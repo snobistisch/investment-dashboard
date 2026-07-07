@@ -3,6 +3,10 @@
 Personal, open-sourceable dashboard for research trackers. First section: Citrini
 Research Tracker (public-source-only alternative to the paid Citrindex).
 
+Repo: https://github.com/snobistisch/investment-dashboard — live at
+https://snobistisch.github.io/investment-dashboard/ (Pages via Actions,
+deploys on every push to main).
+
 ## Done
 
 - **Phase 0 — Scaffold.** Vite + React + TypeScript + Tailwind v4

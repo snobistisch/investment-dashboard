@@ -1,7 +1,8 @@
 # Progress
 
-Personal, open-sourceable dashboard for research trackers. First section: Citrini
-Research Tracker (public-source-only alternative to the paid Citrindex).
+Personal, open-sourceable dashboard for research trackers. Three sections so
+far: Citrini Research Tracker (native React), plus Digital Biology and Robotics
+(pre-built standalone dashboards, embedded).
 
 Repo: https://github.com/snobistisch/investment-dashboard — live at
 https://snobistisch.github.io/investment-dashboard/ (Pages via Actions,
@@ -37,10 +38,31 @@ deploys on every push to main).
   fetched every substantive free post, cross-checked podcast pages. Awaiting
   Matthias's review before Phase 2.
 
+- **Digital Biology + Robotics sections.** Two pre-built, self-contained HTML
+  dashboards Matthias made earlier, added as embedded sections. Files live in
+  [public/dashboards/](public/dashboards/) (`digital-biology.html`,
+  `robotics.html`) and render in a full-height iframe via
+  [EmbeddedDashboard.tsx](src/components/EmbeddedDashboard.tsx). App now has a
+  top nav switching three views with hash routing (`#citrini`, `#biology`,
+  `#robotics`) in [src/App.tsx](src/App.tsx). Not ported to the TrackerEntry
+  pattern on purpose — they're rich bespoke dashboards; embedding keeps 100%
+  fidelity. Source files were in ~/Downloads; two earlier biology drafts
+  (`_investment_report`, `_landscape`) were left out as superseded. Robotics
+  pulls Google Fonts from a CDN (loads fine on Pages).
+
+## Two kinds of section
+
+- **Native tracker** (Citrini): folder under `src/sections/<name>/` with a
+  component + `data.ts` typed `TrackerEntry[]`. Copy the citrini folder to add
+  another.
+- **Embedded dashboard** (biology, robotics): drop a self-contained `.html`
+  into `public/dashboards/`, render `<EmbeddedDashboard src="dashboards/x.html">`,
+  and add one entry to the `sections` array + `navLabels` in App.tsx.
+
 ## Next
 
 - Possible follow-ups: periodic re-check of Citrini's free output for new
-  entries/status changes; second tracker section when Matthias picks one.
+  entries/status changes; a third tracker when Matthias picks one.
 
 ## Working agreements
 

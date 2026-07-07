@@ -19,12 +19,17 @@ Research Tracker (public-source-only alternative to the paid Citrindex).
   copy `src/sections/citrini/`, swap in its own data, render it from
   [src/App.tsx](src/App.tsx). No registry, no plugin system — on purpose.
 
+- **Phase 1 — Research (pending review).** Full table in
+  [research/citrini-tracker-research.md](research/citrini-tracker-research.md):
+  17 verified entries, 1 flagged unverified/ambiguous (25 Trades for 2025 —
+  contents in a PDF not publicly enumerable), 4 excluded for lack of free
+  source (bird flu, India infra, defense/drones, humanoid robots). Method:
+  enumerated the Substack archive via its public API (free/paid flag per post),
+  fetched every substantive free post, cross-checked podcast pages. Awaiting
+  Matthias's review before Phase 2.
+
 ## Next
 
-- **Phase 1 — Research.** Build the Citrini entry list from public sources only
-  (@Citrini7 on X, free Substack tier, podcasts/interviews). Every entry needs a
-  checkable source URL; no source means the entry is dropped, not hedged.
-  Deliver as a markdown table for review BEFORE writing any UI for it.
 - **Phase 2 — Build** (only after the research table is approved): render the
   approved entries in `src/sections/citrini/data.ts` + the tracker component.
 

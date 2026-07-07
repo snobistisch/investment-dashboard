@@ -19,7 +19,12 @@ Research Tracker (public-source-only alternative to the paid Citrindex).
   copy `src/sections/citrini/`, swap in its own data, render it from
   [src/App.tsx](src/App.tsx). No registry, no plugin system — on purpose.
 
-- **Phase 1 — Research (pending review).** Full table in
+- **Phase 2 — Build.** Research table approved and rendered as the Citrini
+  section: 18 entries in [src/sections/citrini/data.ts](src/sections/citrini/data.ts)
+  (typed `TrackerEntry[]`), table UI with status badges in
+  [CitriniTracker.tsx](src/sections/citrini/CitriniTracker.tsx). Verified in
+  the browser (no console errors) and `npm run build` passes.
+- **Phase 1 — Research (approved).** Full table in
   [research/citrini-tracker-research.md](research/citrini-tracker-research.md):
   17 verified entries, 1 flagged unverified/ambiguous (25 Trades for 2025 —
   contents in a PDF not publicly enumerable), 4 excluded for lack of free
@@ -30,8 +35,8 @@ Research Tracker (public-source-only alternative to the paid Citrindex).
 
 ## Next
 
-- **Phase 2 — Build** (only after the research table is approved): render the
-  approved entries in `src/sections/citrini/data.ts` + the tracker component.
+- Possible follow-ups: periodic re-check of Citrini's free output for new
+  entries/status changes; second tracker section when Matthias picks one.
 
 ## Working agreements
 

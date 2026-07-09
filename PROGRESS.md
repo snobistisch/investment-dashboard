@@ -50,6 +50,16 @@ deploys on every push to main).
   (`_investment_report`, `_landscape`) were left out as superseded. Robotics
   pulls Google Fonts from a CDN (loads fine on Pages).
 
+- **Robotics page rebuilt from scratch.** Old robotics dashboard content was
+  discarded and replaced with fresh, sourced research (equities + tokenised
+  DePIN names), rebuilt on the digital-biology page as the exact template —
+  same 9-section skeleton, same components (risk-profile cards, timeline,
+  7-segment landscape, 6 deep dives, sortable JS table, hypotheses, risk grid,
+  the 2-col "vs" repurposed as equities-vs-tokens, synthesis) and identical
+  design tokens/classes. Only the content differs. Research notes:
+  [research/robotics-tracker-research.md](research/robotics-tracker-research.md).
+  Digital-biology page left untouched (it is the quality/design benchmark).
+
 - **Terminal restyle.** Whole dashboard now uses one Bloomberg-terminal look:
   black background, amber (#fb8b1e) accents, system-mono type, square corners,
   bracketed status tags, dark scrollbars. Shared tokens live in

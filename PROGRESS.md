@@ -81,6 +81,22 @@ deploys on every push to main).
   [research/robotics-tracker-research.md](research/robotics-tracker-research.md).
   Digital-biology page left untouched (it is the quality/design benchmark).
 
+- **Crypto section added.** Sixth tab (`#crypto`), built on the shared terminal
+  template as a five-asset digital-assets tracker: ZEC, NOCK, PRL, ETH, LIT —
+  one deep-dive card per asset (refined thesis, evidence, catalysts,
+  risks/counter-evidence, per-card source links), an evidence spectrum in the
+  hero, and a comparison table with HYPE as the benchmark row for the LIT
+  thesis. Fresh web research July 9, 2026; each supplied working thesis was
+  stress-tested and downgraded where evidence was thin (ZEC rotation leg →
+  tailwind; NOCK proof market → internal-only today; LIT "stronger than
+  Hyperliquid" → contested). Research notes with conflict log:
+  [research/crypto-tab-research.md](research/crypto-tab-research.md). This tab
+  supersedes the earlier quantum-resistance screen
+  ([research/crypto_deep_dive.md](research/crypto_deep_dive.md), retained);
+  ZEC and ETH carry over, ALGO/STRK/QRL rotate out. File:
+  [public/dashboards/crypto.html](public/dashboards/crypto.html); registered
+  in [src/App.tsx](src/App.tsx).
+
 - **Terminal restyle.** Whole dashboard now uses one Bloomberg-terminal look:
   black background, amber (#fb8b1e) accents, system-mono type, square corners,
   bracketed status tags, dark scrollbars. Shared tokens live in

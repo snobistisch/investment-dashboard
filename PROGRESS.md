@@ -50,6 +50,16 @@ deploys on every push to main).
   (`_investment_report`, `_landscape`) were left out as superseded. Robotics
   pulls Google Fonts from a CDN (loads fine on Pages).
 
+- **Quantum section added.** Fourth tab (`#quantum`), built on the
+  digital-biology template (same 9-section skeleton, components and design
+  tokens) from Matthias's supplied `quantum_deep_dive.md` — federal QIS spend
+  as a leading indicator for public equities. Content faithfully transformed
+  from the (already-sourced) md, not re-researched. Section 8's "vs" is
+  repurposed as "sector beta vs the gov-capital signal"; the comparison
+  table's numeric columns are relabelled Mkt cap / Fed $ (M). File:
+  [public/dashboards/quantum.html](public/dashboards/quantum.html); registered
+  in [src/App.tsx](src/App.tsx).
+
 - **Robotics page rebuilt from scratch.** Old robotics dashboard content was
   discarded and replaced with fresh, sourced research (equities + tokenised
   DePIN names), rebuilt on the digital-biology page as the exact template —

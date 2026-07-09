@@ -5,13 +5,14 @@ import { EmbeddedDashboard } from './components/EmbeddedDashboard'
 // The dashboard's sections. React trackers (like Citrini) render inline and
 // scroll; embedded sections host a self-contained HTML dashboard in an iframe.
 // To add another: drop its file in public/dashboards/ and add one entry here.
-const sections = ['citrini', 'biology', 'robotics'] as const
+const sections = ['citrini', 'biology', 'robotics', 'quantum'] as const
 type Section = (typeof sections)[number]
 
 const navLabels: Record<Section, string> = {
   citrini: 'CITRINI',
   biology: 'DIGITAL BIOLOGY',
   robotics: 'ROBOTICS',
+  quantum: 'QUANTUM',
 }
 
 function sectionFromHash(): Section {
@@ -65,6 +66,9 @@ function App() {
         )}
         {active === 'robotics' && (
           <EmbeddedDashboard src="dashboards/robotics.html" title="Robotics landscape dashboard" />
+        )}
+        {active === 'quantum' && (
+          <EmbeddedDashboard src="dashboards/quantum.html" title="Quantum computing dashboard" />
         )}
       </main>
 

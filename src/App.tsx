@@ -9,9 +9,9 @@ const sections = ['citrini', 'biology', 'robotics'] as const
 type Section = (typeof sections)[number]
 
 const navLabels: Record<Section, string> = {
-  citrini: 'Citrini Research',
-  biology: 'Digital Biology',
-  robotics: 'Robotics',
+  citrini: 'CITRINI',
+  biology: 'DIGITAL BIOLOGY',
+  robotics: 'ROBOTICS',
 }
 
 function sectionFromHash(): Section {
@@ -29,25 +29,25 @@ function App() {
   }, [])
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-neutral-50 text-neutral-900">
-      <header className="border-b border-neutral-200 bg-white">
-        <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-6 py-3">
-          <span className="text-sm font-semibold tracking-tight">
-            Investment Intelligence Dashboard
+    <div className="flex h-screen flex-col overflow-hidden bg-term-bg font-mono text-term-text">
+      <header className="border-b border-term-line bg-term-bg">
+        <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-2">
+          <span className="text-xs font-bold uppercase tracking-[0.2em] text-term-amber">
+            Investment Intelligence
           </span>
-          <nav className="flex gap-1 text-sm">
-            {sections.map((id) => (
+          <nav className="flex gap-px text-xs">
+            {sections.map((id, i) => (
               <a
                 key={id}
                 href={`#${id}`}
                 aria-current={active === id ? 'page' : undefined}
-                className={`rounded-md px-3 py-1.5 transition-colors ${
+                className={`px-3 py-1.5 uppercase tracking-wider transition-colors ${
                   active === id
-                    ? 'bg-neutral-900 text-white'
-                    : 'text-neutral-600 hover:bg-neutral-100'
+                    ? 'bg-term-amber font-bold text-black'
+                    : 'text-term-dim hover:bg-term-panel hover:text-term-amber'
                 }`}
               >
-                {navLabels[id]}
+                {i + 1} {navLabels[id]}
               </a>
             ))}
           </nav>
@@ -67,6 +67,13 @@ function App() {
           <EmbeddedDashboard src="dashboards/robotics.html" title="Robotics landscape dashboard" />
         )}
       </main>
+
+      <footer className="border-t border-term-line bg-term-bg">
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-1 text-[10px] uppercase tracking-wider text-term-dim">
+          <span>Data: public sources only · Not investment advice</span>
+          <span>snobistisch/investment-dashboard</span>
+        </div>
+      </footer>
     </div>
   )
 }

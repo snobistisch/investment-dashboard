@@ -1,1 +1,23 @@
 @import "tailwindcss";
+
+/* Shared terminal palette — the embedded dashboards in public/dashboards/
+   mirror these exact values so all sections read as one system. */
+@theme {
+  --color-term-bg: #000000;
+  --color-term-panel: #0a0a0a;
+  --color-term-line: #262626;
+  --color-term-amber: #fb8b1e;
+  --color-term-text: #d6d6d6;
+  --color-term-dim: #8c8c8c;
+  --color-term-cyan: #4dd0e1;
+  --color-term-green: #00d264;
+  --color-term-red: #ff4d40;
+  --color-term-magenta: #d670d6;
+  --color-term-yellow: #ffd60a;
+  --font-mono:
+    ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+}
+
+* {
+  scrollbar-color: #333333 #0a0a0a;
+}

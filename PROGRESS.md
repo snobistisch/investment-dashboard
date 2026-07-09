@@ -50,6 +50,16 @@ deploys on every push to main).
   (`_investment_report`, `_landscape`) were left out as superseded. Robotics
   pulls Google Fonts from a CDN (loads fine on Pages).
 
+- **Terminal restyle.** Whole dashboard now uses one Bloomberg-terminal look:
+  black background, amber (#fb8b1e) accents, system-mono type, square corners,
+  bracketed status tags, dark scrollbars. Shared tokens live in
+  [src/index.css](src/index.css) (`--color-term-*`); both embedded dashboards
+  were rethemed in place to mirror those exact values (their `:root` variables,
+  a handful of hardcoded literals, JS chart colors, and fonts — robotics no
+  longer loads Google Fonts, so both files are fully self-contained). Density
+  fix in robotics: mono glyphs are wider, so the universe table got smaller
+  type + a `min-width` on the thesis column.
+
 ## Two kinds of section
 
 - **Native tracker** (Citrini): folder under `src/sections/<name>/` with a

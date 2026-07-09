@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Agent Economy — Cross-Theme Conviction Dashboard</title>
+<style>
+  :root{
+    /* terminal theme — mirrors src/index.css tokens */
+    --paper:#000000; --surface:#0a0a0a; --panel:#111111;
+    --ink:#d6d6d6; --ink-2:#a8a8a8; --ink-3:#8c8c8c;
+    --line:#262626; --line-2:#1c1c1c;
+    --viridian:#00d264; --viridian-soft:#00b457; --viridian-wash:#04150b;
+    --ochre:#fb8b1e; --ochre-wash:#180e02;
+    --slate:#4dd0e1;
+    /* dark title band */
+    --hero:#0a0a0a; --hero-2:#101010; --hero-ink:#d6d6d6; --hero-mut:#8c8c8c; --hero-accent:#fb8b1e;
+    /* type */
+    --serif:ui-monospace,'SF Mono','Cascadia Code','JetBrains Mono','Roboto Mono',Menlo,Consolas,monospace;
+    --sans:ui-monospace,'SF Mono','Cascadia Code','JetBrains Mono','Roboto Mono',Menlo,Consolas,monospace;
+    --mono:ui-monospace,'SF Mono','Cascadia Code','JetBrains Mono','Roboto Mono',Menlo,Consolas,monospace;
+    --maxw:1140px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--sans); font-size:17px; line-height:1.72;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px}
+  p{margin:0 0 1.05em}
+  a{color:var(--viridian); text-decoration:none; border-bottom:1px solid var(--line)}
+  a:hover{border-color:var(--viridian)}
+  .mono{font-family:var(--mono)}
+  .eyebrow{font-family:var(--mono); font-size:.7rem; letter-spacing:.18em; text-transform:uppercase; color:var(--viridian); font-weight:600}
+
+  /* ---------- top nav ---------- */
+  nav.top{position:sticky; top:0; z-index:50; background:rgba(0,0,0,.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--line)}
+  nav.top .wrap{display:flex; align-items:center; gap:22px; height:54px}
+  nav.top .brand{font-family:var(--mono); font-size:.74rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink); font-weight:600; white-space:nowrap}
+  nav.top .brand span{color:var(--viridian)}
+  nav.top .links{display:flex; gap:20px; margin-left:auto; overflow-x:auto}
+  nav.top .links a{font-family:var(--mono); font-size:.72rem; letter-spacing:.04em; color:var(--ink-2); border:none; text-transform:uppercase; white-space:nowrap; padding:4px 0; border-bottom:2px solid transparent}
+  nav.top .links a:hover{color:var(--ink)}
+  nav.top .links a.active{color:var(--viridian); border-bottom-color:var(--viridian)}
+  @media (max-width:820px){nav.top .links{display:none}}
+
+  /* ---------- hero ---------- */
+  header.hero{background:linear-gradient(160deg,var(--hero) 0%,var(--hero-2) 140%); color:var(--hero-ink); padding:64px 0 46px; border-bottom:3px solid var(--viridian)}
+  header.hero .kicker{font-family:var(--mono); font-size:.72rem; letter-spacing:.2em; text-transform:uppercase; color:var(--hero-accent); margin-bottom:22px}
+  header.hero h1{font-family:var(--serif); font-weight:600; font-size:clamp(2.2rem,5.4vw,3.5rem); line-height:1.04; letter-spacing:-.01em; margin:0 0 20px; max-width:16ch}
+  header.hero .lede{font-family:var(--serif); font-size:clamp(1.05rem,2.1vw,1.28rem); line-height:1.55; color:#a8a8a8; max-width:60ch; margin:0 0 30px}
+  header.hero .lede b{color:#fff; font-weight:600}
+  .meta-row{display:flex; flex-wrap:wrap; gap:26px 40px; padding-top:26px; border-top:1px solid rgba(255,255,255,.14)}
+  .meta-row .m .k{font-family:var(--mono); font-size:.64rem; letter-spacing:.16em; text-transform:uppercase; color:var(--hero-mut)}
+  .meta-row .m .v{font-family:var(--mono); font-size:1.02rem; color:#fff; margin-top:5px}
+
+  /* ---------- spectrum signature ---------- */
+  .spectrum{margin:38px 0 6px}
+  .spectrum .head{display:flex; justify-content:space-between; font-family:var(--mono); font-size:.66rem; letter-spacing:.14em; text-transform:uppercase; color:var(--hero-mut); margin-bottom:12px}
+  .spectrum svg{width:100%; height:132px; display:block; overflow:visible}
+  .spectrum .cap{font-family:var(--mono); font-size:.66rem; color:var(--hero-mut); margin-top:6px; text-align:center; letter-spacing:.04em}
+
+  /* ---------- section scaffold ---------- */
+  section{padding:66px 0; border-bottom:1px solid var(--line)}
+  .sec-head{display:flex; align-items:baseline; gap:16px; margin-bottom:28px}
+  .sec-num{font-family:var(--mono); font-size:.8rem; color:var(--viridian-soft); font-weight:600; padding-top:6px}
+  h2{font-family:var(--serif); font-weight:600; font-size:clamp(1.55rem,3vw,2.1rem); line-height:1.12; letter-spacing:-.01em; margin:0; max-width:22ch}
+  h3{font-family:var(--serif); font-weight:600; font-size:1.24rem; line-height:1.2; margin:0 0 .5em}
+  .prose{max-width:70ch}
+  .prose.wide{max-width:82ch}
+  .lead-p{font-size:1.12rem; line-height:1.62}
+  .lead-p b{color:var(--ink); font-weight:600}
+
+  /* callout / not-advice */
+  .note{background:var(--ochre-wash); border-left:3px solid var(--ochre); padding:16px 20px; border-radius:0; font-size:.96rem; color:#e8b06a; max-width:78ch}
+  .note b{color:#fb8b1e}
+
+  /* ---------- three risk profiles ---------- */
+  .profiles{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:30px}
+  .pf{background:var(--surface); border:1px solid var(--line); border-radius:0; padding:22px 22px 24px; border-top:3px solid var(--tier)}
+  .pf .tier{font-family:var(--mono); font-size:.66rem; letter-spacing:.12em; text-transform:uppercase; color:var(--tier); font-weight:600}
+  .pf h3{font-size:1.08rem; margin:10px 0 8px}
+  .pf p{font-size:.94rem; line-height:1.6; color:var(--ink-2); margin:0 0 12px}
+  .pf .names{font-family:var(--mono); font-size:.76rem; color:var(--ink); letter-spacing:.02em; border-top:1px solid var(--line-2); padding-top:11px}
+  .pf.a{--tier:#4dd0e1} .pf.b{--tier:#00d264} .pf.c{--tier:#fb8b1e}
+  @media (max-width:820px){.profiles{grid-template-columns:1fr}}
+
+  /* ---------- kpi strip ---------- */
+  .kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:0; border:1px solid var(--line); border-radius:0; overflow:hidden; background:var(--surface); margin-top:8px}
+  .kpi{padding:22px 20px; border-right:1px solid var(--line-2)}
+  .kpi:last-child{border-right:none}
+  .kpi .n{font-family:var(--mono); font-size:1.9rem; font-weight:600; color:var(--viridian); line-height:1}
+  .kpi .l{font-size:.82rem; color:var(--ink-2); margin-top:8px; line-height:1.35}
+  @media (max-width:820px){.kpis{grid-template-columns:1fr 1fr} .kpi{border-bottom:1px solid var(--line-2)}}
+
+  /* ---------- timeline ---------- */
+  .timeline{margin-top:26px; max-width:80ch}
+  .tl{display:grid; grid-template-columns:120px 1fr; gap:20px; padding:16px 0; border-top:1px solid var(--line)}
+  .tl:last-child{border-bottom:1px solid var(--line)}
+  .tl .when{font-family:var(--mono); font-size:.8rem; color:var(--viridian); font-weight:600; letter-spacing:.02em}
+  .tl .what{font-size:.98rem; line-height:1.55}
+  .tl .what b{color:var(--ink)}
+  @media (max-width:560px){.tl{grid-template-columns:1fr; gap:4px}}
+
+  /* ---------- segmentation grid ---------- */
+  .segs{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:26px}
+  .seg{background:var(--surface); border:1px solid var(--line); border-radius:0; padding:18px 18px 20px}
+  .seg .lbl{font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--viridian-soft); font-weight:600}
+  .seg h3{font-size:1rem; margin:8px 0 7px}
+  .seg p{font-size:.9rem; color:var(--ink-2); line-height:1.55; margin:0}
+  .seg .tk{font-family:var(--mono); font-size:.74rem; color:var(--ink); margin-top:10px; letter-spacing:.02em}
+  @media (max-width:820px){.segs{grid-template-columns:1fr 1fr}}
+  @media (max-width:560px){.segs{grid-template-columns:1fr}}
+
+  /* ---------- deep dive cards ---------- */
+  .dd{background:var(--surface); border:1px solid var(--line); border-radius:0; padding:30px 30px 28px; margin-bottom:22px}
+  .dd .top{display:flex; align-items:flex-start; gap:16px; flex-wrap:wrap; margin-bottom:6px}
+  .dd .tk{font-family:var(--mono); font-size:1rem; font-weight:600; color:#000; background:var(--viridian); padding:5px 10px; border-radius:0; letter-spacing:.03em}
+  .dd .nm{font-family:var(--serif); font-size:1.4rem; font-weight:600; line-height:1.1; align-self:center}
+  .dd .cat{font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3); border:1px solid var(--line); border-radius:0; padding:4px 11px; align-self:center; margin-left:auto}
+  .stats{display:grid; grid-template-columns:repeat(5,1fr); gap:0; border-top:1px solid var(--line-2); border-bottom:1px solid var(--line-2); margin:18px 0 20px}
+  .stat{padding:14px 14px 14px 0; border-right:1px solid var(--line-2)}
+  .stat:last-child{border-right:none; padding-right:0}
+  .stat .k{font-family:var(--mono); font-size:.6rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3)}
+  .stat .v{font-family:var(--mono); font-size:1.02rem; font-weight:600; color:var(--ink); margin-top:6px; line-height:1.15}
+  .stat .v.pos{color:var(--viridian)} .stat .v.neg{color:var(--ochre)}
+  .dd .body{max-width:74ch}
+  .dd .body p{font-size:.99rem; line-height:1.68}
+  .dd .body p:last-child{margin-bottom:0}
+  .dd .body .lab{font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--viridian-soft); font-weight:600; display:block; margin-bottom:4px}
+  .bar{height:6px; background:var(--panel); border-radius:0; overflow:hidden; margin-top:16px; max-width:74ch}
+  .bar > i{display:block; height:100%; background:var(--viridian-soft); border-radius:0; width:0; transition:width 1.1s cubic-bezier(.2,.7,.2,1)}
+  .bar-cap{font-family:var(--mono); font-size:.64rem; color:var(--ink-3); margin-top:6px; letter-spacing:.03em}
+  @media (max-width:760px){.stats{grid-template-columns:1fr 1fr 1fr} .stat{border-bottom:1px solid var(--line-2)} .dd{padding:24px 20px}}
+
+  /* ---------- table ---------- */
+  .filters{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 20px}
+  .filters button{font-family:var(--mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-2); background:var(--surface); border:1px solid var(--line); border-radius:0; padding:7px 14px; cursor:pointer; transition:all .15s}
+  .filters button:hover{border-color:var(--viridian-soft); color:var(--ink)}
+  .filters button.on{background:var(--viridian); color:#000; border-color:var(--viridian)}
+  .tbl-scroll{overflow-x:auto; border:1px solid var(--line); border-radius:0; background:var(--surface)}
+  table{border-collapse:collapse; width:100%; min-width:920px; font-size:.9rem}
+  thead th{font-family:var(--mono); font-size:.64rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-2); text-align:left; padding:15px 14px; border-bottom:2px solid var(--line); background:var(--panel); cursor:pointer; user-select:none; white-space:nowrap; position:sticky; top:0}
+  thead th:hover{color:var(--viridian)}
+  thead th .ar{opacity:.35; margin-left:5px}
+  thead th.sorted .ar{opacity:1; color:var(--viridian)}
+  tbody td{padding:15px 14px; border-bottom:1px solid var(--line-2); vertical-align:top; line-height:1.45}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:var(--viridian-wash)}
+  td.tk{font-family:var(--mono); font-weight:600; color:var(--viridian); white-space:nowrap}
+  td.nm{font-weight:600; color:var(--ink); white-space:nowrap}
+  td .seglbl{font-family:var(--mono); font-size:.68rem; color:var(--ink-2); letter-spacing:.02em}
+  td.num{font-family:var(--mono); white-space:nowrap}
+  td.num.pos{color:var(--viridian)} td.num.neg{color:var(--ochre)}
+  td.small{font-size:.82rem; color:var(--ink-2); max-width:24ch}
+  .tier-dot{display:inline-block; width:8px; height:8px; border-radius:0; margin-right:7px; vertical-align:middle}
+  .table-note{font-family:var(--mono); font-size:.66rem; color:var(--ink-3); margin-top:12px; letter-spacing:.02em}
+
+  /* ---------- hypotheses ---------- */
+  .hyps{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:26px}
+  .hyp{background:var(--surface); border:1px solid var(--line); border-radius:0; padding:24px 24px 22px}
+  .hyp .hh{display:flex; align-items:center; gap:10px; margin-bottom:12px}
+  .hyp .id{font-family:var(--mono); font-size:.72rem; font-weight:600; color:#000; background:var(--ink); border-radius:0; padding:3px 8px}
+  .hyp h3{font-size:1.1rem; margin:0}
+  .hyp p{font-size:.93rem; line-height:1.6; color:var(--ink-2); margin:0 0 14px}
+  .conf{margin:0 0 12px}
+  .conf .cl{display:flex; justify-content:space-between; font-family:var(--mono); font-size:.64rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); margin-bottom:6px}
+  .conf .cl b{color:var(--ink)}
+  .conf .track{height:7px; background:var(--panel); border-radius:0; overflow:hidden}
+  .conf .track > i{display:block; height:100%; width:0; border-radius:0; transition:width 1.1s cubic-bezier(.2,.7,.2,1)}
+  .upd{border-top:1px dashed var(--line); padding-top:11px; font-size:.86rem; color:var(--ink-2)}
+  .upd .lab{font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:var(--viridian-soft); font-weight:600; display:block; margin-bottom:3px}
+  @media (max-width:820px){.hyps{grid-template-columns:1fr}}
+
+  /* risks */
+  .riskgrid{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:24px}
+  .risk{background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--ochre); border-radius:0; padding:18px 20px}
+  .risk h3{font-size:1rem; margin:0 0 6px}
+  .risk p{font-size:.92rem; color:var(--ink-2); line-height:1.55; margin:0}
+  @media (max-width:820px){.riskgrid{grid-template-columns:1fr}}
+
+  /* theme vs special situations */
+  .vs{display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:26px}
+  .vs .col{background:var(--surface); border:1px solid var(--line); border-radius:0; padding:24px}
+  .vs .col.ss{border-top:3px solid var(--ochre)} .vs .col.th{border-top:3px solid var(--viridian)}
+  .vs .col .tag{font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; font-weight:600}
+  .vs .col.th .tag{color:var(--viridian)} .vs .col.ss .tag{color:var(--ochre)}
+  .vs .col h3{font-size:1.12rem; margin:8px 0 10px}
+  .vs .col p{font-size:.93rem; line-height:1.6; color:var(--ink-2)}
+  .mini{width:100%; border-collapse:collapse; margin-top:8px; font-size:.82rem; min-width:0}
+  .mini th{font-family:var(--mono); font-size:.6rem; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3); text-align:left; padding:8px 8px 8px 0; border-bottom:1px solid var(--line)}
+  .mini td{padding:9px 8px 9px 0; border-bottom:1px solid var(--line-2); vertical-align:top; line-height:1.4}
+  .mini td.k{font-family:var(--mono); font-weight:600; color:var(--viridian)}
+  @media (max-width:820px){.vs{grid-template-columns:1fr}}
+
+  /* synthesis */
+  .synth{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:26px}
+  .sc{background:var(--surface); border:1px solid var(--line); border-radius:0; padding:22px}
+  .sc .bet{font-family:var(--mono); font-size:.64rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3); font-weight:600}
+  .sc h3{font-size:1.02rem; margin:8px 0 10px; color:var(--viridian)}
+  .sc .picks{font-family:var(--mono); font-size:.82rem; color:var(--ink); line-height:1.7; letter-spacing:.02em}
+  .sc p{font-size:.88rem; color:var(--ink-2); line-height:1.55; margin:10px 0 0}
+  @media (max-width:820px){.synth{grid-template-columns:1fr}}
+
+  /* footer */
+  footer{background:var(--hero); color:var(--hero-mut); padding:48px 0 60px}
+  footer h3{font-family:var(--mono); font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; color:var(--hero-accent); margin:0 0 14px}
+  footer p{font-size:.86rem; line-height:1.6; max-width:80ch; color:#8c8c8c; margin:0 0 12px}
+  footer .src{font-family:var(--mono); font-size:.76rem; line-height:1.9; color:var(--hero-mut)}
+  footer .disc{border-top:1px solid rgba(255,255,255,.12); margin-top:26px; padding-top:22px; font-size:.8rem; color:var(--hero-mut)}
+
+  .reveal{opacity:0; transform:translateY(14px); transition:opacity .6s ease, transform .6s ease}
+  .reveal.in{opacity:1; transform:none}
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1; transform:none; transition:none} .bar>i,.conf .track>i{transition:none}}
+  :focus-visible{outline:2px solid var(--viridian); outline-offset:2px}
+
+*{scrollbar-color:#333333 #0a0a0a}
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="wrap">
+    <div class="brand">Agent&nbsp;Economy <span>/</span> Cross-Theme&nbsp;Conviction</div>
+    <div class="links">
+      <a href="#summary">Summary</a>
+      <a href="#why">Why now</a>
+      <a href="#map">Value chain</a>
+      <a href="#deep">Positions</a>
+      <a href="#table">Comparison</a>
+      <a href="#hyp">Assumptions</a>
+      <a href="#risk">Risks</a>
+      <a href="#vs">Correlation</a>
+      <a href="#synth">Synthesis</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">Cross-theme conviction analysis · July 2026</div>
+    <h1>Every position here is already down. None of the thesis is priced in.</h1>
+    <p class="lede">Seven public companies sit at the intersection of agentic AI infrastructure, digital banking and autonomous payments — each down 27–76% from its 52-week high, each carrying a thesis the market hasn't modeled. This is explicitly <b>not consensus</b>: five falsifiable assumptions about 2026–2030 do the work, and every position traces back to one or more of them. Read the assumptions before the tickers — the tickers are just where the assumptions happen to be cheap.</p>
+    <div class="meta-row">
+      <div class="m"><div class="k">Positions covered</div><div class="v">7</div></div>
+      <div class="m"><div class="k">Core assumptions</div><div class="v">5</div></div>
+      <div class="m"><div class="k">Avg. drawdown</div><div class="v">−43.6%</div></div>
+      <div class="m"><div class="k">Status</div><div class="v">Not investment advice</div></div>
+    </div>
+
+    <div class="spectrum">
+      <div class="head"><span>◄ Real business today, thesis is upside</span><span>Thesis does the heavy lifting ►</span></div>
+      <svg id="spectrumSvg" viewBox="0 0 1000 132" preserveAspectRatio="xMidYMid meet" aria-label="Risk spectrum plotting the seven positions from established business to thesis-dependent optionality"></svg>
+      <div class="cap">Position ≈ how much of the investment case depends on the agent-economy thesis playing out vs. existing today. Node placement is judgmental, for orientation only.</div>
+    </div>
+  </div>
+</header>
+
+<!-- 1 · SUMMARY -->
+<section id="summary">
+  <div class="wrap">
+    <div class="sec-head"><div class="sec-num">01</div><h2>Own sturdy businesses with agent optionality, not just the story</h2></div>
+    <div class="prose wide">
+      <p class="lead-p">All seven names share one setup: real, growing, publicly traded businesses trading well off their highs, each with an <em>optional</em> agent-economy catalyst layered on top of an existing operation. That is different from buying a story with no revenue behind it — but it also means the size of the drawdown reflects real, non-thematic risks (credit, regulation, competition) as much as it reflects the market ignoring the thesis. Segmenting by <b>how much of the investment case already exists today vs. depends on the thesis</b> separates three genuinely different bets.</p>
+      <p>The honest framing: these seven are <em>positively correlated</em> on the macro question ("does the agent economy show up on schedule?"). They are not seven independent ideas — they are one idea expressed seven ways, at different points on the real-business-vs-optionality spectrum. Diversification against being wrong has to come from outside this basket, not within it.</p>
+    </div>
+    <div class="profiles">
+      <div class="pf a">
+        <div class="tier">Profile A · Lower variance</div>
+        <h3>Real, growing businesses today — agent upside is optional</h3>
+        <p>Profitable-or-improving operating companies (100M+ users, a full banking license, a national card-issuing platform) where the agent thesis is a call option on top of a business that works regardless.</p>
+        <div class="names">NU · HOOD · MQ</div>
+      </div>
+      <div class="pf b">
+        <div class="tier">Profile B · Platform bet</div>
+        <h3>Real revenue, structural catalyst still unfolding</h3>
+        <p>Genuine, fast-growing revenue lines with a specific regulatory or platform catalyst (a compliance moat, a banking-as-a-service flywheel) that needs to keep compounding for the thesis to pay off.</p>
+        <div class="names">CRCL · SOFI</div>
+      </div>
+      <div class="pf c">
+        <div class="tier">Profile C · Thesis-dependent optionality</div>
+        <h3>Real business, but the premium is unproven</h3>
+        <p>Operating companies with genuine backlogs or cash flow, where the specific bull case — a pricing premium for "agent compute," a mining-to-AI power pivot — has not yet been demonstrated at scale.</p>
+        <div class="names">CRWV · IREN</div>
+      </div>
+    </div>
+    <p style="margin-top:26px"></p>
+    <div class="note"><b>Read this as a research map for prioritising due diligence — not investment advice.</b> This page transforms a supplied internal thesis note (dated July 2026); figures are as supplied and were not independently re-verified against primary filings in this pass. The bull/base/bear ranges in each position below are the source note's own scenario anchors, not modelled price targets — treat them as framing, not forecasts.</div>
+  </div>
+</section>
+
+<!-- 2 · WHY NOW -->
+<section id="why">
+  <div class="wrap">
+    <div class="sec-head"><div class="sec-num">02</div><h2>The listings came first; the volume is arriving now</h2></div>
+    <div class="prose wide">
+      <p class="lead-p">The setup is sequential, not simultaneous. Two of the seven went public in 2025 near a sentiment peak and were subsequently crushed; the volume and regulatory evidence that might justify the thesis mostly shows up afterward, in 2026 — which is exactly the gap between "priced" and "proven" this dashboard is built to track.</p>
+      <p>None of this is capacity or revenue in dispute — USDC circulation, CoreWeave's backlog and the x402 launch are real, reported numbers. What is unproven is the <em>connective tissue</em>: whether "agent compute" commands a durable price premium, whether stablecoin rails specifically (not just crypto generally) capture agent-to-agent payment volume, and whether a neobank's data advantage survives contact with a user's own AI agent shopping for a better deal.</p>
+    </div>
+    <div class="timeline">
+      <div class="tl"><div class="when">2025</div><div class="what"><b>Two IPOs set the stage.</b> Circle lists on the NYSE (June) as the first regulated public stablecoin issuer; CoreWeave lists (March) as the first pure-play neocloud. Both now trade 27–76% below their highs going into 2026.</div></div>
+      <div class="tl"><div class="when">Q1 2026</div><div class="what"><b>The volume numbers turn up first.</b> USDC circulation reaches $77B (+28% YoY), on-chain settlement volume hits $21.5T (+263% YoY), and total stablecoin supply reaches $273B; CoreWeave's backlog hits $66B even as near-term revenue guidance disappoints the market.</div></div>
+      <div class="tl"><div class="when">May 2026</div><div class="what"><b>The payment rail and the regulation arrive together.</b> Coinbase's x402 protocol (HTTP-native stablecoin micropayments) goes live with Amazon, Stripe and Cloudflare adopting it; the GENIUS Act sets KYC/AML requirements for stablecoin issuers, converting compliance into a moat for regulated incumbents.</div></div>
+      <div class="tl"><div class="when">June 2026</div><div class="what"><b>The card networks and the neobanks start moving.</b> Mastercard launches Agent Pay and acquires BVNK for $1.8B; Visa's stablecoin settlement run-rate reaches $7B annualized; Nubank's CTO outlines an explicit AI-agent transformation strategy (June 11), and SoFi's Galileo unit ships Cyberbank Konecta AI agents into production.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 · VALUE CHAIN -->
+<section id="map">
+  <div class="wrap">
+    <div class="sec-head"><div class="sec-num">03</div><h2>Seven layers, one stack — an agent needs all of them</h2></div>
+    <div class="prose wide"><p class="lead-p">An autonomous financial agent needs somewhere to think, a way to pay, an identity to act under, and somewhere to hold and invest what it earns. Each of the seven positions maps to one layer of that stack — which is also why they move together: they are one bet on the stack existing, not seven separate bets.</p></div>
+    <div class="segs">
+      <div class="seg"><div class="lbl">A · Compute</div><h3>Agent-optimized GPU clouds</h3><p>Low-latency, bursty, stateful inference that general-purpose hyperscaler clouds are not optimized to serve. The "thinking" layer.</p><div class="tk">CRWV</div></div>
+      <div class="seg"><div class="lbl">B · Power</div><h3>Provisioned power capacity</h3><p>The scarce upstream input for AI compute — capacity that can pivot between Bitcoin mining and GPU hosting faster than new data centers get built.</p><div class="tk">IREN</div></div>
+      <div class="seg"><div class="lbl">C · Stablecoin rails</div><h3>Regulated settlement layer</h3><p>Machine-speed, sub-cent micropayments that traditional card economics can't serve. The "money" an agent actually moves.</p><div class="tk">CRCL</div></div>
+      <div class="seg"><div class="lbl">D · Card issuing</div><h3>Programmable virtual cards</h3><p>"Agentic cards" issued and controlled in real time for agents that need to spend within a traditional card network.</p><div class="tk">MQ</div></div>
+      <div class="seg"><div class="lbl">E · Banking middleware</div><h3>Banking-as-a-service platform</h3><p>The API layer other neobanks and fintechs build agent features on top of, rather than build themselves.</p><div class="tk">SOFI</div></div>
+      <div class="seg"><div class="lbl">F · Consumer agent OS</div><h3>The default financial layer</h3><p>Identity, transaction history and a full banking license in one place — what a personal financial agent plugs into first.</p><div class="tk">NU</div></div>
+      <div class="seg"><div class="lbl">G · Brokerage</div><h3>Where the agent invests</h3><p>Crypto and equities on one API-first platform — where an agent could plausibly trade and hold assets on a user's behalf.</p><div class="tk">HOOD</div></div>
+    </div>
+    <p style="margin-top:22px; font-size:.88rem; color:var(--ink-2); max-width:78ch">This maps the source note's seven picks onto the stack a financial agent would need end-to-end; it is illustrative, not an exhaustive map of the sector (large card networks, hyperscalers and private agent-infrastructure startups are deliberately out of scope here).</p>
+  </div>
+</section>
+
+<!-- 4 · DEEP DIVES -->
+<section id="deep">
+  <div class="wrap">
+    <div class="sec-head"><div class="sec-num">04</div><h2>Seven positions across the risk spectrum</h2></div>
+    <div class="prose wide"><p class="lead-p" style="margin-bottom:34px">Each carries the same skeleton: model and moat, then trajectory, risk and scenario framing. The bar under each card is the position's drawdown from its 52-week high — a rough proxy for how much disappointment is already priced in.</p></div>
+
+    <!-- CRCL -->
+    <div class="dd">
+      <div class="top"><span class="tk">CRCL</span><span class="nm">Circle Internet Group</span><span class="cat">Profile B · Stablecoin rails</span></div>
+      <div class="stats">
+        <div class="stat"><div class="k">Price</div><div class="v">$61.85</div></div>
+        <div class="stat"><div class="k">Drawdown</div><div class="v neg">−76.5%</div></div>
+        <div class="stat"><div class="k">Mkt cap</div><div class="v">~$17B</div></div>
+        <div class="stat"><div class="k">Reserve income Q1</div><div class="v pos">$653M</div></div>
+        <div class="stat"><div class="k">USDC circulating</div><div class="v">$77B</div></div>
+      </div>
+      <div class="body">
+        <p><span class="lab">Model &amp; moat</span>The equity market prices Circle as a volatile crypto proxy; the more useful frame is a yield-on-reserves business (like a money-market fund) with a regulatory catalyst layered on top. Circle earns interest on USDC reserves (mostly T-bills), and the GENIUS Act's KYC/AML requirements for stablecoin issuers convert Circle's regulated, NYSE-listed status from a cost center into a moat that unregulated competitors and new entrants cannot easily replicate. Every x402-protocol micropayment that settles in USDC also flows through this reserve model.</p>
+        <p><span class="lab">Trajectory, risk &amp; valuation</span>Q1 2026: USDC circulation $77B (+28% YoY), on-chain volume $21.5T (+263% YoY), reserve income $653M (+17% YoY) — a ~$2.6B annualized run-rate at the current reported pace (correcting the source note's $3.5B figure, which didn't reconcile with the quarterly print). The core risk is that this is a leveraged bet on <em>two</em> variables at once: agent-payment volume growth and Treasury yields — a Fed cut to 2% roughly halves reserve income independent of volume growth. Scenario framing from the source note: bull ~$150–200 on USDC reaching $200B+; base ~$90–120 on continued 20–30% growth; bear ~$25–35 on rate cuts plus Tether achieving compliance without losing share.</p>
+      </div>
+      <div class="bar"><i data-w="77"></i></div>
+      <div class="bar-cap">−76.5% from 52-week high — the deepest drawdown of the seven; the most priced-for-failure name in the basket.</div>
+    </div>
+
+    <!-- NU -->
+    <div class="dd">
+      <div class="top"><span class="tk">NU</span><span class="nm">Nu Holdings (Nubank)</span><span class="cat">Profile A · Consumer agent OS</span></div>
+      <div class="stats">
+        <div class="stat"><div class="k">Price</div><div class="v">$13.14</div></div>
+        <div class="stat"><div class="k">Drawdown</div><div class="v neg">−30.8%</div></div>
+        <div class="stat"><div class="k">Mkt cap</div><div class="v">~$63B</div></div>
+        <div class="stat"><div class="k">Customers</div><div class="v pos">100M+</div></div>
+        <div class="stat"><div class="k">Segment</div><div class="v">Agentic banking</div></div>
+      </div>
+      <div class="body">
+        <p><span class="lab">Model &amp; moat</span>Nubank is the largest digital bank in Latin America (100M+ customers across Brazil, Mexico and Colombia) and already holds the five things a personal financial agent needs: verified identity, years of transaction history, income data, a full banking license, and an API-first architecture. The CTO's June 2026 AI-transformation announcement (foundation models for advice, AI-driven wealth management) reads to the market as a press release; the more interesting read is a platform that, if it ships a consumer agent API, creates Microsoft-Office-style switching costs — moving banks would mean re-training an agent on an entirely new data structure.</p>
+        <p><span class="lab">Trajectory, risk &amp; valuation</span>This is the slowest-playing-out thesis of the seven and the highest-quality underlying business: real earnings and growth today independent of any agent feature shipping. Key risks are conventional for the name (Brazilian real/EM macro, Pix and incumbent-bank competition) rather than agent-specific — the agent thesis is genuine upside optionality, not the load-bearing investment case. Scenario framing: bull ~$25–30 if an agent API ships and re-rates the stock as a platform; base ~$16–20 on continued organic growth; bear ~$8–10 on an EM shock combined with agent adoption simply not materializing.</p>
+      </div>
+      <div class="bar"><i data-w="31"></i></div>
+      <div class="bar-cap">−30.8% from 52-week high — the shallowest drawdown alongside HOOD, consistent with the least thesis-dependent case in the basket.</div>
+    </div>
+
+    <!-- SOFI -->
+    <div class="dd">
+      <div class="top"><span class="tk">SOFI</span><span class="nm">SoFi Technologies</span><span class="cat">Profile B · Banking middleware</span></div>
+      <div class="stats">
+        <div class="stat"><div class="k">Price</div><div class="v">$17.77</div></div>
+        <div class="stat"><div class="k">Drawdown</div><div class="v neg">−45.7%</div></div>
+        <div class="stat"><div class="k">Mkt cap</div><div class="v">~$19B</div></div>
+        <div class="stat"><div class="k">Galileo clients</div><div class="v">dozens</div></div>
+        <div class="stat"><div class="k">Segment</div><div class="v">Platform / BaaS</div></div>
+      </div>
+      <div class="body">
+        <p><span class="lab">Model &amp; moat</span>The market values SoFi as a consumer neobank with a lending book; the less-noticed asset is Galileo, its banking-as-a-service platform, which already powers dozens of other neobanks and fintechs and has shipped Cyberbank Konecta AI customer-service agents into production (a measured 7% service-quality improvement, halved drop-offs). The thesis is that fintechs building agent-driven financial features will build on Galileo's existing APIs — the same abstraction-layer playbook Stripe used for payments — rather than build agent infrastructure themselves.</p>
+        <p><span class="lab">Trajectory, risk &amp; valuation</span>Galileo is a real, deployed platform business, but SoFi is both Galileo's owner and one of its customers, which creates a structural tension if Galileo ever needs to prioritize third-party clients over its parent. The lending book's credit cycle (student and personal loans, sensitive to unemployment) is the more immediate risk and could pressure earnings well before any agent-banking catalyst plays out; Stripe Treasury, Marqeta and Unit are all credible competitors in the same banking-as-a-service layer. Scenario framing: bull ~$30–40 if Galileo re-rates as a recognized platform business; base ~$22–28 on steady growth; bear ~$10–12 on credit losses plus Galileo failing to differentiate.</p>
+      </div>
+      <div class="bar"><i data-w="46"></i></div>
+      <div class="bar-cap">−45.7% from 52-week high — a mid-basket drawdown; the platform (Galileo) and lending-book risks are largely independent of each other.</div>
+    </div>
+
+    <!-- CRWV -->
+    <div class="dd">
+      <div class="top"><span class="tk">CRWV</span><span class="nm">CoreWeave</span><span class="cat">Profile C · Agent compute</span></div>
+      <div class="stats">
+        <div class="stat"><div class="k">Price</div><div class="v">$94.98</div></div>
+        <div class="stat"><div class="k">Drawdown</div><div class="v neg">−38.1%</div></div>
+        <div class="stat"><div class="k">Mkt cap</div><div class="v">~$35B</div></div>
+        <div class="stat"><div class="k">Backlog (Apr'26)</div><div class="v pos">$66B</div></div>
+        <div class="stat"><div class="k">Segment</div><div class="v">Neocloud</div></div>
+      </div>
+      <div class="body">
+        <p><span class="lab">Model &amp; moat</span>CoreWeave's light Q1 2026 revenue guidance and rising capex forecast triggered a sell-off read as "hyperscalers are winning GPU cloud." The more interesting claim is that agentic inference — bursty, latency-sensitive, stateful — is a different product than the large-batch training workloads hyperscalers optimized for, and that CoreWeave's reserved-capacity architecture can charge a 2–3x premium over hyperscaler spot pricing for guaranteed low-latency inference an agent can't afford to have preempted. The $66B backlog is the evidence the bull case needs to convert.</p>
+        <p><span class="lab">Trajectory, risk &amp; valuation</span>This premium-pricing claim is <b>the least proven part of the whole thesis</b> — no disclosed inference-vs-training revenue split confirms it yet, and it is the most consensus-adjacent, most-covered name on this list rather than a genuine hidden gem. The clearest risk is direct: if AWS, Azure or GCP ship a dedicated low-latency inference tier, the architectural edge narrows fast, and a large share of the backlog concentrated in a few AI labs is a real customer-concentration risk. Scenario framing: bull ~$140–170 if agent inference is recognized as a distinct, premium-priced category; base ~$100–120 on steady backlog conversion; bear ~$50–65 if hyperscalers commoditize GPU inference.</p>
+      </div>
+      <div class="bar"><i data-w="38"></i></div>
+      <div class="bar-cap">−38.1% from 52-week high — the "agent compute premium" pricing claim remains unconfirmed by any disclosed revenue split.</div>
+    </div>
+
+    <!-- IREN -->
+    <div class="dd">
+      <div class="top"><span class="tk">IREN</span><span class="nm">IREN Limited</span><span class="cat">Profile C · Power optionality</span></div>
+      <div class="stats">
+        <div class="stat"><div class="k">Price</div><div class="v">$45.40</div></div>
+        <div class="stat"><div class="k">Drawdown</div><div class="v neg">−40.9%</div></div>
+        <div class="stat"><div class="k">Mkt cap</div><div class="v">~$5B</div></div>
+        <div class="stat"><div class="k">Power capacity</div><div class="v">GW-scale</div></div>
+        <div class="stat"><div class="k">Segment</div><div class="v">Neocloud / power</div></div>
+      </div>
+      <div class="body">
+        <p><span class="lab">Model &amp; moat</span>IREN (formerly Iris Energy) is a Bitcoin miner pivoting to AI cloud services; the market largely still prices it as a miner with AI as a side project. The inverted read is that provisioned, already-energized power capacity — not GPUs — is the real bottleneck for new AI data centers (hyperscalers sign power-purchase agreements years out; construction takes 18–36 months), and IREN can convert mining infrastructure to GPU hosting in months rather than years. Either commodity cycle (Bitcoin or AI compute) monetizes the same scarce input: power.</p>
+        <p><span class="lab">Trajectory, risk &amp; valuation</span>This is a real-options structure, not a pure-play: Bitcoin mining cash flow funds the AI build-out while it scales, which is a genuine hedge but also means the equity carries Bitcoin-price risk on top of AI-conversion execution risk (networking, cooling and reliability upgrades may cost more than building new capacity outright). Running both businesses simultaneously also stretches management attention, and diversified/conglomerate structures typically get discounted by the market. Scenario framing: bull ~$80–100 if AI hosting becomes 50%+ of revenue; base ~$50–65 on modest AI revenue plus stable mining; bear ~$15–20 on a Bitcoin crash paired with a stalled AI pivot.</p>
+      </div>
+      <div class="bar"><i data-w="41"></i></div>
+      <div class="bar-cap">−40.9% from 52-week high — carries both Bitcoin-price risk and AI-conversion execution risk simultaneously.</div>
+    </div>
+
+    <!-- MQ -->
+    <div class="dd">
+      <div class="top"><span class="tk">MQ</span><span class="nm">Marqeta</span><span class="cat">Profile A · Card issuing</span></div>
+      <div class="stats">
+        <div class="stat"><div class="k">Price</div><div class="v">$15.17</div></div>
+        <div class="stat"><div class="k">Drawdown</div><div class="v neg">−46.1%</div></div>
+        <div class="stat"><div class="k">Mkt cap</div><div class="v">~$5B</div></div>
+        <div class="stat"><div class="k">Architecture</div><div class="v">API-first</div></div>
+        <div class="stat"><div class="k">Segment</div><div class="v">Agentic payments</div></div>
+      </div>
+      <div class="body">
+        <p><span class="lab">Model &amp; moat</span>Marqeta is the modern, API-first card-issuing platform behind Block's Cash App, DoorDash, Instacart and Affirm, among others — the infrastructure for real-time card issuance, spending controls and transaction-level authorization. Agent-payments infrastructure company Crossmint has launched "Agentic Cards," virtual debit cards issued specifically for AI agents to spend autonomously; Marqeta doesn't need to build agent-native cards itself to benefit — every Agentic Card issued by a Crossmint-like company runs on a card-issuing platform, and Marqeta is the incumbent modern leader in that layer.</p>
+        <p><span class="lab">Trajectory, risk &amp; valuation</span>The most consequential open question for this name specifically is whether agent payments settle through <em>cards</em> at all — if agent-to-agent payments route primarily through stablecoin rails like x402 instead, Marqeta's entire card-issuing model is bypassed and Crossmint's Agentic Cards end up a transitional product rather than a durable category. Cash App concentration (Marqeta's largest customer) and direct competition from Stripe Issuing, Adyen and Unit are the nearer-term, non-thematic risks. Scenario framing: bull ~$25–35 if agent card issuance becomes a recognized category Marqeta wins; base ~$18–22 on steady fintech growth and reaching profitability; bear ~$8–10 on Cash App concentration risk plus agent payments bypassing cards entirely.</p>
+      </div>
+      <div class="bar"><i data-w="46"></i></div>
+      <div class="bar-cap">−46.1% from 52-week high — the position most exposed to a single either/or outcome: do agent payments use cards, or not.</div>
+    </div>
+
+    <!-- HOOD -->
+    <div class="dd">
+      <div class="top"><span class="tk">HOOD</span><span class="nm">Robinhood Markets</span><span class="cat">Profile A · Brokerage</span></div>
+      <div class="stats">
+        <div class="stat"><div class="k">Price</div><div class="v">$111.89</div></div>
+        <div class="stat"><div class="k">Drawdown</div><div class="v neg">−27.3%</div></div>
+        <div class="stat"><div class="k">Funded accounts</div><div class="v">24M+</div></div>
+        <div class="stat"><div class="k">Products</div><div class="v">Crypto + equity</div></div>
+        <div class="stat"><div class="k">Segment</div><div class="v">Agentic banking</div></div>
+      </div>
+      <div class="body">
+        <p><span class="lab">Model &amp; moat</span>This is the most consensus-adjacent name on the list — the market already prices Robinhood as a retail trading app — but the second-order claim is that it is the most "agent-ready" public brokerage: crypto-native (20+ tokens, a self-custody wallet, integrated USDC) so an agent can hold equities and pay in stablecoins from one account; built API-first from day one, unlike incumbents running modern UI wrapped around legacy core banking systems; and skewed toward a demographic (average age ~34) more likely to delegate financial decisions to an agent in the first place.</p>
+        <p><span class="lab">Trajectory, risk &amp; valuation</span>None of this requires new product development to matter — it's an architecture-and-demographics argument about who becomes the default venue <em>if and when</em> agent-managed trading exists, which is precisely why it's the hardest of the seven to underwrite on a near-term catalyst. Revenue remains meaningfully transaction- and PFOF-dependent, so a low-volatility, low-volume market compresses earnings regardless of the agent thesis, and payment-for-order-flow itself remains under SEC scrutiny. Scenario framing: bull ~$160–200 if an agent API ships and creates a new agent-managed-assets revenue line; base ~$130–150 on organic growth plus crypto recovery; bear ~$60–80 on a PFOF restriction combined with a crypto downturn.</p>
+      </div>
+      <div class="bar"><i data-w="27"></i></div>
+      <div class="bar-cap">−27.3% from 52-week high — the shallowest drawdown of the seven; also the least differentiated, most consensus-adjacent thesis.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 · COMPARISON TABLE -->
+<section id="table">
+  <div class="wrap">
+    <div class="sec-head"><div class="sec-num">05</div><h2>The whole basket, sortable side by side</h2></div>
+    <div class="prose wide"><p class="lead-p">All seven positions from the source note. Click any column to sort; filter by theme. Tier dots map to the three risk profiles.</p></div>
+    <div class="filters" id="filters">
+      <button data-f="all" class="on">All</button>
+      <button data-f="payments">Agentic payments</button>
+      <button data-f="banking">Agentic banking</button>
+      <button data-f="neocloud">Neocloud</button>
+    </div>
+    <div class="tbl-scroll">
+      <table id="mainTable">
+        <thead>
+          <tr>
+            <th data-key="tk" data-type="txt">Ticker<span class="ar">↕</span></th>
+            <th data-key="nm" data-type="txt">Company<span class="ar">↕</span></th>
+            <th data-key="seg" data-type="txt">Theme<span class="ar">↕</span></th>
+            <th data-key="price" data-type="num">Price<span class="ar">↕</span></th>
+            <th data-key="dd" data-type="num">Drawdown<span class="ar">↕</span></th>
+            <th data-key="mcap" data-type="num">Mkt cap<span class="ar">↕</span></th>
+            <th data-key="assum" data-type="txt">Core assumption<span class="ar">↕</span></th>
+            <th data-key="hz" data-type="txt">Horizon<span class="ar">↕</span></th>
+            <th data-key="risk" data-type="txt">Key risk<span class="ar">↕</span></th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <div class="table-note">Tier ● Profile A (real business, agent upside optional) · ● Profile B (real revenue, catalyst unfolding) · ● Profile C (thesis-dependent optionality). Prices/drawdowns as supplied, point-in-time (~July 2026). Verify against filings.</div>
+  </div>
+</section>
+
+<!-- 6 · HYPOTHESES (source note's "Key Novel Assumptions") -->
+<section id="hyp">
+  <div class="wrap">
+    <div class="sec-head"><div class="sec-num">06</div><h2>Five assumptions, explicitly not consensus</h2></div>
+    <div class="prose wide"><p class="lead-p">The source note is upfront that these are extrapolations, not consensus views — that honesty is preserved here. Confidence below is my read of the evidence cited for each one; every position above depends on at least one of them being roughly right.</p></div>
+    <div class="hyps">
+      <div class="hyp">
+        <div class="hh"><span class="id">A1</span><h3>Agentic inference outgrows hyperscaler capacity</h3></div>
+        <p>Bursty, stateful, latency-sensitive agent workloads are different enough from training workloads that neoclouds can charge a 2–3x "agent compute premium" for guaranteed low-latency inference. CoreWeave's $66B backlog is the leading evidence.</p>
+        <div class="conf"><div class="cl"><span>Confidence</span><b>Moderate</b></div><div class="track"><i data-w="50" style="background:var(--slate)"></i></div></div>
+        <div class="upd"><span class="lab">What would update it</span>A disclosed inference-vs-training revenue split showing premium pricing would confirm it. The disconfirmer: a hyperscaler shipping a dedicated low-latency inference SLA at standard pricing.</div>
+      </div>
+      <div class="hyp">
+        <div class="hh"><span class="id">A2</span><h3>Stablecoin rails are the only rational agent-payment choice</h3></div>
+        <p>Agent-to-agent micropayments (often sub-$0.01) make 2.9%+$0.30 card economics nonsensical, so stablecoin rails (x402, USDC) capture the volume by default. The volume figures cited ($21.5T on-chain, $273B supply) are real; the causal link to "agent-driven" specifically is not yet isolated.</p>
+        <div class="conf"><div class="cl"><span>Confidence</span><b>Moderate</b></div><div class="track"><i data-w="55" style="background:var(--viridian-soft)"></i></div></div>
+        <div class="upd"><span class="lab">What would update it</span>Coinbase, Stripe or Circle disclosing what share of x402/USDC volume is agent-initiated (vs. human crypto activity) would sharpen this considerably in either direction.</div>
+      </div>
+      <div class="hyp">
+        <div class="hh"><span class="id">A3</span><h3>Neobanks become "agent operating systems"</h3></div>
+        <p>A neobank's identity, transaction and credit data make it the natural place a personal AI agent plugs in, creating switching costs far beyond a normal bank switch. Real evidence so far is limited to strategy announcements (Nubank, SoFi), not a shipped consumer product.</p>
+        <div class="conf"><div class="cl"><span>Confidence</span><b>Moderate-low</b></div><div class="track"><i data-w="40" style="background:var(--slate)"></i></div></div>
+        <div class="upd"><span class="lab">What would update it</span>A first consumer-facing agent-banking feature actually shipping (not just announced) would meaningfully raise confidence; continued announcement-only progress through 2027 would lower it.</div>
+      </div>
+      <div class="hyp">
+        <div class="hh"><span class="id">A4</span><h3>Regulation bifurcates the market toward regulated incumbents</h3></div>
+        <p>The GENIUS Act and FATF stablecoin guidance push compliance costs that regulated issuers (Circle) can absorb and unregulated protocols cannot, making regulatory status a moat rather than a burden. This is the most grounded assumption — it follows a well-established regulatory pattern.</p>
+        <div class="conf"><div class="cl"><span>Confidence</span><b>Moderate-high</b></div><div class="track"><i data-w="60" style="background:var(--viridian-soft)"></i></div></div>
+        <div class="upd"><span class="lab">What would update it</span>GENIUS Act final rules landing with workable (not per-transaction) KYC requirements would confirm it; onerous per-transaction verification requirements would break the CRCL thesis specifically.</div>
+      </div>
+      <div class="hyp">
+        <div class="hh"><span class="id">A5</span><h3>Compute and payments converge into one "agent infrastructure cloud"</h3></div>
+        <p>A neocloud that bundles GPU capacity with integrated stablecoin payment rails creates a closed loop stickier than either a pure-compute or pure-payments company. The source note itself is explicit that <b>no company has announced this yet</b> — Cloudflare Workers plus x402 is the closest live example.</p>
+        <div class="conf"><div class="cl"><span>Confidence</span><b>Low</b></div><div class="track"><i data-w="25" style="background:var(--ochre)"></i></div></div>
+        <div class="upd"><span class="lab">What would update it</span>Any neocloud (CoreWeave or otherwise) announcing native payment-rail integration would be the first real evidence this assumption is playing out rather than purely speculative.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 · RISKS -->
+<section id="risk">
+  <div class="wrap">
+    <div class="sec-head"><div class="sec-num">07</div><h2>What breaks the whole framework</h2></div>
+    <div class="prose wide"><p class="lead-p">These are structural risks to the assumptions themselves, each paired with a tripwire from the source note — a specific, checkable event that should change position sizing, not just sentiment.</p></div>
+    <div class="riskgrid">
+      <div class="risk"><h3>Agent adoption is a 10-year story, not 3</h3><p>All seven theses assume meaningful adoption within 2026–2028. If consumers and enterprises resist delegating financial decisions to agents, every thesis here is early by years, not quarters. <b>Tripwire:</b> no major consumer agent-banking feature ships by Q2 2027 → cut NU/SOFI/HOOD exposure by half.</p></div>
+      <div class="risk"><h3>Stablecoin regulation restricts rather than enables</h3><p>The GENIUS Act could land with per-transaction KYC requirements onerous enough to erase the low-friction advantage stablecoin rails have over cards. <b>Tripwire:</b> final rules require per-transaction identity verification → the CRCL thesis breaks; exit.</p></div>
+      <div class="risk"><h3>Hyperscalers commoditize the neocloud</h3><p>If AWS, Azure or GCP ship dedicated low-latency GPU inference tiers at standard pricing, the architectural edge behind the "agent compute premium" disappears. <b>Tripwire:</b> a hyperscaler announces a sub-50ms inference SLA → cut CRWV/IREN exposure by half.</p></div>
+      <div class="risk"><h3>One protocol disintermediates the infrastructure layer</h3><p>If x402 (or a competitor) gets built natively into model providers (OpenAI, Anthropic) and cloud platforms, the payment infrastructure layer becomes invisible — USDC still wins as the settlement asset, but card rails get bypassed. <b>Tripwire:</b> a major AI lab ships native protocol support with no third-party infra → MQ thesis weakens.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 · CORRELATION -->
+<section id="vs">
+  <div class="wrap">
+    <div class="sec-head"><div class="sec-num">08</div><h2>This reads like seven ideas. It behaves like one.</h2></div>
+    <div class="prose wide"><p class="lead-p">The most important thing to get right about this basket isn't which name is best — it's recognizing that all seven move on the same underlying question. The pairs below compound each other's <em>coverage</em> of the stack; none of them are actually uncorrelated with each other.</p></div>
+    <div class="vs">
+      <div class="col ss">
+        <div class="tag">What this basket is</div>
+        <h3>One correlated bet, expressed seven ways</h3>
+        <p>If the core "does the agent economy show up on schedule" question resolves badly, most or all seven positions decline together — they share the same macro driver, not independent, uncorrelated theses. Owning all seven is concentration in disguise, not diversification.</p>
+        <table class="mini">
+          <thead><tr><th>Pair</th><th>What it hedges</th><th>What it doesn't hedge</th></tr></thead>
+          <tbody>
+            <tr><td class="k">CRCL + MQ</td><td>Which payment rail wins — stablecoin vs. card</td><td>Whether agents pay autonomously at machine speed at all</td></tr>
+            <tr><td class="k">NU + SOFI + HOOD</td><td>Three layers of one banking stack (OS, middleware, brokerage)</td><td>Whether "agentic banking" becomes a real category</td></tr>
+            <tr><td class="k">CRWV + IREN</td><td>Execution quality vs. optionality within neocloud</td><td>Whether the "agent compute premium" itself is real</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col th">
+        <div class="tag">Where the real diversification lives</div>
+        <h3>Outside this basket, by design</h3>
+        <p>The source note's own allocation discipline is worth keeping: size each position at roughly 2–5% of a dedicated thematic sleeve, and cap total agent-economy exposure at 15–25% of the overall portfolio. Because these seven are positively correlated with each other, genuine diversification has to come from non-thematic holdings — traditional equities, cash, or assets that don't share this specific macro driver — not from adding an eighth or ninth name to this list.</p>
+        <p style="margin-bottom:0; color:var(--ink-3); font-size:.86rem">Treat the whole page as one position-sizing decision, not seven.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 9 · SYNTHESIS -->
+<section id="synth">
+  <div class="wrap">
+    <div class="sec-head"><div class="sec-num">09</div><h2>Where to point due diligence next</h2></div>
+    <div class="prose wide"><p class="lead-p">Not a buy list — three ways to prioritise inside a basket you've already decided (per Section 8) to size as one correlated bet. Start here, then verify against primary filings.</p></div>
+    <div class="synth">
+      <div class="sc">
+        <div class="bet">Highest single-name conviction</div>
+        <h3>CRCL</h3>
+        <div class="picks">Circle Internet Group<br><span style="color:var(--ink-3)">A2 + A4</span></div>
+        <p>The clearest measurable metric of the seven (USDC circulation × reserve yield) and the deepest drawdown. Diligence the corrected reserve-income run-rate (~$2.6B annualized, not the $3.5B in the source note) and the GENIUS Act's final KYC rules.</p>
+      </div>
+      <div class="sc">
+        <div class="bet">Highest-quality long-run compounder</div>
+        <h3>NU</h3>
+        <div class="picks">Nu Holdings<br><span style="color:var(--ink-3)">A3</span></div>
+        <p>100M+ verified users, a full banking license, real earnings today independent of any agent feature shipping. Slowest thesis to play out; widest moat if a consumer agent API actually ships.</p>
+      </div>
+      <div class="sc">
+        <div class="bet">Neocloud category anchor</div>
+        <h3>CRWV</h3>
+        <div class="picks">CoreWeave<br><span style="color:var(--ink-3)">A1 + A5, paired with IREN</span></div>
+        <p>The most consensus-adjacent name here — which cuts both ways. Diligence whether any inference-vs-training revenue split or premium-pricing disclosure emerges before treating the "agent compute premium" as more than a hypothesis.</p>
+      </div>
+    </div>
+    <p style="margin-top:24px; font-size:.92rem; color:var(--ink-2); max-width:80ch">The one cross-cutting view I hold with reasonable confidence: <b>this is a single macro bet sized as a portfolio sleeve, not seven independent picks.</b> Decide the sleeve size first (2–5% per name, 15–25% total, per the source note's own discipline) — then let conviction in individual assumptions decide which names within it get the larger allocations.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <h3>Sources &amp; method</h3>
+    <p>This page transforms a supplied internal research note ("The Agent Economy — Hidden Gems," dated 9 July 2026) into the shared dashboard format. Figures are as supplied by that note and were <b>not independently re-verified against primary filings or news sources in this pass</b> — unlike the Citrini tracker's per-entry sourcing, this note does not cite URLs per claim. One internal-consistency correction was made: Circle's annualized reserve income was recalculated from the note's own reported Q1 2026 quarterly figure ($653M × 4 ≈ $2.6B) rather than the note's stated $3.5B, which did not reconcile with that print.</p>
+    <div class="src">
+      Primary source: supplied research note "agent_economy_hidden_gems" (Matthias Alma, 9 July 2026)<br>
+      Cited within that note: company Q1 2026 disclosures (Circle, CoreWeave) · GENIUS Act · Coinbase x402 protocol · Nubank, SoFi, Mastercard, Visa announcements (as reported)<br>
+      Not verified independently this session — confirm all figures, dates and dollar amounts against primary filings before acting.
+    </div>
+    <div class="disc">
+      <b>Not investment advice.</b> This is a research overview built from a single analyst's thematic thesis note, explicitly labelled by its own author as "not consensus." It does not constitute investment, legal or tax advice, is not a recommendation to buy or sell any security, and reflects information as supplied in July 2026 that will change. The bull/base/bear ranges are the source note's own scenario anchors, not modelled price targets. Verify all figures against primary filings and consult a licensed adviser before making any investment decision.
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ---------- data ---------- */
+const COMPANIES = [
+  {tk:'CRCL', nm:'Circle Internet Group', cat:'payments', tier:'B', seg:'Agentic Payments',
+   price:61.85, dd:-76.5, mcap:17, mcapd:'~$17B', assum:'A2 + A4', hz:'3–5 yr', risk:'Rate sensitivity; Tether regulatory catch-up'},
+  {tk:'NU', nm:'Nu Holdings', cat:'banking', tier:'A', seg:'Agentic Banking',
+   price:13.14, dd:-30.8, mcap:63, mcapd:'~$63B', assum:'A3', hz:'3–5 yr', risk:'EM macro; Pix and incumbent competition'},
+  {tk:'SOFI', nm:'SoFi Technologies', cat:'banking', tier:'B', seg:'Agentic Banking (Galileo)',
+   price:17.77, dd:-45.7, mcap:19, mcapd:'~$19B', assum:'A3', hz:'3–5 yr', risk:'Credit cycle; Stripe/Marqeta/Unit competition'},
+  {tk:'CRWV', nm:'CoreWeave', cat:'neocloud', tier:'C', seg:'Neocloud',
+   price:94.98, dd:-38.1, mcap:35, mcapd:'~$35B', assum:'A1 + A5', hz:'2–4 yr', risk:'Hyperscaler dedicated inference tiers; customer concentration'},
+  {tk:'IREN', nm:'IREN Limited', cat:'neocloud', tier:'C', seg:'Neocloud (power)',
+   price:45.40, dd:-40.9, mcap:5, mcapd:'~$5B', assum:'A1', hz:'2–4 yr', risk:'Bitcoin price crash; conversion cost and execution'},
+  {tk:'MQ', nm:'Marqeta', cat:'payments', tier:'A', seg:'Agentic Payments (cards)',
+   price:15.17, dd:-46.1, mcap:5, mcapd:'~$5B', assum:'A2', hz:'2–4 yr', risk:'Block/Cash App concentration; stablecoin rails bypass cards'},
+  {tk:'HOOD', nm:'Robinhood Markets', cat:'banking', tier:'A', seg:'Agentic Banking (brokerage)',
+   price:111.89, dd:-27.3, mcap:25, mcapd:'~$25B', assum:'A3 + A2', hz:'3–5 yr', risk:'PFOF regulatory risk; Coinbase competition'}
+];
+const TIER_COLOR = {A:'#4dd0e1', B:'#00d264', C:'#fb8b1e'};
+
+/* ---------- render table ---------- */
+const tbody = document.getElementById('tbody');
+let curFilter = 'all';
+let sortKey = 'tier', sortDir = 1, sortType = 'txt';
+const tierRank = {A:0,B:1,C:2};
+
+function render(){
+  let rows = COMPANIES.filter(c=> curFilter==='all' || c.cat===curFilter);
+  rows.sort((a,b)=>{
+    if(sortKey==='tier'){ return (tierRank[a.tier]-tierRank[b.tier])*sortDir || a.tk.localeCompare(b.tk); }
+    let x=a[sortKey], y=b[sortKey];
+    if(sortType==='num'){ x=(x===null||x===undefined)?-Infinity:x; y=(y===null||y===undefined)?-Infinity:y; return (x-y)*sortDir; }
+    return String(x).localeCompare(String(y))*sortDir;
+  });
+  tbody.innerHTML = rows.map(c=>{
+    const ddCls = 'num neg';
+    const ddTxt = c.dd+'%';
+    return '<tr>'+
+      '<td class="tk"><span class="tier-dot" style="background:'+TIER_COLOR[c.tier]+'"></span>'+c.tk+'</td>'+
+      '<td class="nm">'+c.nm+'</td>'+
+      '<td><span class="seglbl">'+c.seg+'</span></td>'+
+      '<td class="num">$'+c.price.toFixed(2)+'</td>'+
+      '<td class="'+ddCls+'">'+ddTxt+'</td>'+
+      '<td class="num">'+c.mcapd+'</td>'+
+      '<td class="small">'+c.assum+'</td>'+
+      '<td class="small">'+c.hz+'</td>'+
+      '<td class="small">'+c.risk+'</td>'+
+    '</tr>';
+  }).join('');
+}
+/* sort handlers */
+document.querySelectorAll('#mainTable thead th').forEach(th=>{
+  th.addEventListener('click', ()=>{
+    const key=th.dataset.key, type=th.dataset.type;
+    if(sortKey===key){ sortDir*=-1; } else { sortKey=key; sortType=type; sortDir=1; }
+    document.querySelectorAll('#mainTable thead th').forEach(t=>{t.classList.remove('sorted'); t.querySelector('.ar').textContent='↕';});
+    th.classList.add('sorted'); th.querySelector('.ar').textContent = sortDir>0?'▲':'▼';
+    render();
+  });
+});
+/* filter handlers */
+document.querySelectorAll('#filters button').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    document.querySelectorAll('#filters button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); curFilter=b.dataset.f; render();
+  });
+});
+render();
+
+/* ---------- spectrum svg ---------- */
+(function(){
+  const svg=document.getElementById('spectrumSvg');
+  const NS='http://www.w3.org/2000/svg';
+  const pts=[
+    {tk:'NU',pos:8,tier:'A'},{tk:'HOOD',pos:20,tier:'A'},{tk:'MQ',pos:33,tier:'A'},
+    {tk:'SOFI',pos:47,tier:'B'},{tk:'CRCL',pos:60,tier:'B'},
+    {tk:'CRWV',pos:76,tier:'C'},{tk:'IREN',pos:92,tier:'C'}
+  ];
+  const W=1000, x0=40, x1=960, y=70;
+  // baseline
+  const line=document.createElementNS(NS,'line');
+  line.setAttribute('x1',x0);line.setAttribute('x2',x1);line.setAttribute('y1',y);line.setAttribute('y2',y);
+  line.setAttribute('stroke','rgba(255,255,255,.22)');line.setAttribute('stroke-width','1.5');
+  svg.appendChild(line);
+  // subtle ticks
+  [0,25,50,75,100].forEach(p=>{
+    const gx=x0+(x1-x0)*p/100;
+    const t=document.createElementNS(NS,'line');
+    t.setAttribute('x1',gx);t.setAttribute('x2',gx);t.setAttribute('y1',y-5);t.setAttribute('y2',y+5);
+    t.setAttribute('stroke','rgba(255,255,255,.18)');t.setAttribute('stroke-width','1');
+    svg.appendChild(t);
+  });
+  const colors={A:'#4dd0e1',B:'#00d264',C:'#fb8b1e'};
+  pts.forEach((p,i)=>{
+    const gx=x0+(x1-x0)*p.pos/100;
+    const up=(i%2===0);
+    const ly=up? y-30 : y+30;
+    const ty=up? y-38 : y+46;
+    // connector
+    const c=document.createElementNS(NS,'line');
+    c.setAttribute('x1',gx);c.setAttribute('x2',gx);c.setAttribute('y1',y);c.setAttribute('y2',ly);
+    c.setAttribute('stroke','rgba(255,255,255,.28)');c.setAttribute('stroke-width','1');
+    svg.appendChild(c);
+    // dot
+    const dot=document.createElementNS(NS,'circle');
+    dot.setAttribute('cx',gx);dot.setAttribute('cy',y);dot.setAttribute('r','5.5');
+    dot.setAttribute('fill',colors[p.tier]);dot.setAttribute('stroke','#000000');dot.setAttribute('stroke-width','2');
+    svg.appendChild(dot);
+    // label
+    const tx=document.createElementNS(NS,'text');
+    tx.setAttribute('x',gx);tx.setAttribute('y',ty);tx.setAttribute('text-anchor','middle');
+    tx.setAttribute('fill','#d6d6d6');tx.setAttribute('font-family','ui-monospace,SF Mono,Menlo,monospace');
+    tx.setAttribute('font-size','15');tx.setAttribute('font-weight','600');tx.setAttribute('letter-spacing','.5');
+    tx.textContent=p.tk;
+    svg.appendChild(tx);
+  });
+})();
+
+/* ---------- reveal + bar fill ---------- */
+const bars = document.querySelectorAll('.bar > i, .conf .track > i');
+const reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+if(reduce){ bars.forEach(b=> b.style.width=(b.dataset.w||0)+'%'); }
+else{
+  const io=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ const el=e.target; el.style.width=(el.dataset.w||0)+'%'; io.unobserve(el); } });
+  },{threshold:.4});
+  bars.forEach(b=> io.observe(b));
+
+  const rev=document.querySelectorAll('section .prose, .dd, .hyp, .risk, .seg, .pf, .kpi, .vs .col, .sc, .tl');
+  rev.forEach(el=> el.classList.add('reveal'));
+  const io2=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io2.unobserve(e.target); } });
+  },{threshold:.12});
+  rev.forEach(el=> io2.observe(el));
+}
+
+/* ---------- scroll-spy nav ---------- */
+const navLinks=[...document.querySelectorAll('nav.top .links a')];
+const secs=navLinks.map(a=> document.querySelector(a.getAttribute('href')));
+const spy=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const id='#'+e.target.id;
+      navLinks.forEach(a=> a.classList.toggle('active', a.getAttribute('href')===id));
+    }
+  });
+},{rootMargin:'-45% 0px -50% 0px'});
+secs.forEach(s=> s && spy.observe(s));
+</script>
+</body>
+</html>

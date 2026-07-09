@@ -50,6 +50,17 @@ deploys on every push to main).
   (`_investment_report`, `_landscape`) were left out as superseded. Robotics
   pulls Google Fonts from a CDN (loads fine on Pages).
 
+- **Agentic section added.** Fifth tab (`#agentic`), built on the shared
+  template from a supplied thesis note (`agent_economy_hidden_gems.html`, 7
+  positions across agentic payments/banking/neocloud). Applied senior-analyst
+  fixes before implementing: corrected Circle's reserve-income annualization
+  (source said $3.5B, doesn't reconcile with its own $653M quarterly print —
+  corrected to ~$2.6B), reframed bull/base/bear ranges as scenario anchors not
+  price targets, and added my own confidence ratings to the 5 "assumptions"
+  (now the hypotheses section). Footer flags that figures are as-supplied and
+  not independently re-verified this session. File:
+  [public/dashboards/agentic.html](public/dashboards/agentic.html).
+
 - **Quantum section added.** Fourth tab (`#quantum`), built on the
   digital-biology template (same 9-section skeleton, components and design
   tokens) from Matthias's supplied `quantum_deep_dive.md` — federal QIS spend

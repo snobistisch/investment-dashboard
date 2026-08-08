@@ -132,6 +132,32 @@ deploys on every push to main).
   fix in robotics: mono glyphs are wider, so the universe table got smaller
   type + a `min-width` on the thesis column.
 
+- **Exposure layer (rebuild Phase 1).** New first tab (`#exposure`, now the
+  default) answering "what am I actually long, and how correlated is it?".
+  Backed by [src/data/positions.ts](src/data/positions.ts): 161 rows, one per
+  ticker mentioned anywhere in the dashboard — 91 across the six thematic
+  sections plus 70 named only inside Citrini entries. Pure transcription from
+  the embedded dashboards' `COMPANIES` arrays and the research notes; no figure
+  was re-derived, re-estimated or refreshed, and every row carries the `asOf`
+  date its market data was true. Computation lives in
+  [analysis.ts](src/sections/exposure/analysis.ts) so every figure on screen is
+  derived from the data, not hardcoded.
+
+  Headline: **26 of 69 researched names share one primary driver (hyperscaler
+  AI capex) — 88% of the $3.94tn of market cap on file.** Including the 22
+  names their own sections flag as context-not-exposure: 28 of 91 at 94%.
+
+  Findings worth keeping: (1) ticker overlap is nearly empty — only NVDA (4
+  sections) and ALAB (2) repeat, so the sections share a *driver*, not names,
+  which is why the factor view carries the argument; (2) the cap-weighted
+  figure rests on three tickers (AVGO 59% of the AI-capex bucket, ANET 7%,
+  MRVL 6%); (3) market-cap coverage is 47 of 69 — robotics has no market-cap
+  column at all and biology states only two, so every weighted figure states
+  its own coverage. Conviction is derived mechanically from each dashboard's
+  A/B/C risk tier (Matthias's call, 2026-08-08) and labelled as a placeholder
+  on screen, not as his judgement. Footer now states leverage explicitly:
+  research only, no positions held, unlevered by construction.
+
 ## Two kinds of section
 
 - **Native tracker** (Citrini): folder under `src/sections/<name>/` with a

@@ -1,14 +1,28 @@
 import { useEffect, useState } from 'react'
 import { CitriniTracker } from './sections/citrini/CitriniTracker'
+import { ExposurePanel } from './sections/exposure/ExposurePanel'
 import { EmbeddedDashboard } from './components/EmbeddedDashboard'
 
 // The dashboard's sections. React trackers (like Citrini) render inline and
 // scroll; embedded sections host a self-contained HTML dashboard in an iframe.
 // To add another: drop its file in public/dashboards/ and add one entry here.
-const sections = ['citrini', 'biology', 'robotics', 'quantum', 'agentic', 'crypto', 'photonics'] as const
+// Exposure comes first on purpose: it is the only view that reads across the
+// others, and the concentration question should be answered before the
+// individual theses are read.
+const sections = [
+  'exposure',
+  'citrini',
+  'biology',
+  'robotics',
+  'quantum',
+  'agentic',
+  'crypto',
+  'photonics',
+] as const
 type Section = (typeof sections)[number]
 
 const navLabels: Record<Section, string> = {
+  exposure: 'EXPOSURE',
   citrini: 'CITRINI',
   biology: 'DIGITAL BIOLOGY',
   robotics: 'ROBOTICS',
@@ -20,7 +34,7 @@ const navLabels: Record<Section, string> = {
 
 function sectionFromHash(): Section {
   const hash = window.location.hash.replace('#', '')
-  return (sections as readonly string[]).includes(hash) ? (hash as Section) : 'citrini'
+  return (sections as readonly string[]).includes(hash) ? (hash as Section) : 'exposure'
 }
 
 function App() {
@@ -59,6 +73,11 @@ function App() {
       </header>
 
       <main className="min-h-0 flex-1">
+        {active === 'exposure' && (
+          <div className="h-full overflow-y-auto">
+            <ExposurePanel />
+          </div>
+        )}
         {active === 'citrini' && (
           <div className="h-full overflow-y-auto">
             <CitriniTracker />
@@ -89,7 +108,14 @@ function App() {
 
       <footer className="border-t border-term-line bg-term-bg">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-1 text-[10px] uppercase tracking-wider text-term-dim">
-          <span>Data: public sources only · Not investment advice</span>
+          {/* Leverage state is the single most important risk fact about any
+              book — the difference between the July 2026 drawdown being
+              survivable and being terminal. Stated explicitly, per Matthias
+              (2026-08-08): this is research, not a live book. */}
+          <span>
+            Research only · no positions held · unlevered by construction · public sources ·
+            not investment advice
+          </span>
           <span>snobistisch/investment-dashboard</span>
         </div>
       </footer>

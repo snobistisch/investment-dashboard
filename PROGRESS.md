@@ -97,6 +97,31 @@ deploys on every push to main).
   [public/dashboards/crypto.html](public/dashboards/crypto.html); registered
   in [src/App.tsx](src/App.tsx).
 
+- **Photonics section added.** Seventh tab (`#photonics`), built on the
+  digital-biology template (same 9-section skeleton, components and design
+  tokens) from fresh web research on 8 August 2026 — market data is the 7 Aug
+  close. Covers the full public photonics / optical-interconnect universe:
+  **33 tickers across five exchanges** (US, Shenzhen, Shanghai STAR, Tokyo,
+  Taipei Exchange, plus HK dual listings), seven deep dives (ALAB, LITE, COHR,
+  Zhongji Innolight, CRDO, AAOI, FN), a supply-chain/competition map, and a
+  sortable comparison table with a value-chain filter.
+  Research notes with the conflict log:
+  [research/photonics-tracker-research.md](research/photonics-tracker-research.md).
+  Editorial calls made during the build: LYTE's holdings are used as a *seed*
+  only and the section says so explicitly (its ≥50%-photonics-revenue screen
+  excludes AVGO/MRVL/NVDA/GLW/ALAB/CRDO); a widely-shared "full LYTE holdings"
+  list on X was discarded as not credible (it mixed in a private company and a
+  lidar ticker); one aggregator's ZTE weight conflicted with Roundhill's own
+  top-five and was dropped. Asian market caps are shown in local currency with
+  an approximate USD equivalent at a **stated FX assumption** (USD/CNY 6.7372,
+  USD/JPY 157.65, USD/TWD ≈32.25), and the USD figure is what the table sorts
+  on. Adjacent photonics names (IPGP, LASR, LPTH, 6965) are included but
+  flagged in-page as *not* AI-interconnect exposure. Everything time-sensitive
+  is labelled: the FCC draft ban is unpublished and unconfirmed, and LITE,
+  COHR, POET and FN all report within nine days of the snapshot.
+  File: [public/dashboards/photonics.html](public/dashboards/photonics.html);
+  registered in [src/App.tsx](src/App.tsx).
+
 - **Terminal restyle.** Whole dashboard now uses one Bloomberg-terminal look:
   black background, amber (#fb8b1e) accents, system-mono type, square corners,
   bracketed status tags, dark scrollbars. Shared tokens live in

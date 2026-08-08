@@ -11,8 +11,11 @@ Sections:
   Citrindex product is not accessed or reconstructed. Research notes with
   per-entry sourcing live in
   [research/citrini-tracker-research.md](research/citrini-tracker-research.md).
-- **Digital Biology** and **Robotics** — self-contained research dashboards,
-  embedded from [public/dashboards/](public/dashboards/).
+- **Digital Biology**, **Robotics**, **Quantum**, **Agentic**, **Crypto** and
+  **Photonics** — self-contained research dashboards, embedded from
+  [public/dashboards/](public/dashboards/). Sourced notes for the photonics
+  section live in
+  [research/photonics-tracker-research.md](research/photonics-tracker-research.md).
 
 Not affiliated with Citrini Research. Nothing here is investment advice.
 

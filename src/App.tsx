@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { CitriniTracker } from './sections/citrini/CitriniTracker'
 import { ExposurePanel } from './sections/exposure/ExposurePanel'
+import { AllocatorPanel } from './sections/allocator/AllocatorPanel'
 import { EmbeddedDashboard } from './components/EmbeddedDashboard'
 
 // The dashboard's sections. React trackers (like Citrini) render inline and
@@ -11,6 +12,7 @@ import { EmbeddedDashboard } from './components/EmbeddedDashboard'
 // individual theses are read.
 const sections = [
   'exposure',
+  'allocator',
   'citrini',
   'biology',
   'robotics',
@@ -23,6 +25,7 @@ type Section = (typeof sections)[number]
 
 const navLabels: Record<Section, string> = {
   exposure: 'EXPOSURE',
+  allocator: 'ALLOCATOR',
   citrini: 'CITRINI',
   biology: 'DIGITAL BIOLOGY',
   robotics: 'ROBOTICS',
@@ -76,6 +79,11 @@ function App() {
         {active === 'exposure' && (
           <div className="h-full overflow-y-auto">
             <ExposurePanel />
+          </div>
+        )}
+        {active === 'allocator' && (
+          <div className="h-full overflow-y-auto">
+            <AllocatorPanel />
           </div>
         )}
         {active === 'citrini' && (

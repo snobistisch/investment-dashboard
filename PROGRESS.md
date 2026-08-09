@@ -158,6 +158,91 @@ deploys on every push to main).
   on screen, not as his judgement. Footer now states leverage explicitly:
   research only, no positions held, unlevered by construction.
 
+- **Allocator section.** New second tab (`#allocator`), sitting right after
+  Exposure: "what do I already have" answered, "what should I size next"
+  asked. Takes a capital amount and a 0-100 risk slider (labelled
+  Conservative/Balanced/Aggressive — deliberately not the A/B/C letters
+  positions.ts uses for a position's own risk tier, a different axis) and
+  sizes a concrete dollar allocation from
+  [src/sections/allocator/allocation.ts](src/sections/allocator/allocation.ts).
+  Universe is `activeBook` filtered to `stance === 'long'` and to positions
+  carrying a documented `edge` — 29 of the 69 long names. Sizing rules, named
+  as constants: 18 names down to 11 across the slider, 7% up to 16% per-name
+  cap, weight proportional to `conviction` raised to a tilt that rises 1.0 to
+  2.0. The per-factor cap (28-32%, reusing `factorBreakdown` from the Exposure
+  tab) is held tight across the whole range on purpose, so the allocator can
+  never recreate the 88% hyperscaler-AI-capex concentration the Exposure tab
+  exists to surface, even at max risk.
+
+  Leverage sleeve (off by default): an options overlay on the 1-2
+  highest-conviction names already in the core allocation, sized as its own
+  slice of capital from 0% to a hard 17.5% ceiling as the slider rises to
+  100 — confirmed it never exceeds that ceiling and reads $0 at risk 0.
+  Describes structure only ("moderately OTM call, ~2-4 months out, premium
+  loss capped at N% of capital") with no invented strikes, premiums or
+  greeks, and an explicit "check a live chain" disclosure, per the site's
+  no-live-data convention. Rendered in a term-red-bordered panel, referencing
+  the Exposure tab's July 2026 drawdown / `JULY_2026_DRAWDOWN` fund-failure
+  story as the reason the sleeve has a ceiling at all.
+
+  `Panel`/`Bar`, previously local to ExposurePanel.tsx, moved to
+  [src/components/Panel.tsx](src/components/Panel.tsx) now that a second
+  section uses them; the Exposure tab was re-verified in-browser after the
+  move. `npm run build` and `npm run lint` both pass.
+
+- **Allocator, second pass — three real defects fixed.** The first version was
+  verified against its own brief and still had three things wrong. Found by
+  running the sizing functions headless over the full slider (`jiti` against
+  allocation.ts) instead of eyeballing two slider positions.
+
+  1. **`note` was accepted as a buy rationale.** 40 of the 69 long names carry
+     no `edge`, only a `note` — which positions.ts defines as a transcription
+     caveat, *what the source did not say*. In practice most are bear cases
+     ("option value, not a business", "the conglomerate discount is deserved",
+     "GAAP-unprofitable, sub-scale") or bookkeeping ("market cap not stated").
+     Printing one of those in a Rationale column beside a dollar amount states
+     the reason *not* to own a name as the reason to own it. The sizeable
+     universe is now `edge`-only: 29 names, and the tab says so. This is a
+     deliberate departure from the original brief's "edge/note" wording, in
+     favour of what that instruction was actually protecting against. It
+     changes no current output — every note-only name is conviction ≤2 and was
+     already ranked out — it removes a latent trap.
+  2. **39% of capital sat in cash and the code called it discipline.** When a
+     factor bucket hit its cap the excess was dropped, with a comment claiming
+     redistribution "would just rebuild the concentration". That is wrong:
+     redistributing into buckets that are *under* their cap lowers
+     concentration. With four buckets at a 28% cap there is 112% of capacity,
+     so full deployment was always feasible. Sizing is now a capped
+     water-fill — a bucket that refuses capital passes it to buckets with
+     headroom, never back into itself. Cash is 0.00% at every slider position
+     and is now a genuine diagnostic (caps binding everywhere at once).
+  3. **Positions sized at literally $0.** Ranking purely by conviction handed
+     AI-capex 10 of 18 slots — 15 of the 29 sizeable names share that driver —
+     and then split one capped budget across them, so the tail (ANET, AVGO,
+     AXTI, COHR) appeared in the table at 0.0% with a rationale next to it.
+     Two fixes: no factor may take more than a third of the name slots, and
+     sizing is two-level (bucket budget first, then names within the bucket)
+     so a crowded bucket splits evenly instead of the top names absorbing it.
+     Side effect worth having: conservative now spans six factor buckets
+     rather than four, and `ai-adoption` appears at all.
+
+  Position count is the headline change Matthias asked for: **5 names at max
+  risk was too concentrated to be useful**, now 11, with conservative at 18.
+  Because count alone no longer distinguishes the ends of the slider, risk
+  tolerance also drives a conviction tilt (1.0 to 2.0) and the per-name cap
+  came down from 22.5% to 16% — at 11 names, 22.5% is 2.5x equal weight and
+  would never bind, making it decoration rather than a control.
+
+  Verification is now an invariant script rather than two screenshots: 5
+  capital values x 101 slider positions x sleeve on/off = 1,010 allocations,
+  asserting every ticker resolves to a real positions.ts row, every position
+  is `long` with a non-empty rationale and non-zero dollars, no per-name or
+  per-factor cap is ever breached, the slot limit holds, no duplicates, total
+  never exceeds capital, and the sleeve stays inside its 17.5% ceiling and
+  only ever draws from core names. All hold. Re-verified in-browser at risk 0
+  and 100, Exposure tab re-checked after the shared-`Bar` change, `npm run
+  build` and `npm run lint` pass.
+
 ## Two kinds of section
 
 - **Native tracker** (Citrini): folder under `src/sections/<name>/` with a

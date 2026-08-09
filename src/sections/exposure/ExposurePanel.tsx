@@ -1,4 +1,5 @@
 import { Section } from '../../components/Section'
+import { Panel, Bar } from '../../components/Panel'
 import { FACTOR_LABELS, JULY_2026_DRAWDOWN } from '../../data/positions'
 import type { Factor, Position } from '../../data/positions'
 import {
@@ -34,25 +35,6 @@ const factorColor: Record<Factor, string> = {
   'biotech-idio': 'text-term-yellow',
   'industrial-cycle': 'text-term-text',
   'rates-macro': 'text-term-dim',
-}
-
-function Panel({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div className="border border-term-line bg-term-panel">
-      <h3 className="border-b border-term-line px-3 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-term-amber">
-        {title}
-      </h3>
-      <div className="p-3">{children}</div>
-    </div>
-  )
-}
-
-function Bar({ share, className }: { share: number; className: string }) {
-  return (
-    <div className="h-1.5 w-full bg-[#1a1a1a]">
-      <div className={`h-full ${className}`} style={{ width: `${Math.max(share * 100, 0.5)}%` }} />
-    </div>
-  )
 }
 
 export function ExposurePanel() {

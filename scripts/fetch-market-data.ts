@@ -29,7 +29,7 @@
 //   crypto    CoinGecko      simple/price + market_chart   [COINGECKO_API_KEY]
 //   fx        ECB daily reference rates + Yahoo `TWD=X` (ECB omits TWD)
 
-import { mkdirSync, writeFileSync } from 'node:fs'
+import { appendFileSync, mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { positions } from '../src/data/positions'
@@ -531,4 +531,33 @@ for (const u of payload.unmapped) console.log(`  ${u.ticker.padEnd(12)} ${u.exch
 if (nameFlags.length) {
   console.log(`\nNAME MISMATCHES (${nameFlags.length}) — check these are the right company:`)
   for (const f of nameFlags) console.log(`  ${f.ticker.padEnd(12)} positions.ts: ${f.expected}  |  provider: ${f.got}`)
+}
+
+// The same summary in the Actions run page, so an unmapped ticker or a wrong
+// mapping is visible without opening the log.
+const summaryPath = process.env.GITHUB_STEP_SUMMARY
+if (summaryPath) {
+  const lines = [
+    `## Market data ${fx.asOf}`,
+    '',
+    `| | |`,
+    `|---|---|`,
+    `| Quotes | ${Object.keys(quotes).length} / ${positions.length} |`,
+    `| With market cap | ${withCap} / ${positions.length} (transcribed in positions.ts: ${transcribed}) |`,
+    `| With price stats | ${withStats} / ${positions.length} |`,
+    `| FX pairs | ${Object.keys(fx.usdPer).length} as of ${fx.asOf} (${fx.source}) |`,
+    '',
+    `### Unmapped (${payload.unmapped.length}) — keeping transcribed values`,
+    '',
+    ...payload.unmapped.map((u) => `- \`${u.ticker}\` (${u.exchange}) — ${u.reason}`),
+  ]
+  if (nameFlags.length) {
+    lines.push(
+      '',
+      `### Name mismatches (${nameFlags.length}) — confirm these are the right company`,
+      '',
+      ...nameFlags.map((f) => `- \`${f.ticker}\` positions.ts: **${f.expected}** / provider: **${f.got}**`),
+    )
+  }
+  appendFileSync(summaryPath, lines.join('\n') + '\n')
 }

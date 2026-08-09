@@ -4,6 +4,19 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # Called by refresh-market-data.yml. A push made with the default
+  # GITHUB_TOKEN does not trigger workflows, so the data refresh has to invoke
+  # the deploy itself or the live site would keep serving the old bundle.
+  workflow_call:
+    inputs:
+      ref:
+        description: >-
+          Commit to build. The refresh workflow passes the SHA it just
+          committed: a called workflow otherwise checks out the SHA that
+          started the run, which predates the new data.
+        type: string
+        required: false
+        default: ''
 
 permissions:
   contents: read
@@ -21,7 +34,11 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      # Empty `ref` is what actions/checkout already defaults to, so the push
+      # and workflow_dispatch paths are unchanged.
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22

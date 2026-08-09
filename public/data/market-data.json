@@ -1,0 +1,2405 @@
+{
+ "schemaVersion": 1,
+ "fetchedAt": "2026-08-09T17:03:49.039Z",
+ "providers": {
+  "equity": "Yahoo Finance (v7 quote + v8 chart)",
+  "crypto": "CoinGecko",
+  "fx": "ECB reference rates + Yahoo for pairs ECB does not publish"
+ },
+ "fx": {
+  "asOf": "2026-08-07",
+  "source": "ecb+yahoo",
+  "usdPer": {
+   "USD": 1,
+   "CNY": 6.747638,
+   "JPY": 158.335501,
+   "HKD": 7.844907,
+   "MXN": 17.155093,
+   "DKK": 6.480798,
+   "KRW": 1415.951452,
+   "TWD": 32.235
+  }
+ },
+ "quotes": {
+  "3081": {
+   "symbol": "3081.TWO",
+   "provider": "yahoo",
+   "providerName": "LandMark Optoelectronics Corporation",
+   "currency": "TWD",
+   "priceLocal": 2305,
+   "marketCapUsd": 7.2771,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 85.28,
+    "maxDrawdownPct": -50.05,
+    "julyDrawdownPct": -33.54
+   }
+  },
+  "4979": {
+   "symbol": "4979.TWO",
+   "provider": "yahoo",
+   "providerName": "LuxNet Corporation",
+   "currency": "TWD",
+   "priceLocal": 488,
+   "marketCapUsd": 2.1354,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 79.24,
+    "maxDrawdownPct": -52.65,
+    "julyDrawdownPct": -38.41
+   }
+  },
+  "5801": {
+   "symbol": "5801.T",
+   "provider": "yahoo",
+   "providerName": "Furukawa Electric Co., Ltd.",
+   "currency": "JPY",
+   "priceLocal": 3856,
+   "marketCapUsd": 17.1325,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 87.5,
+    "maxDrawdownPct": -53.9,
+    "julyDrawdownPct": -52.2
+   }
+  },
+  "5802": {
+   "symbol": "5802.T",
+   "provider": "yahoo",
+   "providerName": "Sumitomo Electric Industries, Ltd.",
+   "currency": "JPY",
+   "priceLocal": 2129.5,
+   "marketCapUsd": 41.9575,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 68.15,
+    "maxDrawdownPct": -40.92,
+    "julyDrawdownPct": -38.61
+   }
+  },
+  "5803": {
+   "symbol": "5803.T",
+   "provider": "yahoo",
+   "providerName": "Fujikura Ltd.",
+   "currency": "JPY",
+   "priceLocal": 5185,
+   "marketCapUsd": 54.2191,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 83.73,
+    "maxDrawdownPct": -52.64,
+    "julyDrawdownPct": -42.04
+   }
+  },
+  "6965": {
+   "symbol": "6965.T",
+   "provider": "yahoo",
+   "providerName": "Hamamatsu Photonics K.K.",
+   "currency": "JPY",
+   "priceLocal": 2322.5,
+   "marketCapUsd": 4.2353,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 59.15,
+    "maxDrawdownPct": -27.61,
+    "julyDrawdownPct": -23.78
+   }
+  },
+  "300308": {
+   "symbol": "300308.SZ",
+   "provider": "yahoo",
+   "providerName": "Zhongji Innolight Co., Ltd.",
+   "currency": "CNY",
+   "priceLocal": 919.87,
+   "marketCapUsd": 152.0341,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 77.25,
+    "maxDrawdownPct": -37.5,
+    "julyDrawdownPct": -34.31
+   }
+  },
+  "300394": {
+   "symbol": "300394.SZ",
+   "provider": "yahoo",
+   "providerName": "Suzhou TFC Optical Communication Co., Ltd.",
+   "currency": "CNY",
+   "priceLocal": 230.68,
+   "marketCapUsd": 37.2918,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 93.04,
+    "maxDrawdownPct": -54.94,
+    "julyDrawdownPct": -46.91
+   }
+  },
+  "300502": {
+   "symbol": "300502.SZ",
+   "provider": "yahoo",
+   "providerName": "Eoptolink Technology Inc., Ltd.",
+   "currency": "CNY",
+   "priceLocal": 420.95,
+   "marketCapUsd": 86.9804,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 83.16,
+    "maxDrawdownPct": -39.21,
+    "julyDrawdownPct": -33.35
+   }
+  },
+  "688498": {
+   "symbol": "688498.SS",
+   "provider": "yahoo",
+   "providerName": "Yuanjie Semiconductor Technology Co., Ltd.",
+   "currency": "CNY",
+   "priceLocal": 1355.5,
+   "marketCapUsd": 25.0103,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 94.66,
+    "maxDrawdownPct": -46.09,
+    "julyDrawdownPct": -34.99
+   }
+  },
+  "LITE": {
+   "symbol": "LITE",
+   "provider": "yahoo",
+   "providerName": "Lumentum Holdings Inc.",
+   "currency": "USD",
+   "priceLocal": 890.17,
+   "marketCapUsd": 69.2552,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 93.03,
+    "maxDrawdownPct": -42.8,
+    "julyDrawdownPct": -32.62
+   }
+  },
+  "COHR": {
+   "symbol": "COHR",
+   "provider": "yahoo",
+   "providerName": "Coherent Corp.",
+   "currency": "USD",
+   "priceLocal": 379.13,
+   "marketCapUsd": 74.1727,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 83.29,
+    "maxDrawdownPct": -47.98,
+    "julyDrawdownPct": -47.81
+   }
+  },
+  "AXTI": {
+   "symbol": "AXTI",
+   "provider": "yahoo",
+   "providerName": "AXT, Inc.",
+   "currency": "USD",
+   "priceLocal": 88.58,
+   "marketCapUsd": 5.7952,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 147.98,
+    "maxDrawdownPct": -73.75,
+    "julyDrawdownPct": -60.01
+   }
+  },
+  "002281": {
+   "symbol": "002281.SZ",
+   "provider": "yahoo",
+   "providerName": "Accelink Technologies Co,Ltd.",
+   "currency": "CNY",
+   "priceLocal": 193.04,
+   "marketCapUsd": 23.6835,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 73.43,
+    "maxDrawdownPct": -44.82,
+    "julyDrawdownPct": -38.69
+   }
+  },
+  "AAOI": {
+   "symbol": "AAOI",
+   "provider": "yahoo",
+   "providerName": "Applied Optoelectronics, Inc.",
+   "currency": "USD",
+   "priceLocal": 135.63,
+   "marketCapUsd": 11.4701,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 139.79,
+    "maxDrawdownPct": -65.7,
+    "julyDrawdownPct": -55.31
+   }
+  },
+  "TSEM": {
+   "symbol": "TSEM",
+   "provider": "yahoo",
+   "providerName": "Tower Semiconductor Ltd.",
+   "currency": "USD",
+   "priceLocal": 252.49,
+   "marketCapUsd": 28.5393,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 76.95,
+    "maxDrawdownPct": -40.72,
+    "julyDrawdownPct": -40.72
+   }
+  },
+  "POET": {
+   "symbol": "POET",
+   "provider": "yahoo",
+   "providerName": "POET Technologies Inc.",
+   "currency": "USD",
+   "priceLocal": 8.91,
+   "marketCapUsd": 1.5378,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 144.26,
+    "maxDrawdownPct": -69.03,
+    "julyDrawdownPct": -47.31
+   }
+  },
+  "MRVL": {
+   "symbol": "MRVL",
+   "provider": "yahoo",
+   "providerName": "Marvell Technology, Inc.",
+   "currency": "USD",
+   "priceLocal": 218.72,
+   "marketCapUsd": 196.3109,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 77.52,
+    "maxDrawdownPct": -48.36,
+    "julyDrawdownPct": -46.92
+   }
+  },
+  "AVGO": {
+   "symbol": "AVGO",
+   "provider": "yahoo",
+   "providerName": "Broadcom Inc.",
+   "currency": "USD",
+   "priceLocal": 427.76,
+   "marketCapUsd": 2035.1026,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 47.81,
+    "maxDrawdownPct": -28.95,
+    "julyDrawdownPct": -8.08
+   }
+  },
+  "CRDO": {
+   "symbol": "CRDO",
+   "provider": "yahoo",
+   "providerName": "Credo Technology Group Holding Ltd",
+   "currency": "USD",
+   "priceLocal": 249.89,
+   "marketCapUsd": 46.599,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 92.35,
+    "maxDrawdownPct": -53.59,
+    "julyDrawdownPct": -41.34
+   }
+  },
+  "ALAB": {
+   "symbol": "ALAB",
+   "provider": "yahoo",
+   "providerName": "Astera Labs, Inc.",
+   "currency": "USD",
+   "priceLocal": 334.17,
+   "marketCapUsd": 57.9735,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 98.52,
+    "maxDrawdownPct": -60.19,
+    "julyDrawdownPct": -48.3
+   }
+  },
+  "SMTC": {
+   "symbol": "SMTC",
+   "provider": "yahoo",
+   "providerName": "Semtech Corporation",
+   "currency": "USD",
+   "priceLocal": 139.42,
+   "marketCapUsd": 12.9871,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 72.21,
+    "maxDrawdownPct": -40.74,
+    "julyDrawdownPct": -40.74
+   }
+  },
+  "MXL": {
+   "symbol": "MXL",
+   "provider": "yahoo",
+   "providerName": "MaxLinear, Inc.",
+   "currency": "USD",
+   "priceLocal": 74.98,
+   "marketCapUsd": 6.8002,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 109.07,
+    "maxDrawdownPct": -55.28,
+    "julyDrawdownPct": -55.28
+   }
+  },
+  "MTSI": {
+   "symbol": "MTSI",
+   "provider": "yahoo",
+   "providerName": "MACOM Technology Solutions Holdings, Inc.",
+   "currency": "USD",
+   "priceLocal": 310.82,
+   "marketCapUsd": 23.7376,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 57.88,
+    "maxDrawdownPct": -44.17,
+    "julyDrawdownPct": -42.28
+   }
+  },
+  "FN": {
+   "symbol": "FN",
+   "provider": "yahoo",
+   "providerName": "Fabrinet",
+   "currency": "USD",
+   "priceLocal": 562.38,
+   "marketCapUsd": 20.1499,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 73.45,
+    "maxDrawdownPct": -44.47,
+    "julyDrawdownPct": -32.83
+   }
+  },
+  "GLW": {
+   "symbol": "GLW",
+   "provider": "yahoo",
+   "providerName": "Corning Incorporated",
+   "currency": "USD",
+   "priceLocal": 165.68,
+   "marketCapUsd": 142.4248,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 68.51,
+    "maxDrawdownPct": -51.48,
+    "julyDrawdownPct": -51.48
+   }
+  },
+  "CIEN": {
+   "symbol": "CIEN",
+   "provider": "yahoo",
+   "providerName": "Ciena Corporation",
+   "currency": "USD",
+   "priceLocal": 412.39,
+   "marketCapUsd": 58.375,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 71.87,
+    "maxDrawdownPct": -47.31,
+    "julyDrawdownPct": -32.65
+   }
+  },
+  "ANET": {
+   "symbol": "ANET",
+   "provider": "yahoo",
+   "providerName": "Arista Networks, Inc.",
+   "currency": "USD",
+   "priceLocal": 188.67,
+   "marketCapUsd": 237.9553,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 53.95,
+    "maxDrawdownPct": -28.33,
+    "julyDrawdownPct": -15.51
+   }
+  },
+  "NVDA": {
+   "symbol": "NVDA",
+   "provider": "yahoo",
+   "providerName": "NVIDIA Corporation",
+   "currency": "USD",
+   "priceLocal": 223.96,
+   "marketCapUsd": 5424.5353,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 36.63,
+    "maxDrawdownPct": -20.22,
+    "julyDrawdownPct": -10.58
+   }
+  },
+  "000063": {
+   "symbol": "000063.SZ",
+   "provider": "yahoo",
+   "providerName": "ZTE Corporation",
+   "currency": "CNY",
+   "priceLocal": 34.7,
+   "marketCapUsd": 24.5995,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 53.08,
+    "maxDrawdownPct": -40.68,
+    "julyDrawdownPct": -16.78
+   }
+  },
+  "IPGP": {
+   "symbol": "IPGP",
+   "provider": "yahoo",
+   "providerName": "IPG Photonics Corporation",
+   "currency": "USD",
+   "priceLocal": 90.23,
+   "marketCapUsd": 3.8297,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 70.63,
+    "maxDrawdownPct": -47.89,
+    "julyDrawdownPct": -32.03
+   }
+  },
+  "LASR": {
+   "symbol": "LASR",
+   "provider": "yahoo",
+   "providerName": "nLIGHT, Inc.",
+   "currency": "USD",
+   "priceLocal": 56.155,
+   "marketCapUsd": 3.1676,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 86.35,
+    "maxDrawdownPct": -33.9,
+    "julyDrawdownPct": -21.48
+   }
+  },
+  "LPTH": {
+   "symbol": "LPTH",
+   "provider": "yahoo",
+   "providerName": "LightPath Technologies, Inc.",
+   "currency": "USD",
+   "priceLocal": 13.06,
+   "marketCapUsd": 0.82,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 119.95,
+    "maxDrawdownPct": -48.26,
+    "julyDrawdownPct": -42.57
+   }
+  },
+  "RXRX": {
+   "symbol": "RXRX",
+   "provider": "yahoo",
+   "providerName": "Recursion Pharmaceuticals, Inc.",
+   "currency": "USD",
+   "priceLocal": 3.22,
+   "marketCapUsd": 1.7268,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 69.46,
+    "maxDrawdownPct": -58.17,
+    "julyDrawdownPct": -27.02
+   }
+  },
+  "SDGR": {
+   "symbol": "SDGR",
+   "provider": "yahoo",
+   "providerName": "Schrödinger, Inc.",
+   "currency": "USD",
+   "priceLocal": 18.16,
+   "marketCapUsd": 1.3585,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 52.52,
+    "maxDrawdownPct": -50.84,
+    "julyDrawdownPct": -13.92
+   }
+  },
+  "TEM": {
+   "symbol": "TEM",
+   "provider": "yahoo",
+   "providerName": "Tempus AI, Inc.",
+   "currency": "USD",
+   "priceLocal": 52.05,
+   "marketCapUsd": 9.3916,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 66.66,
+    "maxDrawdownPct": -59.76,
+    "julyDrawdownPct": -32.55
+   }
+  },
+  "TXG": {
+   "symbol": "TXG",
+   "provider": "yahoo",
+   "providerName": "10x Genomics, Inc.",
+   "currency": "USD",
+   "priceLocal": 52.03,
+   "marketCapUsd": 6.6055,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 69.66,
+    "maxDrawdownPct": -28.03,
+    "julyDrawdownPct": -6.32
+   }
+  },
+  "TWST": {
+   "symbol": "TWST",
+   "provider": "yahoo",
+   "providerName": "Twist Bioscience Corporation",
+   "currency": "USD",
+   "priceLocal": 115.67,
+   "marketCapUsd": 7.2534,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 68.85,
+    "maxDrawdownPct": -25.54,
+    "julyDrawdownPct": -16.92
+   }
+  },
+  "ABCL": {
+   "symbol": "ABCL",
+   "provider": "yahoo",
+   "providerName": "AbCellera Biologics Inc.",
+   "currency": "USD",
+   "priceLocal": 6.93,
+   "marketCapUsd": 2.1163,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 77.57,
+    "maxDrawdownPct": -54.94,
+    "julyDrawdownPct": -35.34
+   }
+  },
+  "ABSI": {
+   "symbol": "ABSI",
+   "provider": "yahoo",
+   "providerName": "Absci Corporation",
+   "currency": "USD",
+   "priceLocal": 8.93,
+   "marketCapUsd": 1.5127,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 101.69,
+    "maxDrawdownPct": -54,
+    "julyDrawdownPct": -40.62
+   }
+  },
+  "IOVA": {
+   "symbol": "IOVA",
+   "provider": "yahoo",
+   "providerName": "Iovance Biotherapeutics, Inc.",
+   "currency": "USD",
+   "priceLocal": 6.34,
+   "marketCapUsd": 2.8718,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 95.27,
+    "maxDrawdownPct": -39,
+    "julyDrawdownPct": -16.79
+   }
+  },
+  "RLAY": {
+   "symbol": "RLAY",
+   "provider": "yahoo",
+   "providerName": "Relay Therapeutics, Inc.",
+   "currency": "USD",
+   "priceLocal": 19.77,
+   "marketCapUsd": 4.3324,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 68.53,
+    "maxDrawdownPct": -28.15,
+    "julyDrawdownPct": -11.86
+   }
+  },
+  "ILMN": {
+   "symbol": "ILMN",
+   "provider": "yahoo",
+   "providerName": "Illumina, Inc.",
+   "currency": "USD",
+   "priceLocal": 187.96,
+   "marketCapUsd": 28.382,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 45.96,
+    "maxDrawdownPct": -25.66,
+    "julyDrawdownPct": -4.97
+   }
+  },
+  "DNA": {
+   "symbol": "DNA",
+   "provider": "yahoo",
+   "providerName": "Ginkgo Bioworks Holdings, Inc.",
+   "currency": "USD",
+   "priceLocal": 7.97,
+   "marketCapUsd": 0.5206,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 95.42,
+    "maxDrawdownPct": -66.05,
+    "julyDrawdownPct": -29.23
+   }
+  },
+  "GENB": {
+   "symbol": "GENB",
+   "provider": "yahoo",
+   "providerName": "Generate Biomedicines, Inc.",
+   "currency": "USD",
+   "priceLocal": 14.35,
+   "marketCapUsd": 1.8419,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 86.37,
+    "maxDrawdownPct": -26.2,
+    "julyDrawdownPct": -24.87
+   }
+  },
+  "EIKN": {
+   "symbol": "EIKN",
+   "provider": "yahoo",
+   "providerName": "Eikon Therapeutics, Inc.",
+   "currency": "USD",
+   "priceLocal": 9.29,
+   "marketCapUsd": 0.5029,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 90.26,
+    "maxDrawdownPct": -48.59,
+    "julyDrawdownPct": -31.8
+   }
+  },
+  "6324.T": {
+   "symbol": "6324.T",
+   "provider": "yahoo",
+   "providerName": "Harmonic Drive Systems Inc.",
+   "currency": "JPY",
+   "priceLocal": 7160,
+   "marketCapUsd": 4.2809,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 80.88,
+    "maxDrawdownPct": -38.81,
+    "julyDrawdownPct": -38.81
+   }
+  },
+  "6268.T": {
+   "symbol": "6268.T",
+   "provider": "yahoo",
+   "providerName": "Nabtesco Corporation",
+   "currency": "JPY",
+   "priceLocal": 4910,
+   "marketCapUsd": 3.6339,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 50.07,
+    "maxDrawdownPct": -27.01,
+    "julyDrawdownPct": -27.01
+   }
+  },
+  "MP": {
+   "symbol": "MP",
+   "provider": "yahoo",
+   "providerName": "MP Materials Corp.",
+   "currency": "USD",
+   "priceLocal": 51.11,
+   "marketCapUsd": 9.0987,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 74.94,
+    "maxDrawdownPct": -61.38,
+    "julyDrawdownPct": -36.81
+   }
+  },
+  "HSAI": {
+   "symbol": "HSAI",
+   "provider": "yahoo",
+   "providerName": "Hesai Group",
+   "currency": "USD",
+   "priceLocal": 19.22,
+   "marketCapUsd": 24.1622,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 71.36,
+    "maxDrawdownPct": -51.01,
+    "julyDrawdownPct": -19.91
+   }
+  },
+  "OUST": {
+   "symbol": "OUST",
+   "provider": "yahoo",
+   "providerName": "Ouster, Inc.",
+   "currency": "USD",
+   "priceLocal": 43.4,
+   "marketCapUsd": 2.9206,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 106.11,
+    "maxDrawdownPct": -55.15,
+    "julyDrawdownPct": -49.94
+   }
+  },
+  "CGNX": {
+   "symbol": "CGNX",
+   "provider": "yahoo",
+   "providerName": "Cognex Corporation",
+   "currency": "USD",
+   "priceLocal": 66.89,
+   "marketCapUsd": 11.2525,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 54.83,
+    "maxDrawdownPct": -28.02,
+    "julyDrawdownPct": -20.16
+   }
+  },
+  "6861.T": {
+   "symbol": "6861.T",
+   "provider": "yahoo",
+   "providerName": "Keyence Corporation",
+   "currency": "JPY",
+   "priceLocal": 85110,
+   "marketCapUsd": 130.3644,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 39.66,
+    "maxDrawdownPct": -18.3,
+    "julyDrawdownPct": -13.17
+   }
+  },
+  "6954.T": {
+   "symbol": "6954.T",
+   "provider": "yahoo",
+   "providerName": "Fanuc Corporation",
+   "currency": "JPY",
+   "priceLocal": 6535,
+   "marketCapUsd": 38.5143,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 52.77,
+    "maxDrawdownPct": -27.46,
+    "julyDrawdownPct": -19.94
+   }
+  },
+  "6506.T": {
+   "symbol": "6506.T",
+   "provider": "yahoo",
+   "providerName": "YASKAWA Electric Corporation",
+   "currency": "JPY",
+   "priceLocal": 5266,
+   "marketCapUsd": 8.6262,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 61.3,
+    "maxDrawdownPct": -40.64,
+    "julyDrawdownPct": -39.53
+   }
+  },
+  "9880.HK": {
+   "symbol": "9880.HK",
+   "provider": "yahoo",
+   "providerName": "Ubtech Robotics Corp Ltd",
+   "currency": "HKD",
+   "priceLocal": 90,
+   "marketCapUsd": 5.7752,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 62.58,
+    "maxDrawdownPct": -50.73,
+    "julyDrawdownPct": -27.82
+   }
+  },
+  "SERV": {
+   "symbol": "SERV",
+   "provider": "yahoo",
+   "providerName": "Serve Robotics Inc.",
+   "currency": "USD",
+   "priceLocal": 5.085,
+   "marketCapUsd": 0.4327,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 88.98,
+    "maxDrawdownPct": -75.28,
+    "julyDrawdownPct": -35.74
+   }
+  },
+  "SYM": {
+   "symbol": "SYM",
+   "provider": "yahoo",
+   "providerName": "Symbotic Inc.",
+   "currency": "USD",
+   "priceLocal": 40.18,
+   "marketCapUsd": 24.3236,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 83.56,
+    "maxDrawdownPct": -55.82,
+    "julyDrawdownPct": -10.7
+   }
+  },
+  "TSLA": {
+   "symbol": "TSLA",
+   "provider": "yahoo",
+   "providerName": "Tesla, Inc.",
+   "currency": "USD",
+   "priceLocal": 328.58,
+   "marketCapUsd": 1297.7423,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 46.71,
+    "maxDrawdownPct": -39.1,
+    "julyDrawdownPct": -29.86
+   }
+  },
+  "IONQ": {
+   "symbol": "IONQ",
+   "provider": "yahoo",
+   "providerName": "IonQ, Inc.",
+   "currency": "USD",
+   "priceLocal": 44.43,
+   "marketCapUsd": 16.5844,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 94.57,
+    "maxDrawdownPct": -67.61,
+    "julyDrawdownPct": -45.15
+   }
+  },
+  "RGTI": {
+   "symbol": "RGTI",
+   "provider": "yahoo",
+   "providerName": "Rigetti Computing, Inc.",
+   "currency": "USD",
+   "priceLocal": 17.94,
+   "marketCapUsd": 5.9878,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 104.7,
+    "maxDrawdownPct": -77.1,
+    "julyDrawdownPct": -38.17
+   }
+  },
+  "INFQ": {
+   "symbol": "INFQ",
+   "provider": "yahoo",
+   "providerName": "Infleqtion, Inc.",
+   "currency": "USD",
+   "priceLocal": 11.91,
+   "marketCapUsd": 2.5987,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 116.71,
+    "maxDrawdownPct": -55.56,
+    "julyDrawdownPct": -44.67
+   }
+  },
+  "QUBT": {
+   "symbol": "QUBT",
+   "provider": "yahoo",
+   "providerName": "Quantum Computing Inc.",
+   "currency": "USD",
+   "priceLocal": 9.18,
+   "marketCapUsd": 2.0704,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 98.85,
+    "maxDrawdownPct": -74.37,
+    "julyDrawdownPct": -30.74
+   }
+  },
+  "QNT": {
+   "symbol": "QNT",
+   "provider": "yahoo",
+   "providerName": "Quantinuum Inc.",
+   "currency": "USD",
+   "priceLocal": 58.71,
+   "marketCapUsd": 15.2227,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 102.7,
+    "maxDrawdownPct": -43.08,
+    "julyDrawdownPct": -43.08
+   }
+  },
+  "QBTS": {
+   "symbol": "QBTS",
+   "provider": "yahoo",
+   "providerName": "D-Wave Quantum Inc.",
+   "currency": "USD",
+   "priceLocal": 16.21,
+   "marketCapUsd": 6.0373,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 109.28,
+    "maxDrawdownPct": -71.01,
+    "julyDrawdownPct": -35.36
+   }
+  },
+  "XNDU": {
+   "symbol": "XNDU",
+   "provider": "yahoo",
+   "providerName": "Xanadu Quantum Technologies Limited",
+   "currency": "USD",
+   "priceLocal": 11,
+   "marketCapUsd": 3.3465,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 245.17,
+    "maxDrawdownPct": -73.01,
+    "julyDrawdownPct": -22.25
+   }
+  },
+  "ARQQ": {
+   "symbol": "ARQQ",
+   "provider": "yahoo",
+   "providerName": "Arqit Quantum Inc.",
+   "currency": "USD",
+   "priceLocal": 22.9,
+   "marketCapUsd": 0.3985,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 114.08,
+    "maxDrawdownPct": -79.78,
+    "julyDrawdownPct": -47.88
+   }
+  },
+  "HQ": {
+   "symbol": "HQ",
+   "provider": "yahoo",
+   "providerName": "Horizon Quantum Holdings Ltd.",
+   "currency": "USD",
+   "priceLocal": 14.13,
+   "marketCapUsd": 0.7626,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 165.51,
+    "maxDrawdownPct": -69.91,
+    "julyDrawdownPct": -69.91
+   }
+  },
+  "IBM": {
+   "symbol": "IBM",
+   "provider": "yahoo",
+   "providerName": "International Business Machines Corporation",
+   "currency": "USD",
+   "priceLocal": 237.28,
+   "marketCapUsd": 223.5497,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 50.49,
+    "maxDrawdownPct": -37.5,
+    "julyDrawdownPct": -32.78
+   }
+  },
+  "GOOGL": {
+   "symbol": "GOOGL",
+   "provider": "yahoo",
+   "providerName": "Alphabet Inc.",
+   "currency": "USD",
+   "priceLocal": 354.3,
+   "marketCapUsd": 4333.0657,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 32.27,
+    "maxDrawdownPct": -21.09,
+    "julyDrawdownPct": -14.35
+   }
+  },
+  "MSFT": {
+   "symbol": "MSFT",
+   "provider": "yahoo",
+   "providerName": "Microsoft Corporation",
+   "currency": "USD",
+   "priceLocal": 499.99,
+   "marketCapUsd": 3712.6985,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 31.8,
+    "maxDrawdownPct": -34.91,
+    "julyDrawdownPct": -5.65
+   }
+  },
+  "AMZN": {
+   "symbol": "AMZN",
+   "provider": "yahoo",
+   "providerName": "Amazon.com, Inc.",
+   "currency": "USD",
+   "priceLocal": 274.48,
+   "marketCapUsd": 2960.6273,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 33.9,
+    "maxDrawdownPct": -21.74,
+    "julyDrawdownPct": -11.1
+   }
+  },
+  "AMAT": {
+   "symbol": "AMAT",
+   "provider": "yahoo",
+   "providerName": "Applied Materials, Inc.",
+   "currency": "USD",
+   "priceLocal": 539.14,
+   "marketCapUsd": 428.0553,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 59.93,
+    "maxDrawdownPct": -39.63,
+    "julyDrawdownPct": -39.63
+   }
+  },
+  "QTUM": {
+   "symbol": "QTUM",
+   "provider": "yahoo",
+   "providerName": "Defiance Quantum ETF",
+   "currency": "USD",
+   "priceLocal": 153.46,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 32.34,
+    "maxDrawdownPct": -21.64,
+    "julyDrawdownPct": -21.57
+   }
+  },
+  "CRCL": {
+   "symbol": "CRCL",
+   "provider": "yahoo",
+   "providerName": "Circle Internet Group",
+   "currency": "USD",
+   "priceLocal": 66.67,
+   "marketCapUsd": 18.1738,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 95.18,
+    "maxDrawdownPct": -69.22,
+    "julyDrawdownPct": -24.38
+   }
+  },
+  "NU": {
+   "symbol": "NU",
+   "provider": "yahoo",
+   "providerName": "Nu Holdings Ltd.",
+   "currency": "USD",
+   "priceLocal": 13.84,
+   "marketCapUsd": 66.8539,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 37.57,
+    "maxDrawdownPct": -38.17,
+    "julyDrawdownPct": -4.91
+   }
+  },
+  "SOFI": {
+   "symbol": "SOFI",
+   "provider": "yahoo",
+   "providerName": "SoFi Technologies, Inc.",
+   "currency": "USD",
+   "priceLocal": 18.38,
+   "marketCapUsd": 23.7391,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 58.02,
+    "maxDrawdownPct": -52.96,
+    "julyDrawdownPct": -18.8
+   }
+  },
+  "CRWV": {
+   "symbol": "CRWV",
+   "provider": "yahoo",
+   "providerName": "CoreWeave, Inc.",
+   "currency": "USD",
+   "priceLocal": 90.67,
+   "marketCapUsd": 49.4669,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 97.93,
+    "maxDrawdownPct": -59.11,
+    "julyDrawdownPct": -45.35
+   }
+  },
+  "IREN": {
+   "symbol": "IREN",
+   "provider": "yahoo",
+   "providerName": "IREN Limited",
+   "currency": "USD",
+   "priceLocal": 41.23,
+   "marketCapUsd": 14.7347,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 110.59,
+    "maxDrawdownPct": -61.64,
+    "julyDrawdownPct": -48.46
+   }
+  },
+  "MQ": {
+   "symbol": "MQ",
+   "provider": "yahoo",
+   "providerName": "Marqeta, Inc.",
+   "currency": "USD",
+   "priceLocal": 15.96,
+   "marketCapUsd": 1.679,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 40.82,
+    "maxDrawdownPct": -42.33,
+    "julyDrawdownPct": -11.32
+   }
+  },
+  "HOOD": {
+   "symbol": "HOOD",
+   "provider": "yahoo",
+   "providerName": "Robinhood Markets, Inc.",
+   "currency": "USD",
+   "priceLocal": 93.29,
+   "marketCapUsd": 83.8754,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 69.91,
+    "maxDrawdownPct": -57.26,
+    "julyDrawdownPct": -23.57
+   }
+  },
+  "TSM": {
+   "symbol": "TSM",
+   "provider": "yahoo",
+   "providerName": "Taiwan Semiconductor Manufacturing Company Limited",
+   "currency": "USD",
+   "priceLocal": 420.04,
+   "marketCapUsd": 2178.5266,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 40.37,
+    "maxDrawdownPct": -21.55,
+    "julyDrawdownPct": -21.55
+   }
+  },
+  "SMCI": {
+   "symbol": "SMCI",
+   "provider": "yahoo",
+   "providerName": "Super Micro Computer, Inc.",
+   "currency": "USD",
+   "priceLocal": 31.13,
+   "marketCapUsd": 20.1372,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 92.01,
+    "maxDrawdownPct": -65.01,
+    "julyDrawdownPct": -32.8
+   }
+  },
+  "CNXC": {
+   "symbol": "CNXC",
+   "provider": "yahoo",
+   "providerName": "Concentrix Corporation",
+   "currency": "USD",
+   "priceLocal": 25.72,
+   "marketCapUsd": 1.5694,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 67.09,
+    "maxDrawdownPct": -63.27,
+    "julyDrawdownPct": -16.88
+   }
+  },
+  "TASK": {
+   "symbol": "TASK",
+   "provider": "yahoo",
+   "providerName": "TaskUs, Inc.",
+   "currency": "USD",
+   "priceLocal": 7.3,
+   "marketCapUsd": 0.6693,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 70.03,
+    "maxDrawdownPct": -74.9,
+    "julyDrawdownPct": -10.39
+   }
+  },
+  "SSTK": {
+   "symbol": "SSTK",
+   "provider": "yahoo",
+   "providerName": "Shutterstock, Inc.",
+   "currency": "USD",
+   "priceLocal": 5.96,
+   "marketCapUsd": 0.2194,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 69.05,
+    "maxDrawdownPct": -79.63,
+    "julyDrawdownPct": -64.48
+   }
+  },
+  "GETY": {
+   "symbol": "GETY",
+   "provider": "yahoo",
+   "providerName": "Getty Images Holdings, Inc.",
+   "currency": "USD",
+   "priceLocal": 0.4368,
+   "marketCapUsd": 0.183,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 107.47,
+    "maxDrawdownPct": -84.24,
+    "julyDrawdownPct": -67.04
+   }
+  },
+  "FVRR": {
+   "symbol": "FVRR",
+   "provider": "yahoo",
+   "providerName": "Fiverr International Ltd.",
+   "currency": "USD",
+   "priceLocal": 9.42,
+   "marketCapUsd": 0.3387,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 55.23,
+    "maxDrawdownPct": -66.52,
+    "julyDrawdownPct": -20.88
+   }
+  },
+  "UPWK": {
+   "symbol": "UPWK",
+   "provider": "yahoo",
+   "providerName": "Upwork Inc.",
+   "currency": "USD",
+   "priceLocal": 9.67,
+   "marketCapUsd": 1.1944,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 60.67,
+    "maxDrawdownPct": -64.54,
+    "julyDrawdownPct": -9.07
+   }
+  },
+  "CHGG": {
+   "symbol": "CHGG",
+   "provider": "yahoo",
+   "providerName": "Chegg, Inc.",
+   "currency": "USD",
+   "priceLocal": 0.9157,
+   "marketCapUsd": 0.1017,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 109.13,
+    "maxDrawdownPct": -75.54,
+    "julyDrawdownPct": -30.97
+   }
+  },
+  "BILL": {
+   "symbol": "BILL",
+   "provider": "yahoo",
+   "providerName": "BILL Holdings, Inc.",
+   "currency": "USD",
+   "priceLocal": 47.99,
+   "marketCapUsd": 4.7796,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 61.87,
+    "maxDrawdownPct": -43.24,
+    "julyDrawdownPct": -8.68
+   }
+  },
+  "PAYX": {
+   "symbol": "PAYX",
+   "provider": "yahoo",
+   "providerName": "Paychex, Inc.",
+   "currency": "USD",
+   "priceLocal": 120.04,
+   "marketCapUsd": 42.6962,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 27.71,
+    "maxDrawdownPct": -39.39,
+    "julyDrawdownPct": -3.94
+   }
+  },
+  "BKNG": {
+   "symbol": "BKNG",
+   "provider": "yahoo",
+   "providerName": "Booking Holdings Inc.",
+   "currency": "USD",
+   "priceLocal": 214.42,
+   "marketCapUsd": 166.1494,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 36.05,
+    "maxDrawdownPct": -32.65,
+    "julyDrawdownPct": -6.38
+   }
+  },
+  "EXPE": {
+   "symbol": "EXPE",
+   "provider": "yahoo",
+   "providerName": "Expedia Group, Inc.",
+   "currency": "USD",
+   "priceLocal": 310.68,
+   "marketCapUsd": 37.2876,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 48.81,
+    "maxDrawdownPct": -37.44,
+    "julyDrawdownPct": -4.92
+   }
+  },
+  "TRIP": {
+   "symbol": "TRIP",
+   "provider": "yahoo",
+   "providerName": "Tripadvisor, Inc.",
+   "currency": "USD",
+   "priceLocal": 10.78,
+   "marketCapUsd": 1.2634,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 58.3,
+    "maxDrawdownPct": -51.72,
+    "julyDrawdownPct": -9.4
+   }
+  },
+  "LLY": {
+   "symbol": "LLY",
+   "provider": "yahoo",
+   "providerName": "Eli Lilly and Company",
+   "currency": "USD",
+   "priceLocal": 1185.71,
+   "marketCapUsd": 1056.8909,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 35.33,
+    "maxDrawdownPct": -23.31,
+    "julyDrawdownPct": -7.18
+   }
+  },
+  "NVO": {
+   "symbol": "NVO",
+   "provider": "yahoo",
+   "providerName": "Novo Nordisk A/S",
+   "currency": "USD",
+   "priceLocal": 47.26,
+   "marketCapUsd": 208.9247,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 46.64,
+    "maxDrawdownPct": -44.84,
+    "julyDrawdownPct": -6.41
+   }
+  },
+  "MTCH": {
+   "symbol": "MTCH",
+   "provider": "yahoo",
+   "providerName": "Match Group, Inc.",
+   "currency": "USD",
+   "priceLocal": 37.26,
+   "marketCapUsd": 8.5531,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 32.2,
+    "maxDrawdownPct": -25.46,
+    "julyDrawdownPct": -7.17
+   }
+  },
+  "BMBL": {
+   "symbol": "BMBL",
+   "provider": "yahoo",
+   "providerName": "Bumble Inc.",
+   "currency": "USD",
+   "priceLocal": 2.83,
+   "marketCapUsd": 0.4336,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 71.17,
+    "maxDrawdownPct": -62.34,
+    "julyDrawdownPct": -14.94
+   }
+  },
+  "INMD": {
+   "symbol": "INMD",
+   "provider": "yahoo",
+   "providerName": "InMode Ltd.",
+   "currency": "USD",
+   "priceLocal": 15.31,
+   "marketCapUsd": 0.88,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 33.06,
+    "maxDrawdownPct": -23.23,
+    "julyDrawdownPct": -3.24
+   }
+  },
+  "ESTA": {
+   "symbol": "ESTA",
+   "provider": "yahoo",
+   "providerName": "Establishment Labs Holdings Inc.",
+   "currency": "USD",
+   "priceLocal": 77.42,
+   "marketCapUsd": 2.2785,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 56.6,
+    "maxDrawdownPct": -31.35,
+    "julyDrawdownPct": -5.43
+   }
+  },
+  "RMD": {
+   "symbol": "RMD",
+   "provider": "yahoo",
+   "providerName": "ResMed Inc.",
+   "currency": "USD",
+   "priceLocal": 211.94,
+   "marketCapUsd": 30.7433,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 27.88,
+    "maxDrawdownPct": -37.76,
+    "julyDrawdownPct": -12.68
+   }
+  },
+  "INSP": {
+   "symbol": "INSP",
+   "provider": "yahoo",
+   "providerName": "Inspire Medical Systems, Inc.",
+   "currency": "USD",
+   "priceLocal": 60.16,
+   "marketCapUsd": 1.7392,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 70.24,
+    "maxDrawdownPct": -72.19,
+    "julyDrawdownPct": -7.66
+   }
+  },
+  "CLS": {
+   "symbol": "CLS",
+   "provider": "yahoo",
+   "providerName": "Celestica Inc.",
+   "currency": "USD",
+   "priceLocal": 317.83,
+   "marketCapUsd": 36.5448,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 77.33,
+    "maxDrawdownPct": -36.21,
+    "julyDrawdownPct": -20.04
+   }
+  },
+  "ALB": {
+   "symbol": "ALB",
+   "provider": "yahoo",
+   "providerName": "Albemarle Corporation",
+   "currency": "USD",
+   "priceLocal": 131.11,
+   "marketCapUsd": 15.4716,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 59.21,
+    "maxDrawdownPct": -47.52,
+    "julyDrawdownPct": -27.78
+   }
+  },
+  "JCI": {
+   "symbol": "JCI",
+   "provider": "yahoo",
+   "providerName": "Johnson Controls International plc",
+   "currency": "USD",
+   "priceLocal": 152.21,
+   "marketCapUsd": 92.1999,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 29.11,
+    "maxDrawdownPct": -12.98,
+    "julyDrawdownPct": -6.62
+   }
+  },
+  "NRG": {
+   "symbol": "NRG",
+   "provider": "yahoo",
+   "providerName": "NRG Energy, Inc.",
+   "currency": "USD",
+   "priceLocal": 118.13,
+   "marketCapUsd": 24.8322,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 47.93,
+    "maxDrawdownPct": -36.4,
+    "julyDrawdownPct": -16.83
+   }
+  },
+  "SMR": {
+   "symbol": "SMR",
+   "provider": "yahoo",
+   "providerName": "NuScale Power Corporation",
+   "currency": "USD",
+   "priceLocal": 9.82,
+   "marketCapUsd": 4.03,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 100.03,
+    "maxDrawdownPct": -85.79,
+    "julyDrawdownPct": -32.47
+   }
+  },
+  "7011.T": {
+   "symbol": "7011.T",
+   "provider": "yahoo",
+   "providerName": "Mitsubishi Heavy Industries, Ltd.",
+   "currency": "JPY",
+   "priceLocal": 4044,
+   "marketCapUsd": 85.8221,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 43.04,
+    "maxDrawdownPct": -32.74,
+    "julyDrawdownPct": -10.44
+   }
+  },
+  "FLR": {
+   "symbol": "FLR",
+   "provider": "yahoo",
+   "providerName": "Fluor Corporation",
+   "currency": "USD",
+   "priceLocal": 57,
+   "marketCapUsd": 7.9612,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 47.74,
+    "maxDrawdownPct": -21.88,
+    "julyDrawdownPct": -13.95
+   }
+  },
+  "ACM": {
+   "symbol": "ACM",
+   "provider": "yahoo",
+   "providerName": "AECOM",
+   "currency": "USD",
+   "priceLocal": 75.84,
+   "marketCapUsd": 9.7472,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 34.17,
+    "maxDrawdownPct": -50.23,
+    "julyDrawdownPct": -5.86
+   }
+  },
+  "AGUA.MX": {
+   "symbol": "AGUA.MX",
+   "provider": "yahoo",
+   "providerName": "Grupo Rotoplas S.A.B. de C.V.",
+   "currency": "MXN",
+   "priceLocal": 14.06,
+   "marketCapUsd": 0.3931,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 28.19,
+    "maxDrawdownPct": -25.13,
+    "julyDrawdownPct": -5.83
+   }
+  },
+  "LAUR": {
+   "symbol": "LAUR",
+   "provider": "yahoo",
+   "providerName": "Laureate Education, Inc.",
+   "currency": "USD",
+   "priceLocal": 38.34,
+   "marketCapUsd": 5.2813,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 33.05,
+    "maxDrawdownPct": -16.33,
+    "julyDrawdownPct": -11.42
+   }
+  },
+  "LOPE": {
+   "symbol": "LOPE",
+   "provider": "yahoo",
+   "providerName": "Grand Canyon Education, Inc.",
+   "currency": "USD",
+   "priceLocal": 152.53,
+   "marketCapUsd": 3.9757,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 31.37,
+    "maxDrawdownPct": -38.01,
+    "julyDrawdownPct": -10.89
+   }
+  },
+  "UTI": {
+   "symbol": "UTI",
+   "provider": "yahoo",
+   "providerName": "Universal Technical Institute, Inc.",
+   "currency": "USD",
+   "priceLocal": 28.95,
+   "marketCapUsd": 1.594,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 71.94,
+    "maxDrawdownPct": -45.57,
+    "julyDrawdownPct": -29.71
+   }
+  },
+  "ZEAL.CO": {
+   "symbol": "ZEAL.CO",
+   "provider": "yahoo",
+   "providerName": "Zealand Pharma A/S",
+   "currency": "DKK",
+   "priceLocal": 331,
+   "marketCapUsd": 3.4994,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 73.61,
+    "maxDrawdownPct": -56.96,
+    "julyDrawdownPct": -8.13
+   }
+  },
+  "GEO": {
+   "symbol": "GEO",
+   "provider": "yahoo",
+   "providerName": "The GEO Group, Inc.",
+   "currency": "USD",
+   "priceLocal": 30.69,
+   "marketCapUsd": 4.0394,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 49.1,
+    "maxDrawdownPct": -42.35,
+    "julyDrawdownPct": -4.44
+   }
+  },
+  "CXW": {
+   "symbol": "CXW",
+   "provider": "yahoo",
+   "providerName": "CoreCivic, Inc.",
+   "currency": "USD",
+   "priceLocal": 32.27,
+   "marketCapUsd": 3.1913,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 38.28,
+    "maxDrawdownPct": -25.15,
+    "julyDrawdownPct": -7.55
+   }
+  },
+  "AXON": {
+   "symbol": "AXON",
+   "provider": "yahoo",
+   "providerName": "Axon Enterprise, Inc.",
+   "currency": "USD",
+   "priceLocal": 571.01,
+   "marketCapUsd": 46.3874,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 60.02,
+    "maxDrawdownPct": -58.94,
+    "julyDrawdownPct": -23.26
+   }
+  },
+  "PLTR": {
+   "symbol": "PLTR",
+   "provider": "yahoo",
+   "providerName": "Palantir Technologies Inc.",
+   "currency": "USD",
+   "priceLocal": 172.01,
+   "marketCapUsd": 413.3501,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 59,
+    "maxDrawdownPct": -48.22,
+    "julyDrawdownPct": -10.23
+   }
+  },
+  "NEE": {
+   "symbol": "NEE",
+   "provider": "yahoo",
+   "providerName": "NextEra Energy, Inc.",
+   "currency": "USD",
+   "priceLocal": 84.65,
+   "marketCapUsd": 176.5465,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 21.88,
+    "maxDrawdownPct": -14.53,
+    "julyDrawdownPct": -2.58
+   }
+  },
+  "ENPH": {
+   "symbol": "ENPH",
+   "provider": "yahoo",
+   "providerName": "Enphase Energy, Inc.",
+   "currency": "USD",
+   "priceLocal": 41.87,
+   "marketCapUsd": 5.5184,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 80.67,
+    "maxDrawdownPct": -51.51,
+    "julyDrawdownPct": -33.09
+   }
+  },
+  "RUN": {
+   "symbol": "RUN",
+   "provider": "yahoo",
+   "providerName": "Sunrun Inc.",
+   "currency": "USD",
+   "priceLocal": 10.2,
+   "marketCapUsd": 2.4566,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 89.27,
+    "maxDrawdownPct": -56.19,
+    "julyDrawdownPct": -34.33
+   }
+  },
+  "APOG": {
+   "symbol": "APOG",
+   "provider": "yahoo",
+   "providerName": "Apogee Enterprises, Inc.",
+   "currency": "USD",
+   "priceLocal": 43.52,
+   "marketCapUsd": 0.9082,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 42.19,
+    "maxDrawdownPct": -30.11,
+    "julyDrawdownPct": -21.5
+   }
+  },
+  "AAPL": {
+   "symbol": "AAPL",
+   "provider": "yahoo",
+   "providerName": "Apple Inc.",
+   "currency": "USD",
+   "priceLocal": 313.33,
+   "marketCapUsd": 4572.7943,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 25.07,
+    "maxDrawdownPct": -13.82,
+    "julyDrawdownPct": -7.36
+   }
+  },
+  "QCOM": {
+   "symbol": "QCOM",
+   "provider": "yahoo",
+   "providerName": "QUALCOMM Incorporated",
+   "currency": "USD",
+   "priceLocal": 167.86,
+   "marketCapUsd": 176.253,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 52.14,
+    "maxDrawdownPct": -41.2,
+    "julyDrawdownPct": -29.84
+   }
+  },
+  "MU": {
+   "symbol": "MU",
+   "provider": "yahoo",
+   "providerName": "Micron Technology, Inc.",
+   "currency": "USD",
+   "priceLocal": 877.57,
+   "marketCapUsd": 991.1216,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 80.16,
+    "maxDrawdownPct": -39.1,
+    "julyDrawdownPct": -39.1
+   }
+  },
+  "000660.KS": {
+   "symbol": "000660.KS",
+   "provider": "yahoo",
+   "providerName": "SK hynix Inc.",
+   "currency": "KRW",
+   "priceLocal": 1422000,
+   "marketCapUsd": 712.8872,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 89.45,
+    "maxDrawdownPct": -54.71,
+    "julyDrawdownPct": -52
+   }
+  },
+  "6981.T": {
+   "symbol": "6981.T",
+   "provider": "yahoo",
+   "providerName": "Murata Manufacturing Co., Ltd.",
+   "currency": "JPY",
+   "priceLocal": 7263,
+   "marketCapUsd": 83.4995,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 68.81,
+    "maxDrawdownPct": -49.13,
+    "julyDrawdownPct": -49.13
+   }
+  },
+  "6762.T": {
+   "symbol": "6762.T",
+   "provider": "yahoo",
+   "providerName": "TDK Corporation",
+   "currency": "JPY",
+   "priceLocal": 2988,
+   "marketCapUsd": 35.8207,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 53,
+    "maxDrawdownPct": -33.2,
+    "julyDrawdownPct": -32.41
+   }
+  },
+  "3711.TW": {
+   "symbol": "3711.TW",
+   "provider": "yahoo",
+   "providerName": "ASE Technology Holding Co., Ltd.",
+   "currency": "TWD",
+   "priceLocal": 585,
+   "marketCapUsd": 79.8081,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 60.69,
+    "maxDrawdownPct": -31.36,
+    "julyDrawdownPct": -31.36
+   }
+  },
+  "PDD": {
+   "symbol": "PDD",
+   "provider": "yahoo",
+   "providerName": "PDD Holdings Inc.",
+   "currency": "USD",
+   "priceLocal": 91.76,
+   "marketCapUsd": 130.6109,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 33.86,
+    "maxDrawdownPct": -46.93,
+    "julyDrawdownPct": -6.16
+   }
+  },
+  "BABA": {
+   "symbol": "BABA",
+   "provider": "yahoo",
+   "providerName": "Alibaba Group Holding Limited",
+   "currency": "USD",
+   "priceLocal": 128.41,
+   "marketCapUsd": 307.7825,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 44.65,
+    "maxDrawdownPct": -49.93,
+    "julyDrawdownPct": -9.68
+   }
+  },
+  "JD": {
+   "symbol": "JD",
+   "provider": "yahoo",
+   "providerName": "JD.com, Inc.",
+   "currency": "USD",
+   "priceLocal": 32.97,
+   "marketCapUsd": 44.526,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 31.81,
+    "maxDrawdownPct": -30.36,
+    "julyDrawdownPct": -6.77
+   }
+  },
+  "NUE": {
+   "symbol": "NUE",
+   "provider": "yahoo",
+   "providerName": "Nucor Corporation",
+   "currency": "USD",
+   "priceLocal": 272.63,
+   "marketCapUsd": 62.089,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 30.92,
+    "maxDrawdownPct": -18.43,
+    "julyDrawdownPct": -12
+   }
+  },
+  "STLD": {
+   "symbol": "STLD",
+   "provider": "yahoo",
+   "providerName": "Steel Dynamics, Inc.",
+   "currency": "USD",
+   "priceLocal": 262.45,
+   "marketCapUsd": 37.6165,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 34.98,
+    "maxDrawdownPct": -22.06,
+    "julyDrawdownPct": -12.2
+   }
+  },
+  "WY": {
+   "symbol": "WY",
+   "provider": "yahoo",
+   "providerName": "Weyerhaeuser Company",
+   "currency": "USD",
+   "priceLocal": 25.58,
+   "marketCapUsd": 18.4364,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 27.04,
+    "maxDrawdownPct": -20.42,
+    "julyDrawdownPct": -12.81
+   }
+  },
+  "SAM": {
+   "symbol": "SAM",
+   "provider": "yahoo",
+   "providerName": "The Boston Beer Company, Inc.",
+   "currency": "USD",
+   "priceLocal": 186.61,
+   "marketCapUsd": 1.9433,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 37.98,
+    "maxDrawdownPct": -38.06,
+    "julyDrawdownPct": -12.05
+   }
+  },
+  "GM": {
+   "symbol": "GM",
+   "provider": "yahoo",
+   "providerName": "General Motors Company",
+   "currency": "USD",
+   "priceLocal": 87.58,
+   "marketCapUsd": 79.2119,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 33.36,
+    "maxDrawdownPct": -16.2,
+    "julyDrawdownPct": -6.1
+   }
+  },
+  "F": {
+   "symbol": "F",
+   "provider": "yahoo",
+   "providerName": "Ford Motor Company",
+   "currency": "USD",
+   "priceLocal": 13.98,
+   "marketCapUsd": 55.7466,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 36.94,
+    "maxDrawdownPct": -23.39,
+    "julyDrawdownPct": -5.45
+   }
+  },
+  "WMT": {
+   "symbol": "WMT",
+   "provider": "yahoo",
+   "providerName": "Walmart Inc.",
+   "currency": "USD",
+   "priceLocal": 111.85,
+   "marketCapUsd": 890.1111,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 24.55,
+    "maxDrawdownPct": -19.23,
+    "julyDrawdownPct": -9.23
+   }
+  },
+  "DHI": {
+   "symbol": "DHI",
+   "provider": "yahoo",
+   "providerName": "D.R. Horton, Inc.",
+   "currency": "USD",
+   "priceLocal": 151.08,
+   "marketCapUsd": 42.2573,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 35.46,
+    "maxDrawdownPct": -27.99,
+    "julyDrawdownPct": -14.87
+   }
+  },
+  "STZ": {
+   "symbol": "STZ",
+   "provider": "yahoo",
+   "providerName": "Constellation Brands, Inc.",
+   "currency": "USD",
+   "priceLocal": 135.76,
+   "marketCapUsd": 23.1884,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 30.38,
+    "maxDrawdownPct": -25.18,
+    "julyDrawdownPct": -11.64
+   }
+  },
+  "CAT": {
+   "symbol": "CAT",
+   "provider": "yahoo",
+   "providerName": "Caterpillar Inc.",
+   "currency": "USD",
+   "priceLocal": 842.19,
+   "marketCapUsd": 387.1336,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 39.27,
+    "maxDrawdownPct": -26.5,
+    "julyDrawdownPct": -26.5
+   }
+  },
+  "SNDK": {
+   "symbol": "SNDK",
+   "provider": "yahoo",
+   "providerName": "Sandisk Corporation",
+   "currency": "USD",
+   "priceLocal": 1212.21,
+   "marketCapUsd": 176.9827,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 114.28,
+    "maxDrawdownPct": -56.49,
+    "julyDrawdownPct": -56.49
+   }
+  },
+  "MA": {
+   "symbol": "MA",
+   "provider": "yahoo",
+   "providerName": "Mastercard Incorporated",
+   "currency": "USD",
+   "priceLocal": 562.95,
+   "marketCapUsd": 493.1498,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 22.25,
+    "maxDrawdownPct": -21.27,
+    "julyDrawdownPct": -3.85
+   }
+  },
+  "V": {
+   "symbol": "V",
+   "provider": "yahoo",
+   "providerName": "Visa Inc.",
+   "currency": "USD",
+   "priceLocal": 362.5,
+   "marketCapUsd": 676.8046,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 21.77,
+    "maxDrawdownPct": -17.35,
+    "julyDrawdownPct": -4.03
+   }
+  },
+  "AXP": {
+   "symbol": "AXP",
+   "provider": "yahoo",
+   "providerName": "American Express Company",
+   "currency": "USD",
+   "priceLocal": 340.91,
+   "marketCapUsd": 230.2199,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 27.16,
+    "maxDrawdownPct": -24.06,
+    "julyDrawdownPct": -9.79
+   }
+  },
+  "SYF": {
+   "symbol": "SYF",
+   "provider": "yahoo",
+   "providerName": "Synchrony Financial",
+   "currency": "USD",
+   "priceLocal": 78.59,
+   "marketCapUsd": 25.5709,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 31.82,
+    "maxDrawdownPct": -27.91,
+    "julyDrawdownPct": -13.22
+   }
+  },
+  "COF": {
+   "symbol": "COF",
+   "provider": "yahoo",
+   "providerName": "Capital One Financial Corporation",
+   "currency": "USD",
+   "priceLocal": 217.76,
+   "marketCapUsd": 133.5958,
+   "asOf": "2026-08-07",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 32.73,
+    "maxDrawdownPct": -31.73,
+    "julyDrawdownPct": -7.05
+   }
+  },
+  "PEAQ": {
+   "symbol": "peaq-2",
+   "provider": "coingecko",
+   "providerName": "peaq-2",
+   "currency": "USD",
+   "priceLocal": 0.01775732,
+   "marketCapUsd": 0.0428,
+   "asOf": "2026-08-09",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 124.75,
+    "maxDrawdownPct": -90.69,
+    "julyDrawdownPct": -27.01
+   }
+  },
+  "GEOD": {
+   "symbol": "geodnet",
+   "provider": "coingecko",
+   "providerName": "geodnet",
+   "currency": "USD",
+   "priceLocal": 0.181261,
+   "marketCapUsd": 0.0826,
+   "asOf": "2026-08-09",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 69.83,
+    "maxDrawdownPct": -46.08,
+    "julyDrawdownPct": -18.45
+   }
+  },
+  "ETH": {
+   "symbol": "ethereum",
+   "provider": "coingecko",
+   "providerName": "ethereum",
+   "currency": "USD",
+   "priceLocal": 1922.48,
+   "marketCapUsd": 232.0288,
+   "asOf": "2026-08-09",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 53.92,
+    "maxDrawdownPct": -67.5,
+    "julyDrawdownPct": -9.23
+   }
+  },
+  "ZEC": {
+   "symbol": "zcash",
+   "provider": "coingecko",
+   "providerName": "zcash",
+   "currency": "USD",
+   "priceLocal": 517.84,
+   "marketCapUsd": 8.693,
+   "asOf": "2026-08-09",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 126.22,
+    "maxDrawdownPct": -71.73,
+    "julyDrawdownPct": -18.18
+   }
+  },
+  "LIT": {
+   "symbol": "lighter",
+   "provider": "coingecko",
+   "providerName": "lighter",
+   "currency": "USD",
+   "priceLocal": 2.34,
+   "marketCapUsd": 0.5847,
+   "asOf": "2026-08-09"
+  },
+  "PRL": {
+   "symbol": "pearl-2",
+   "provider": "coingecko",
+   "providerName": "pearl-2",
+   "currency": "USD",
+   "priceLocal": 0.269737,
+   "marketCapUsd": 0.0688,
+   "asOf": "2026-08-09",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 133.46,
+    "maxDrawdownPct": -66.6,
+    "julyDrawdownPct": -66.6
+   }
+  },
+  "NOCK": {
+   "symbol": "nockchain",
+   "provider": "coingecko",
+   "providerName": "nockchain",
+   "currency": "USD",
+   "priceLocal": 0.00994657,
+   "marketCapUsd": 0.0226,
+   "asOf": "2026-08-09",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 232.48,
+    "maxDrawdownPct": -96.75,
+    "julyDrawdownPct": -70.6
+   }
+  },
+  "HYPE": {
+   "symbol": "hyperliquid",
+   "provider": "coingecko",
+   "providerName": "hyperliquid",
+   "currency": "USD",
+   "priceLocal": 54.87,
+   "marketCapUsd": 12.2052,
+   "asOf": "2026-08-09",
+   "stats": {
+    "windowDays": 365,
+    "realisedVolPct": 78.14,
+    "maxDrawdownPct": -64.01,
+    "julyDrawdownPct": -22.56
+   }
+  }
+ },
+ "unmapped": [
+  {
+   "ticker": "BitRobot",
+   "exchange": "crypto (Solana)",
+   "reason": "no CoinGecko listing (zero symbol matches across the full coin list)"
+  },
+  {
+   "ticker": "Unitree",
+   "exchange": "Shanghai STAR (approved, not trading)",
+   "reason": "Shanghai STAR listing approved, not trading"
+  },
+  {
+   "ticker": "X",
+   "exchange": "NYSE",
+   "reason": "US Steel ceased trading 2025-06-18 on the Nippon Steel acquisition"
+  }
+ ]
+}

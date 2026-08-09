@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "verify": "jiti scripts/verify-allocation.ts",
+    "fetch-market-data": "jiti scripts/fetch-market-data.ts",
     "lint": "oxlint",
     "preview": "vite preview"
   },

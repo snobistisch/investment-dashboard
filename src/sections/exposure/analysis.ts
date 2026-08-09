@@ -150,3 +150,37 @@ export function chainBreakdown(set: Position[]) {
 export function drawdownIllustration(concentrationShare: number, indexMove: number) {
   return concentrationShare * indexMove
 }
+
+/** How far apart the market-data vintages in a set are, in days.
+ *
+ *  This matters more than it looks. The photonics rows are the 7 Aug 2026
+ *  close; every other section is 7-9 July. The July 2026 drawdown sits
+ *  BETWEEN those two dates, so any figure that weighs a thesis name against a
+ *  diversifier is comparing a post-correction price with a pre-correction one,
+ *  and the diversifiers' own `edge` texts describe a world that no longer
+ *  existed when the photonics rows were written. */
+export function vintageSpread(set: Position[]) {
+  const times = set.map((p) => Date.parse(p.asOf)).filter((t) => !Number.isNaN(t))
+  if (times.length === 0) return { days: 0, oldest: undefined, newest: undefined }
+  const min = Math.min(...times)
+  const max = Math.max(...times)
+  return {
+    days: Math.round((max - min) / 86_400_000),
+    oldest: new Date(min).toISOString().slice(0, 10),
+    newest: new Date(max).toISOString().slice(0, 10),
+  }
+}
+
+/** Beyond this the tab says so rather than quietly weighing across vintages. */
+export const VINTAGE_WARN_DAYS = 14
+
+/** Oldest `asOf` per primary factor, so a factor table can carry its own
+ *  vintage instead of deferring to a note at the bottom of the page. */
+export function oldestAsOfByFactor(set: Position[]) {
+  const out = new Map<Factor, string>()
+  for (const p of set) {
+    const current = out.get(p.factors[0])
+    if (!current || p.asOf < current) out.set(p.factors[0], p.asOf)
+  }
+  return out
+}

@@ -3,6 +3,7 @@ import { Section } from '../../components/Section'
 import { Panel, Bar } from '../../components/Panel'
 import { FACTOR_LABELS } from '../../data/positions'
 import type { Factor } from '../../data/positions'
+import { VINTAGE_WARN_DAYS } from '../exposure/analysis'
 import {
   buildAllocation,
   riskBand,
@@ -335,6 +336,70 @@ export function AllocatorPanel({
           </p>
         </Panel>
       </div>
+
+      {/* ------------------------------------------------------------------ */}
+      <div className="mt-4">
+        <Panel title="Stress — this allocation, not the universe">
+          <table className="w-full text-left text-xs">
+            <thead>
+              <tr className="border-b border-term-line text-[10px] uppercase tracking-[0.15em] text-term-dim">
+                <th className="py-1.5 pr-2 font-bold">July 2026 scenario</th>
+                <th className="py-1.5 pr-2 text-right font-bold">Equity</th>
+                <th className="py-1.5 pr-2 text-right font-bold">Premium</th>
+                <th className="py-1.5 text-right font-bold">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {result.stress.map((s) => (
+                <tr key={s.label} className="border-b border-term-line/60 last:border-b-0">
+                  <td className="py-2 pr-2">
+                    <span className="text-term-text">{s.label}</span>
+                    <span className="ml-2 text-term-dim">{s.indexMovePct.toFixed(1)}%</span>
+                  </td>
+                  <td className="py-2 pr-2 text-right tabular-nums text-term-dim">
+                    {usd(s.equityLossUsd)}
+                  </td>
+                  <td className="py-2 pr-2 text-right tabular-nums text-term-dim">
+                    {s.premiumLossUsd === 0 ? '—' : usd(s.premiumLossUsd)}
+                  </td>
+                  <td className="py-2 text-right font-bold tabular-nums text-term-red">
+                    {pct(s.totalLossShare)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="mt-3 text-[11px] leading-relaxed text-term-dim">
+            Applied to the <span className="text-term-text">thesis exposure above</span> — real
+            position sizes, not the universe&rsquo;s market-cap shares. The premium column is a full
+            write-off, because an out-of-the-money call below its strike is worth zero however far
+            below it lands.
+          </p>
+          <p className="mt-2 text-[11px] leading-relaxed text-term-dim">
+            <span className="text-term-yellow">Plan against the worst row, not the mildest.</span>{' '}
+            The SOX is the wrong benchmark for this book: over the same window the Morgan Stanley
+            Momentum TMT index fell nearly twice as far, and a concentrated, high-momentum book sits
+            in that regime rather than the broad one. This is arithmetic, not a forecast — it
+            assumes the thesis block moves one-for-one with the named index and that nothing else
+            moves at all.
+          </p>
+        </Panel>
+      </div>
+
+      {result.vintageSpreadDays > VINTAGE_WARN_DAYS && (
+        <div className="mt-4 border border-term-yellow/70 bg-term-panel p-3">
+          <p className="text-[10px] uppercase tracking-[0.2em] text-term-yellow">
+            Market data vintages differ by {result.vintageSpreadDays} days
+          </p>
+          <p className="mt-2 max-w-4xl text-xs leading-relaxed text-term-text">
+            Oldest row here is {result.vintageOldest}, newest {result.vintageNewest}. The July 2026
+            drawdown sits between those two dates, so this allocation weighs post-correction
+            photonics prices against pre-correction prices for every other section. The
+            diversifiers&rsquo; own rationales describe a world from before the move. Relative
+            weights across that boundary are not comparing like with like.
+          </p>
+        </div>
+      )}
 
       {/* ------------------------------------------------------------------ */}
       <div className="mt-4">

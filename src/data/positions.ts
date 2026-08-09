@@ -2091,10 +2091,21 @@ export const JULY_2026_DRAWDOWN = {
   provenance:
     'Supplied by Matthias, August 2026. Not independently verified in this session and not present in research/. Treat as a stated historical fact with a named source, not as repo-sourced data.',
   facts: [
+    // `index: true` marks the rows that describe a market, not a single name.
+    // Only those are meaningful as a book-level stress scenario — applying
+    // Micron's own drawdown to a whole portfolio would be a category error.
     {
       label: 'SOX (semiconductor index)',
       detail: '−28.6% from its 22 June 2026 peak',
       value: -28.6,
+      index: true,
+    },
+    {
+      label: 'MS Momentum TMT index',
+      detail:
+        '−53.5% over the same window — the regime a book that had returned 439% was actually in',
+      value: -53.5,
+      index: true,
     },
     {
       label: 'Micron (MU)',
@@ -2109,4 +2120,12 @@ export const JULY_2026_DRAWDOWN = {
   ],
   fundFailure:
     'The Situational Awareness fund lost ~67% in one month and was force-liquidated to Citadel. Its thesis — AI infrastructure, bought at the bottleneck — was correct and had returned 439% through June. What killed it was roughly 4x leverage against a concentrated, correlated book during an ordinary correction.',
+  /** Detail that complicates the "leverage, not concentration" reading. Kept
+   *  separate from fundFailure because it argues against the simple version. */
+  fundFailureCaveat:
+    'Two things make the single-cause reading too clean. The losses were not only on concentrated longs: a short in software (Adobe) ran against the fund at the same time. And leverage and concentration are not separable — a margin call is a function of their product, so one observation cannot attribute the failure to either alone.',
+  /** Which index to stress against. The SOX understates it: this book is
+   *  momentum TMT, and in the same window that index fell nearly twice as far.
+   *  Using the first entry in `facts` silently picked the milder one. */
+  worstIndexMovePct: -53.5,
 }

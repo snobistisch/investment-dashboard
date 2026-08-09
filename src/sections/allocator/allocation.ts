@@ -1,5 +1,6 @@
 import type { Factor, Position } from '../../data/positions'
-import { activeBook } from '../exposure/analysis'
+import { JULY_2026_DRAWDOWN } from '../../data/positions'
+import { activeBook, vintageSpread } from '../exposure/analysis'
 
 // Sizing rules, not a vibe. Every constant here is named so it can be
 // retuned without touching the logic that uses it.
@@ -256,6 +257,17 @@ export interface SleeveResult {
   legs: SleeveLeg[]
 }
 
+export interface StressScenario {
+  label: string
+  indexMovePct: number
+  /** Equity loss in dollars: thesis exposure moves with the index. */
+  equityLossUsd: number
+  /** Premium written off entirely — an OTM call below its strike is worth 0. */
+  premiumLossUsd: number
+  totalLossUsd: number
+  totalLossShare: number
+}
+
 export interface AllocationResult {
   riskBand: RiskBand
   thesisFactor: Factor
@@ -280,6 +292,11 @@ export interface AllocationResult {
   unallocatedShare: number
   factorTotals: FactorTotal[]
   chainTotals: ChainTotal[]
+  stress: StressScenario[]
+  /** Spread between the oldest and newest market-data vintage in the book. */
+  vintageSpreadDays: number
+  vintageOldest?: string
+  vintageNewest?: string
   thesisUniverseCount: number
   diversifierUniverseCount: number
   longUniverseCount: number
@@ -601,6 +618,36 @@ export function buildAllocation(
 
   const reserveUsd = Math.max(capitalUsd - totalAllocated, 0)
 
+  // --- Stress ------------------------------------------------------------
+  // Run on the ACTUAL allocation weights, which is the whole point: the
+  // Exposure tab ran this same multiplication on the universe's market-cap
+  // shares, on a tab whose own copy says "there are no position sizes here".
+  // These are sizes. The sleeve is treated as a total write-off rather than
+  // moved with the index, because an out-of-the-money call below its strike
+  // is worth zero regardless of how far below it lands.
+  //
+  // Still a multiplication and not a model: it assumes the thesis block moves
+  // one-for-one with the named index and that nothing else moves at all.
+  const thesisExposureUsd = thesisRows.reduce((t, r) => t + exposureOf(r), 0)
+  const stress: StressScenario[] = JULY_2026_DRAWDOWN.facts
+    .filter((f) => f.index === true && f.value < 0)
+    .map((f) => {
+      const equityLossUsd = ((thesisExposureUsd - totalPremiumUsd) * f.value) / 100
+      const premiumLossUsd = -totalPremiumUsd
+      const totalLossUsd = equityLossUsd + premiumLossUsd
+      return {
+        label: f.label,
+        indexMovePct: f.value,
+        equityLossUsd,
+        premiumLossUsd,
+        totalLossUsd,
+        totalLossShare: shareOf(totalLossUsd),
+      }
+    })
+    .sort((a, b) => a.totalLossUsd - b.totalLossUsd)
+
+  const vintage = vintageSpread(rows.map((r) => r.position))
+
   return {
     riskBand: riskBand(risk),
     thesisFactor: THESIS_FACTOR,
@@ -620,6 +667,10 @@ export function buildAllocation(
     unallocatedShare: shareOf(reserveUsd),
     factorTotals,
     chainTotals,
+    stress,
+    vintageSpreadDays: vintage.days,
+    vintageOldest: vintage.oldest,
+    vintageNewest: vintage.newest,
     thesisUniverseCount: thesisUniverse.length,
     diversifierUniverseCount: diversifierUniverse.length,
     longUniverseCount: investableUniverse.length,

@@ -11,6 +11,7 @@ import {
   drawdownIllustration,
   factorBreakdown,
   hiddenFactorOverlap,
+  oldestAsOfByFactor,
   thematicPositions,
   topByCap,
 } from './analysis'
@@ -57,8 +58,11 @@ export function ExposurePanel() {
   // thing this panel exists to show.
   const chain = chainBreakdown(thematicPositions)
 
-  const sox = JULY_2026_DRAWDOWN.facts[0].value // −28.6%
-  const illustration = drawdownIllustration(top.capShare, sox)
+  const oldestAsOf = oldestAsOfByFactor(activeBook)
+  // The worst relevant index, not the first one in the array. Using facts[0]
+  // silently picked the SOX, which is the mild scenario for a momentum book.
+  const worst = JULY_2026_DRAWDOWN.worstIndexMovePct
+  const illustration = drawdownIllustration(top.capShare, worst)
 
   return (
     <Section
@@ -77,9 +81,17 @@ export function ExposurePanel() {
             {top.count} of {activeBook.length}
           </span>{' '}
           researched names share one primary driver —{' '}
-          <span className="text-term-amber">{FACTOR_LABELS[top.factor]}</span> —{' '}
-          <span className="text-term-amber">{pct(top.capShare)}</span> of the{' '}
-          {cap(bookCoverage.capUsd)} of market cap on file.
+          <span className="text-term-amber">{FACTOR_LABELS[top.factor]}</span>.
+        </p>
+        <p className="mt-3 max-w-4xl text-xs leading-relaxed text-term-dim">
+          <span className="text-term-yellow">The count is the robust number; read it first.</span>{' '}
+          The cap-weighted version of the same fact — {pct(top.capShare)} of{' '}
+          {cap(bookCoverage.capUsd)} — is far more fragile than it looks, and the headline used to
+          lead with it. It covers only {bookCoverage.withCap} of {bookCoverage.total} names, and the{' '}
+          {bookCoverage.missing} without a market cap are not missing at random: robotics carries no
+          cap column at all and biology states two, which are precisely the buckets that would pull
+          the concentration down. Within the bucket itself {heaviest[0]?.position.ticker} alone is{' '}
+          {pct(heaviest[0]?.share ?? 0)}, so one ticker drives roughly half the entire figure.
         </p>
         <p className="mt-4 max-w-4xl text-xs leading-relaxed text-term-dim">
           That is {pct(top.countShare)} of the book by count and {pct(top.capShare)} by market cap.
@@ -130,11 +142,16 @@ export function ExposurePanel() {
                         }
                       />
                     </div>
-                    {row.missingCap > 0 && (
-                      <span className="mt-1 block text-[10px] text-term-dim">
-                        {row.missingCap} of {row.count} carry no market cap
-                      </span>
-                    )}
+                    <span className="mt-1 block text-[10px] text-term-dim">
+                      {row.missingCap > 0 ? (
+                        <span className="text-term-yellow">
+                          {row.count - row.missingCap}/{row.count} priced
+                        </span>
+                      ) : (
+                        <span>{row.count}/{row.count} priced</span>
+                      )}
+                      {oldestAsOf.get(row.factor) && ` · from ${oldestAsOf.get(row.factor)}`}
+                    </span>
                   </td>
                   <td className="py-2 pr-2 text-right align-top tabular-nums text-term-text">
                     {row.count}
@@ -313,21 +330,28 @@ export function ExposurePanel() {
               </p>
               <p className="mt-3 text-xs leading-relaxed text-term-text">
                 <span className="font-bold text-term-amber">
-                  What a repeat would do to this book:
+                  What a repeat would do to this universe:
                 </span>{' '}
                 {pct(top.capShare)} of the market cap on file sits behind one driver. Applying the
-                observed SOX move of {sox}% uniformly to that share is{' '}
-                <span className="font-bold text-term-red">
-                  {illustration.toFixed(1)}%
+                Momentum TMT move of {worst}% uniformly to that share is{' '}
+                <span className="font-bold text-term-red">{illustration.toFixed(1)}%</span>. That
+                index rather than the SOX, because a concentrated high-momentum book sits in that
+                regime — the semiconductor index fell roughly half as far in the same window.{' '}
+                <span className="text-term-yellow">
+                  This shape is the universe&rsquo;s, not a portfolio&rsquo;s.
                 </span>{' '}
-                at the book level. That is arithmetic, not a forecast — it assumes uniform beta,
-                equal weighting and no position sizing, none of which hold.
+                There are no position sizes on this tab. The Allocator has them, and runs the same
+                arithmetic on the weights it actually produces.
               </p>
               <p className="mt-3 text-xs leading-relaxed text-term-dim">
                 The book is research-only and unlevered, so the ~4x that turned a correct thesis
                 into a forced liquidation does not apply here. The correlation that made 4x fatal
                 does. What killed that fund was not being wrong — it was being right, concentrated
                 and levered through an ordinary correction.
+              </p>
+              <p className="mt-3 text-[11px] leading-relaxed text-term-dim">
+                <span className="text-term-yellow">Against that reading:</span>{' '}
+                {JULY_2026_DRAWDOWN.fundFailureCaveat}
               </p>
               <p className="mt-3 text-[11px] leading-relaxed text-term-dim">
                 <span className="text-term-yellow">Provenance:</span>{' '}

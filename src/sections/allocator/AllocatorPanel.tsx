@@ -52,6 +52,22 @@ function PositionRow({ row, nameCap }: { row: AllocatedPosition; nameCap: number
             bottleneck
           </span>
         )}
+        {row.hedge && (
+          <span
+            className="ml-1.5 border border-term-cyan px-1 text-[9px] uppercase tracking-wider text-term-cyan"
+            title="The source frames this name as a hedge against the book's own thesis, not an expression of it"
+          >
+            hedge
+          </span>
+        )}
+        {!row.tradable && (
+          <span
+            className="ml-1.5 border border-term-red px-1 text-[9px] uppercase tracking-wider text-term-red"
+            title="Not directly tradable from a Dutch retail account — mainland China A-share or Taipei Exchange listing"
+          >
+            not tradable
+          </span>
+        )}
         <span className="mt-0.5 block text-[10px] text-term-dim">{row.position.name}</span>
         <span className="mt-0.5 block text-[10px] text-term-dim">
           <span className={factorColor[row.position.factors[0]]}>
@@ -337,6 +353,39 @@ export function AllocatorPanel({
         </Panel>
       </div>
 
+      {result.forkExclusions.length > 0 && (
+        <div className="mt-4">
+          <Panel title="Architectural forks — one side taken, the other excluded">
+            <ul className="space-y-2 text-xs">
+              {result.forkExclusions.map((f) => (
+                <li key={f.ticker} className="text-term-dim">
+                  <span className="font-bold text-term-text">{f.ticker}</span> ({f.name}) excluded —
+                  it is the <span className="text-term-text">{f.side}</span> side of the{' '}
+                  <span className="text-term-text">{f.fork}</span> fork, and{' '}
+                  <span className="text-term-text">{f.beatenBy}</span> already holds the other side
+                  with a higher score.
+                </li>
+              ))}
+            </ul>
+            <p className="mt-3 text-[11px] leading-relaxed text-term-dim">
+              Several rationales in positions.ts describe the same disagreement from opposite
+              sides: Marvell owns roughly 70% of the optical DSP market, and Semtech is described
+              there as &ldquo;the direct short leg against Marvell&rsquo;s DSP TAM&rdquo;. Sized
+              side by side at equal weight, the idiosyncratic half of each thesis cancels and what
+              remains is sector beta paid for twice.{' '}
+              {result.hedgeTickers.length > 0 && (
+                <>
+                  Exempt from this rule:{' '}
+                  <span className="text-term-cyan">{result.hedgeTickers.join(', ')}</span> — their
+                  own sources frame them as hedges against the optical thesis rather than
+                  expressions of it, so they are deliberate offsets rather than accidents.
+                </>
+              )}
+            </p>
+          </Panel>
+        </div>
+      )}
+
       {/* ------------------------------------------------------------------ */}
       <div className="mt-4">
         <Panel title="Stress — this allocation, not the universe">
@@ -616,6 +665,28 @@ export function AllocatorPanel({
               <span className="text-term-yellow">No live pricing.</span> Dollar allocations at
               today&rsquo;s capital figure, not share counts. Prices across sections are also not
               synchronised — photonics is 7 Aug 2026, the rest early July.
+            </li>
+            <li>
+              <span className="text-term-yellow">Nothing here is execution-tested.</span> Positions
+              marked <span className="text-term-red">not tradable</span> are mainland China
+              A-shares or Taipei Exchange listings that a Dutch retail account cannot buy directly;
+              where a dual listing exists (Zhongji Innolight also trades in Hong Kong) this tab does
+              not route you to it. Transaction costs, bid-ask spread, the one-off FX assumptions
+              carried over from the photonics note, and Dutch box 3 — a levy on the value of the
+              holding rather than on the gain, which changes the net outcome of a volatile book —
+              are all absent. None of them is derivable from anything in this repo, so they are
+              named here rather than modelled badly.
+            </li>
+            <li>
+              <span className="text-term-yellow">Valuation does not enter the sizing.</span> The PE
+              multiples scattered through the <span className="text-term-text">note</span> fields —
+              472x, 333x, 169x trailing, 90x on 16.8% growth — touch no weight. The largest thesis
+              positions are among the strongest 12-month performers in the universe, and the
+              literature on both sides of that is unflattering: long-run earnings growth does not
+              persist beyond chance (Chan, Karceski and Lakonishok 2003), and a sector up 100% over
+              the market in two years has carried a 53% chance of a subsequent 40% drawdown
+              (Greenwood, Shleifer and You 2019). Adding valuation fields needs sourced numbers per
+              row, which is a data task, not a code one.
             </li>
             <li>
               <span className="text-term-yellow">Not investment advice.</span> A sizing exercise

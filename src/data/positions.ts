@@ -82,6 +82,21 @@ export const FACTOR_LABELS: Record<Factor, string> = {
  *  counting either as a long would misstate the book. */
 export type Stance = 'long' | 'short' | 'pair' | 'context'
 
+/** Which side of a named technical fork a position sits on.
+ *
+ *  Several `edge` fields in this file describe the SAME fork from opposite
+ *  sides — Marvell owns ~70% of the optical DSP market, Semtech is "the direct
+ *  short leg against Marvell's DSP TAM" — and nothing downstream noticed.
+ *  Sized side by side, the idiosyncratic half of each bet cancels and what is
+ *  left is sector beta paid for twice. `fork` names the disagreement, `side`
+ *  names the position taken. Only filled where a source in this repo states
+ *  the relationship; left absent for names their own source calls
+ *  architecture-agnostic (Fabrinet, Tower). */
+export interface ArchitecturalBet {
+  fork: string
+  side: string
+}
+
 export interface Position {
   ticker: string
   exchange: string
@@ -99,6 +114,14 @@ export interface Position {
   /** Why the market is wrong, specifically. If this is empty, cap conviction at 2. */
   edge?: string
   stance: Stance
+  /** Which side of a named technical fork this position takes, where a source
+   *  states it. See ArchitecturalBet. */
+  architecturalBet?: ArchitecturalBet
+  /** Set only where the source itself frames the name as a hedge against the
+   *  book's own thesis rather than an expression of it. Lets a deliberate
+   *  offset sit next to its opposite without the allocator treating it as an
+   *  accident. */
+  hedge?: boolean
   /** Transcription caveats: what the source did not say, and what was assumed. */
   note?: string
 }
@@ -133,6 +156,7 @@ export const positions: Position[] = [
     asOf: '2026-08-07',
     conviction: 3,
     edge: 'Volume supplier of the 200G-per-lane EML — the component that gates 1.6T module production. 200G EML revenue more than doubled sequentially and management guides EML units up >50% by the Dec 2026 quarter.',
+    architecturalBet: { fork: 'interconnect', side: 'optical' },
     stance: 'long',
     note: 'The section\'s own bear case is duration, not demand: a 169x trailing multiple assumes the two-supplier structure persists for years.',
   },
@@ -147,6 +171,7 @@ export const positions: Position[] = [
     asOf: '2026-08-07',
     conviction: 3,
     edge: 'Nvidia took a $2bn equity stake (2 Mar 2026) with a multi-year supply agreement, funding a doubling of six-inch InP capacity a quarter ahead of plan and more than a quadrupling by end-2027. The customer is funding the supplier.',
+    architecturalBet: { fork: 'interconnect', side: 'optical' },
     stance: 'long',
     note: 'Section flags that price has essentially met consensus, and that the move came on the FCC headline rather than company news.',
   },
@@ -161,6 +186,7 @@ export const positions: Position[] = [
     asOf: '2026-08-07',
     conviction: 3,
     edge: 'The purest listed expression of the indium phosphide bottleneck, which the section calls the hardest constraint in the chain; doubling capacity by end-2027.',
+    architecturalBet: { fork: 'interconnect', side: 'optical' },
     stance: 'long',
     note: '$126m of revenue against a $5.65bn cap; +17.8% in the 7 Aug session.',
   },
@@ -214,6 +240,7 @@ export const positions: Position[] = [
     asOf: '2026-08-07',
     conviction: 3,
     edge: 'Earmarked roughly a quarter of its HK$53.4bn IPO proceeds for strategic inventory of InP and laser chips — an unusually direct signal about where the scarcity actually is.',
+    architecturalBet: { fork: 'interconnect', side: 'optical' },
     stance: 'long',
     note: 'Global #1 at ~27% transceiver share, and therefore the most exposed name to the reported (unpublished, unconfirmed) FCC import ban.',
   },
@@ -228,6 +255,7 @@ export const positions: Position[] = [
     asOf: '2026-08-07',
     conviction: 4,
     edge: 'Fastest revenue growth in the entire covered universe at +151.4%, on a 54.7x PE — the lowest multiple among the high-growth Chinese module names.',
+    architecturalBet: { fork: 'interconnect', side: 'optical' },
     stance: 'long',
     note: 'Same FCC ban exposure as Innolight; +216% over 12 months.',
   },
@@ -255,6 +283,7 @@ export const positions: Position[] = [
     asOf: '2026-08-07',
     conviction: 3,
     edge: 'The clearest sentiment split in the report: short interest 21.8% of float and RISING into a record quarter (12.9m -> 14.4m shares) while the sell side sits neutral. Mechanical, checkable, and not a target gap.',
+    architecturalBet: { fork: 'interconnect', side: 'optical' },
     stance: 'long',
     note: 'Beta 3.79. Bear case is a ~30% gross-margin manufacturer priced like a technology franchise. Microsoft was ~29% of 2025 revenue.',
   },
@@ -296,6 +325,7 @@ export const positions: Position[] = [
     asOf: '2026-08-07',
     conviction: 3,
     edge: 'DSP unit volume and optical module unit volume are the same number — one DSP per module — and Marvell holds ~70% of the optical DSP market. It is a unit-volume claim on the whole module layer without module-maker margins.',
+    architecturalBet: { fork: 'module-dsp', side: 'dsp' },
     stance: 'long',
     note: 'Two live risks named: Broadcom\'s Sian3/Sian2M DSP attack, and LPO removing the DSP from the module entirely.',
   },
@@ -324,6 +354,8 @@ export const positions: Position[] = [
     asOf: '2026-08-07',
     conviction: 3,
     edge: 'Owns active electrical cables — the copper answer to short-reach optics — which makes it a partial HEDGE against the optical thesis rather than a pure expression of it. Every quarter in-rack copper holds is a quarter Credo wins and the module makers lose.',
+    architecturalBet: { fork: 'interconnect', side: 'copper' },
+    hedge: true,
     stance: 'long',
     note: 'Revenue +205.7%; FY2027 guidance implies >80% growth.',
   },
@@ -338,6 +370,8 @@ export const positions: Position[] = [
     asOf: '2026-08-07',
     conviction: 3,
     edge: '72% non-GAAP gross margin while growing 100%+ separates it from every optical-module name. The comparison that matters is not optics at all — it is Marvell (48.2x fwd) and Broadcom (27.1x), which compete for the same silicon budget with far more diversified revenue.',
+    architecturalBet: { fork: 'interconnect', side: 'copper' },
+    hedge: true,
     stance: 'long',
     note: 'Concentration is the central risk and the exact figure could not be verified: the section states SEC EDGAR blocked automated retrieval of the Q2 2026 10-Q table, so the ">70% of 2025 revenue from one customer" figure is approximate and unconfirmed. Also carried by the quantum section as an indirect enabler (QTUM holding), where that section itself calls the exposure indirect.',
   },
@@ -352,6 +386,7 @@ export const positions: Position[] = [
     asOf: '2026-08-07',
     conviction: 3,
     edge: 'The listed champion of LPO, which removes the DSP from the module. It is the direct short leg against Marvell\'s DSP TAM — a specific architectural fork, not a valuation argument.',
+    architecturalBet: { fork: 'module-dsp', side: 'lpo' },
     stance: 'long',
     note: 'GAAP-unprofitable. The whole thesis depends on LPO winning share.',
   },

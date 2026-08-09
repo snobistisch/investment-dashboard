@@ -26,7 +26,7 @@ export function CitriniTracker() {
   return (
     <Section
       title="Citrini Research Tracker"
-      description="Free, public-source-only tracker of themes and calls disclosed by Citrini Research (@Citrini7). Built exclusively from the free Substack tier, public podcast pages and public posts; the paid Citrindex is not accessed or reconstructed. Not affiliated with Citrini Research. Nothing here is investment advice."
+      description="Free, public-source-only tracker of themes and calls disclosed by Citrini Research (@Citrini7). Built exclusively from the free Substack tier, public podcast pages and public posts; the paid Citrindex is not accessed or reconstructed. This records only the visible half of someone's calls, with no entry prices and no exits, so it cannot support a hit rate, a return, or any input to sizing — it is idea flow, and the Allocator draws nothing from it. Not affiliated with Citrini Research. Nothing here is investment advice."
     >
       <div className="overflow-x-auto border border-term-line bg-term-panel">
         <table className="min-w-[64rem] w-full text-left text-xs">

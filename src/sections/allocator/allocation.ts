@@ -112,6 +112,20 @@ const CONVICTION_TILT_AGGRESSIVE = 2.0
 // volatile bottleneck names score LOWER than the steadier module makers, and
 // weighting on conviction alone would systematically underweight exactly what
 // the thesis says to own.
+// POLICY, NOT A PROPERTY OF THE WORLD. Set 2026-08-09. These numbers are a
+// ranking made numeric; nothing calibrated them, and the ordering carries the
+// argument rather than the exact values. Two things should trigger a review:
+//
+//  1. The multipliers assume the bottleneck HOLDS over the horizon of the
+//     positions. The evidence in the edge fields points the other way —
+//     Coherent is quadrupling six-inch InP capacity by end-2027 with Nvidia
+//     money, AXT is doubling by end-2027, Zhongji is stockpiling InP. A
+//     constraint that earns rent attracts capacity, and the same texts that
+//     justify the position document the scarcity being solved. If that
+//     capacity lands before the cluster build-out peaks, substrate and
+//     component stop deserving a premium and this table should flatten.
+//  2. If the copper reach limit above 200G per lane is pushed out, the whole
+//     ordering is wrong rather than mistuned.
 export const CHAIN_LAYER_WEIGHT: Record<string, number> = {
   substrate: 1.6, // "the hardest constraint in the chain" — InP shortage
   component: 1.4, // "the genuine bottleneck" — EMLs, DSPs, silicon photonics
@@ -182,22 +196,50 @@ export const investableUniverse: Position[] = activeBook.filter((p) => p.stance 
 // reason to own it.
 export const sizeableUniverse: Position[] = investableUniverse.filter((p) => p.edge !== undefined)
 
-/** The hypothesis the book is built on, derived rather than hardcoded: the
- *  primary driver behind the most researched names. On the current data this
- *  resolves to 'ai-capex' — 15 of the 29 sizeable names — which is the same
- *  driver the Exposure tab reports as 88% of market cap on file. Deriving it
- *  means the allocator follows positions.ts if the book's centre of gravity
- *  ever moves. */
-export const THESIS_FACTOR: Factor = (() => {
-  const counts = new Map<Factor, number>()
-  for (const p of sizeableUniverse) {
-    counts.set(p.factors[0], (counts.get(p.factors[0]) ?? 0) + 1)
-  }
-  return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))[0][0]
-})()
+/** The hypothesis the book is built on. DECLARED, not derived.
+ *
+ *  This used to be computed as "the primary driver behind the most sizeable
+ *  names", which sounded principled and was not: that count is a function of
+ *  how deeply one section happened to be researched. Photonics carries 33
+ *  transcribed tickers because that is where the work went; robotics carries
+ *  15 and contributes none. The chain ran research effort -> ticker count ->
+ *  designation as the central hypothesis -> two thirds of the capital, with no
+ *  step in it that says anything about expected return. An afternoon spent on
+ *  a new section could have moved the book's centre of gravity.
+ *
+ *  Chosen 2026-08-09 on the argument in research/photonics-tracker-research.md
+ *  §5 (copper runs out of reach above 200G per lane as clusters grow) and §4
+ *  (compound-semiconductor substrates are "the hardest constraint"), not on
+ *  the ticker count. Review when either the copper reach limit or the InP
+ *  shortage is resolved — see CHAIN_LAYER_WEIGHT for the same review trigger.
+ *
+ *  The derived majority is still computed, as a check rather than a source:
+ *  scripts/verify-allocation.ts fails when it drifts away from this constant,
+ *  which is the useful version of that mechanism. */
+export const THESIS_FACTOR: Factor = 'ai-capex'
 
 export const thesisUniverse = sizeableUniverse.filter((p) => p.factors[0] === THESIS_FACTOR)
 export const diversifierUniverse = sizeableUniverse.filter((p) => p.factors[0] !== THESIS_FACTOR)
+
+/** Whether a Dutch retail account can actually buy the listing.
+ *
+ *  Derived from `exchange`, not transcribed, because it is a property of the
+ *  venue rather than of the company. Mainland China A-shares (Shenzhen,
+ *  Shanghai STAR) and Taipei Exchange listings are not directly tradable
+ *  through the brokers available here; every other venue in this file is. The
+ *  allocator does not filter on this — it is a research book and the position
+ *  may still be the right one to hold via another route — but a tool that
+ *  proposes 11.8% of capital in a Shenzhen A-share without saying so is
+ *  proposing something that cannot be executed.
+ *
+ *  Deliberately absent: transaction costs, bid-ask spread, and the Dutch box 3
+ *  treatment. All three are real and none is derivable from anything in this
+ *  repo, so they are stated on the tab as gaps rather than modelled. */
+const RESTRICTED_EXCHANGES = ['Shenzhen', 'Shanghai STAR', 'Taipei Exchange']
+
+export function isDirectlyTradable(p: Position) {
+  return !RESTRICTED_EXCHANGES.some((venue) => p.exchange.includes(venue))
+}
 
 export function chainWeight(p: Position) {
   return p.chainLayer ? (CHAIN_LAYER_WEIGHT[p.chainLayer] ?? DEFAULT_CHAIN_WEIGHT) : DEFAULT_CHAIN_WEIGHT
@@ -229,6 +271,10 @@ export interface AllocatedPosition {
   sleeveName: 'thesis' | 'diversifier'
   bottleneck: boolean
   nameCapped: boolean
+  /** False for venues a Dutch retail account cannot reach directly. */
+  tradable: boolean
+  /** Source-stated hedge against the book's own thesis. */
+  hedge: boolean
 }
 
 export interface FactorTotal {
@@ -292,6 +338,10 @@ export interface AllocationResult {
   unallocatedShare: number
   factorTotals: FactorTotal[]
   chainTotals: ChainTotal[]
+  /** Names excluded for sitting on the losing side of a fork already taken. */
+  forkExclusions: { ticker: string; name: string; fork: string; side: string; beatenBy: string }[]
+  /** Positions the source itself calls a hedge against the book's own thesis. */
+  hedgeTickers: string[]
   stress: StressScenario[]
   /** Spread between the oldest and newest market-data vintage in the book. */
   vintageSpreadDays: number
@@ -371,9 +421,39 @@ export function buildAllocation(
   // Ranked on conviction AND chain position, so the bottleneck outranks the
   // volume layer even where the derived conviction column disagrees.
   const thesisScore = (p: Position) => Math.pow(p.conviction, tilt) * chainWeight(p)
-  const thesisPicked = [...thesisUniverse]
-    .sort((a, b) => thesisScore(b) - thesisScore(a) || a.ticker.localeCompare(b.ticker))
-    .slice(0, Math.min(thesisNameCount(risk), thesisUniverse.length))
+
+  // Within one named fork the allocator takes ONE side. Marvell's edge is that
+  // it owns ~70% of the optical DSP market; Semtech's is that LPO removes the
+  // DSP from the module — the file calls it "the direct short leg against
+  // Marvell's DSP TAM". Sizing both at 7.1% cancelled the idiosyncratic half
+  // of each thesis and left sector beta bought twice, with two sets of costs.
+  // The higher-scoring side wins; the loser is recorded so the UI can say what
+  // was dropped and why, rather than silently omitting it.
+  //
+  // Names their own source frames as a hedge (CRDO's edge says "partial HEDGE
+  // against the optical thesis"; the photonics note puts Astera on the same
+  // side) are exempt: a deliberate offset is a position, not an accident.
+  const forkSideTaken = new Map<string, string>()
+  const thesisDropped: { position: Position; beatenBy: string }[] = []
+  const thesisPicked: Position[] = []
+  for (const p of [...thesisUniverse].sort(
+    (a, b) => thesisScore(b) - thesisScore(a) || a.ticker.localeCompare(b.ticker),
+  )) {
+    if (thesisPicked.length >= Math.min(thesisNameCount(risk), thesisUniverse.length)) break
+    const bet = p.architecturalBet
+    if (bet && !p.hedge) {
+      const taken = forkSideTaken.get(bet.fork)
+      if (taken && taken !== bet.side) {
+        const winner = thesisPicked.find(
+          (q) => q.architecturalBet?.fork === bet.fork && !q.hedge,
+        )
+        thesisDropped.push({ position: p, beatenBy: winner?.ticker ?? taken })
+        continue
+      }
+      forkSideTaken.set(bet.fork, bet.side)
+    }
+    thesisPicked.push(p)
+  }
 
   // --- Diversifier sleeve ------------------------------------------------
   // Plain conviction order, but no single driver may take more than a third of
@@ -556,6 +636,8 @@ export function buildAllocation(
       rationale: r.position.edge ?? '',
       sleeveName: r.sleeveName,
       bottleneck: isBottleneck(r.position),
+      tradable: isDirectlyTradable(r.position),
+      hedge: r.position.hedge === true,
       nameCapped:
         exposureOf(r) >=
           (r.sleeveName === 'thesis' ? nameCapUsd : divNameCapUsd) - EPSILON && r.dollars > 0,
@@ -667,6 +749,14 @@ export function buildAllocation(
     unallocatedShare: shareOf(reserveUsd),
     factorTotals,
     chainTotals,
+    forkExclusions: thesisDropped.map((d) => ({
+      ticker: d.position.ticker,
+      name: d.position.name,
+      fork: d.position.architecturalBet?.fork ?? '',
+      side: d.position.architecturalBet?.side ?? '',
+      beatenBy: d.beatenBy,
+    })),
+    hedgeTickers: rows.filter((r) => r.position.hedge).map((r) => r.position.ticker),
     stress,
     vintageSpreadDays: vintage.days,
     vintageOldest: vintage.oldest,

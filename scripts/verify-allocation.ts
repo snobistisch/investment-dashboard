@@ -128,6 +128,30 @@ for (const capital of CAPITALS) {
         narrowestThesisMargin = Math.min(narrowestThesisMargin, topThesis - topDiv)
       }
 
+      // --- F-04: never both sides of the same architectural fork ---------
+      // Unless a source frames one leg as a deliberate hedge. Holding Marvell
+      // (owns the optical DSP market) beside Semtech (LPO removes the DSP)
+      // at equal weight cancels the idiosyncratic half of both theses and
+      // leaves sector beta bought twice.
+      const bySide = new Map<string, { side: string; ticker: string; w: number }[]>()
+      for (const p of r.positions) {
+        const bet = p.position.architecturalBet
+        if (!bet || p.position.hedge) continue
+        const list = bySide.get(bet.fork) ?? []
+        list.push({ side: bet.side, ticker: p.position.ticker, w: p.exposureWeight })
+        bySide.set(bet.fork, list)
+      }
+      for (const [fork, legs] of bySide) {
+        const material = legs.filter((l) => l.w > 0.03)
+        const sides = new Set(material.map((l) => l.side))
+        check(
+          sides.size <= 1,
+          `${tag}: both sides of fork '${fork}' held above 3% — ${material
+            .map((l) => `${l.ticker}(${l.side} ${(l.w * 100).toFixed(1)}%)`)
+            .join(' vs ')}`,
+        )
+      }
+
       // --- totals ---------------------------------------------------------
       const deployed = r.positions.reduce((t, p) => t + p.dollars + p.premiumUsd, 0)
       check(deployed <= capital + 1e-6, `${tag}: deployed more than capital`)

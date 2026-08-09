@@ -243,6 +243,68 @@ deploys on every push to main).
   and 100, Exposure tab re-checked after the shared-`Bar` change, `npm run
   build` and `npm run lint` pass.
 
+- **Allocator rebuilt around the book's actual hypothesis.** Matthias asked why
+  Robinhood kept sizing so large when it is not part of the thesis. It was, and
+  the answer was structural rather than a tuning problem.
+
+  **What the hypothesis is.** Stated in the repo, not inferred: AI
+  infrastructure bought at the optical interconnect bottleneck.
+  [research/photonics-tracker-research.md](research/photonics-tracker-research.md)
+  §5 ("The macro thesis, and what breaks it") argues copper runs out of reach
+  above 200G per lane as clusters grow past single racks; §4 ranks the chain,
+  calling compound-semiconductor substrates "one level deeper, and currently
+  the hardest constraint" (InP in structural shortage) and the laser/EML layer
+  "the genuine bottleneck". The Exposure tab already states the rule that
+  follows: substrate and component are what the thesis says to buy, system and
+  demand-setter are beta. 15 of the 29 sizeable names sit in that one driver.
+
+  **Why HOOD dominated — three compounding causes.** (1) Its `edge` field is
+  not a mispricing claim. positions.ts defines `edge` as "filled only where a
+  source makes an explicit 'the market is wrong' claim", but HOOD's records a
+  cross-reference between two sections; its actual bear case (−27.3%, PFOF
+  regulatory risk, Coinbase competition) sits in `note`. (2) Conviction 4,
+  derived from risk tier A, which means *lower variance* — close to the
+  opposite of conviction. (3) The decisive one: the per-factor cap punished
+  the thesis. ai-capex held 15 names and hit its ~30% ceiling; risk-appetite
+  held 3 and had room to spare, so an off-thesis name was sized above every
+  bottleneck position. A cap meant as a risk control had become a penalty on
+  the only theme researched in depth.
+
+  **The rebuild.** Two sleeves instead of seven equal factor buckets. A thesis
+  core (floor 55% rising to 75% with risk; lands at 60-75% after caps) weighted
+  on conviction^tilt × a chain-layer multiplier — substrate 1.6, component 1.4,
+  module 0.9, system 0.5. That multiplier is the point: conviction is derived
+  from risk tier, so the volatile bottleneck names score *lower* than the
+  steadier module makers, and weighting on conviction alone systematically
+  underweights exactly what the research says to own. Plus a diversifier sleeve
+  carrying a ceiling of 0.6x the core's per-name cap, so ballast can never
+  outrank the thesis. `isBottleneck` is thesis-scoped: Harmonic Drive is a
+  `component` in the robotics chain and Hesai in the lidar one, and counting
+  either would credit the optical bottleneck with unrelated capital.
+
+  **Leverage sleeve now draws only from thesis bottleneck names** (AXTI, ALAB
+  and similar) rather than from the top of the derived conviction column, which
+  used to surface two names with no chain position at all. Hard 17.5% ceiling
+  unchanged.
+
+  **The deliberate departure.** The original brief demanded a per-factor cap of
+  25-35% at every slider position so the allocator could never recreate the
+  Exposure tab's 88% concentration. This rebuild removes that cap on the thesis
+  and keeps it only on diversifiers — Matthias's call, taken explicitly. The
+  justification is the repo's own calibration case: `JULY_2026_DRAWDOWN` records
+  a fund with this exact thesis that was *right* and was still force-liquidated
+  by roughly 4x leverage. Concentration is what a research book is for; leverage
+  is what kills it. So the tab expresses the concentration, states it in the
+  headline rather than burying it, and caps the leverage instead.
+
+  Invariant sweep extended to assert the complaint directly: across 5 capitals
+  x 101 slider positions x sleeve on/off, no diversifier is ever the largest
+  position (narrowest margin 1.22pp), the thesis core is never below 50% of
+  capital, every sleeve leg is a thesis bottleneck name, and no per-name or
+  diversifier-factor cap is breached. HOOD now runs 4.2% (conservative) to 8.0%
+  (aggressive) against a top thesis position of 7.0% to 11.8%. `npm run build`
+  and `npm run lint` pass; verified in-browser at both slider ends.
+
 ## Two kinds of section
 
 - **Native tracker** (Citrini): folder under `src/sections/<name>/` with a

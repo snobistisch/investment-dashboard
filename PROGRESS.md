@@ -305,6 +305,67 @@ deploys on every push to main).
   (aggressive) against a top thesis position of 7.0% to 11.8%. `npm run build`
   and `npm run lint` pass; verified in-browser at both slider ends.
 
+- **Red-team review worked through (2026-08-09).** External review of `ade41aa`
+  produced 17 findings. Worked in the review's own blocks; three commits.
+
+  **Block 1 — output safety.** (a) The per-name cap was not the real cap: the
+  option sleeve was a separate slice of capital on the same tickers, so AXTI
+  reached 11.8% equity + 9.3% premium = 21.1% against a stated 16%. The sleeve
+  is now sized before the equity fill, its premium counts toward the same cap,
+  and every downstream figure is computed on exposure rather than equity. (b)
+  The footer claimed "unlevered by construction" while tab 2 allocated up to
+  17.5% into OTM calls; it now follows the sleeve, and the sleeve panel states
+  the modal outcome (total premium loss below the strike) beside the "capped
+  at N%" framing. (c) "Conservative" was 100% invested with two thirds behind
+  one driver — every control moved the same way as risk, so the slider had no
+  low end. Added a reserve falling 40% → 0%, the only monotonic risk control
+  in the model.
+
+  **Block 2 — misleading numbers.** The stress illustration ran on the
+  Exposure tab's market-cap shares, on a tab that says it has no position
+  sizes, while the Allocator's real weights were never stressed; it now runs
+  on those weights with the premium written off in full. It also stressed
+  against `facts[0]`, which happened to be the SOX at −28.6%; the Morgan
+  Stanley Momentum TMT index fell 53.5% over the same window and is the right
+  regime for a concentrated momentum book, so the figure was understated by
+  nearly half. At risk 100 with the sleeve on, a Momentum TMT repeat is −48.3%
+  of capital. The 88% headline now leads with the count (26 of 69) and treats
+  the cap-weighted version as secondary with coverage inline — the 22 names
+  without a market cap are not missing at random, they sit in exactly the
+  buckets that would lower the concentration. Vintage spread (29 days, with
+  the July drawdown sitting between the two dates) is surfaced.
+
+  **Block 3 — data model.** `architecturalBet` and `hedge` on `Position`,
+  populated only where a source in this repo states the relationship. The book
+  had been holding Marvell (owns the optical DSP market) and Semtech ("the
+  direct short leg against Marvell's DSP TAM") at 7.1% each — the allocator now
+  takes one side per fork and shows what it dropped. `THESIS_FACTOR` is a
+  declared constant instead of a ticker count, since counting made research
+  effort the thing that assigned two thirds of the capital; the derived
+  majority is kept as a failing check. Tradability is derived from `exchange`
+  and badged, because the largest position at risk 100 is a Shenzhen A-share.
+
+  **Infrastructure.** PROGRESS.md had described a 1,010-allocation invariant
+  sweep that was never committed. It now exists as
+  [scripts/verify-allocation.ts](scripts/verify-allocation.ts), runs via
+  `npm run verify`, and the deploy workflow runs verify and lint before build
+  so a broken invariant blocks the deploy. 113,471 assertions. It earned itself
+  immediately: adding the reserve shrank the invested pool and let the largest
+  diversifier overtake the largest thesis position again, because the
+  diversifier ceiling was a fixed fraction of the per-name cap and only correct
+  for one combination of budgets and name counts. It is now bound to the
+  largest position the thesis actually took.
+
+  **Deliberately not done, and why.** Theme-weighted market cap
+  (`themeRevenueShare`), valuation fields, and `edgeType`/`edgeFalsifier` all
+  need sourced numbers or judgement calls per row — that is a data task and
+  filling it from inference would break the rule the dataset is built on. A
+  daily price series, realised correlations and a benchmark comparison need a
+  data source this static, key-less site does not have; the review is right
+  that it is the single largest upgrade available, and it is a prerequisite
+  for measuring rather than asserting "how correlated is it". Those gaps are
+  now stated on the tab instead of being implied.
+
 ## Two kinds of section
 
 - **Native tracker** (Citrini): folder under `src/sections/<name>/` with a

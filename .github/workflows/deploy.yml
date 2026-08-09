@@ -27,6 +27,11 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # Allocation invariants run before the build, so a sizing rule that no
+      # longer holds blocks the deploy instead of shipping behind copy that
+      # claims it does hold.
+      - run: npm run verify
+      - run: npm run lint
       - run: npm run build
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

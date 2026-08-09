@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Section } from '../../components/Section'
 import { Panel, Bar } from '../../components/Panel'
 import { FACTOR_LABELS } from '../../data/positions'
@@ -64,31 +64,41 @@ function PositionRow({ row, nameCap }: { row: AllocatedPosition; nameCap: number
       </td>
       <td className="py-2 pr-2 align-top">
         <div className="text-right tabular-nums text-term-text">
-          {pct(row.weight)}
+          {pct(row.exposureWeight)}
           {row.nameCapped && (
             <span className="ml-1 text-[10px] text-term-yellow" title="Held at its ceiling">
               ●
             </span>
           )}
         </div>
-        {/* Scaled against the per-name cap, so a full bar is a position at
-            its ceiling — same reading as the bars above. */}
+        {/* Scaled against the per-name cap and drawn on TOTAL exposure, so a
+            full bar is a position at its ceiling however it got there. */}
         <div className="mt-1 ml-auto w-16">
           <Bar
-            share={nameCap ? row.weight / nameCap : 0}
-            className={row.bottleneck ? 'bg-term-green' : 'bg-term-amber'}
+            share={nameCap ? row.exposureWeight / nameCap : 0}
+            className={row.premiumUsd > 0 ? 'bg-term-red' : row.bottleneck ? 'bg-term-green' : 'bg-term-amber'}
           />
         </div>
       </td>
       <td className="py-2 pr-2 text-right align-top tabular-nums text-term-dim">
         {usd(row.dollars)}
+        {row.premiumUsd > 0 && (
+          <span className="mt-0.5 block text-[10px] text-term-red">
+            + {usd(row.premiumUsd)} premium
+          </span>
+        )}
       </td>
       <td className="py-2 align-top text-[11px] leading-relaxed text-term-dim">{row.rationale}</td>
     </tr>
   )
 }
 
-export function AllocatorPanel() {
+export function AllocatorPanel({
+  onLeverageChange,
+}: {
+  /** Lets the app footer state the book's leverage instead of asserting it. */
+  onLeverageChange?: (active: boolean) => void
+}) {
   const [capital, setCapital] = useState(100_000)
   const [risk, setRisk] = useState(35)
   const [sleeveOn, setSleeveOn] = useState(false)
@@ -100,6 +110,12 @@ export function AllocatorPanel() {
   )
   const band = riskBand(risk)
   const sleeve = result.sleeve
+
+  const leverageActive = sleeve !== null && sleeve.premiumUsd > 0
+  useEffect(() => {
+    onLeverageChange?.(leverageActive)
+    return () => onLeverageChange?.(false)
+  }, [leverageActive, onLeverageChange])
   const thesisRows = result.positions.filter((p) => p.sleeveName === 'thesis')
   const diversifierRows = result.positions.filter((p) => p.sleeveName === 'diversifier')
 
@@ -199,9 +215,11 @@ export function AllocatorPanel() {
           <span className="text-term-text">leverage is what it caps</span>.
         </p>
         <p className="mt-3 max-w-4xl text-[11px] leading-relaxed text-term-dim">
-          At this setting: thesis floor {pct(result.thesisFloorShare, 0)}, per-name cap{' '}
-          {pct(result.perNameCapPct)}, conviction tilt {result.convictionTilt.toFixed(2)},
-          diversifiers capped at {pct(result.diversifierFactorCapPct)} per driver. Drawn from{' '}
+          At this setting: <span className="text-term-text">{pct(result.reserveShare)}</span> held
+          in reserve, thesis floor {pct(result.thesisFloorShare, 0)} of the invested part, per-name
+          cap {pct(result.perNameCapPct)} measured on total exposure including any option premium,
+          conviction tilt {result.convictionTilt.toFixed(2)}, diversifiers capped at{' '}
+          {pct(result.diversifierFactorCapPct)} per driver. Drawn from{' '}
           {result.thesisUniverseCount} thesis names and {result.diversifierUniverseCount}{' '}
           diversifiers — the {result.thesisUniverseCount + result.diversifierUniverseCount} of{' '}
           {result.longUniverseCount} long positions that carry a documented edge.
@@ -311,14 +329,42 @@ export function AllocatorPanel() {
             Bars are drawn against capital, not against a cap — there is no per-factor ceiling on
             the thesis, by design. The diversifiers keep one:{' '}
             {pct(result.diversifierFactorCapPct)} of capital per driver, so no secondary bet quietly
-            becomes a second thesis.
-            {result.unallocatedUsd > 0 && (
-              <>
-                {' '}
-                Unallocated: {usd(result.unallocatedUsd)} ({pct(result.unallocatedShare)}).
-              </>
-            )}
+            becomes a second thesis. Every figure here is{' '}
+            <span className="text-term-text">exposure</span>, so an option premium counts toward the
+            ticker it is written on.
           </p>
+        </Panel>
+      </div>
+
+      {/* ------------------------------------------------------------------ */}
+      <div className="mt-4">
+        <Panel title={`Reserve — ${usd(result.reserveUsd)} held back, ${pct(result.reserveShare)} of capital`}>
+          <div className="grid gap-4 lg:grid-cols-3">
+            <div>
+              <p className="text-2xl font-bold text-term-text">{pct(result.reserveShare)}</p>
+              <p className="mt-1 text-xs text-term-dim">
+                not at risk · {pct(result.investedShare)} invested
+              </p>
+              <div className="mt-2 w-full">
+                <Bar share={result.investedShare} className="bg-term-amber" />
+              </div>
+            </div>
+            <div className="lg:col-span-2">
+              <p className="text-xs leading-relaxed text-term-text">
+                This is the only control on the slider that moves in one direction and means one
+                thing. Everything else — thesis share, name count, per-name cap, conviction tilt,
+                sleeve size — pushes the same way as risk rises, so without a reserve
+                &ldquo;Conservative&rdquo; was 100% invested with two thirds of it behind a single
+                driver: a slightly smaller version of the same bet rather than a different one.
+              </p>
+              <p className="mt-3 text-[11px] leading-relaxed text-term-dim">
+                It is a reserve, not a forecast. There is no cash-yield assumption here and no claim
+                that holding it beats being invested — it is the part of the number a drawdown
+                cannot reach. Read the allocation above as{' '}
+                <span className="text-term-text">risk capital</span>, not as your net worth.
+              </p>
+            </div>
+          </div>
         </Panel>
       </div>
 
@@ -339,8 +385,8 @@ export function AllocatorPanel() {
                 <tr className="border-b border-term-line text-[10px] uppercase tracking-[0.15em] text-term-dim">
                   <th className="py-1.5 pr-2 font-bold">Ticker</th>
                   <th className="py-1.5 pr-2 text-right font-bold">Conv.</th>
-                  <th className="py-1.5 pr-2 text-right font-bold">Weight</th>
-                  <th className="py-1.5 pr-2 text-right font-bold">$</th>
+                  <th className="py-1.5 pr-2 text-right font-bold">Exposure</th>
+                  <th className="py-1.5 pr-2 text-right font-bold">$ equity</th>
                   <th className="py-1.5 font-bold">Rationale</th>
                 </tr>
               </thead>
@@ -409,6 +455,26 @@ export function AllocatorPanel() {
                 plausible-looking fake number is worse than none.{' '}
                 <span className="text-term-yellow">Check a live options chain before acting.</span>
               </p>
+              <p className="mt-3 text-xs leading-relaxed text-term-text">
+                <span className="font-bold text-term-red">
+                  &ldquo;Capped at {pct(sleeve.targetShare)}&rdquo; is the best case for the
+                  downside, not the expected one.
+                </span>{' '}
+                An out-of-the-money call expires worthless at any price below its strike, so the
+                modal outcome of this block is not a partial loss but a total one: the full{' '}
+                {usd(sleeve.premiumUsd)} goes to zero unless the underlying rises past the strike,
+                and it needs to clear strike + premium paid before the position makes anything.
+                Compute that breakeven off the live chain — it cannot be derived here. In a repeat
+                of July 2026 the honest planning assumption for this sleeve is −100%, on top of
+                whatever the equity does.
+              </p>
+              <p className="mt-3 text-[11px] leading-relaxed text-term-dim">
+                Worth knowing before switching this on: Bauer, Cosemans and Eichholtz (2009,{' '}
+                <em>Journal of Banking &amp; Finance</em>) find Dutch retail investors lost an
+                average of 1.81% <em>per month</em> on option positions — well above their losses on
+                equities — attributed to poor timing after strong price run-ups and to transaction
+                costs. This book is filled by construction with names that have already run.
+              </p>
               <div className="mt-3 space-y-2">
                 {sleeve.legs.map((leg) => (
                   <div key={leg.position.ticker} className="flex items-baseline justify-between">
@@ -444,11 +510,22 @@ export function AllocatorPanel() {
         <Panel title="What this tab cannot tell you">
           <ul className="space-y-2 text-[11px] leading-relaxed text-term-dim">
             <li>
-              <span className="text-term-yellow">This is a concentrated book by design.</span> Two
-              thirds of capital keys off one driver, and the Exposure tab&rsquo;s whole argument is
-              that those names move together. The July 2026 reference is the calibration case: a
-              correct thesis, concentrated, levered, force-liquidated. This tab keeps the
-              concentration and caps the leverage — a deliberate choice, not a neutral default.
+              <span className="text-term-yellow">This is a concentrated book by design.</span>{' '}
+              {pct(result.thesisActualShare)} of capital keys off one driver, and the Exposure
+              tab&rsquo;s whole argument is that those names move together. The July 2026 reference
+              is the calibration case: a correct thesis, concentrated, levered, force-liquidated.
+              This tab keeps the concentration, caps the leverage and holds a reserve — deliberate
+              choices, not neutral defaults.
+            </li>
+            <li>
+              <span className="text-term-yellow">
+                There is no risk input anywhere in this model.
+              </span>{' '}
+              No prices, no volatility, no correlations, no expected returns. Weights come from a
+              conviction column positions.ts itself calls a placeholder, a chain-layer multiplier
+              set by hand, and the caps above. &ldquo;How correlated is it&rdquo; is not measured
+              here — what is measured is how many names share a stated driver, which is a weaker
+              claim. Treat the output as a structured reading of the research, not as a risk model.
             </li>
             <li>
               <span className="text-term-yellow">Conviction is derived, not stated.</span> Mapped

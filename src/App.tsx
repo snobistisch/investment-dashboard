@@ -42,6 +42,10 @@ function sectionFromHash(): Section {
 
 function App() {
   const [active, setActive] = useState<Section>(sectionFromHash)
+  // The footer used to assert "unlevered by construction" unconditionally,
+  // while the Allocator was busy sizing up to 17.5% of capital into OTM calls.
+  // The claim is true only while that sleeve is off, so it now follows it.
+  const [leverageActive, setLeverageActive] = useState(false)
 
   useEffect(() => {
     const onHashChange = () => setActive(sectionFromHash())
@@ -83,7 +87,7 @@ function App() {
         )}
         {active === 'allocator' && (
           <div className="h-full overflow-y-auto">
-            <AllocatorPanel />
+            <AllocatorPanel onLeverageChange={setLeverageActive} />
           </div>
         )}
         {active === 'citrini' && (
@@ -119,10 +123,18 @@ function App() {
           {/* Leverage state is the single most important risk fact about any
               book — the difference between the July 2026 drawdown being
               survivable and being terminal. Stated explicitly, per Matthias
-              (2026-08-08): this is research, not a live book. */}
+              (2026-08-08): this is research, not a live book. It is derived
+              from the Allocator's sleeve rather than asserted, because a
+              standing claim of "unlevered" next to a tab that sizes options is
+              the one disclosure error that cannot be argued away. */}
           <span>
-            Research only · no positions held · unlevered by construction · public sources ·
-            not investment advice
+            Research only · no positions held ·{' '}
+            {leverageActive ? (
+              <span className="text-term-red">leverage sleeve active in Allocator</span>
+            ) : (
+              'unlevered by construction'
+            )}{' '}
+            · public sources · not investment advice
           </span>
           <span>snobistisch/investment-dashboard</span>
         </div>

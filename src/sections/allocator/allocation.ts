@@ -40,9 +40,23 @@ export function riskBand(risk: number): RiskBand {
   return 'Aggressive'
 }
 
-// Share of capital going to the thesis core. Rises with risk: expressing more
-// conviction means leaning further into the hypothesis, not holding more
-// unrelated names.
+// Reserve — capital deliberately NOT put at risk, falling to zero as risk
+// rises. Without it the slider had no low end: every other control moved the
+// same way (more thesis, fewer names, higher caps, steeper tilt, bigger
+// sleeve), so "Conservative" meant nothing more than a slightly smaller
+// version of the same bet, 100% invested with two thirds in one driver. This
+// is the only genuinely monotonic risk control in the model, and it is the one
+// that decides what a drawdown does to the whole number rather than to the
+// invested part of it.
+//
+// It is a reserve, not a forecast: there is no cash-yield assumption here and
+// no view that holding it beats being invested.
+const RESERVE_CONSERVATIVE = 0.4
+const RESERVE_AGGRESSIVE = 0
+
+// Share of INVESTED capital going to the thesis core. Rises with risk:
+// expressing more conviction means leaning further into the hypothesis, not
+// holding more unrelated names.
 const THESIS_SHARE_CONSERVATIVE = 0.55
 const THESIS_SHARE_AGGRESSIVE = 0.75
 
@@ -74,6 +88,15 @@ const DIVERSIFIER_FACTOR_CAP_AGGRESSIVE = 0.16
 // allowed to be ballast; it is not allowed to outrank the thesis.
 const DIVERSIFIER_NAME_CAP_MULTIPLE = 0.6
 
+// ...and the same ceiling expressed against the thesis itself, which is the
+// version that actually holds. A fixed fraction of the per-name cap is only
+// correct for one particular combination of budgets and name counts: adding
+// the reserve shrank the invested pool and immediately let the largest
+// diversifier overtake the largest thesis position again at low risk. Binding
+// the ceiling to the biggest position the thesis actually took makes the rule
+// survive any retune of the constants above.
+const DIVERSIFIER_MAX_VS_TOP_THESIS = 0.85
+
 // How hard weighting tilts toward high conviction: weight is proportional to
 // conviction^tilt. Conviction is a 1-5 integer, so anything steeper than a
 // square would read precision into the data that is not there.
@@ -103,6 +126,13 @@ export const BOTTLENECK_LAYERS = ['substrate', 'component'] as const
 
 // Leverage sleeve: near-zero at the conservative end, hard ceiling at the
 // aggressive end, so the toggle alone never introduces meaningful leverage.
+//
+// The premium is NOT a separate slice sitting alongside the equity. It is
+// carved out of the same capital and counts toward the same per-name cap,
+// because economically it is exposure to the same ticker. Sizing it beside the
+// equity let AXTI reach 11.8% equity plus 9.3% premium — 21.1% of capital
+// against a stated 16% cap, on the smallest and most volatile name in the
+// book.
 export const SLEEVE_CAP_AGGRESSIVE = 0.175
 export const SLEEVE_MAX_NAMES = 2
 
@@ -111,6 +141,9 @@ function interpolate(risk: number, atZero: number, atHundred: number) {
   return atZero + (atHundred - atZero) * t
 }
 
+export function reserveShare(risk: number) {
+  return interpolate(risk, RESERVE_CONSERVATIVE, RESERVE_AGGRESSIVE)
+}
 export function thesisShare(risk: number) {
   return interpolate(risk, THESIS_SHARE_CONSERVATIVE, THESIS_SHARE_AGGRESSIVE)
 }
@@ -183,8 +216,14 @@ export function isBottleneck(p: Position) {
 
 export interface AllocatedPosition {
   position: Position
+  /** Equity weight as a share of total capital. */
   weight: number
+  /** Equity dollars. */
   dollars: number
+  /** Option premium on this same ticker, 0 when the sleeve is off. */
+  premiumUsd: number
+  /** (equity + premium) / capital — what the per-name cap is enforced on. */
+  exposureWeight: number
   rationale: string
   sleeveName: 'thesis' | 'diversifier'
   bottleneck: boolean
@@ -231,6 +270,12 @@ export interface AllocationResult {
   diversifierFactorCapPct: number
   convictionTilt: number
   positions: AllocatedPosition[]
+  /** Capital deliberately held back, as a share of total capital. */
+  reserveShare: number
+  reserveUsd: number
+  /** Share of total capital actually put at risk (1 - reserve, less any
+   *  rounding a cap prevented from being deployed). */
+  investedShare: number
   unallocatedUsd: number
   unallocatedShare: number
   factorTotals: FactorTotal[]
@@ -296,9 +341,14 @@ export function buildAllocation(
 ): AllocationResult {
   const tilt = convictionTilt(risk)
   const nameCap = perNameCap(risk)
+  // Caps are measured against TOTAL capital, not against the invested part:
+  // the question a cap answers is what one name can do to your wealth, and the
+  // reserve is part of that wealth.
   const nameCapUsd = nameCap * capitalUsd
   const factorCap = diversifierFactorCap(risk)
   const targetThesisShare = thesisShare(risk)
+  const reserve = reserveShare(risk)
+  const investedUsd = capitalUsd * (1 - reserve)
 
   // --- Thesis core -------------------------------------------------------
   // Ranked on conviction AND chain position, so the bottleneck outranks the
@@ -344,11 +394,66 @@ export function buildAllocation(
   const thesisRows = rows.filter((r) => r.sleeveName === 'thesis')
   const diversifierRows = rows.filter((r) => r.sleeveName === 'diversifier')
 
+  // --- Leverage sleeve, sized BEFORE the equity fill ---------------------
+  // Order matters. The premium has to be known before equity is placed,
+  // because it competes for the same per-name cap and comes out of the same
+  // invested capital. Legs are the bottleneck names already selected into the
+  // core — substrate and component in the thesis chain, never a diversifier.
+  const sleeveCandidates = thesisRows.filter((r) => isBottleneck(r.position))
+  const sleeveTargetShare = leverageSleeveOn ? sleevePct(risk) : 0
+  const premiumByTicker = new Map<string, number>()
+  let sleeve: SleeveResult | null = null
+
+  if (sleeveTargetShare > 0 && sleeveCandidates.length > 0) {
+    const legRows = [...sleeveCandidates]
+      .sort(
+        (a, b) =>
+          chainWeight(b.position) * b.position.conviction -
+            chainWeight(a.position) * a.position.conviction ||
+          a.position.ticker.localeCompare(b.position.ticker),
+      )
+      .slice(0, Math.min(SLEEVE_MAX_NAMES, sleeveCandidates.length))
+    const legWeightTotal = legRows.reduce(
+      (t, r) => t + chainWeight(r.position) * r.position.conviction,
+      0,
+    )
+    // A leg is capped at the per-name cap on its own: premium alone must never
+    // exceed what the name is allowed to be worth, which would leave a
+    // negative equity budget.
+    const legs: SleeveLeg[] = legRows.map((r) => {
+      const rawShare = legWeightTotal
+        ? (chainWeight(r.position) * r.position.conviction) / legWeightTotal
+        : 0
+      const premiumUsd = Math.min(rawShare * sleeveTargetShare * capitalUsd, nameCapUsd)
+      premiumByTicker.set(r.position.ticker, premiumUsd)
+      return {
+        position: r.position,
+        premiumUsd,
+        premiumShare: capitalUsd ? premiumUsd / capitalUsd : 0,
+      }
+    })
+    const premiumUsd = legs.reduce((t, l) => t + l.premiumUsd, 0)
+    sleeve = {
+      targetShare: capitalUsd ? premiumUsd / capitalUsd : 0,
+      premiumUsd,
+      legs,
+    }
+  }
+
+  const premiumOf = (r: Row) => premiumByTicker.get(r.position.ticker) ?? 0
+  const totalPremiumUsd = sleeve?.premiumUsd ?? 0
+
   // Fill the thesis core: one factor throughout, so the per-name cap is the
-  // only constraint that applies.
+  // only constraint that applies — less whatever premium already sits on that
+  // same ticker. Every sleeve leg is a thesis name, so the whole premium comes
+  // out of the thesis budget and the core's share stays honest.
+  const thesisBudget = Math.max(targetThesisShare * investedUsd - totalPremiumUsd, 0)
   const thesisFill = waterFill(
-    thesisRows.map((r) => ({ weight: r.weight, cap: nameCapUsd })),
-    targetThesisShare * capitalUsd,
+    thesisRows.map((r) => ({
+      weight: r.weight,
+      cap: Math.max(nameCapUsd - premiumOf(r), 0),
+    })),
+    thesisBudget,
   )
   thesisRows.forEach((r, i) => {
     r.dollars = thesisFill[i]
@@ -358,8 +463,14 @@ export function buildAllocation(
   // inside each factor. Filling all diversifiers in one pass would let the
   // highest-conviction member of a crowded bucket absorb that bucket's cap and
   // leave its neighbours at zero.
-  const divNameCapUsd = DIVERSIFIER_NAME_CAP_MULTIPLE * nameCapUsd
-  const divBudget = (1 - targetThesisShare) * capitalUsd
+  // The thesis is already filled, so its largest position is known and the
+  // diversifier ceiling can be tied to it rather than guessed at.
+  const topThesisUsd = thesisRows.reduce((m, r) => Math.max(m, r.dollars + premiumOf(r)), 0)
+  const divNameCapUsd = Math.min(
+    DIVERSIFIER_NAME_CAP_MULTIPLE * nameCapUsd,
+    topThesisUsd > 0 ? DIVERSIFIER_MAX_VS_TOP_THESIS * topThesisUsd : Infinity,
+  )
+  const divBudget = (1 - targetThesisShare) * investedUsd
   const divFactors = [...new Set(diversifierRows.map((r) => r.position.factors[0]))]
   const divByFactor = new Map<Factor, Row[]>(
     divFactors.map((f) => [f, diversifierRows.filter((r) => r.position.factors[0] === f)]),
@@ -390,13 +501,17 @@ export function buildAllocation(
   // rather than a target: the diversifier ceiling usually stops that sleeve
   // spending its whole budget, and the remainder belongs to the hypothesis
   // before it belongs to ballast.
-  const leftover = capitalUsd - rows.reduce((t, r) => t + r.dollars, 0)
+  const equityBudget = investedUsd - totalPremiumUsd
+  const leftover = equityBudget - rows.reduce((t, r) => t + r.dollars, 0)
   if (leftover > EPSILON) {
     const order = [...thesisRows, ...diversifierRows]
     const topUp = waterFill(
       order.map((r) => ({
         weight: r.weight,
-        cap: Math.max((r.sleeveName === 'thesis' ? nameCapUsd : divNameCapUsd) - r.dollars, 0),
+        cap: Math.max(
+          (r.sleeveName === 'thesis' ? nameCapUsd - premiumOf(r) : divNameCapUsd) - r.dollars,
+          0,
+        ),
       })),
       leftover,
     )
@@ -405,20 +520,27 @@ export function buildAllocation(
     })
   }
 
-  const totalAllocated = rows.reduce((t, r) => t + r.dollars, 0)
+  const totalEquity = rows.reduce((t, r) => t + r.dollars, 0)
+  const totalAllocated = totalEquity + totalPremiumUsd
   const shareOf = (d: number) => (capitalUsd ? d / capitalUsd : 0)
+
+  // Exposure, not equity, is what every downstream figure is built on: a
+  // premium on AXTI is exposure to AXTI whichever budget line it came from.
+  const exposureOf = (r: Row) => r.dollars + premiumOf(r)
 
   const positions: AllocatedPosition[] = rows
     .map((r) => ({
       position: r.position,
       dollars: r.dollars,
+      premiumUsd: premiumOf(r),
       weight: shareOf(r.dollars),
+      exposureWeight: shareOf(exposureOf(r)),
       // Guaranteed present: sizeableUniverse filters on edge !== undefined.
       rationale: r.position.edge ?? '',
       sleeveName: r.sleeveName,
       bottleneck: isBottleneck(r.position),
       nameCapped:
-        r.dollars >=
+        exposureOf(r) >=
           (r.sleeveName === 'thesis' ? nameCapUsd : divNameCapUsd) - EPSILON && r.dollars > 0,
     }))
     .sort(
@@ -426,14 +548,14 @@ export function buildAllocation(
         // Thesis first, then by size — the table should read as a thesis with
         // diversifiers attached, not as a flat ranking.
         Number(b.sleeveName === 'thesis') - Number(a.sleeveName === 'thesis') ||
-        b.dollars - a.dollars ||
+        b.exposureWeight - a.exposureWeight ||
         a.position.ticker.localeCompare(b.position.ticker),
     )
 
   const factorDollars = new Map<Factor, number>()
   for (const r of rows) {
     const f = r.position.factors[0]
-    factorDollars.set(f, (factorDollars.get(f) ?? 0) + r.dollars)
+    factorDollars.set(f, (factorDollars.get(f) ?? 0) + exposureOf(r))
   }
   const factorTotals: FactorTotal[] = [...factorDollars.entries()]
     .map(([factor, dollars]) => ({
@@ -452,7 +574,7 @@ export function buildAllocation(
   const chainDollars = new Map<string, number>()
   for (const r of thesisRows) {
     const layer = r.position.chainLayer ?? 'unclassified'
-    chainDollars.set(layer, (chainDollars.get(layer) ?? 0) + r.dollars)
+    chainDollars.set(layer, (chainDollars.get(layer) ?? 0) + exposureOf(r))
   }
   const chainTotals: ChainTotal[] = [...chainDollars.entries()]
     .map(([layer, dollars]) => ({
@@ -463,7 +585,7 @@ export function buildAllocation(
     }))
     .sort((a, b) => b.dollars - a.dollars || a.layer.localeCompare(b.layer))
 
-  const diversifierUsd = diversifierRows.reduce((t, r) => t + r.dollars, 0)
+  const diversifierUsd = diversifierRows.reduce((t, r) => t + exposureOf(r), 0)
   if (diversifierUsd > 0) {
     chainTotals.push({
       layer: 'outside the thesis chain',
@@ -475,51 +597,27 @@ export function buildAllocation(
 
   const bottleneckUsd = rows
     .filter((r) => isBottleneck(r.position))
-    .reduce((t, r) => t + r.dollars, 0)
+    .reduce((t, r) => t + exposureOf(r), 0)
 
-  // --- Leverage sleeve ---------------------------------------------------
-  // Drawn only from the bottleneck names already held in the core. A
-  // leveraged expression belongs on the sharpest version of the thesis, not
-  // on whichever name the derived conviction column happens to rank highest —
-  // that used to surface two names with no chain position at all.
-  let sleeve: SleeveResult | null = null
-  const sleeveCandidates = positions.filter((p) => p.bottleneck && p.dollars > 0)
-  if (leverageSleeveOn && sleeveCandidates.length > 0) {
-    const targetShare = sleevePct(risk)
-    const premiumUsd = targetShare * capitalUsd
-    const legNames = [...sleeveCandidates]
-      .sort(
-        (a, b) =>
-          chainWeight(b.position) * b.position.conviction -
-            chainWeight(a.position) * a.position.conviction ||
-          a.position.ticker.localeCompare(b.position.ticker),
-      )
-      .slice(0, Math.min(SLEEVE_MAX_NAMES, sleeveCandidates.length))
-    const legWeightTotal = legNames.reduce(
-      (t, p) => t + chainWeight(p.position) * p.position.conviction,
-      0,
-    )
-    const legs: SleeveLeg[] = legNames.map((p) => {
-      const premiumShare = legWeightTotal
-        ? (chainWeight(p.position) * p.position.conviction) / legWeightTotal
-        : 0
-      return { position: p.position, premiumUsd: premiumShare * premiumUsd, premiumShare }
-    })
-    sleeve = { targetShare, premiumUsd, legs }
-  }
+  const reserveUsd = Math.max(capitalUsd - totalAllocated, 0)
 
   return {
     riskBand: riskBand(risk),
     thesisFactor: THESIS_FACTOR,
     thesisFloorShare: targetThesisShare,
-    thesisActualShare: shareOf(thesisRows.reduce((t, r) => t + r.dollars, 0)),
+    thesisActualShare: shareOf(thesisRows.reduce((t, r) => t + exposureOf(r), 0)),
     bottleneckShare: shareOf(bottleneckUsd),
     perNameCapPct: nameCap,
     diversifierFactorCapPct: factorCap,
     convictionTilt: tilt,
     positions,
-    unallocatedUsd: Math.max(capitalUsd - totalAllocated, 0),
-    unallocatedShare: shareOf(Math.max(capitalUsd - totalAllocated, 0)),
+    reserveShare: shareOf(reserveUsd),
+    reserveUsd,
+    investedShare: shareOf(totalAllocated),
+    // Kept for compatibility with the coverage copy: on the current universe
+    // the caps never bind hard enough to leave anything beyond the reserve.
+    unallocatedUsd: reserveUsd,
+    unallocatedShare: shareOf(reserveUsd),
     factorTotals,
     chainTotals,
     thesisUniverseCount: thesisUniverse.length,

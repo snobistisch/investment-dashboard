@@ -1,5 +1,6 @@
 import type { Factor, Position } from '../../data/positions'
 import { positions, THEMATIC_SECTIONS } from '../../data/positions'
+import type { EffectivePosition } from '../../data/market-data'
 
 // Every number on the exposure tab is computed here from positions.ts.
 // Nothing is hardcoded — if a position changes, the headline changes with it.
@@ -32,12 +33,15 @@ export interface FactorRow {
   capShare: number
   /** Positions in this bucket that carry no market cap at all. */
   missingCap: number
+  /** How many of this bucket's caps are live rather than transcribed, so a
+   *  row can state its own provenance instead of deferring to the banner. */
+  liveCap: number
 }
 
 /** Buckets by PRIMARY factor — factors[0]. A name's secondary factors are
  *  real but do not decide what its P&L keys off first. */
-export function factorBreakdown(set: Position[]): FactorRow[] {
-  const byFactor = new Map<Factor, Position[]>()
+export function factorBreakdown(set: EffectivePosition[]): FactorRow[] {
+  const byFactor = new Map<Factor, EffectivePosition[]>()
   for (const p of set) {
     const primary = p.factors[0]
     const bucket = byFactor.get(primary)
@@ -56,6 +60,7 @@ export function factorBreakdown(set: Position[]): FactorRow[] {
       capUsd: sumCap(ps),
       capShare: totalCap ? sumCap(ps) / totalCap : 0,
       missingCap: ps.filter((p) => p.marketCapUsd === undefined).length,
+      liveCap: ps.filter((p) => p.capSource === 'live').length,
     }))
     .sort((a, b) => b.capShare - a.capShare || b.count - a.count)
 }
@@ -70,6 +75,23 @@ export function capCoverage(set: Position[]) {
     withCap: withCap.length,
     total: set.length,
     missing: set.length - withCap.length,
+    capUsd: sumCap(set),
+  }
+}
+
+/** The same coverage split by where each number came from. Takes the merged
+ *  book; on the transcribed-only fallback every covered row reads as
+ *  'transcribed' and the figure equals capCoverage above. */
+export function capCoverageByProvenance(set: EffectivePosition[]) {
+  const live = set.filter((p) => p.capSource === 'live')
+  const transcribed = set.filter((p) => p.capSource === 'transcribed')
+  return {
+    total: set.length,
+    live: live.length,
+    transcribed: transcribed.length,
+    absent: set.filter((p) => p.capSource === 'absent').length,
+    liveCapUsd: sumCap(live),
+    transcribedCapUsd: sumCap(transcribed),
     capUsd: sumCap(set),
   }
 }
@@ -93,9 +115,10 @@ export interface OverlapRow {
   marketCapUsd?: number
 }
 
-/** Every ticker appearing in two or more sections. */
-export function crossSectionOverlap(): OverlapRow[] {
-  return positions
+/** Every ticker appearing in two or more sections. Takes the set so it can run
+ *  over merged positions; defaults to the transcribed book. */
+export function crossSectionOverlap(set: Position[] = positions): OverlapRow[] {
+  return set
     .filter((p) => p.sections.length > 1)
     .sort((a, b) => b.sections.length - a.sections.length || a.ticker.localeCompare(b.ticker))
     .map((p) => ({
@@ -153,12 +176,17 @@ export function drawdownIllustration(concentrationShare: number, indexMove: numb
 
 /** How far apart the market-data vintages in a set are, in days.
  *
- *  This matters more than it looks. The photonics rows are the 7 Aug 2026
- *  close; every other section is 7-9 July. The July 2026 drawdown sits
- *  BETWEEN those two dates, so any figure that weighs a thesis name against a
- *  diversifier is comparing a post-correction price with a pre-correction one,
- *  and the diversifiers' own `edge` texts describe a world that no longer
- *  existed when the photonics rows were written. */
+ *  This matters more than it looks. On the transcribed book the photonics rows
+ *  are the 7 Aug 2026 close and every other section is 7-9 July. The July 2026
+ *  drawdown sits BETWEEN those two dates, so any figure weighing a thesis name
+ *  against a diversifier compared a post-correction price with a pre-correction
+ *  one, and the diversifiers' own `edge` texts described a world that no longer
+ *  existed when the photonics rows were written.
+ *
+ *  Run over merged positions this reads effective dates, so a live snapshot
+ *  collapses the spread to hours and the warning below clears on its own
+ *  merits. Rows that stayed unmapped keep their transcribed date and keep
+ *  widening the spread, which is the honest result: they really are that old. */
 export function vintageSpread(set: Position[]) {
   const times = set.map((p) => Date.parse(p.asOf)).filter((t) => !Number.isNaN(t))
   if (times.length === 0) return { days: 0, oldest: undefined, newest: undefined }

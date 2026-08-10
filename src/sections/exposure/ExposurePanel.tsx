@@ -1,18 +1,26 @@
+import { useMemo } from 'react'
 import { Section } from '../../components/Section'
 import { Panel, Bar } from '../../components/Panel'
+import { DataProvenance } from '../../components/DataProvenance'
 import { FACTOR_LABELS, JULY_2026_DRAWDOWN } from '../../data/positions'
 import type { Factor, Position } from '../../data/positions'
 import {
-  activeBook,
+  capRevisions,
+  coverageDelta,
+  mergePositions,
+  useMarketSnapshot,
+} from '../../data/market-data'
+import {
   capCoverage,
+  capCoverageByProvenance,
   chainBreakdown,
-  citriniOnly,
   crossSectionOverlap,
   drawdownIllustration,
   factorBreakdown,
   hiddenFactorOverlap,
+  isContext,
+  isThematic,
   oldestAsOfByFactor,
-  thematicPositions,
   topByCap,
 } from './analysis'
 
@@ -39,10 +47,32 @@ const factorColor: Record<Factor, string> = {
 }
 
 export function ExposurePanel() {
+  const { snapshot, source, loading } = useMarketSnapshot()
+
+  // The merged book. Every figure below runs over these rows, so a live
+  // snapshot changes the numbers and the absence of one leaves them exactly as
+  // they were when positions.ts was the only source.
+  const merged = useMemo(() => mergePositions(snapshot), [snapshot])
+  const thematicPositions = useMemo(() => merged.filter(isThematic), [merged])
+  const activeBook = useMemo(() => thematicPositions.filter((p) => !isContext(p)), [thematicPositions])
+  const citriniOnly = useMemo(() => merged.filter((p) => !isThematic(p)), [merged])
+  const revisions = useMemo(() => capRevisions(activeBook), [activeBook])
+  const provenance = capCoverageByProvenance(activeBook)
+  const coverage = coverageDelta(activeBook)
+
   const bookRows = factorBreakdown(activeBook)
   const allRows = factorBreakdown(thematicPositions)
+
+  // The same breakdown over transcribed caps only, so the headline can state
+  // what the extra coverage did to the number instead of asserting it barely
+  // moved. This is the before half of the before/after.
+  const beforeRows = useMemo(
+    () => factorBreakdown(activeBook.map((p) => ({ ...p, marketCapUsd: p.transcribedCapUsd }))),
+    [activeBook],
+  )
   const top = bookRows[0]
   const topAll = allRows.find((r) => r.factor === top.factor) ?? allRows[0]
+  const beforeTop = beforeRows.find((r) => r.factor === top.factor)
 
   const bookCoverage = capCoverage(activeBook)
   const allCoverage = capCoverage(thematicPositions)
@@ -50,7 +80,7 @@ export function ExposurePanel() {
   const topFactorNames = activeBook.filter((p) => p.factors[0] === top.factor)
   const heaviest = topByCap(topFactorNames, 3)
 
-  const overlap = crossSectionOverlap()
+  const overlap = crossSectionOverlap(merged)
   const hidden = hiddenFactorOverlap(activeBook)
   // Chain layer is computed over the FULL thematic set, not the active book:
   // every demand-setter (NVDA, the hyperscalers, TSLA) is a context name, so
@@ -69,6 +99,8 @@ export function ExposurePanel() {
       title="Exposure"
       description="What the seven tabs actually add up to. Every figure on this tab is computed from src/data/positions.ts, which is a transcription of the other sections — no number here was re-derived or refreshed. Read the coverage panel at the bottom before trusting any weighted figure."
     >
+      <DataProvenance snapshot={snapshot} source={source} loading={loading} book={activeBook} />
+
       {/* ------------------------------------------------------------------ */}
       {/* The headline. This sentence is the point of the tab.               */}
       {/* ------------------------------------------------------------------ */}
@@ -86,12 +118,31 @@ export function ExposurePanel() {
         <p className="mt-3 max-w-4xl text-xs leading-relaxed text-term-dim">
           <span className="text-term-yellow">The count is the robust number; read it first.</span>{' '}
           The cap-weighted version of the same fact — {pct(top.capShare)} of{' '}
-          {cap(bookCoverage.capUsd)} — is far more fragile than it looks, and the headline used to
-          lead with it. It covers only {bookCoverage.withCap} of {bookCoverage.total} names, and the{' '}
-          {bookCoverage.missing} without a market cap are not missing at random: robotics carries no
-          cap column at all and biology states two, which are precisely the buckets that would pull
-          the concentration down. Within the bucket itself {heaviest[0]?.position.ticker} alone is{' '}
+          {cap(bookCoverage.capUsd)} — is more fragile than it looks, and the headline used to lead
+          with it.{' '}
+          {coverage.live > 0 ? (
+            <>
+              It now covers {bookCoverage.withCap} of {bookCoverage.total} names, against{' '}
+              {coverage.before} before live data was merged. Those gaps were not random: robotics
+              carried no market-cap column at all and biology stated two, which were precisely the
+              buckets that would have pulled the concentration down. They did — this figure was{' '}
+              <span className="text-term-text">{pct(beforeTop?.capShare ?? 0)}</span> on transcribed
+              caps alone and is <span className="text-term-text">{pct(top.capShare)}</span> with the
+              missing {coverage.after - coverage.before} names priced — an objection worth about{' '}
+              {(Math.abs((beforeTop?.capShare ?? 0) - top.capShare) * 100).toFixed(0)} points, now
+              measured rather than argued.
+            </>
+          ) : (
+            <>
+              It covers only {bookCoverage.withCap} of {bookCoverage.total} names, and the{' '}
+              {bookCoverage.missing} without a market cap are not missing at random: robotics
+              carries no cap column at all and biology states two, which are precisely the buckets
+              that would pull the concentration down.
+            </>
+          )}{' '}
+          Within the bucket itself {heaviest[0]?.position.ticker} alone is{' '}
           {pct(heaviest[0]?.share ?? 0)}, so one ticker drives roughly half the entire figure.
+          Market cap is still not position size.
         </p>
         <p className="mt-4 max-w-4xl text-xs leading-relaxed text-term-dim">
           That is {pct(top.countShare)} of the book by count and {pct(top.capShare)} by market cap.
@@ -149,6 +200,14 @@ export function ExposurePanel() {
                         </span>
                       ) : (
                         <span>{row.count}/{row.count} priced</span>
+                      )}
+                      {row.liveCap > 0 && (
+                        <span className="text-term-cyan">
+                          {' · '}
+                          {row.liveCap} live
+                          {row.count - row.missingCap - row.liveCap > 0 &&
+                            `, ${row.count - row.missingCap - row.liveCap} transcribed`}
+                        </span>
                       )}
                       {oldestAsOf.get(row.factor) && ` · from ${oldestAsOf.get(row.factor)}`}
                     </span>
@@ -363,15 +422,84 @@ export function ExposurePanel() {
       </div>
 
       {/* ------------------------------------------------------------------ */}
+      {revisions.length > 0 && (
+        <div className="mt-4">
+          <Panel title={`Revisions — ${revisions.length} transcribed caps the live snapshot disagrees with by 25% or more`}>
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="border-b border-term-line text-[10px] uppercase tracking-[0.15em] text-term-dim">
+                  <th className="py-1.5 pr-2 font-bold">Ticker</th>
+                  <th className="py-1.5 pr-2 font-bold">Sections</th>
+                  <th className="py-1.5 pr-2 text-right font-bold">Transcribed</th>
+                  <th className="py-1.5 pr-2 text-right font-bold">Live</th>
+                  <th className="py-1.5 text-right font-bold">Delta</th>
+                </tr>
+              </thead>
+              <tbody>
+                {revisions.map((r) => (
+                  <tr key={r.position.ticker} className="border-b border-term-line/60 last:border-b-0">
+                    <td className="py-2 pr-2">
+                      <span className="text-term-text">{r.position.ticker}</span>
+                      <span className="ml-2 text-term-dim">{r.position.name}</span>
+                    </td>
+                    <td className="py-2 pr-2 text-term-dim">{r.position.sections.join(', ')}</td>
+                    <td className="py-2 pr-2 text-right tabular-nums text-term-dim">
+                      {cap(r.transcribed)}
+                    </td>
+                    <td className="py-2 pr-2 text-right tabular-nums text-term-text">
+                      {cap(r.live)}
+                    </td>
+                    <td
+                      className={`py-2 text-right font-bold tabular-nums ${
+                        r.delta > 0 ? 'text-term-green' : 'text-term-red'
+                      }`}
+                    >
+                      {r.delta > 0 ? '+' : ''}
+                      {(r.delta * 100).toFixed(0)}%
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className="mt-3 max-w-4xl text-[11px] leading-relaxed text-term-dim">
+              Neither column is corrected here. positions.ts still says what it always said, and the
+              figures above use the live number — this table exists so the gap between them is
+              visible instead of silently resolved. The photonics rows, transcribed from the 7 Aug
+              close, agree with live data to within about a percent and do not appear.{' '}
+              <span className="text-term-yellow">
+                The gaps cluster in the sections whose own headers say the figures were supplied
+                rather than verified
+              </span>{' '}
+              — which is what those headers were warning about.
+            </p>
+          </Panel>
+        </div>
+      )}
+
+      {/* ------------------------------------------------------------------ */}
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
         <Panel title="Coverage — what this tab cannot tell you">
           <ul className="space-y-2 text-[11px] leading-relaxed text-term-dim">
             <li>
-              <span className="text-term-yellow">Market-cap coverage is partial.</span>{' '}
+              <span className={provenance.absent > 0 ? 'text-term-yellow' : 'text-term-cyan'}>
+                Market-cap coverage is {provenance.absent === 0 ? 'complete' : 'partial'}.
+              </span>{' '}
               {bookCoverage.withCap} of {bookCoverage.total} researched positions carry a market
-              cap; {bookCoverage.missing} do not. The robotics section has no market-cap column at
-              all, and biology states only two. Every &ldquo;% by market cap&rdquo; above covers
-              only the {bookCoverage.withCap} names that have one.
+              cap; {bookCoverage.missing} do not.{' '}
+              {provenance.live > 0 ? (
+                <>
+                  Of those, <span className="text-term-cyan">{provenance.live} are live</span> and{' '}
+                  {provenance.transcribed} are the transcribed figure. Before live data was wired
+                  in, the robotics section had no market-cap column at all and biology stated only
+                  two, so every &ldquo;% by market cap&rdquo; covered a third of the book.
+                </>
+              ) : (
+                <>
+                  The robotics section has no market-cap column at all, and biology states only two.
+                  Every &ldquo;% by market cap&rdquo; above covers only the {bookCoverage.withCap}{' '}
+                  names that have one.
+                </>
+              )}
             </li>
             <li>
               <span className="text-term-yellow">There are no position sizes.</span> Market cap is
@@ -379,10 +507,20 @@ export function ExposurePanel() {
               portfolio.
             </li>
             <li>
-              <span className="text-term-yellow">Prices are not synchronised.</span> Photonics is
-              the 7 Aug 2026 close; crypto, quantum, agentic and robotics are 9 July 2026; biology
-              is 7 July 2026. Comparing caps across sections compares different days. Automatic
-              staleness banners are Phase 3.
+              {source === 'none' ? (
+                <>
+                  <span className="text-term-yellow">Prices are not synchronised.</span> Photonics
+                  is the 7 Aug 2026 close; crypto, quantum, agentic and robotics are 9 July 2026;
+                  biology is 7 July 2026. Comparing caps across sections compares different days.
+                </>
+              ) : (
+                <>
+                  <span className="text-term-cyan">Prices are synchronised where they are live.</span>{' '}
+                  Every row the snapshot priced carries the same close. Rows it could not price keep
+                  their transcribed date and still compare different days — the banner at the top
+                  names them.
+                </>
+              )}
             </li>
             <li>
               <span className="text-term-yellow">Conviction is derived, not stated.</span> Matthias

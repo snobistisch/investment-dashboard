@@ -1,5 +1,6 @@
 import type { Factor, Position } from '../../data/positions'
 import { JULY_2026_DRAWDOWN } from '../../data/positions'
+import type { MarketSnapshot, MarketStats } from '../../data/market-data'
 import { activeBook, vintageSpread } from '../exposure/analysis'
 
 // Sizing rules, not a vibe. Every constant here is named so it can be
@@ -305,13 +306,32 @@ export interface SleeveResult {
 
 export interface StressScenario {
   label: string
-  indexMovePct: number
-  /** Equity loss in dollars: thesis exposure moves with the index. */
+  /** How the move was derived.
+   *
+   *  'realised'     each held name moves by its OWN measured drawdown or
+   *                 volatility, from the price history in the live snapshot.
+   *  'index-anchor' one index figure applied to the whole thesis block. This
+   *                 is what every scenario used to be: a multiplication that
+   *                 assumed the book moves one-for-one with a named index. It
+   *                 is kept, and labelled, because JULY_2026_DRAWDOWN is a
+   *                 stated historical fact worth showing beside the measured
+   *                 numbers — not because it is the better estimate. */
+  basis: 'realised' | 'index-anchor'
+  /** Only meaningful for index anchors. */
+  indexMovePct?: number
+  /** Equity loss in dollars. */
   equityLossUsd: number
   /** Premium written off entirely — an OTM call below its strike is worth 0. */
   premiumLossUsd: number
   totalLossUsd: number
   totalLossShare: number
+  /** Realised scenarios only: how many sized names had usable price history,
+   *  so a scenario resting on a third of the book cannot read as if it rested
+   *  on all of it. */
+  namesCovered?: number
+  namesTotal?: number
+  /** One line on what the scenario assumes, shown next to the number. */
+  note?: string
 }
 
 export interface AllocationResult {
@@ -405,6 +425,11 @@ export function buildAllocation(
   capitalUsd: number,
   risk: number,
   leverageSleeveOn: boolean,
+  /** Live snapshot, when one loaded. Sizing does not read it — position sizes
+   *  come from conviction and chain position, not market cap — so every
+   *  allocation invariant holds identically with or without it. It supplies
+   *  the realised stress scenarios and the effective vintage dates. */
+  market?: MarketSnapshot | null,
 ): AllocationResult {
   const tilt = convictionTilt(risk)
   const nameCap = perNameCap(risk)
@@ -711,7 +736,8 @@ export function buildAllocation(
   // Still a multiplication and not a model: it assumes the thesis block moves
   // one-for-one with the named index and that nothing else moves at all.
   const thesisExposureUsd = thesisRows.reduce((t, r) => t + exposureOf(r), 0)
-  const stress: StressScenario[] = JULY_2026_DRAWDOWN.facts
+
+  const anchorScenarios: StressScenario[] = JULY_2026_DRAWDOWN.facts
     .filter((f) => f.index === true && f.value < 0)
     .map((f) => {
       const equityLossUsd = ((thesisExposureUsd - totalPremiumUsd) * f.value) / 100
@@ -719,16 +745,85 @@ export function buildAllocation(
       const totalLossUsd = equityLossUsd + premiumLossUsd
       return {
         label: f.label,
+        basis: 'index-anchor' as const,
         indexMovePct: f.value,
         equityLossUsd,
         premiumLossUsd,
         totalLossUsd,
         totalLossShare: shareOf(totalLossUsd),
+        note: 'Assumes the thesis block moves one-for-one with this index and nothing else moves.',
       }
     })
-    .sort((a, b) => a.totalLossUsd - b.totalLossUsd)
 
-  const vintage = vintageSpread(rows.map((r) => r.position))
+  // Each held name moved by its own measured amount. Equity is summed per
+  // position rather than applying one figure to the block, so a book of
+  // 90%-vol Chinese optics and a book of megacaps no longer stress alike.
+  // Names without price history are excluded from the loss AND counted in
+  // namesCovered, so a scenario cannot quietly rest on half the book.
+  function realised(
+    label: string,
+    movePct: (s: MarketStats) => number | undefined,
+    note: string,
+  ): StressScenario | null {
+    let equityLossUsd = 0
+    let covered = 0
+    for (const r of rows) {
+      const stats = market?.quotes[r.position.ticker]?.stats
+      const move = stats ? movePct(stats) : undefined
+      if (move === undefined) continue
+      covered++
+      // Equity only: premium is written off separately below.
+      equityLossUsd += (r.dollars * move) / 100
+    }
+    if (covered === 0) return null
+    const premiumLossUsd = -totalPremiumUsd
+    const totalLossUsd = equityLossUsd + premiumLossUsd
+    return {
+      label,
+      basis: 'realised',
+      equityLossUsd,
+      premiumLossUsd,
+      totalLossUsd,
+      totalLossShare: shareOf(totalLossUsd),
+      namesCovered: covered,
+      namesTotal: rows.length,
+      note,
+    }
+  }
+
+  const realisedScenarios = [
+    realised(
+      'July 2026, each name at its own realised drawdown',
+      (s) => s.julyDrawdownPct,
+      'Peak-to-trough actually recorded per name between 22 Jun and 29 Jul 2026.',
+    ),
+    realised(
+      'Worst 12-month drawdown, per name',
+      (s) => s.maxDrawdownPct,
+      'Each name at its own worst peak-to-trough of the last year. Assumes those troughs coincide, which they did not.',
+    ),
+    realised(
+      'Two-sigma annual move, per name',
+      // Vol is measured from log returns, so the 2-sigma move is taken in log
+      // space: exp(-2s) - 1. A normal approximation would hand back losses
+      // beyond -100% on the 90%-vol names, which cannot happen to a long.
+      (s) => (Math.exp((-2 * s.realisedVolPct) / 100) - 1) * 100,
+      'Each name two standard deviations down on its own realised volatility, assuming the moves coincide.',
+    ),
+  ].filter((s): s is StressScenario => s !== null)
+
+  const stress: StressScenario[] = [...realisedScenarios, ...anchorScenarios].sort(
+    (a, b) => a.totalLossUsd - b.totalLossUsd,
+  )
+
+  // Effective dates: a row the snapshot priced carries the snapshot's date,
+  // one it did not keeps its transcribed date and goes on widening the spread.
+  const vintage = vintageSpread(
+    rows.map((r) => {
+      const q = market?.quotes[r.position.ticker]
+      return q ? { ...r.position, asOf: q.asOf } : r.position
+    }),
+  )
 
   return {
     riskBand: riskBand(risk),

@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Section } from '../../components/Section'
 import { Panel, Bar } from '../../components/Panel'
+import { DataProvenance } from '../../components/DataProvenance'
 import { FACTOR_LABELS } from '../../data/positions'
 import type { Factor } from '../../data/positions'
+import { mergePositions, useMarketSnapshot } from '../../data/market-data'
 import { VINTAGE_WARN_DAYS } from '../exposure/analysis'
 import {
   buildAllocation,
@@ -120,10 +122,12 @@ export function AllocatorPanel({
   const [risk, setRisk] = useState(35)
   const [sleeveOn, setSleeveOn] = useState(false)
 
+  const { snapshot, source, loading } = useMarketSnapshot()
+
   const capitalUsd = Number.isFinite(capital) && capital > 0 ? capital : 0
   const result = useMemo(
-    () => buildAllocation(capitalUsd, risk, sleeveOn),
-    [capitalUsd, risk, sleeveOn],
+    () => buildAllocation(capitalUsd, risk, sleeveOn, snapshot),
+    [capitalUsd, risk, sleeveOn, snapshot],
   )
   const band = riskBand(risk)
   const sleeve = result.sleeve
@@ -136,11 +140,22 @@ export function AllocatorPanel({
   const thesisRows = result.positions.filter((p) => p.sleeveName === 'thesis')
   const diversifierRows = result.positions.filter((p) => p.sleeveName === 'diversifier')
 
+  // Sizing never reads market cap, so this book is here for the provenance
+  // banner and nothing else — the allocation itself is identical either way.
+  const sizedTickers = new Set(result.positions.map((p) => p.position.ticker))
+  const book = useMemo(
+    () => mergePositions(snapshot).filter((p) => sizedTickers.has(p.ticker)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [snapshot, result],
+  )
+
   return (
     <Section
       title="Allocator"
       description="Sizes a concrete allocation across the dashboard's own researched universe. It is built around the hypothesis the research actually argues — AI infrastructure bought at the optical interconnect bottleneck — rather than spreading capital evenly over seven drivers. Universe is src/data/positions.ts, filtered to the active book, to stance === 'long', and to names carrying a documented edge. Every figure is computed in allocation.ts."
     >
+      <DataProvenance snapshot={snapshot} source={source} loading={loading} book={book} />
+
       {/* ------------------------------------------------------------------ */}
       <div className="border border-term-line bg-term-panel p-4 sm:p-6">
         <div className="grid gap-6 sm:grid-cols-2">
@@ -392,7 +407,7 @@ export function AllocatorPanel({
           <table className="w-full text-left text-xs">
             <thead>
               <tr className="border-b border-term-line text-[10px] uppercase tracking-[0.15em] text-term-dim">
-                <th className="py-1.5 pr-2 font-bold">July 2026 scenario</th>
+                <th className="py-1.5 pr-2 font-bold">Scenario</th>
                 <th className="py-1.5 pr-2 text-right font-bold">Equity</th>
                 <th className="py-1.5 pr-2 text-right font-bold">Premium</th>
                 <th className="py-1.5 text-right font-bold">Total</th>
@@ -403,7 +418,23 @@ export function AllocatorPanel({
                 <tr key={s.label} className="border-b border-term-line/60 last:border-b-0">
                   <td className="py-2 pr-2">
                     <span className="text-term-text">{s.label}</span>
-                    <span className="ml-2 text-term-dim">{s.indexMovePct.toFixed(1)}%</span>
+                    {s.indexMovePct !== undefined && (
+                      <span className="ml-2 text-term-dim">{s.indexMovePct.toFixed(1)}%</span>
+                    )}
+                    <span
+                      className={`ml-2 text-[10px] uppercase tracking-[0.1em] ${
+                        s.basis === 'realised' ? 'text-term-cyan' : 'text-term-yellow'
+                      }`}
+                    >
+                      {s.basis === 'realised'
+                        ? `measured · ${s.namesCovered}/${s.namesTotal} names`
+                        : 'index anchor'}
+                    </span>
+                    {s.note && (
+                      <span className="mt-0.5 block text-[10px] leading-snug text-term-dim">
+                        {s.note}
+                      </span>
+                    )}
                   </td>
                   <td className="py-2 pr-2 text-right tabular-nums text-term-dim">
                     {usd(s.equityLossUsd)}
@@ -426,11 +457,14 @@ export function AllocatorPanel({
           </p>
           <p className="mt-2 text-[11px] leading-relaxed text-term-dim">
             <span className="text-term-yellow">Plan against the worst row, not the mildest.</span>{' '}
-            The SOX is the wrong benchmark for this book: over the same window the Morgan Stanley
-            Momentum TMT index fell nearly twice as far, and a concentrated, high-momentum book sits
-            in that regime rather than the broad one. This is arithmetic, not a forecast — it
-            assumes the thesis block moves one-for-one with the named index and that nothing else
-            moves at all.
+            The <span className="text-term-cyan">measured</span> rows move each held name by its own
+            recorded drawdown or volatility, from the price history in the live snapshot — a book of
+            90%-volatility Chinese optics no longer stresses like a book of megacaps. The{' '}
+            <span className="text-term-yellow">index anchor</span> rows are the older method, kept
+            because they are a stated historical fact worth seeing beside the measured numbers, not
+            because they are the better estimate: they apply one index figure to the whole thesis
+            block and assume nothing else moves. None of these is a forecast. Each measured row says
+            how many of the sized names it actually covers.
           </p>
         </Panel>
       </div>
@@ -441,11 +475,12 @@ export function AllocatorPanel({
             Market data vintages differ by {result.vintageSpreadDays} days
           </p>
           <p className="mt-2 max-w-4xl text-xs leading-relaxed text-term-text">
-            Oldest row here is {result.vintageOldest}, newest {result.vintageNewest}. The July 2026
-            drawdown sits between those two dates, so this allocation weighs post-correction
-            photonics prices against pre-correction prices for every other section. The
-            diversifiers&rsquo; own rationales describe a world from before the move. Relative
-            weights across that boundary are not comparing like with like.
+            Oldest row here is {result.vintageOldest}, newest {result.vintageNewest}, measured on
+            effective dates — a row the snapshot priced carries the snapshot&rsquo;s date, one it
+            did not keeps its transcribed date.{' '}
+            {source === 'none'
+              ? 'No snapshot loaded, so these are the transcribed vintages. The July 2026 drawdown sits between them, which means this allocation weighs post-correction photonics prices against pre-correction prices for every other section, and the diversifiers’ own rationales describe a world from before the move.'
+              : 'The rows still spread this far are the ones no snapshot could price. Relative weights that cross the gap are not comparing like with like.'}
           </p>
         </div>
       )}

@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { Section } from '../../components/Section'
 import { Panel, Bar } from '../../components/Panel'
 import { DataProvenance } from '../../components/DataProvenance'
+import { Tickers } from '../../components/Tickers'
 import { FACTOR_LABELS, JULY_2026_DRAWDOWN } from '../../data/positions'
 import type { Factor, Position } from '../../data/positions'
 import {
@@ -56,6 +57,15 @@ export function ExposurePanel() {
   const thematicPositions = useMemo(() => merged.filter(isThematic), [merged])
   const activeBook = useMemo(() => thematicPositions.filter((p) => !isContext(p)), [thematicPositions])
   const citriniOnly = useMemo(() => merged.filter((p) => !isThematic(p)), [merged])
+  // The whole researched book in one list, largest first. Context names are
+  // included so the table is complete; they are marked and dimmed.
+  const allNames = useMemo(
+    () =>
+      [...thematicPositions].sort(
+        (a, b) => (b.marketCapUsd ?? 0) - (a.marketCapUsd ?? 0) || a.ticker.localeCompare(b.ticker),
+      ),
+    [thematicPositions],
+  )
   const revisions = useMemo(() => capRevisions(activeBook), [activeBook])
   const provenance = capCoverageByProvenance(activeBook)
   const coverage = coverageDelta(activeBook)
@@ -165,6 +175,87 @@ export function ExposurePanel() {
         </p>
       </div>
 
+      {/* ------------------------------------------------------------------ */}
+      {/* Every name, once. The tables below aggregate; this one does not.    */}
+      {/* ------------------------------------------------------------------ */}
+      <div className="mt-4">
+        <Panel
+          title={`The book — all ${allNames.length} researched positions, largest first`}
+        >
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[46rem] text-left text-xs">
+              <thead>
+                <tr className="border-b border-term-line text-[10px] uppercase tracking-[0.15em] text-term-dim">
+                  <th className="py-1.5 pr-2 font-bold">Ticker</th>
+                  <th className="py-1.5 pr-2 font-bold">Name</th>
+                  <th className="py-1.5 pr-2 font-bold">Sections</th>
+                  <th className="py-1.5 pr-2 font-bold">Primary driver</th>
+                  <th className="py-1.5 pr-2 font-bold">Chain</th>
+                  <th className="py-1.5 pr-2 text-right font-bold">Mkt cap</th>
+                  <th className="py-1.5 pr-2 font-bold">As of</th>
+                  <th className="py-1.5 font-bold">Source</th>
+                </tr>
+              </thead>
+              <tbody>
+                {allNames.map((p) => (
+                  <tr
+                    key={p.ticker}
+                    className={`border-b border-term-line/60 last:border-b-0 ${
+                      p.stance === 'context' ? 'opacity-60' : ''
+                    }`}
+                  >
+                    <td className="py-1.5 pr-2 whitespace-nowrap">
+                      <span className="font-bold text-term-text">{p.ticker}</span>
+                      {p.stance === 'context' && (
+                        <span className="ml-1.5 text-[9px] uppercase tracking-wider text-term-dim">
+                          ctx
+                        </span>
+                      )}
+                    </td>
+                    <td className="py-1.5 pr-2 text-term-dim">{p.name}</td>
+                    <td className="py-1.5 pr-2 whitespace-nowrap text-term-cyan">
+                      {p.sections.join(' · ')}
+                    </td>
+                    <td className={`py-1.5 pr-2 whitespace-nowrap ${factorColor[p.factors[0]]}`}>
+                      {FACTOR_LABELS[p.factors[0]]}
+                    </td>
+                    <td className="py-1.5 pr-2 whitespace-nowrap text-term-dim">
+                      {p.chainLayer ?? '—'}
+                    </td>
+                    <td className="py-1.5 pr-2 text-right tabular-nums text-term-text">
+                      {cap(p.marketCapUsd)}
+                    </td>
+                    <td className="py-1.5 pr-2 whitespace-nowrap tabular-nums text-term-dim">
+                      {p.asOf}
+                    </td>
+                    <td className="py-1.5 whitespace-nowrap text-[10px]">
+                      {p.capSource === 'live' ? (
+                        <span className="text-term-cyan">{p.providerSymbol}</span>
+                      ) : p.capSource === 'transcribed' ? (
+                        <span className="text-term-dim">positions.ts</span>
+                      ) : (
+                        <span className="text-term-dim">no cap stated</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-3 max-w-4xl text-[11px] leading-relaxed text-term-dim">
+            Every researched name, listed once, with the market cap the figures above actually use
+            and where that number came from. A{' '}
+            <span className="text-term-cyan">cyan symbol</span> is the provider symbol the quote was
+            fetched under — <span className="text-term-cyan">3081.TWO</span>, not 3081.TW — so a
+            wrong mapping is visible here rather than buried in a script.{' '}
+            <span className="text-term-dim">positions.ts</span> means the transcribed figure is
+            still the one in use. Rows marked <span className="text-term-dim">ctx</span> are the
+            ones their own section calls context rather than exposure; they are dimmed and excluded
+            from the {activeBook.length}-name active book, but shown so nothing is hidden.
+          </p>
+        </Panel>
+      </div>
+
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
         {/* ---------------------------------------------------------------- */}
         <Panel title="Factor concentration — primary driver only">
@@ -211,6 +302,14 @@ export function ExposurePanel() {
                       )}
                       {oldestAsOf.get(row.factor) && ` · from ${oldestAsOf.get(row.factor)}`}
                     </span>
+                    <Tickers
+                      items={row.members.map((p) => ({
+                        ticker: p.ticker,
+                        detail: cap(p.marketCapUsd),
+                        live: p.capSource === 'live',
+                        absent: p.capSource === 'absent',
+                      }))}
+                    />
                   </td>
                   <td className="py-2 pr-2 text-right align-top tabular-nums text-term-text">
                     {row.count}
@@ -266,6 +365,14 @@ export function ExposurePanel() {
                           ? 'volume layer'
                           : 'beta'}
                     </span>
+                    <Tickers
+                      items={row.members.map((p) => ({
+                        ticker: p.ticker,
+                        detail: cap(p.marketCapUsd),
+                        live: p.capSource === 'live',
+                        absent: p.capSource === 'absent',
+                      }))}
+                    />
                   </td>
                   <td className="py-2 pr-2 text-right tabular-nums text-term-text">{row.count}</td>
                   <td className="py-2 text-right tabular-nums text-term-dim">{cap(row.capUsd)}</td>

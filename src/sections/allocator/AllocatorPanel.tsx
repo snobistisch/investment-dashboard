@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Section } from '../../components/Section'
 import { Panel, Bar } from '../../components/Panel'
 import { DataProvenance } from '../../components/DataProvenance'
+import { Tickers } from '../../components/Tickers'
 import { FACTOR_LABELS } from '../../data/positions'
 import type { Factor } from '../../data/positions'
 import { mergePositions, useMarketSnapshot } from '../../data/market-data'
@@ -293,6 +294,12 @@ export function AllocatorPanel({
                         className={row.bottleneck ? 'bg-term-green' : 'bg-term-dim/60'}
                       />
                     </div>
+                    <Tickers
+                      items={row.holdings.map((h) => ({
+                        ticker: h.ticker,
+                        detail: usd(h.dollars),
+                      }))}
+                    />
                   </td>
                   <td className="py-2 pr-2 text-right align-top tabular-nums text-term-text">
                     {usd(row.dollars)}
@@ -346,6 +353,12 @@ export function AllocatorPanel({
                         className={row.isThesis ? 'bg-term-amber' : 'bg-term-dim/60'}
                       />
                     </div>
+                    <Tickers
+                      items={row.holdings.map((h) => ({
+                        ticker: h.ticker,
+                        detail: usd(h.dollars),
+                      }))}
+                    />
                   </td>
                   <td className="py-2 pr-2 text-right align-top tabular-nums text-term-text">
                     {usd(row.dollars)}

@@ -36,6 +36,9 @@ export interface FactorRow {
   /** How many of this bucket's caps are live rather than transcribed, so a
    *  row can state its own provenance instead of deferring to the banner. */
   liveCap: number
+  /** The names in this bucket, largest cap first. An aggregate that does not
+   *  name its constituents cannot be checked against the book. */
+  members: EffectivePosition[]
 }
 
 /** Buckets by PRIMARY factor — factors[0]. A name's secondary factors are
@@ -61,6 +64,9 @@ export function factorBreakdown(set: EffectivePosition[]): FactorRow[] {
       capShare: totalCap ? sumCap(ps) / totalCap : 0,
       missingCap: ps.filter((p) => p.marketCapUsd === undefined).length,
       liveCap: ps.filter((p) => p.capSource === 'live').length,
+      members: [...ps].sort(
+        (a, b) => (b.marketCapUsd ?? 0) - (a.marketCapUsd ?? 0) || a.ticker.localeCompare(b.ticker),
+      ),
     }))
     .sort((a, b) => b.capShare - a.capShare || b.count - a.count)
 }
@@ -157,10 +163,17 @@ export const CHAIN_ORDER: ChainLayer[] = [
   'demand-setter',
 ]
 
-export function chainBreakdown(set: Position[]) {
+export function chainBreakdown(set: EffectivePosition[]) {
   const rows = CHAIN_ORDER.map((layer) => {
     const ps = set.filter((p) => p.chainLayer === layer)
-    return { layer, count: ps.length, capUsd: sumCap(ps) }
+    return {
+      layer,
+      count: ps.length,
+      capUsd: sumCap(ps),
+      members: [...ps].sort(
+        (a, b) => (b.marketCapUsd ?? 0) - (a.marketCapUsd ?? 0) || a.ticker.localeCompare(b.ticker),
+      ),
+    }
   })
   const unclassified = set.filter((p) => p.chainLayer === undefined).length
   const totalClassified = rows.reduce((t, r) => t + r.count, 0)

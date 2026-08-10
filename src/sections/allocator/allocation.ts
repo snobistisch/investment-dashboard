@@ -283,6 +283,9 @@ export interface FactorTotal {
   dollars: number
   share: number
   isThesis: boolean
+  /** Which names make up the row, largest first. An aggregate that does not
+   *  name its constituents cannot be checked against the book. */
+  holdings: { ticker: string; dollars: number; share: number }[]
 }
 
 export interface ChainTotal {
@@ -290,6 +293,7 @@ export interface ChainTotal {
   dollars: number
   share: number
   bottleneck: boolean
+  holdings: { ticker: string; dollars: number; share: number }[]
 }
 
 export interface SleeveLeg {
@@ -676,6 +680,16 @@ export function buildAllocation(
         a.position.ticker.localeCompare(b.position.ticker),
     )
 
+  /** Constituents of an aggregate row, largest first. */
+  const holdingsOf = (set: typeof rows) =>
+    set
+      .map((r) => ({
+        ticker: r.position.ticker,
+        dollars: exposureOf(r),
+        share: shareOf(exposureOf(r)),
+      }))
+      .sort((a, b) => b.dollars - a.dollars || a.ticker.localeCompare(b.ticker))
+
   const factorDollars = new Map<Factor, number>()
   for (const r of rows) {
     const f = r.position.factors[0]
@@ -687,6 +701,7 @@ export function buildAllocation(
       dollars,
       share: shareOf(dollars),
       isThesis: factor === THESIS_FACTOR,
+      holdings: holdingsOf(rows.filter((r) => r.position.factors[0] === factor)),
     }))
     .sort((a, b) => b.dollars - a.dollars || a.factor.localeCompare(b.factor))
 
@@ -706,6 +721,9 @@ export function buildAllocation(
       dollars,
       share: shareOf(dollars),
       bottleneck: (BOTTLENECK_LAYERS as readonly string[]).includes(layer),
+      holdings: holdingsOf(
+        thesisRows.filter((r) => (r.position.chainLayer ?? 'unclassified') === layer),
+      ),
     }))
     .sort((a, b) => b.dollars - a.dollars || a.layer.localeCompare(b.layer))
 
@@ -716,6 +734,7 @@ export function buildAllocation(
       dollars: diversifierUsd,
       share: shareOf(diversifierUsd),
       bottleneck: false,
+      holdings: holdingsOf(diversifierRows),
     })
   }
 

@@ -90,6 +90,24 @@ export interface SnapshotState {
   loading: boolean
 }
 
+/** Shared across callers. Exposure and Allocator both want the snapshot and
+ *  mount together, so without this they fetch the same file twice a
+ *  millisecond apart — and raw.githubusercontent rate-limits. The snapshot
+ *  cannot change during a session, so the resolved promise is kept. */
+let inFlight: Promise<Omit<SnapshotState, 'loading'>> | null = null
+
+function loadSnapshot() {
+  inFlight ??= (async () => {
+    const remote = await load(RAW_URL)
+    if (remote) return { snapshot: remote, source: 'remote' as const }
+    const bundled = await load(BUNDLED_URL)
+    return bundled
+      ? { snapshot: bundled, source: 'bundled' as const }
+      : { snapshot: null, source: 'none' as const }
+  })()
+  return inFlight
+}
+
 export function useMarketSnapshot(): SnapshotState {
   const [state, setState] = useState<SnapshotState>({
     snapshot: null,
@@ -99,21 +117,9 @@ export function useMarketSnapshot(): SnapshotState {
 
   useEffect(() => {
     let live = true
-    void (async () => {
-      const remote = await load(RAW_URL)
-      if (!live) return
-      if (remote) {
-        setState({ snapshot: remote, source: 'remote', loading: false })
-        return
-      }
-      const bundled = await load(BUNDLED_URL)
-      if (!live) return
-      setState(
-        bundled
-          ? { snapshot: bundled, source: 'bundled', loading: false }
-          : { snapshot: null, source: 'none', loading: false },
-      )
-    })()
+    void loadSnapshot().then((result) => {
+      if (live) setState({ ...result, loading: false })
+    })
     return () => {
       live = false
     }

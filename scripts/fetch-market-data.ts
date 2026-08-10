@@ -24,10 +24,16 @@
 //     and Litentry; `NOCK` matches Nock and Nockchain; peaq's id is `peaq-2`.
 //     Every id here is pinned by hand against the full coin list.
 //
-// Providers:
+// Providers. None of them takes an API key, so there is no secret to leak into
+// the committed JSON, the bundle, or a workflow log:
 //   equities  Yahoo Finance  v7/finance/quote (cap) + v8/finance/chart (history)
-//   crypto    CoinGecko      simple/price + market_chart   [COINGECKO_API_KEY]
+//   crypto    CoinGecko      simple/price + market_chart, keyless public tier
 //   fx        ECB daily reference rates + Yahoo `TWD=X` (ECB omits TWD)
+//
+// The keyless CoinGecko tier is rate-limited well below the keyed one, so the
+// crypto leg is paced and retried rather than fired off at once. It is also
+// the only leg allowed to fail without failing the run: it covers 8 rows of
+// 161, and losing the other 153 to protect them would be the worse trade.
 
 import { appendFileSync, mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
@@ -148,9 +154,29 @@ interface Quote {
 // HTTP
 // ---------------------------------------------------------------------------
 
+/** Carries the status so a caller can retry on 429 alone, and the served
+ *  Retry-After where one came back. */
+class HttpError extends Error {
+  constructor(
+    readonly status: number,
+    readonly retryAfterMs: number | undefined,
+    message: string,
+  ) {
+    super(message)
+  }
+}
+
 async function getText(url: string, headers: Record<string, string> = {}) {
   const res = await fetch(url, { headers: { 'User-Agent': UA, ...headers } })
-  if (!res.ok) throw new Error(`${res.status} ${res.statusText} for ${url}`)
+  if (!res.ok) {
+    const header = res.headers.get('retry-after')
+    const seconds = header === null ? NaN : Number(header)
+    throw new HttpError(
+      res.status,
+      Number.isFinite(seconds) && seconds > 0 ? seconds * 1_000 : undefined,
+      `${res.status} ${res.statusText} for ${url}`,
+    )
+  }
   return res.text()
 }
 
@@ -310,22 +336,31 @@ async function fetchFx(needed: Set<string>) {
 // CoinGecko
 // ---------------------------------------------------------------------------
 
-function cgHeaders(): Record<string, string> {
-  const key = process.env.COINGECKO_API_KEY
-  return key ? { 'x-cg-demo-api-key': key } : {}
-}
+/** Gap between the per-coin history calls.
+ *
+ *  No API key, so this runs on CoinGecko's keyless public tier, whose limit is
+ *  not published and is well below the 100/min of the keyed demo plan. Nine
+ *  calls spaced this far apart works out around ten a minute, which is a pace
+ *  the free tier tolerates. The whole crypto leg then takes under a minute,
+ *  which costs nothing on a job that runs once a weekday. */
+const CG_SPACING_MS = 6_000
 
-/** CoinGecko rate-limits hard, and a shared CI runner IP is throttled harder
- *  than a laptop. Observed on the first local run without a key. */
+/** Retries on 429 only.
+ *
+ *  A GitHub runner shares its IP with everything else on that host, so it can
+ *  be throttled when a laptop making the same nine calls would not be. Honours
+ *  Retry-After when the response carries one, since a served number beats a
+ *  guessed one, and falls back to fixed backoff when it does not. */
 async function cgJson<T>(url: string): Promise<T> {
-  const backoffMs = [1_500, 5_000, 15_000, 30_000]
+  const backoffMs = [5_000, 15_000, 30_000, 60_000, 90_000]
   for (let attempt = 0; ; attempt++) {
     try {
-      return await getJson<T>(url, cgHeaders())
+      return await getJson<T>(url)
     } catch (err) {
-      const rateLimited = err instanceof Error && err.message.startsWith('429')
+      const rateLimited = err instanceof HttpError && err.status === 429
       if (!rateLimited || attempt >= backoffMs.length) throw err
-      await new Promise((r) => setTimeout(r, backoffMs[attempt]))
+      const served = err.retryAfterMs
+      await new Promise((r) => setTimeout(r, served ?? backoffMs[attempt]))
     }
   }
 }
@@ -365,7 +400,7 @@ async function fetchCrypto(ids: string[]) {
     } catch {
       historyErrors++
     }
-    await new Promise((r) => setTimeout(r, 2_000))
+    await new Promise((r) => setTimeout(r, CG_SPACING_MS))
   }
   return { price, history, priceError, historyErrors }
 }

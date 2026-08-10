@@ -39,12 +39,11 @@ jobs:
           cache: npm
       - run: npm ci
 
-      # The key is read from the environment inside the script and never
-      # written to the JSON, so nothing secret reaches the committed file or
-      # the built bundle. Equities and FX need no key at all.
+      # No secrets. Every provider this fetches from is open: Yahoo for
+      # equities, CoinGecko's keyless public tier for the 8 crypto rows, the
+      # ECB for FX. There is therefore no key that could reach the committed
+      # JSON, the built bundle, or this log.
       - run: npm run fetch-market-data
-        env:
-          COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
 
       - id: commit
         run: |

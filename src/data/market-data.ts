@@ -120,20 +120,36 @@ export interface SnapshotState {
  *  cannot change during a session, so the resolved promise is kept. */
 let inFlight: Promise<Omit<SnapshotState, 'loading'>> | null = null
 
+function stamp(s: MarketSnapshot | null) {
+  const t = s ? Date.parse(s.fetchedAt) : NaN
+  return Number.isNaN(t) ? -Infinity : t
+}
+
 function loadSnapshot() {
   inFlight ??= (async () => {
-    // In dev the local file is the one being worked on, and the copy on main
-    // is whatever was last deployed — older, and on an older schema after a
-    // change like adding returns. Preferring remote there means testing
-    // against production data and seeing empty columns for fields that exist.
-    if (!import.meta.env.DEV) {
-      const remote = await load(RAW_URL)
-      if (remote) return { snapshot: remote, source: 'remote' as const }
+    // In dev the local file is the one being worked on; the copy on main is
+    // whatever was last deployed. Never go to the network for it.
+    if (import.meta.env.DEV) {
+      const local = await load(BUNDLED_URL)
+      return local
+        ? { snapshot: local, source: 'bundled' as const }
+        : { snapshot: null, source: 'none' as const }
     }
-    const bundled = await load(BUNDLED_URL)
-    return bundled
-      ? { snapshot: bundled, source: 'bundled' as const }
-      : { snapshot: null, source: 'none' as const }
+
+    // Both, then the newer one wins.
+    //
+    // Remote-first was wrong, and it showed the first time a deploy changed the
+    // schema: raw.githubusercontent caches for five minutes and its edges
+    // disagree with each other, so the freshly deployed site read a snapshot
+    // one commit behind and rendered empty price and return columns for fields
+    // it had just shipped. Reading whichever copy is actually newer keeps the
+    // freshness the remote read exists for, without ever being worse than the
+    // build. They are fetched together, so this costs no extra latency.
+    const [remote, bundled] = await Promise.all([load(RAW_URL), load(BUNDLED_URL)])
+    if (!remote && !bundled) return { snapshot: null, source: 'none' as const }
+    return stamp(remote) > stamp(bundled)
+      ? { snapshot: remote, source: 'remote' as const }
+      : { snapshot: bundled, source: 'bundled' as const }
   })()
   return inFlight
 }

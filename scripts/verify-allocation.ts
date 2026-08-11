@@ -18,6 +18,8 @@ import {
   sizeableUniverse,
   thesisUniverse,
   diversifierUniverse,
+  cryptoUniverse,
+  CRYPTO_TARGET_SHARE,
   THESIS_FACTOR,
   SLEEVE_CAP_AGGRESSIVE,
 } from '../src/sections/allocator/allocation'
@@ -181,6 +183,30 @@ for (const capital of CAPITALS) {
             .join(' vs ')}`,
         )
       }
+
+      // --- crypto mandate --------------------------------------------------
+      // The whole point of the sleeve is that it is a fixed share of capital.
+      // If it drifts, it has stopped being a mandate and nobody would notice
+      // from the screen, which shows whatever it computed.
+      const cryptoRows = r.positions.filter((p) => p.sleeveName === 'crypto')
+      const cryptoUsd = cryptoRows.reduce((t, p) => t + p.dollars, 0)
+      const wanted = Math.min(CRYPTO_TARGET_SHARE * capital, capital * (1 - r.reserveShare))
+      check(
+        Math.abs(cryptoUsd - wanted) < Math.max(1e-6, capital * 1e-9),
+        `${tag}: crypto mandate is ${(cryptoUsd / capital * 100).toFixed(3)}% of capital, wanted ${(wanted / capital * 100).toFixed(3)}%`,
+      )
+      for (const p of cryptoRows) {
+        check(
+          p.position.sections.includes('crypto'),
+          `${tag}: ${p.position.ticker} is in the crypto sleeve but not in the crypto section`,
+        )
+      }
+      // Every name in the section is held: a mandate with a selection rule
+      // inside it would silently drop names Matthias asked to hold.
+      check(
+        cryptoRows.length === cryptoUniverse.length,
+        `${tag}: crypto sleeve holds ${cryptoRows.length} of ${cryptoUniverse.length} section names`,
+      )
 
       // --- totals ---------------------------------------------------------
       const deployed = r.positions.reduce((t, p) => t + p.dollars + p.premiumUsd, 0)
@@ -359,7 +385,7 @@ if (snapshot) {
   }
 }
 
-console.log(`universe: ${sizeableUniverse.length} sizeable = ${thesisUniverse.length} thesis + ${diversifierUniverse.length} diversifiers`)
+console.log(`universe: ${sizeableUniverse.length} sizeable = ${thesisUniverse.length} thesis + ${diversifierUniverse.length} diversifiers + ${cryptoUniverse.length} crypto mandate`)
 console.log(`thesis factor: ${THESIS_FACTOR} (derived: ${derived})`)
 console.log(`thesis exposure range: ${(minThesis * 100).toFixed(1)}% .. ${(maxThesis * 100).toFixed(1)}%`)
 console.log(`reserve at risk 0: ${(minReserveAtZero * 100).toFixed(1)}%`)

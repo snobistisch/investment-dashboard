@@ -184,6 +184,8 @@ export function AllocatorPanel({
   }, [leverageActive, onLeverageChange])
   const thesisRows = result.positions.filter((p) => p.sleeveName === 'thesis')
   const diversifierRows = result.positions.filter((p) => p.sleeveName === 'diversifier')
+  const cryptoRows = result.positions.filter((p) => p.sleeveName === 'crypto')
+  const cryptoShare = cryptoRows.reduce((t, p) => t + p.exposureWeight, 0)
 
   // Sizing never reads market cap, so this book is here for the provenance
   // banner and nothing else — the allocation itself is identical either way.
@@ -330,7 +332,9 @@ export function AllocatorPanel({
                           ? 'volume layer'
                           : row.layer === 'system'
                             ? 'beta'
-                            : 'ballast'}
+                            : row.layer === 'crypto mandate'
+                              ? 'sized to instruction, not to conviction'
+                              : 'ballast'}
                     </span>
                     <div className="mt-1 w-40 max-w-full">
                       <Bar
@@ -629,6 +633,25 @@ export function AllocatorPanel({
                     nameCap={result.perNameCapPct}
                     quote={snapshot?.quotes[row.position.ticker]}
                     />
+                ))}
+                {cryptoRows.length > 0 && (
+                  <tr className="border-b border-term-line bg-term-bg">
+                    <td
+                      colSpan={5}
+                      className="py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-term-magenta"
+                    >
+                      Crypto mandate — {pct(cryptoShare)} of capital, sized to instruction rather
+                      than to the conviction ranking
+                    </td>
+                  </tr>
+                )}
+                {cryptoRows.map((row) => (
+                  <PositionRow
+                    key={row.position.ticker}
+                    row={row}
+                    nameCap={result.perNameCapPct}
+                    quote={snapshot?.quotes[row.position.ticker]}
+                  />
                 ))}
               </tbody>
             </table>

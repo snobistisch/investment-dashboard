@@ -209,12 +209,11 @@ export const investableUniverse: Position[] = activeBook.filter((p) => p.stance 
 // of the book. What it costs is visible rather than hidden — NOCK's realised
 // volatility is 232% against 37% for NVDA, and the measured stress rows on the
 // Allocator move accordingly once it is held.
-// Scoped to the crypto SECTION, not to every token in the book. Keying off the
-// exchange instead would also pull in the three machine-economy tokens the
-// robotics section carries (GEOD, PEAQ, BitRobot) — and BitRobot has no
-// listing anywhere, so the allocator would size a position it cannot price.
-// Those rows were not part of the instruction; they stay unsizeable until
-// someone says otherwise.
+// Scoped to the crypto SECTION rather than to the asset class. The distinction
+// stopped mattering on 11 Aug 2026, when the robotics section's three
+// machine-economy tokens were removed from the book, but the rule stays written
+// this way: a token added to another section later should not join a mandate
+// sized for this one.
 const RELAXED_EDGE_SECTION = 'crypto'
 
 export const sizeableUniverse: Position[] = investableUniverse.filter(
@@ -243,8 +242,51 @@ export const sizeableUniverse: Position[] = investableUniverse.filter(
  *  which is the useful version of that mechanism. */
 export const THESIS_FACTOR: Factor = 'ai-capex'
 
-export const thesisUniverse = sizeableUniverse.filter((p) => p.factors[0] === THESIS_FACTOR)
-export const diversifierUniverse = sizeableUniverse.filter((p) => p.factors[0] !== THESIS_FACTOR)
+/** The crypto sleeve — a carve-out, not a diversifier bucket.
+ *
+ *  Sized to a fixed share of capital on Matthias's instruction (11 Aug 2026)
+ *  rather than by the conviction ranking that governs everything else. That
+ *  ranking would never have held these names: conviction is derived from each
+ *  section's own risk tier and capped at 2 without a documented edge, which put
+ *  LIT 14th, NOCK 16th and ZEC 12th of 16 diversifiers against at most 8 slots.
+ *  Lowering the edge threshold made them eligible and changed nothing.
+ *
+ *  So this is a mandate, and it is labelled as one wherever it shows up. It is
+ *  not derived from the research and does not pretend to be. */
+export const cryptoUniverse = sizeableUniverse.filter((p) => p.sections.includes('crypto'))
+
+/** Share of TOTAL capital held in the crypto sleeve, before the thesis and
+ *  diversifier sleeves divide what is left. */
+export const CRYPTO_TARGET_SHARE = 0.1
+
+/** Split within the sleeve. Stated, not derived — Matthias asked for LIT and
+ *  ZEC to carry the weight. Shares of the sleeve, so they sum to 1: on the
+ *  default 10% that is 3.0% of capital each for LIT and ZEC, 2.5% for ETH and
+ *  1.5% for NOCK, whose $29m cap and 232% realised volatility are the reason
+ *  it sits last rather than an oversight. A name here with no entry gets the
+ *  remainder split evenly. */
+export const CRYPTO_WEIGHTS: Record<string, number> = {
+  LIT: 0.3,
+  ZEC: 0.3,
+  ETH: 0.25,
+  NOCK: 0.15,
+}
+
+/** Shown in the Rationale column for a sleeve name with no documented edge.
+ *  The column exists to say why a position is held; "because it was asked for"
+ *  is the true answer here, and inventing a thesis to fill the space is the
+ *  one thing this file must not do. */
+export const CRYPTO_MANDATE_RATIONALE =
+  'Held to a fixed 10% crypto mandate, not to a documented mispricing. No edge is recorded for this name in positions.ts.'
+
+const inCrypto = (p: Position) => p.sections.includes('crypto')
+
+export const thesisUniverse = sizeableUniverse.filter(
+  (p) => p.factors[0] === THESIS_FACTOR && !inCrypto(p),
+)
+export const diversifierUniverse = sizeableUniverse.filter(
+  (p) => p.factors[0] !== THESIS_FACTOR && !inCrypto(p),
+)
 
 /** Whether a Dutch retail account can actually buy the listing.
  *
@@ -293,7 +335,7 @@ export interface AllocatedPosition {
   /** (equity + premium) / capital — what the per-name cap is enforced on. */
   exposureWeight: number
   rationale: string
-  sleeveName: 'thesis' | 'diversifier'
+  sleeveName: 'thesis' | 'diversifier' | 'crypto'
   bottleneck: boolean
   nameCapped: boolean
   /** False for venues a Dutch retail account cannot reach directly. */
@@ -446,7 +488,7 @@ interface Row {
   position: Position
   weight: number
   dollars: number
-  sleeveName: 'thesis' | 'diversifier'
+  sleeveName: 'thesis' | 'diversifier' | 'crypto'
 }
 
 export function buildAllocation(
@@ -526,6 +568,12 @@ export function buildAllocation(
     diversifierPicked.push(p)
   }
 
+  // --- Crypto mandate ----------------------------------------------------
+  // A fixed share of capital, taken off the top and divided by stated weights
+  // rather than by the conviction ranking. Every name in the section is held:
+  // the sleeve is a mandate, so there is nothing for a selection rule to do.
+  const cryptoPicked = [...cryptoUniverse]
+
   const rows: Row[] = [
     ...thesisPicked.map((position) => ({
       position,
@@ -539,10 +587,40 @@ export function buildAllocation(
       dollars: 0,
       sleeveName: 'diversifier' as const,
     })),
+    ...cryptoPicked.map((position) => ({
+      position,
+      weight: CRYPTO_WEIGHTS[position.ticker] ?? 0,
+      dollars: 0,
+      sleeveName: 'crypto' as const,
+    })),
   ]
 
   const thesisRows = rows.filter((r) => r.sleeveName === 'thesis')
   const diversifierRows = rows.filter((r) => r.sleeveName === 'diversifier')
+  const cryptoRows = rows.filter((r) => r.sleeveName === 'crypto')
+
+  // Sized before anything else and out of TOTAL capital, so the mandate means
+  // 10% of the portfolio rather than 10% of whatever the other sleeves leave.
+  // Still bounded by the per-name cap and by the invested pool: at maximum
+  // reserve there is less than the mandate asks for, and the reserve wins.
+  const cryptoBudget = Math.min(CRYPTO_TARGET_SHARE * capitalUsd, investedUsd)
+  const cryptoWeightTotal = cryptoRows.reduce((t, r) => t + r.weight, 0)
+  const cryptoFill = waterFill(
+    cryptoRows.map((r) => ({
+      // A name with no stated weight shares whatever the stated ones leave.
+      weight: cryptoWeightTotal > 0 ? r.weight : 1,
+      cap: nameCapUsd,
+    })),
+    cryptoBudget,
+  )
+  cryptoRows.forEach((r, i) => {
+    r.dollars = cryptoFill[i]
+  })
+  const cryptoUsd = cryptoRows.reduce((t, r) => t + r.dollars, 0)
+
+  // What the thesis and diversifier sleeves divide between them. Their ratio
+  // is preserved; both simply have less to work with.
+  const coreInvestedUsd = Math.max(investedUsd - cryptoUsd, 0)
 
   // --- Leverage sleeve, sized BEFORE the equity fill ---------------------
   // Order matters. The premium has to be known before equity is placed,
@@ -597,7 +675,7 @@ export function buildAllocation(
   // only constraint that applies — less whatever premium already sits on that
   // same ticker. Every sleeve leg is a thesis name, so the whole premium comes
   // out of the thesis budget and the core's share stays honest.
-  const thesisBudget = Math.max(targetThesisShare * investedUsd - totalPremiumUsd, 0)
+  const thesisBudget = Math.max(targetThesisShare * coreInvestedUsd - totalPremiumUsd, 0)
   const thesisFill = waterFill(
     thesisRows.map((r) => ({
       weight: r.weight,
@@ -620,7 +698,7 @@ export function buildAllocation(
     DIVERSIFIER_NAME_CAP_MULTIPLE * nameCapUsd,
     topThesisUsd > 0 ? DIVERSIFIER_MAX_VS_TOP_THESIS * topThesisUsd : Infinity,
   )
-  const divBudget = (1 - targetThesisShare) * investedUsd
+  const divBudget = (1 - targetThesisShare) * coreInvestedUsd
   const divFactors = [...new Set(diversifierRows.map((r) => r.position.factors[0]))]
   const divByFactor = new Map<Factor, Row[]>(
     divFactors.map((f) => [f, diversifierRows.filter((r) => r.position.factors[0] === f)]),
@@ -686,7 +764,8 @@ export function buildAllocation(
       weight: shareOf(r.dollars),
       exposureWeight: shareOf(exposureOf(r)),
       // Guaranteed present: sizeableUniverse filters on edge !== undefined.
-      rationale: r.position.edge ?? '',
+      rationale:
+        r.position.edge ?? (r.sleeveName === 'crypto' ? CRYPTO_MANDATE_RATIONALE : ''),
       sleeveName: r.sleeveName,
       bottleneck: isBottleneck(r.position),
       tradable: isDirectlyTradable(r.position),
@@ -759,6 +838,19 @@ export function buildAllocation(
       share: shareOf(diversifierUsd),
       bottleneck: false,
       holdings: holdingsOf(diversifierRows),
+    })
+  }
+  // The mandate is not part of the thesis chain and not ballast either. Giving
+  // it its own row keeps the panel adding up to the invested total instead of
+  // quietly dropping 10% of capital.
+  const cryptoTotalUsd = cryptoRows.reduce((t, r) => t + exposureOf(r), 0)
+  if (cryptoTotalUsd > 0) {
+    chainTotals.push({
+      layer: 'crypto mandate',
+      dollars: cryptoTotalUsd,
+      share: shareOf(cryptoTotalUsd),
+      bottleneck: false,
+      holdings: holdingsOf(cryptoRows),
     })
   }
 

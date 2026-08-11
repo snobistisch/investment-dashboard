@@ -32,8 +32,8 @@
 //
 // The keyless CoinGecko tier is rate-limited well below the keyed one, so the
 // crypto leg is paced and retried rather than fired off at once. It is also
-// the only leg allowed to fail without failing the run: it covers 6 rows of
-// 159, and losing the other 153 to protect them would be the worse trade.
+// the only leg allowed to fail without failing the run: it covers 4 rows of
+// 86, and losing the other 82 to protect them would be the worse trade.
 
 import { appendFileSync, mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
@@ -85,8 +85,6 @@ const CRYPTO_IDS: Record<string, string> = {
   LIT: 'lighter',
   NOCK: 'nockchain',
   ZEC: 'zcash',
-  GEOD: 'geodnet',
-  PEAQ: 'peaq-2',
 }
 
 /** Deliberately not mapped. Listed explicitly rather than left to a lookup
@@ -95,7 +93,6 @@ const CRYPTO_IDS: Record<string, string> = {
 const UNMAPPED: Record<string, string> = {
   X: 'US Steel ceased trading 2025-06-18 on the Nippon Steel acquisition',
   Unitree: 'Shanghai STAR listing approved, not trading',
-  BitRobot: 'no CoinGecko listing (zero symbol matches across the full coin list)',
 }
 
 type Resolved =

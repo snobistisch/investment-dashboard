@@ -134,8 +134,41 @@ interface Stats {
   julyDrawdownPct?: number
 }
 
+/** Price return over each window, in percent, measured in USD.
+ *
+ *  Windows are anchored on CALENDAR days, not trading days. Crypto trades
+ *  every day and equities do not, so a fixed count of points would mean five
+ *  days for NVDA and five days for NOCK sitting in the same column meaning
+ *  different things. Anchoring on the calendar and taking the last close on or
+ *  before that date makes one week mean one week for both.
+ *
+ *  A window the series does not cover is absent rather than approximated from
+ *  the oldest point available — the same rule the market caps follow. */
+export interface Returns {
+  d1?: number
+  w1?: number
+  m1?: number
+  m3?: number
+  m6?: number
+  y1?: number
+}
+
+/** Tolerance on how far back a series must reach for a window to be reported. */
+const WINDOW_SLACK_DAYS = 5
+
+const RETURN_WINDOWS = [
+  ['w1', 7],
+  ['m1', 30],
+  ['m3', 91],
+  ['m6', 182],
+  ['y1', 365],
+] as const
+
 interface Quote {
   symbol: string
+  /** Last close in USD. The figure a dollar investor actually holds. */
+  priceUsd?: number
+  returns?: Returns
   provider: 'yahoo' | 'coingecko'
   /** The provider's own name for the symbol. Recorded so a wrong mapping is
    *  visible on screen rather than only in this script. */
@@ -239,8 +272,16 @@ async function yahooQuotes(symbols: string[], s: { cookie: string; crumb: string
   return out
 }
 
+/** Two years, not one.
+ *
+ *  `range=1y` returns slightly under a calendar year, so a 365-day lookback
+ *  falls off the start of the series and the one-year return comes back absent
+ *  for most names — 121 of 161 on the first run. Fetching two years puts every
+ *  window comfortably inside the data. Nothing extra is stored: the statistics
+ *  are still computed on the trailing year, and only derived numbers are
+ *  written out. */
 async function yahooHistory(symbol: string) {
-  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=1y&interval=1d`
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=2y&interval=1d`
   const body = await getJson<{
     chart: { result?: [{ timestamp?: number[]; indicators: { quote: [{ close?: (number | null)[] }] } }] }
   }>(url)
@@ -272,7 +313,12 @@ function maxDrawdownPct(closes: number[]) {
   return worst * 100
 }
 
-function computeStats(series: { date: string; close: number }[]): Stats | undefined {
+function computeStats(full: Series): Stats | undefined {
+  // Statistics stay on the trailing year even though two are fetched, so
+  // realisedVolPct and maxDrawdownPct keep meaning what they meant before the
+  // series was lengthened for the return windows.
+  const cutoff = shiftDays(full[full.length - 1]?.date ?? '', WINDOW_DAYS)
+  const series = full.filter((p) => p.date >= cutoff)
   if (series.length < 30) return undefined
   const closes = series.map((p) => p.close)
 
@@ -295,6 +341,80 @@ function computeStats(series: { date: string; close: number }[]): Stats | undefi
 function round(n: number, dp: number) {
   const f = 10 ** dp
   return Math.round(n * f) / f
+}
+
+type Series = { date: string; close: number }[]
+
+/** Last value on or before `date`. Markets, FX desks and crypto keep different
+ *  calendars, so an exact date match is the exception rather than the rule. */
+function onOrBefore(series: Series, date: string) {
+  let lo = 0
+  let hi = series.length - 1
+  let found: number | undefined
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1
+    if (series[mid].date <= date) {
+      found = series[mid].close
+      lo = mid + 1
+    } else {
+      hi = mid - 1
+    }
+  }
+  return found
+}
+
+function shiftDays(date: string, days: number) {
+  const d = new Date(`${date}T00:00:00Z`)
+  d.setUTCDate(d.getUTCDate() - days)
+  return d.toISOString().slice(0, 10)
+}
+
+/** Restates a local-currency price series in USD, point by point.
+ *
+ *  Converting only the latest price would report the local-currency return
+ *  under a USD label. A Japanese name up 20% in yen while the yen fell 8% is
+ *  up about 11% to a dollar holder, and that difference is the whole reason
+ *  this exists. Points with no FX rate on or before their date are dropped
+ *  rather than converted at today's rate. */
+function toUsdSeries(series: Series, currency: string, fxHistory: Map<string, Series>): Series {
+  if (currency === 'USD') return series
+  const fx = fxHistory.get(currency)
+  if (!fx || fx.length === 0) return []
+  const out: Series = []
+  for (const p of series) {
+    const rate = onOrBefore(fx, p.date)
+    if (rate && rate > 0) out.push({ date: p.date, close: p.close / rate })
+  }
+  return out
+}
+
+function computeReturns(series: Series): Returns | undefined {
+  if (series.length < 2) return undefined
+  const last = series[series.length - 1]
+  const oldest = series[0].date
+  const returns: Returns = {}
+
+  // One day is the previous point in the series, not a calendar day back: for
+  // an equity that is the previous session, which is what "today's move" means.
+  const prev = series[series.length - 2]
+  returns.d1 = round((last.close / prev.close - 1) * 100, 2)
+
+  for (const [key, days] of RETURN_WINDOWS) {
+    const target = shiftDays(last.date, days)
+    // Normally the last close on or before the window opens. Where the series
+    // begins just inside the window, its oldest point is used instead: asking
+    // CoinGecko for 365 days returns a span of 364, so every token would
+    // otherwise lose its one-year return over a margin of one day. Beyond
+    // WINDOW_SLACK_DAYS the window is genuinely not covered — a listing three
+    // months old has no one-year return — and stays absent rather than being
+    // filled from whatever the series happens to start at.
+    const then =
+      onOrBefore(series, target) ??
+      (oldest <= shiftDays(target, -WINDOW_SLACK_DAYS) ? series[0].close : undefined)
+    if (then && then > 0) returns[key] = round((last.close / then - 1) * 100, 2)
+  }
+
+  return returns
 }
 
 // ---------------------------------------------------------------------------
@@ -330,6 +450,27 @@ async function fetchFx(needed: Set<string>) {
   }
 
   return { asOf, source: missing.length ? 'ecb+yahoo' : 'ecb', usdPer }
+}
+
+/** A year of daily rates per currency, so returns can be stated in USD.
+ *
+ *  ECB publishes a historical series too, but Yahoo is already the source for
+ *  the one pair the ECB omits (TWD), and one code path beats two that have to
+ *  agree with each other. Spot rates for the market caps still come from the
+ *  ECB, which is the better source for a single day. */
+async function fetchFxHistory(currencies: Set<string>) {
+  const out = new Map<string, Series>()
+  for (const ccy of currencies) {
+    if (ccy === 'USD') continue
+    try {
+      const series = await yahooHistory(`${ccy}=X`)
+      if (series) out.set(ccy, series)
+    } catch {
+      // Without a rate series this currency's rows land without returns, which
+      // the UI shows as absent. Reported in the run summary below.
+    }
+  }
+  return out
 }
 
 // ---------------------------------------------------------------------------
@@ -430,6 +571,12 @@ for (const q of quotesRaw.values()) if (q.currency) currencies.add(q.currency)
 const fx = await fetchFx(currencies)
 console.log(`fx ${fx.asOf} (${fx.source}): ${Object.keys(fx.usdPer).sort().join(' ')}`)
 
+const fxHistory = await fetchFxHistory(currencies)
+console.log(
+  `fx history: ${fxHistory.size}/${currencies.size - 1} currencies ` +
+    `(${[...fxHistory.keys()].sort().join(' ') || 'none'})`,
+)
+
 console.log(`\nfetching ${yahooRows.length} price histories...`)
 const histories = new Map<string, { date: string; close: number }[]>()
 await mapLimit(yahooRows, 6, async (x) => {
@@ -493,6 +640,10 @@ for (const { p, r } of yahooRows) {
       : undefined
 
   const series = histories.get(r.symbol)
+  // Stats stay on the local-currency series: volatility and drawdown are
+  // properties of the asset. Returns are restated in USD, because that is
+  // what the holder actually earned.
+  const usdSeries = series ? toUsdSeries(series, currency, fxHistory) : undefined
 
   quotes[p.ticker] = {
     symbol: r.symbol,
@@ -500,6 +651,8 @@ for (const { p, r } of yahooRows) {
     providerName,
     currency,
     priceLocal: price,
+    priceUsd: round(price / fx.usdPer[currency], 4),
+    returns: usdSeries && usdSeries.length ? computeReturns(usdSeries) : undefined,
     marketCapUsd,
     // Every venue in this book closes within its own UTC day (Tokyo 15:00 JST
     // = 06:00 UTC, Mexico 15:00 CST = 21:00 UTC), so the UTC date is the
@@ -523,6 +676,10 @@ for (const { p, r } of cryptoRows) {
     providerName: r.id,
     currency: 'USD',
     priceLocal: c.usd,
+    priceUsd: c.usd,
+    // Already USD, and already a 7-day-a-week series, so the calendar windows
+    // land on real observations rather than on the last session before them.
+    returns: series ? computeReturns(series) : undefined,
     marketCapUsd: typeof cap === 'number' && Number.isFinite(cap) && cap > 0 ? round(cap / BN, 4) : undefined,
     asOf: new Date((c.last_updated_at ?? Date.now() / 1000) * 1000).toISOString().slice(0, 10),
     stats: series ? computeStats(series) : undefined,
@@ -558,6 +715,8 @@ console.log(`wrote ${OUT.split('/').slice(-3).join('/')}`)
 console.log(`  quotes:        ${Object.keys(quotes).length}/${positions.length}`)
 console.log(`  with cap:      ${withCap}/${positions.length}  (transcribed today: ${transcribed})`)
 console.log(`  with stats:    ${withStats}/${positions.length}`)
+const withReturns = Object.values(quotes).filter((q) => q.returns?.y1 !== undefined).length
+console.log(`  with 1y return: ${withReturns}/${positions.length} (USD, FX-adjusted)`)
 console.log(`  fx pairs:      ${Object.keys(fx.usdPer).length} as of ${fx.asOf}`)
 
 console.log(`\nUNMAPPED (${payload.unmapped.length}) — these keep their transcribed values:`)

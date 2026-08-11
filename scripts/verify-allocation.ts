@@ -274,6 +274,27 @@ if (snapshot) {
       /^\d{4}-\d{2}-\d{2}$/.test(q.asOf),
       `snapshot ${ticker} asOf '${q.asOf}' is not an ISO date`,
     )
+    if (q.priceUsd !== undefined) {
+      check(
+        Number.isFinite(q.priceUsd) && q.priceUsd > 0,
+        `snapshot ${ticker} priceUsd is ${q.priceUsd}, must be finite and positive`,
+      )
+    }
+    if (q.returns) {
+      for (const [window, value] of Object.entries(q.returns)) {
+        if (value === undefined) continue
+        check(
+          Number.isFinite(value),
+          `snapshot ${ticker} return ${window} is ${value}, must be finite`,
+        )
+        // A long cannot lose more than everything. -100% exactly would mean the
+        // price went to zero, which no live quote reports.
+        check(
+          value > -100,
+          `snapshot ${ticker} return ${window} is ${value}%, which is worse than a total loss`,
+        )
+      }
+    }
     if (q.stats) {
       check(
         Number.isFinite(q.stats.realisedVolPct) && q.stats.realisedVolPct >= 0,

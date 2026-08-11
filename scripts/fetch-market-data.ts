@@ -32,8 +32,8 @@
 //
 // The keyless CoinGecko tier is rate-limited well below the keyed one, so the
 // crypto leg is paced and retried rather than fired off at once. It is also
-// the only leg allowed to fail without failing the run: it covers 8 rows of
-// 161, and losing the other 153 to protect them would be the worse trade.
+// the only leg allowed to fail without failing the run: it covers 6 rows of
+// 159, and losing the other 153 to protect them would be the worse trade.
 
 import { appendFileSync, mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
@@ -82,10 +82,8 @@ const EXCHANGE_SUFFIX: Record<string, string> = {
  *  is not safe here — see the trap note in the header. */
 const CRYPTO_IDS: Record<string, string> = {
   ETH: 'ethereum',
-  HYPE: 'hyperliquid',
   LIT: 'lighter',
   NOCK: 'nockchain',
-  PRL: 'pearl-2',
   ZEC: 'zcash',
   GEOD: 'geodnet',
   PEAQ: 'peaq-2',

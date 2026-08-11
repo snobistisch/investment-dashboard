@@ -145,7 +145,6 @@
       <a href="#summary">Summary</a>
       <a href="#zec">ZEC</a>
       <a href="#nock">NOCK</a>
-      <a href="#prl">PRL</a>
       <a href="#eth">ETH</a>
       <a href="#lit">LIT</a>
       <a href="#table">Comparison</a>
@@ -156,10 +155,10 @@
 <header class="hero">
   <div class="wrap">
     <div class="kicker">Digital-assets research tracker · data as of July 9, 2026</div>
-    <h1>Three theses, five assets, one hostile tape.</h1>
-    <p class="lede">Bitcoin broke below $70K as the treasury-company flywheel unwound; ETH sits 65% under its 2025 high. Against that tape this tab holds five positions across three theses — <b>privacy money</b> (ZEC), <b>useful-work compute</b> (NOCK, PRL) and <b>financial infrastructure</b> (ETH, LIT). The organising dimension is not the story each asset tells but <b>how much verified evidence stands behind it</b> — and that varies by two orders of magnitude across the five.</p>
+    <h1>Three theses, four assets, one hostile tape.</h1>
+    <p class="lede">Bitcoin broke below $70K as the treasury-company flywheel unwound; ETH sits 65% under its 2025 high. Against that tape this tab holds four positions across three theses — <b>privacy money</b> (ZEC), <b>useful-work compute</b> (NOCK) and <b>financial infrastructure</b> (ETH, LIT). The organising dimension is not the story each asset tells but <b>how much verified evidence stands behind it</b> — and that varies by two orders of magnitude across the four.</p>
     <div class="meta-row">
-      <div class="m"><div class="k">Positions</div><div class="v">5 assets + HYPE as benchmark</div></div>
+      <div class="m"><div class="k">Positions</div><div class="v">4 assets</div></div>
       <div class="m"><div class="k">Market data</div><div class="v">CoinGecko, single snapshot</div></div>
       <div class="m"><div class="k">Method</div><div class="v">Theses stress-tested, not confirmed</div></div>
       <div class="m"><div class="k">Status</div><div class="v">Not investment advice</div></div>
@@ -167,7 +166,7 @@
 
     <div class="spectrum">
       <div class="head"><span>◄ Institutional evidence · liquid majors</span><span>Narrative &amp; venture risk ►</span></div>
-      <svg id="spectrumSvg" viewBox="0 0 1000 132" preserveAspectRatio="xMidYMid meet" aria-label="Evidence spectrum plotting the five assets from institutional evidence to venture risk"></svg>
+      <svg id="spectrumSvg" viewBox="0 0 1000 132" preserveAspectRatio="xMidYMid meet" aria-label="Evidence spectrum plotting the four assets from institutional evidence to venture risk"></svg>
       <div class="cap">Position ≈ how far the thesis rests on verified adoption vs narrative. Placement is judgmental, for orientation only.</div>
     </div>
   </div>
@@ -176,9 +175,9 @@
 <!-- 1 · SUMMARY -->
 <section id="summary">
   <div class="wrap">
-    <div class="sec-head"><div class="sec-num">01</div><h2>Five positions, graded by evidence rather than by story</h2></div>
+    <div class="sec-head"><div class="sec-num">01</div><h2>Four positions, graded by evidence rather than by story</h2></div>
     <div class="prose wide">
-      <p class="lead-p">Every asset here has a good story. The useful question is <b>what survives contact with the data.</b> ETH's institutional-infrastructure case is measurable in the billions and its price ignores it; ZEC's privacy case is verified on-chain but wrapped in reflexive leverage; Lighter's architecture case is real while its commercial case still trails Hyperliquid badly; and the two useful-work chains (NOCK, PRL) share one unsolved problem — mining that produces a commodity nobody is paying for yet.</p>
+      <p class="lead-p">Every asset here has a good story. The useful question is <b>what survives contact with the data.</b> ETH's institutional-infrastructure case is measurable in the billions and its price ignores it; ZEC's privacy case is verified on-chain but wrapped in reflexive leverage; Lighter's architecture case is real while its commercial case still trails Hyperliquid badly; and the useful-work chain (NOCK) has one unsolved problem — mining that produces a commodity nobody is paying for yet.</p>
       <p>Each section below refines the working thesis against what was actually found, lists the strongest evidence, the dated catalysts, and the counter-evidence — including where a thesis leg had to be downgraded. Sources sit at the bottom of every card.</p>
     </div>
     <div class="profiles">
@@ -191,8 +190,8 @@
       <div class="pf b">
         <div class="tier">Thesis II · Useful-work compute</div>
         <h3>Mining as commodity production for the AI era</h3>
-        <p>Two parallel bets that proof-of-work should output something scarce: verified computation (NOCK) or raw AI matmul (PRL). Both have real cryptography and the same open demand-side question.</p>
-        <div class="names">NOCK · PRL</div>
+        <p>The bet that proof-of-work should output something scarce: verified computation rather than raw hashing. Real cryptography, and an open demand-side question.</p>
+        <div class="names">NOCK</div>
       </div>
       <div class="pf c">
         <div class="tier">Thesis III · Financial infrastructure</div>
@@ -247,41 +246,17 @@
         <p><span class="lab">Refined thesis</span>The working thesis is literally the whitepaper: Logan Allen's "Nockchain: A Distributed Market for Verifiable Computation" designs NOCK as the unit of account for tradeable proving capacity. The refinement is about tense — today that market is internal. Miners generate STARK proofs over the NockVM to secure the chain ("proofpower"), but there is no verified external customer paying for proofs yet. At a $46M market cap this is a venture-style option on the proof market materialising, not an operating commodity network.</p>
         <p><span class="lab">Supporting evidence</span>The design is coherent and shipped in public: fair launch May 21, 2025 (genesis attests to Bitcoin block 897,767), no premine, supply hard-capped at 2³². Zorp Corp raised a $5M seed led by Delphi with North Island Ventures and CMCC Global. Execution cadence has been steady: Transaction Engine v1 (Oct 2025), first on-chain NockApp and SDK v1 (Nov 2025), Base bridge (Dec 2025), and two Q1 2026 upgrades — Bythos (fees/storage) and Aletheia (ASERT difficulty, 150s blocks). Kraken listed NOCK on June 26, 2026 — a first step out of DEX-only liquidity.</p>
         <p><span class="lab">Catalysts to watch</span>Optimistic-execution programmability (Q2 2026 roadmap phase, in progress) — the prerequisite for apps that would actually buy proofs. H2 2026: privacy features and native assets. Any first external proof-buying customer would be the thesis-confirming event. Further listings; liquidity is currently ~$0.8M/day.</p>
-        <p><span class="lab">Risks &amp; counter-evidence</span>Down ~90% from the October 2025 peak — the market has already priced one full disillusionment cycle. The demand-side critique that applies to Pearl applies here too: until someone pays for verifiable compute, ZK-PoW is proof-shaped work. Roughly 48% of supply is still to be mined (structural sell pressure), the team is small against well-funded ZK-proving competitors, and a $46M microcap with thin books can be moved by noise in either direction.</p>
+        <p><span class="lab">Risks &amp; counter-evidence</span>Down ~90% from the October 2025 peak — the market has already priced one full disillusionment cycle. The demand-side critique is the whole question: until someone pays for verifiable compute, ZK-PoW is proof-shaped work. Roughly 48% of supply is still to be mined (structural sell pressure), the team is small against well-funded ZK-proving competitors, and a $46M microcap with thin books can be moved by noise in either direction.</p>
         <div class="src">Sources: <a href="https://www.nockchain.org/nockchain.pdf" target="_blank" rel="noopener">nockchain.org (whitepaper)</a> · <a href="https://docs.nockchain.org/architecture/technical-roadmap" target="_blank" rel="noopener">docs.nockchain.org</a> · <a href="https://blog.kraken.com/product/asset-listings/nock-is-available-for-trading" target="_blank" rel="noopener">blog.kraken.com</a> · <a href="https://crypto-fundraising.info/projects/zorp-nockchain/" target="_blank" rel="noopener">crypto-fundraising.info</a> · <a href="https://www.coingecko.com/en/coins/nockchain" target="_blank" rel="noopener">coingecko.com</a></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- 4 · PRL -->
-<section id="prl">
-  <div class="wrap">
-    <div class="sec-head"><div class="sec-num">04</div><h2>Pearl — real cryptography, one real customer, and a lot of unpaid inference</h2></div>
-    <div class="dd">
-      <div class="top"><span class="tk">PRL</span><span class="nm">Pearl (Pearl Research Labs)</span><span class="cat">Thesis II · Useful-work compute</span></div>
-      <div class="stats">
-        <div class="stat"><div class="k">Price</div><div class="v">$0.4497</div></div>
-        <div class="stat"><div class="k">Mkt cap</div><div class="v">$108.4M</div></div>
-        <div class="stat"><div class="k">FDV</div><div class="v neg">$944M</div></div>
-        <div class="stat"><div class="k">Float</div><div class="v">~11.5%</div></div>
-        <div class="stat"><div class="k">From Jun 1 ATH</div><div class="v neg">−48%</div></div>
-      </div>
-      <div class="body">
-        <p><span class="lab">Thesis, built from scratch</span>Pearl is a proof-of-useful-work L1 where the mining work is noisy matrix multiplication on Nvidia GPUs ("NoisyGEMM") — the core operation of AI training and inference — hashed into commitments and wrapped in ZK proofs. It is grounded in a peer-reviewed 2025 paper (Komargodski, Schen &amp; Weinstein, "Proofs of Useful Work from Arbitrary Matrix Multiplication") claiming only ~1+o(1) overhead versus a plain matmul. Fair launch April 27, 2026: no premine, no founder allocation, no VC. On the open question of how it relates to the NOCK thesis: <b>adjacent, not an extension.</b> Nockchain commoditises <em>verified computation</em>; Pearl commoditises <em>raw AI compute</em>. They are parallel bets on "useful work," and Pearl is currently the weaker of the two on demand evidence.</p>
-        <p><span class="lab">Supporting evidence</span>The credibility is academic rather than commercial: CEO Omri Weinstein is a complexity theorist (Princeton PhD, Hebrew University faculty), and the mechanism is published cryptography, not a whitepaper hand-wave. One genuine commercial validation exists: Together AI launched a Pearl-powered inference endpoint on May 15, 2026 (a Gemma-4 31B model priced &gt;25% below list, the discount offset by PRL emissions). The launch triggered an actual GPU-mining rush, covered by mainstream hardware press.</p>
-        <p><span class="lab">Catalysts to watch</span>Scaling paid inference beyond the single Together AI endpoint — the entire thesis compresses into this one variable. Listings beyond the current minor venues. Whether datacenter-class operators (the official pool charges 20% on H100/H200 hardware) commit capacity or keep renting opportunistically.</p>
-        <p><span class="lab">Risks &amp; counter-evidence</span>The demand-side problem is stated plainly by the best available deep dive: most of today's mining output is inference nobody requested or paid for — until paid demand scales, Pearl is AI-shaped proof-of-work consuming energy like any other PoW chain. Mining economics are compressing fast (RTX 5090 daily revenue roughly halved to ~$17 within weeks of launch), which is how opportunistic hashrate leaves. The float is ~11.5% of a 2.1B max supply — a $944M FDV against a $108M market cap is a heavy emission overhang. Fair launch also means no treasury backstop. And the ticker collides with "Perle" (also PRL, a separate Scale-AI-alumni data project) — a real mistaken-identity risk in flows and screens.</p>
-        <div class="src">Sources: <a href="https://pearlresearch.ai/" target="_blank" rel="noopener">pearlresearch.ai</a> · <a href="https://hashrateindex.com/blog/pearl-prl-ai-compute-cryptocurrency/" target="_blank" rel="noopener">hashrateindex.com</a> · <a href="https://www.together.ai/blog/together-ai-partners-with-pearl-research-labs" target="_blank" rel="noopener">together.ai</a> · <a href="https://www.tomshardware.com/tech-industry/cryptomining/new-ai-compute-cryptocurrency-pearl-sparks-a-gpu-mining-rush-but-profitability-is-sliding" target="_blank" rel="noopener">tomshardware.com</a> · <a href="https://www.coingecko.com/en/coins/pearl-2" target="_blank" rel="noopener">coingecko.com</a></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- 5 · ETH -->
+<!-- 4 · ETH -->
 <section id="eth">
   <div class="wrap">
-    <div class="sec-head"><div class="sec-num">05</div><h2>Ethereum — the best-evidenced thesis in the tab, and the market's least favourite</h2></div>
+    <div class="sec-head"><div class="sec-num">04</div><h2>Ethereum — the best-evidenced thesis in the tab, and the market's least favourite</h2></div>
     <div class="dd">
       <div class="top"><span class="tk">ETH</span><span class="nm">Ethereum</span><span class="cat">Thesis III · Financial infrastructure</span></div>
       <div class="stats">
@@ -302,10 +277,10 @@
   </div>
 </section>
 
-<!-- 6 · LIT -->
+<!-- 5 · LIT -->
 <section id="lit">
   <div class="wrap">
-    <div class="sec-head"><div class="sec-num">06</div><h2>Lighter — the architecture thesis holds; the "stronger than Hyperliquid" verdict doesn't, yet</h2></div>
+    <div class="sec-head"><div class="sec-num">05</div><h2>Lighter — the architecture thesis holds; the "stronger than Hyperliquid" verdict doesn't, yet</h2></div>
     <div class="dd">
       <div class="top"><span class="tk">LIT</span><span class="nm">Lighter</span><span class="cat">Thesis III · Financial infrastructure</span></div>
       <div class="stats">
@@ -326,10 +301,10 @@
   </div>
 </section>
 
-<!-- 7 · COMPARISON -->
+<!-- 6 · COMPARISON -->
 <section id="table">
   <div class="wrap">
-    <div class="sec-head"><div class="sec-num">07</div><h2>The five side by side, plus the benchmark Lighter has to beat</h2></div>
+    <div class="sec-head"><div class="sec-num">06</div><h2>The four side by side</h2></div>
     <div class="prose wide"><p class="lead-p">One row per position. "Evidence grade" is the tab's own judgment of how much of the thesis is verified versus narrative — it is the column that matters most.</p></div>
     <div class="tbl-scroll">
       <table>
@@ -361,25 +336,11 @@
             <td class="small">Contested; incumbent still winning</td>
           </tr>
           <tr>
-            <td class="tk"><span class="tier-dot" style="background:#00d264"></span>PRL</td>
-            <td><span class="seglbl">Useful-work compute</span></td>
-            <td class="small">AI matmul as mining; one paid customer, rest unpaid inference</td>
-            <td class="num">$0.4497</td><td class="num">$108.4M</td><td class="num neg">$944M</td><td class="num neg">−48%</td>
-            <td class="small">Early; demand-side unproven</td>
-          </tr>
-          <tr>
             <td class="tk"><span class="tier-dot" style="background:#00d264"></span>NOCK</td>
             <td><span class="seglbl">Useful-work compute</span></td>
             <td class="small">Unit of account for a proof market that is still internal-only</td>
             <td class="num">$0.0206</td><td class="num">$45.9M</td><td class="num">$88.6M</td><td class="num neg">−90%</td>
             <td class="small">Earliest; venture-grade risk</td>
-          </tr>
-          <tr>
-            <td class="tk"><span class="tier-dot" style="background:#8c8c8c"></span>HYPE</td>
-            <td><span class="seglbl">Benchmark (not held)</span></td>
-            <td class="small">The incumbent Lighter must beat: no VC, ~$202M Q2 fees, fresh June ATH</td>
-            <td class="num">$66.96</td><td class="num">$14.9B</td><td class="num">$64.0B</td><td class="num pos">−13%</td>
-            <td class="small">Context row for the LIT thesis</td>
           </tr>
         </tbody>
       </table>
@@ -410,7 +371,7 @@
   const NS='http://www.w3.org/2000/svg';
   const pts=[
     {tk:'ETH',pos:8,c:'#fb8b1e'},{tk:'ZEC',pos:28,c:'#4dd0e1'},{tk:'LIT',pos:55,c:'#fb8b1e'},
-    {tk:'PRL',pos:76,c:'#00d264'},{tk:'NOCK',pos:92,c:'#00d264'}
+    {tk:'NOCK',pos:92,c:'#00d264'}
   ];
   const x0=40, x1=960, y=70;
   const line=document.createElementNS(NS,'line');

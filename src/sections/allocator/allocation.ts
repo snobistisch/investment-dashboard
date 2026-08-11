@@ -195,7 +195,31 @@ export const investableUniverse: Position[] = activeBook.filter((p) => p.stance 
 // cap not stated in the source"). Printing one of those in a Rationale column
 // next to a dollar amount would state a reason not to own the name as the
 // reason to own it.
-export const sizeableUniverse: Position[] = investableUniverse.filter((p) => p.edge !== undefined)
+//
+// Crypto is the one exception, added on Matthias's instruction (11 Aug 2026)
+// after the section was narrowed to ETH, ZEC, LIT and NOCK. Lighter and
+// Nockchain carry no `edge` — their own section grades them "contested" and
+// "earliest; venture-grade risk" — so under the rule above the allocator could
+// never hold two of the four names the tab is now about. The threshold is
+// lowered for them rather than edge text being invented, because writing an
+// edge that no source states is the one thing this file must not do.
+//
+// What that buys them is small and deliberately so: no edge still caps
+// conviction at 2 under the rule in positions.ts, so they size near the bottom
+// of the book. What it costs is visible rather than hidden — NOCK's realised
+// volatility is 232% against 37% for NVDA, and the measured stress rows on the
+// Allocator move accordingly once it is held.
+// Scoped to the crypto SECTION, not to every token in the book. Keying off the
+// exchange instead would also pull in the three machine-economy tokens the
+// robotics section carries (GEOD, PEAQ, BitRobot) — and BitRobot has no
+// listing anywhere, so the allocator would size a position it cannot price.
+// Those rows were not part of the instruction; they stay unsizeable until
+// someone says otherwise.
+const RELAXED_EDGE_SECTION = 'crypto'
+
+export const sizeableUniverse: Position[] = investableUniverse.filter(
+  (p) => p.edge !== undefined || p.sections.includes(RELAXED_EDGE_SECTION),
+)
 
 /** The hypothesis the book is built on. DECLARED, not derived.
  *

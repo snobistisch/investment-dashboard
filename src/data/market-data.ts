@@ -122,8 +122,14 @@ let inFlight: Promise<Omit<SnapshotState, 'loading'>> | null = null
 
 function loadSnapshot() {
   inFlight ??= (async () => {
-    const remote = await load(RAW_URL)
-    if (remote) return { snapshot: remote, source: 'remote' as const }
+    // In dev the local file is the one being worked on, and the copy on main
+    // is whatever was last deployed — older, and on an older schema after a
+    // change like adding returns. Preferring remote there means testing
+    // against production data and seeing empty columns for fields that exist.
+    if (!import.meta.env.DEV) {
+      const remote = await load(RAW_URL)
+      if (remote) return { snapshot: remote, source: 'remote' as const }
+    }
     const bundled = await load(BUNDLED_URL)
     return bundled
       ? { snapshot: bundled, source: 'bundled' as const }

@@ -5,7 +5,12 @@ import { DataProvenance } from '../../components/DataProvenance'
 import { Tickers } from '../../components/Tickers'
 import { FACTOR_LABELS } from '../../data/positions'
 import type { Factor } from '../../data/positions'
-import { mergePositions, useMarketSnapshot } from '../../data/market-data'
+import {
+  mergePositions,
+  RETURN_COLUMNS,
+  useMarketSnapshot,
+  type MarketQuote,
+} from '../../data/market-data'
 import { VINTAGE_WARN_DAYS } from '../exposure/analysis'
 import {
   buildAllocation,
@@ -42,7 +47,36 @@ const bandColor: Record<RiskBand, string> = {
   Aggressive: 'text-term-red',
 }
 
-function PositionRow({ row, nameCap }: { row: AllocatedPosition; nameCap: number }) {
+/** Last close in USD. Sub-dollar tokens need the extra places to say anything. */
+function price(usd: number | undefined) {
+  if (usd === undefined) return '—'
+  if (usd >= 1000) return `$${usd.toLocaleString('en-US', { maximumFractionDigits: 0 })}`
+  if (usd >= 1) return `$${usd.toFixed(2)}`
+  if (usd >= 0.01) return `$${usd.toFixed(4)}`
+  return `$${usd.toPrecision(2)}`
+}
+
+/** A return, or an em dash where the history does not reach back that far. */
+function Ret({ value }: { value: number | undefined }) {
+  if (value === undefined) return <span className="text-term-dim">—</span>
+  const tone = value > 0 ? 'text-term-green' : value < 0 ? 'text-term-red' : 'text-term-dim'
+  return (
+    <span className={tone}>
+      {value > 0 ? '+' : ''}
+      {Math.abs(value) >= 100 ? value.toFixed(0) : value.toFixed(1)}%
+    </span>
+  )
+}
+
+function PositionRow({
+  row,
+  nameCap,
+  quote,
+}: {
+  row: AllocatedPosition
+  nameCap: number
+  quote?: MarketQuote
+}) {
   return (
     <tr className="border-b border-term-line/60 last:border-b-0">
       <td className="py-2 pr-2 align-top">
@@ -78,6 +112,16 @@ function PositionRow({ row, nameCap }: { row: AllocatedPosition; nameCap: number
           </span>
           {row.position.chainLayer && ` · ${row.position.chainLayer}`}
         </span>
+        {quote && (
+          <span className="mt-1 flex flex-wrap items-baseline gap-x-2 text-[10px] tabular-nums">
+            <span className="text-term-text">{price(quote.priceUsd)}</span>
+            {RETURN_COLUMNS.map(([key, label]) => (
+              <span key={key} className="whitespace-nowrap">
+                <span className="text-term-dim">{label}</span> <Ret value={quote.returns?.[key]} />
+              </span>
+            ))}
+          </span>
+        )}
       </td>
       <td className="py-2 pr-2 text-right align-top tabular-nums text-term-text">
         {row.position.conviction}/5
@@ -566,7 +610,8 @@ export function AllocatorPanel({
                     key={row.position.ticker}
                     row={row}
                     nameCap={result.perNameCapPct}
-                  />
+                    quote={snapshot?.quotes[row.position.ticker]}
+                    />
                 ))}
                 <tr className="border-b border-term-line bg-term-bg">
                   <td
@@ -582,7 +627,8 @@ export function AllocatorPanel({
                     key={row.position.ticker}
                     row={row}
                     nameCap={result.perNameCapPct}
-                  />
+                    quote={snapshot?.quotes[row.position.ticker]}
+                    />
                 ))}
               </tbody>
             </table>

@@ -1,6 +1,6 @@
 {
  "schemaVersion": 1,
- "fetchedAt": "2026-08-11T20:08:55.887Z",
+ "fetchedAt": "2026-08-11T23:11:59.139Z",
  "providers": {
   "equity": "Yahoo Finance (v7 quote + v8 chart)",
   "crypto": "CoinGecko",
@@ -14,7 +14,7 @@
    "CNY": 6.745321,
    "JPY": 159.202773,
    "HKD": 7.846274,
-   "TWD": 32.233
+   "TWD": 32.209
   }
  },
  "quotes": {
@@ -24,20 +24,20 @@
    "providerName": "LandMark Optoelectronics Corporation",
    "currency": "TWD",
    "priceLocal": 2480,
-   "priceUsd": 76.9398,
+   "priceUsd": 76.9971,
    "returns": {
-    "d1": 9.91,
-    "w1": 42.36,
-    "m1": 38.52,
-    "m3": -2.42,
-    "m6": 149.5,
-    "y1": 570.79
+    "d1": -2.11,
+    "w1": 26.94,
+    "m1": 35.59,
+    "m3": -12.67,
+    "m6": 138.67,
+    "y1": 556.27
    },
-   "marketCapUsd": 7.8301,
+   "marketCapUsd": 7.1236,
    "asOf": "2026-08-11",
    "stats": {
     "windowDays": 365,
-    "realisedVolPct": 85.91,
+    "realisedVolPct": 85.78,
     "maxDrawdownPct": -50.05,
     "julyDrawdownPct": -33.54
    }
@@ -48,20 +48,20 @@
    "providerName": "LuxNet Corporation",
    "currency": "TWD",
    "priceLocal": 510,
-   "priceUsd": 15.8223,
+   "priceUsd": 15.8341,
    "returns": {
-    "d1": 9.77,
-    "w1": 32.39,
-    "m1": 23.43,
-    "m3": -22.4,
-    "m6": 55.14,
-    "y1": 164.41
+    "d1": -4.8,
+    "w1": 14.62,
+    "m1": 17.51,
+    "m3": -24.31,
+    "m6": 49.85,
+    "y1": 155.63
    },
-   "marketCapUsd": 2.2318,
+   "marketCapUsd": 2.2335,
    "asOf": "2026-08-11",
    "stats": {
     "windowDays": 365,
-    "realisedVolPct": 79.91,
+    "realisedVolPct": 79.93,
     "maxDrawdownPct": -52.65,
     "julyDrawdownPct": -38.41
    }
@@ -170,18 +170,18 @@
    "priceLocal": 886.96,
    "priceUsd": 131.4926,
    "returns": {
-    "d1": -5.99,
-    "w1": -4.13,
-    "m1": -20.45,
-    "m3": -7.39,
-    "m6": 57.09,
-    "y1": 339.63
+    "d1": 2.63,
+    "w1": -13.1,
+    "m1": -18.35,
+    "m3": -12.26,
+    "m6": 63.81,
+    "y1": 340.16
    },
    "marketCapUsd": 146.6451,
    "asOf": "2026-08-11",
    "stats": {
     "windowDays": 365,
-    "realisedVolPct": 77.7,
+    "realisedVolPct": 77.56,
     "maxDrawdownPct": -37.5,
     "julyDrawdownPct": -34.31
    }
@@ -194,18 +194,18 @@
    "priceLocal": 222.49,
    "priceUsd": 32.9843,
    "returns": {
-    "d1": -3.3,
-    "w1": 23.65,
-    "m1": -17.19,
-    "m3": -5.27,
-    "m6": 7.79,
-    "y1": 230.33
+    "d1": -0.2,
+    "w1": 5.08,
+    "m1": -17.36,
+    "m3": -8.4,
+    "m6": 11.05,
+    "y1": 220.39
    },
    "marketCapUsd": 35.9802,
    "asOf": "2026-08-11",
    "stats": {
     "windowDays": 365,
-    "realisedVolPct": 93.26,
+    "realisedVolPct": 93.07,
     "maxDrawdownPct": -54.94,
     "julyDrawdownPct": -46.91
    }
@@ -218,18 +218,18 @@
    "priceLocal": 415.3,
    "priceUsd": 61.5686,
    "returns": {
-    "d1": -5.05,
-    "w1": 1.47,
-    "m1": -23.1,
-    "m3": -0.06,
-    "m6": 47.46,
-    "y1": 226.64
+    "d1": 3.97,
+    "w1": -7.18,
+    "m1": -20.04,
+    "m3": -1.18,
+    "m6": 51.8,
+    "y1": 221.23
    },
    "marketCapUsd": 85.8424,
    "asOf": "2026-08-11",
    "stats": {
     "windowDays": 365,
-    "realisedVolPct": 83.36,
+    "realisedVolPct": 83.26,
     "maxDrawdownPct": -39.21,
     "julyDrawdownPct": -33.35
    }
@@ -242,18 +242,18 @@
    "priceLocal": 1351,
    "priceUsd": 200.287,
    "returns": {
-    "d1": 4.42,
-    "w1": 23.46,
-    "m1": -11.47,
-    "m3": 27.24,
-    "m6": 178.77,
-    "y1": 829.26
+    "d1": -4.49,
+    "w1": 2.87,
+    "m1": -15.44,
+    "m3": 13.97,
+    "m6": 161.11,
+    "y1": 755.96
    },
    "marketCapUsd": 24.9358,
    "asOf": "2026-08-11",
    "stats": {
     "windowDays": 365,
-    "realisedVolPct": 94.8,
+    "realisedVolPct": 94.77,
     "maxDrawdownPct": -46.09,
     "julyDrawdownPct": -34.99
    }
@@ -287,17 +287,17 @@
    "provider": "yahoo",
    "providerName": "Coherent Corp.",
    "currency": "USD",
-   "priceLocal": 328.58,
-   "priceUsd": 328.58,
+   "priceLocal": 328.57,
+   "priceUsd": 328.57,
    "returns": {
     "d1": 1.05,
     "w1": 1.5,
-    "m1": 1.26,
+    "m1": 1.25,
     "m3": -12.15,
     "m6": 43.88,
-    "y1": 189.24
+    "y1": 189.23
    },
-   "marketCapUsd": 64.2832,
+   "marketCapUsd": 64.2812,
    "asOf": "2026-08-11",
    "stats": {
     "windowDays": 365,
@@ -338,18 +338,18 @@
    "priceLocal": 184.07,
    "priceUsd": 27.2885,
    "returns": {
-    "d1": -7.62,
-    "w1": 13.9,
-    "m1": -23.12,
-    "m3": -9.68,
-    "m6": 161.75,
-    "y1": 279.36
+    "d1": 3.28,
+    "w1": 6.96,
+    "m1": -20.6,
+    "m3": -8.01,
+    "m6": 166.49,
+    "y1": 285.77
    },
    "marketCapUsd": 22.5908,
    "asOf": "2026-08-11",
    "stats": {
     "windowDays": 365,
-    "realisedVolPct": 74.08,
+    "realisedVolPct": 73.97,
     "maxDrawdownPct": -44.82,
     "julyDrawdownPct": -38.69
    }
@@ -599,17 +599,16 @@
    "provider": "yahoo",
    "providerName": "Fabrinet",
    "currency": "USD",
-   "priceLocal": 525.66,
-   "priceUsd": 525.66,
+   "priceLocal": 525.88,
+   "priceUsd": 525.88,
    "returns": {
-    "d1": -0.27,
-    "w1": -1.01,
-    "m1": 11.57,
-    "m3": -17.15,
-    "m6": 12.73,
-    "y1": 58.14
+    "d1": -0.23,
+    "w1": -0.97,
+    "m1": 11.62,
+    "m3": -17.12,
+    "m6": 12.78,
+    "y1": 58.2
    },
-   "marketCapUsd": 18.8343,
    "asOf": "2026-08-11",
    "stats": {
     "windowDays": 365,
@@ -623,17 +622,17 @@
    "provider": "yahoo",
    "providerName": "Corning Incorporated",
    "currency": "USD",
-   "priceLocal": 159.2,
-   "priceUsd": 159.2,
+   "priceLocal": 159.19,
+   "priceUsd": 159.19,
    "returns": {
     "d1": 0.91,
-    "w1": -0.43,
-    "m1": -16.6,
-    "m3": -19.69,
-    "m6": 24.28,
-    "y1": 145
+    "w1": -0.44,
+    "m1": -16.61,
+    "m3": -19.7,
+    "m6": 24.27,
+    "y1": 144.98
    },
-   "marketCapUsd": 136.8543,
+   "marketCapUsd": 137.1244,
    "asOf": "2026-08-11",
    "stats": {
     "windowDays": 365,
@@ -647,17 +646,17 @@
    "provider": "yahoo",
    "providerName": "Ciena Corporation",
    "currency": "USD",
-   "priceLocal": 387.54,
-   "priceUsd": 387.54,
+   "priceLocal": 387.53,
+   "priceUsd": 387.53,
    "returns": {
     "d1": -0.04,
     "w1": -5.74,
-    "m1": -15.88,
+    "m1": -15.89,
     "m3": -32.85,
     "m6": 29.74,
-    "y1": 315.01
+    "y1": 315
    },
-   "marketCapUsd": 54.8574,
+   "marketCapUsd": 54.856,
    "asOf": "2026-08-11",
    "stats": {
     "windowDays": 365,
@@ -671,17 +670,17 @@
    "provider": "yahoo",
    "providerName": "Arista Networks, Inc.",
    "currency": "USD",
-   "priceLocal": 197.77,
-   "priceUsd": 197.77,
+   "priceLocal": 197.85,
+   "priceUsd": 197.85,
    "returns": {
-    "d1": 3.26,
-    "w1": 3.81,
-    "m1": 5.78,
-    "m3": 38.75,
-    "m6": 37.87,
-    "y1": 43.68
+    "d1": 3.31,
+    "w1": 3.85,
+    "m1": 5.82,
+    "m3": 38.8,
+    "m6": 37.92,
+    "y1": 43.73
    },
-   "marketCapUsd": 249.4324,
+   "marketCapUsd": 249.5333,
    "asOf": "2026-08-11",
    "stats": {
     "windowDays": 365,
@@ -722,18 +721,18 @@
    "priceLocal": 34.19,
    "priceUsd": 5.0687,
    "returns": {
-    "d1": -1.13,
-    "w1": 0.9,
-    "m1": -14.81,
-    "m3": -11.68,
-    "m6": -5.36,
-    "y1": 8.06
+    "d1": -0.28,
+    "w1": -0.4,
+    "m1": -15.05,
+    "m3": -9.61,
+    "m6": -6.63,
+    "y1": 7.17
    },
    "marketCapUsd": 24.2463,
    "asOf": "2026-08-11",
    "stats": {
     "windowDays": 365,
-    "realisedVolPct": 53.19,
+    "realisedVolPct": 53.08,
     "maxDrawdownPct": -40.68,
     "julyDrawdownPct": -16.78
    }
@@ -753,7 +752,7 @@
     "m6": -22.48,
     "y1": 13.7
    },
-   "marketCapUsd": 3.6417,
+   "marketCapUsd": 3.6495,
    "asOf": "2026-08-11",
    "stats": {
     "windowDays": 365,
@@ -1055,17 +1054,17 @@
    "provider": "yahoo",
    "providerName": "Ginkgo Bioworks Holdings, Inc.",
    "currency": "USD",
-   "priceLocal": 7.515,
-   "priceUsd": 7.515,
+   "priceLocal": 7.51,
+   "priceUsd": 7.51,
    "returns": {
-    "d1": -1.76,
-    "w1": -19.8,
-    "m1": -17.33,
-    "m3": -9.89,
-    "m6": -18.58,
-    "y1": -36.8
+    "d1": -1.83,
+    "w1": -19.85,
+    "m1": -17.38,
+    "m3": -9.95,
+    "m6": -18.63,
+    "y1": -36.84
    },
-   "marketCapUsd": 0.5061,
+   "marketCapUsd": 0.5057,
    "asOf": "2026-08-11",
    "stats": {
     "windowDays": 365,
@@ -1172,17 +1171,17 @@
    "provider": "yahoo",
    "providerName": "MP Materials Corp.",
    "currency": "USD",
-   "priceLocal": 55.26,
-   "priceUsd": 55.26,
+   "priceLocal": 55.24,
+   "priceUsd": 55.24,
    "returns": {
-    "d1": 1.1,
-    "w1": 16.41,
-    "m1": 5.84,
-    "m3": -15.75,
-    "m6": -11.36,
-    "y1": -23.98
+    "d1": 1.06,
+    "w1": 16.37,
+    "m1": 5.8,
+    "m3": -15.78,
+    "m6": -11.39,
+    "y1": -24.01
    },
-   "marketCapUsd": 9.8419,
+   "marketCapUsd": 9.8383,
    "asOf": "2026-08-11",
    "stats": {
     "windowDays": 365,
@@ -1343,18 +1342,18 @@
    "priceLocal": 89.65,
    "priceUsd": 11.4258,
    "returns": {
-    "d1": -1.57,
-    "w1": 4.19,
-    "m1": 4.05,
-    "m3": -22.11,
-    "m6": -30.58,
-    "y1": -4.47
+    "d1": 1.18,
+    "w1": 3.06,
+    "m1": 5.27,
+    "m3": -19.42,
+    "m6": -30.4,
+    "y1": -4.28
    },
    "marketCapUsd": 5.7518,
    "asOf": "2026-08-11",
    "stats": {
     "windowDays": 365,
-    "realisedVolPct": 62.5,
+    "realisedVolPct": 62.38,
     "maxDrawdownPct": -50.73,
     "julyDrawdownPct": -27.82
    }
@@ -1436,17 +1435,17 @@
    "provider": "yahoo",
    "providerName": "IonQ, Inc.",
    "currency": "USD",
-   "priceLocal": 43.425,
-   "priceUsd": 43.425,
+   "priceLocal": 43.44,
+   "priceUsd": 43.44,
    "returns": {
-    "d1": 2.1,
-    "w1": 4.09,
-    "m1": 1.32,
-    "m3": -22.27,
-    "m6": 23.4,
-    "y1": -3.37
+    "d1": 2.14,
+    "w1": 4.12,
+    "m1": 1.35,
+    "m3": -22.25,
+    "m6": 23.44,
+    "y1": -3.34
    },
-   "marketCapUsd": 17.593,
+   "marketCapUsd": 17.5991,
    "asOf": "2026-08-11",
    "stats": {
     "windowDays": 365,
@@ -1643,17 +1642,17 @@
    "provider": "yahoo",
    "providerName": "International Business Machines Corporation",
    "currency": "USD",
-   "priceLocal": 238.44,
-   "priceUsd": 238.44,
+   "priceLocal": 238.42,
+   "priceUsd": 238.42,
    "returns": {
-    "d1": 0.9,
-    "w1": 1.4,
-    "m1": -17.08,
-    "m3": 8.77,
+    "d1": 0.89,
+    "w1": 1.39,
+    "m1": -17.09,
+    "m3": 8.76,
     "m6": -18.28,
-    "y1": 0.91
+    "y1": 0.9
    },
-   "marketCapUsd": 224.6425,
+   "marketCapUsd": 224.6237,
    "asOf": "2026-08-11",
    "stats": {
     "windowDays": 365,
@@ -1786,17 +1785,17 @@
    "provider": "yahoo",
    "providerName": "Circle Internet Group",
    "currency": "USD",
-   "priceLocal": 71.2,
-   "priceUsd": 71.2,
+   "priceLocal": 71.16,
+   "priceUsd": 71.16,
    "returns": {
-    "d1": 6.19,
-    "w1": 12.57,
-    "m1": 7.65,
-    "m3": -42.42,
-    "m6": 19.16,
-    "y1": -55.82
+    "d1": 6.13,
+    "w1": 12.51,
+    "m1": 7.59,
+    "m3": -42.45,
+    "m6": 19.1,
+    "y1": -55.85
    },
-   "marketCapUsd": 19.4087,
+   "marketCapUsd": 19.3978,
    "asOf": "2026-08-11",
    "stats": {
     "windowDays": 365,
@@ -1810,17 +1809,17 @@
    "provider": "yahoo",
    "providerName": "Nu Holdings Ltd.",
    "currency": "USD",
-   "priceLocal": 13.66,
-   "priceUsd": 13.66,
+   "priceLocal": 13.65,
+   "priceUsd": 13.65,
    "returns": {
-    "d1": -1.44,
-    "w1": -4.68,
-    "m1": -0.73,
-    "m3": 2.94,
-    "m6": -22.25,
-    "y1": 14.6
+    "d1": -1.52,
+    "w1": -4.75,
+    "m1": -0.8,
+    "m3": 2.86,
+    "m6": -22.31,
+    "y1": 14.51
    },
-   "marketCapUsd": 65.9844,
+   "marketCapUsd": 65.9361,
    "asOf": "2026-08-11",
    "stats": {
     "windowDays": 365,
@@ -1916,7 +1915,7 @@
     "m6": -9.69,
     "y1": -38.99
    },
-   "marketCapUsd": 1.638,
+   "marketCapUsd": 1.6208,
    "asOf": "2026-08-11",
    "stats": {
     "windowDays": 365,
@@ -1954,17 +1953,17 @@
    "provider": "coingecko",
    "providerName": "ethereum",
    "currency": "USD",
-   "priceLocal": 1881.31,
-   "priceUsd": 1881.31,
+   "priceLocal": 1878.06,
+   "priceUsd": 1878.06,
    "returns": {
-    "d1": 0.53,
-    "w1": 1.25,
-    "m1": 5.22,
-    "m3": -19.55,
-    "m6": -10.7,
-    "y1": -55.49
+    "d1": 0.36,
+    "w1": 1.07,
+    "m1": 5.04,
+    "m3": -19.69,
+    "m6": -10.86,
+    "y1": -55.56
    },
-   "marketCapUsd": 227.0445,
+   "marketCapUsd": 226.6484,
    "asOf": "2026-08-11",
    "stats": {
     "windowDays": 365,
@@ -1978,21 +1977,21 @@
    "provider": "coingecko",
    "providerName": "zcash",
    "currency": "USD",
-   "priceLocal": 476.59,
-   "priceUsd": 476.59,
+   "priceLocal": 478.87,
+   "priceUsd": 478.87,
    "returns": {
-    "d1": -3.86,
-    "w1": -1.4,
-    "m1": -6.29,
-    "m3": -14.3,
-    "m6": 98.27,
-    "y1": 1199.32
+    "d1": -3.4,
+    "w1": -0.93,
+    "m1": -5.84,
+    "m3": -13.89,
+    "m6": 99.21,
+    "y1": 1205.53
    },
-   "marketCapUsd": 8.0406,
+   "marketCapUsd": 8.0792,
    "asOf": "2026-08-11",
    "stats": {
     "windowDays": 365,
-    "realisedVolPct": 126.13,
+    "realisedVolPct": 126.12,
     "maxDrawdownPct": -71.73,
     "julyDrawdownPct": -18.18
    }
@@ -2002,20 +2001,20 @@
    "provider": "coingecko",
    "providerName": "lighter",
    "currency": "USD",
-   "priceLocal": 2.44,
-   "priceUsd": 2.44,
+   "priceLocal": 2.43,
+   "priceUsd": 2.43,
    "returns": {
-    "d1": 2.49,
-    "w1": 22.22,
-    "m1": -5.37,
-    "m3": 144.24,
-    "m6": 57.63
+    "d1": 1.89,
+    "w1": 21.51,
+    "m1": -5.93,
+    "m3": 142.81,
+    "m6": 56.71
    },
-   "marketCapUsd": 0.6104,
+   "marketCapUsd": 0.6069,
    "asOf": "2026-08-11",
    "stats": {
     "windowDays": 365,
-    "realisedVolPct": 107.4,
+    "realisedVolPct": 107.39,
     "maxDrawdownPct": -74.1,
     "julyDrawdownPct": -24.3
    }
@@ -2025,20 +2024,20 @@
    "provider": "coingecko",
    "providerName": "nockchain",
    "currency": "USD",
-   "priceLocal": 0.01321594,
-   "priceUsd": 0.01321594,
+   "priceLocal": 0.01281086,
+   "priceUsd": 0.01281086,
    "returns": {
-    "d1": 22.42,
-    "w1": 14.49,
-    "m1": -27.13,
-    "m3": -51.17,
-    "m6": 11.91
+    "d1": 18.67,
+    "w1": 10.98,
+    "m1": -29.37,
+    "m3": -52.67,
+    "m6": 8.48
    },
-   "marketCapUsd": 0.03,
+   "marketCapUsd": 0.0291,
    "asOf": "2026-08-11",
    "stats": {
     "windowDays": 365,
-    "realisedVolPct": 232.73,
+    "realisedVolPct": 232.55,
     "maxDrawdownPct": -96.75,
     "julyDrawdownPct": -70.6
    }

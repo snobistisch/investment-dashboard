@@ -4,11 +4,12 @@ import { Panel, Bar } from '../../components/Panel'
 import { DataProvenance } from '../../components/DataProvenance'
 import { Tickers } from '../../components/Tickers'
 import { FACTOR_LABELS, JULY_2026_DRAWDOWN } from '../../data/positions'
-import type { Factor, Position } from '../../data/positions'
+import type { Factor } from '../../data/positions'
 import {
   capRevisions,
   coverageDelta,
   mergePositions,
+  RETURN_COLUMNS,
   useMarketSnapshot,
 } from '../../data/market-data'
 import {
@@ -37,6 +38,28 @@ function pct(share: number, digits = 0) {
   return `${(share * 100).toFixed(digits)}%`
 }
 
+/** Last close in USD. Sub-dollar tokens need the extra places to say anything. */
+function price(usd: number | undefined) {
+  if (usd === undefined) return '—'
+  if (usd >= 1000) return `$${usd.toLocaleString('en-US', { maximumFractionDigits: 0 })}`
+  if (usd >= 1) return `$${usd.toFixed(2)}`
+  if (usd >= 0.01) return `$${usd.toFixed(4)}`
+  return `$${usd.toPrecision(2)}`
+}
+
+/** A return, or an em dash where the price history does not reach back far
+ *  enough. An absent window is a fact about the listing's age, not a zero. */
+function Ret({ value }: { value: number | undefined }) {
+  if (value === undefined) return <span className="text-term-dim">—</span>
+  const tone = value > 0 ? 'text-term-green' : value < 0 ? 'text-term-red' : 'text-term-dim'
+  return (
+    <span className={tone}>
+      {value > 0 ? '+' : ''}
+      {Math.abs(value) >= 100 ? value.toFixed(0) : value.toFixed(1)}%
+    </span>
+  )
+}
+
 const factorColor: Record<Factor, string> = {
   'ai-capex': 'text-term-amber',
   'ai-adoption': 'text-term-cyan',
@@ -56,7 +79,6 @@ export function ExposurePanel() {
   const merged = useMemo(() => mergePositions(snapshot), [snapshot])
   const thematicPositions = useMemo(() => merged.filter(isThematic), [merged])
   const activeBook = useMemo(() => thematicPositions.filter((p) => !isContext(p)), [thematicPositions])
-  const citriniOnly = useMemo(() => merged.filter((p) => !isThematic(p)), [merged])
   // The whole researched book in one list, largest first. Context names are
   // included so the table is complete; they are marked and dimmed.
   const allNames = useMemo(
@@ -191,6 +213,12 @@ export function ExposurePanel() {
                   <th className="py-1.5 pr-2 font-bold">Sections</th>
                   <th className="py-1.5 pr-2 font-bold">Primary driver</th>
                   <th className="py-1.5 pr-2 font-bold">Chain</th>
+                  <th className="py-1.5 pr-2 text-right font-bold">Price USD</th>
+                  {RETURN_COLUMNS.map(([key, label]) => (
+                    <th key={key} className="py-1.5 pr-2 text-right font-bold">
+                      {label}
+                    </th>
+                  ))}
                   <th className="py-1.5 pr-2 text-right font-bold">Mkt cap</th>
                   <th className="py-1.5 pr-2 font-bold">As of</th>
                   <th className="py-1.5 font-bold">Source</th>
@@ -223,6 +251,14 @@ export function ExposurePanel() {
                       {p.chainLayer ?? '—'}
                     </td>
                     <td className="py-1.5 pr-2 text-right tabular-nums text-term-text">
+                      {price(p.priceUsd)}
+                    </td>
+                    {RETURN_COLUMNS.map(([key]) => (
+                      <td key={key} className="py-1.5 pr-2 text-right tabular-nums">
+                        <Ret value={p.returns?.[key]} />
+                      </td>
+                    ))}
+                    <td className="py-1.5 pr-2 text-right tabular-nums text-term-text">
                       {cap(p.marketCapUsd)}
                     </td>
                     <td className="py-1.5 pr-2 whitespace-nowrap tabular-nums text-term-dim">
@@ -243,6 +279,19 @@ export function ExposurePanel() {
             </table>
           </div>
           <p className="mt-3 max-w-4xl text-[11px] leading-relaxed text-term-dim">
+            <span className="text-term-text">Prices and returns are in USD</span>, converted point
+            by point against a year of daily FX rather than at today&rsquo;s rate — so a Japanese
+            name up 20% in yen while the yen fell 8% reads as the ~11% a dollar holder actually
+            made, not as 20%. These are price returns; dividends are not counted, which understates
+            the income names over the longer windows. Windows are calendar-anchored — 1W is seven
+            days, not five sessions — because crypto trades every day and equities do not, and the
+            two sit in the same column here. 1D is the last session against the one before it, so
+            for a token that is a 24-hour move and for a Tokyo listing it is the previous close. An{' '}
+            <span className="text-term-dim">em dash</span> means the price history does not reach
+            back that far: a listing three months old has no one-year return, and that is shown as
+            absent rather than filled in from wherever its series happens to start.
+          </p>
+          <p className="mt-2 max-w-4xl text-[11px] leading-relaxed text-term-dim">
             Every researched name, listed once, with the market cap the figures above actually use
             and where that number came from. A{' '}
             <span className="text-term-cyan">cyan symbol</span> is the provider symbol the quote was
@@ -644,41 +693,6 @@ export function ExposurePanel() {
           </ul>
         </Panel>
 
-        <Panel title={`Idea sources — ${citriniOnly.length} tickers, excluded from the figures above`}>
-          <p className="text-[11px] leading-relaxed text-term-dim">
-            The Citrini section names {citriniOnly.length} tickers that appear nowhere else in the
-            dashboard. They are transcribed into positions.ts so the overlap test is complete, and
-            excluded from every concentration figure above, because they are third-party ideas
-            reconstructed from free public sources: disclosed late, without updates and without
-            exits. None of them carries a market cap — the section has no market data at all.
-          </p>
-          <div className="mt-3 flex flex-wrap gap-1">
-            {citriniOnly.map((p: Position) => (
-              <span
-                key={p.ticker}
-                className={`border border-term-line px-1.5 py-0.5 text-[10px] ${
-                  p.stance === 'short'
-                    ? 'text-term-red'
-                    : p.stance === 'pair'
-                      ? 'text-term-cyan'
-                      : p.stance === 'context'
-                        ? 'text-term-dim'
-                        : 'text-term-text'
-                }`}
-                title={`${p.name} · ${p.stance} · ${p.asOf}`}
-              >
-                {p.ticker}
-              </span>
-            ))}
-          </div>
-          <p className="mt-3 text-[10px] leading-relaxed text-term-dim">
-            <span className="text-term-red">red</span> = short leg ·{' '}
-            <span className="text-term-cyan">cyan</span> = one side of a pair ·{' '}
-            <span className="text-term-dim">grey</span> = named in a scenario essay with no stance
-            disclosed. Two of these names, MU and SNDK, are the calibration cases: both appear in
-            the July 2026 drawdown above, and neither entry was ever updated.
-          </p>
-        </Panel>
       </div>
     </Section>
   )

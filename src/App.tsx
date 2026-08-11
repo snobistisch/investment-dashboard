@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
-import { CitriniTracker } from './sections/citrini/CitriniTracker'
 import { ExposurePanel } from './sections/exposure/ExposurePanel'
 import { AllocatorPanel } from './sections/allocator/AllocatorPanel'
 import { EmbeddedDashboard } from './components/EmbeddedDashboard'
 
-// The dashboard's sections. React trackers (like Citrini) render inline and
-// scroll; embedded sections host a self-contained HTML dashboard in an iframe.
+// The dashboard's sections. React panels render inline and scroll; embedded
+// sections host a self-contained HTML dashboard in an iframe.
 // To add another: drop its file in public/dashboards/ and add one entry here.
 // Exposure comes first on purpose: it is the only view that reads across the
 // others, and the concentration question should be answered before the
@@ -13,7 +12,6 @@ import { EmbeddedDashboard } from './components/EmbeddedDashboard'
 const sections = [
   'exposure',
   'allocator',
-  'citrini',
   'biology',
   'robotics',
   'quantum',
@@ -26,7 +24,6 @@ type Section = (typeof sections)[number]
 const navLabels: Record<Section, string> = {
   exposure: 'EXPOSURE',
   allocator: 'ALLOCATOR',
-  citrini: 'CITRINI',
   biology: 'DIGITAL BIOLOGY',
   robotics: 'ROBOTICS',
   quantum: 'QUANTUM',
@@ -88,11 +85,6 @@ function App() {
         {active === 'allocator' && (
           <div className="h-full overflow-y-auto">
             <AllocatorPanel onLeverageChange={setLeverageActive} />
-          </div>
-        )}
-        {active === 'citrini' && (
-          <div className="h-full overflow-y-auto">
-            <CitriniTracker />
           </div>
         )}
         {active === 'biology' && (

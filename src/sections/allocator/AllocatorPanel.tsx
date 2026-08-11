@@ -5,7 +5,12 @@ import { DataProvenance } from '../../components/DataProvenance'
 import { Tickers } from '../../components/Tickers'
 import { FACTOR_LABELS } from '../../data/positions'
 import type { Factor } from '../../data/positions'
-import { mergePositions, useMarketSnapshot } from '../../data/market-data'
+import {
+  mergePositions,
+  RETURN_COLUMNS,
+  useMarketSnapshot,
+  type MarketQuote,
+} from '../../data/market-data'
 import { VINTAGE_WARN_DAYS } from '../exposure/analysis'
 import {
   buildAllocation,
@@ -42,7 +47,36 @@ const bandColor: Record<RiskBand, string> = {
   Aggressive: 'text-term-red',
 }
 
-function PositionRow({ row, nameCap }: { row: AllocatedPosition; nameCap: number }) {
+/** Last close in USD. Sub-dollar tokens need the extra places to say anything. */
+function price(usd: number | undefined) {
+  if (usd === undefined) return '—'
+  if (usd >= 1000) return `$${usd.toLocaleString('en-US', { maximumFractionDigits: 0 })}`
+  if (usd >= 1) return `$${usd.toFixed(2)}`
+  if (usd >= 0.01) return `$${usd.toFixed(4)}`
+  return `$${usd.toPrecision(2)}`
+}
+
+/** A return, or an em dash where the history does not reach back that far. */
+function Ret({ value }: { value: number | undefined }) {
+  if (value === undefined) return <span className="text-term-dim">—</span>
+  const tone = value > 0 ? 'text-term-green' : value < 0 ? 'text-term-red' : 'text-term-dim'
+  return (
+    <span className={tone}>
+      {value > 0 ? '+' : ''}
+      {Math.abs(value) >= 100 ? value.toFixed(0) : value.toFixed(1)}%
+    </span>
+  )
+}
+
+function PositionRow({
+  row,
+  nameCap,
+  quote,
+}: {
+  row: AllocatedPosition
+  nameCap: number
+  quote?: MarketQuote
+}) {
   return (
     <tr className="border-b border-term-line/60 last:border-b-0">
       <td className="py-2 pr-2 align-top">
@@ -78,6 +112,16 @@ function PositionRow({ row, nameCap }: { row: AllocatedPosition; nameCap: number
           </span>
           {row.position.chainLayer && ` · ${row.position.chainLayer}`}
         </span>
+        {quote && (
+          <span className="mt-1 flex flex-wrap items-baseline gap-x-2 text-[10px] tabular-nums">
+            <span className="text-term-text">{price(quote.priceUsd)}</span>
+            {RETURN_COLUMNS.map(([key, label]) => (
+              <span key={key} className="whitespace-nowrap">
+                <span className="text-term-dim">{label}</span> <Ret value={quote.returns?.[key]} />
+              </span>
+            ))}
+          </span>
+        )}
       </td>
       <td className="py-2 pr-2 text-right align-top tabular-nums text-term-text">
         {row.position.conviction}/5
@@ -140,6 +184,8 @@ export function AllocatorPanel({
   }, [leverageActive, onLeverageChange])
   const thesisRows = result.positions.filter((p) => p.sleeveName === 'thesis')
   const diversifierRows = result.positions.filter((p) => p.sleeveName === 'diversifier')
+  const cryptoRows = result.positions.filter((p) => p.sleeveName === 'crypto')
+  const cryptoShare = cryptoRows.reduce((t, p) => t + p.exposureWeight, 0)
 
   // Sizing never reads market cap, so this book is here for the provenance
   // banner and nothing else — the allocation itself is identical either way.
@@ -286,7 +332,9 @@ export function AllocatorPanel({
                           ? 'volume layer'
                           : row.layer === 'system'
                             ? 'beta'
-                            : 'ballast'}
+                            : row.layer === 'crypto mandate'
+                              ? 'sized to instruction, not to conviction'
+                              : 'ballast'}
                     </span>
                     <div className="mt-1 w-40 max-w-full">
                       <Bar
@@ -566,7 +614,8 @@ export function AllocatorPanel({
                     key={row.position.ticker}
                     row={row}
                     nameCap={result.perNameCapPct}
-                  />
+                    quote={snapshot?.quotes[row.position.ticker]}
+                    />
                 ))}
                 <tr className="border-b border-term-line bg-term-bg">
                   <td
@@ -582,6 +631,26 @@ export function AllocatorPanel({
                     key={row.position.ticker}
                     row={row}
                     nameCap={result.perNameCapPct}
+                    quote={snapshot?.quotes[row.position.ticker]}
+                    />
+                ))}
+                {cryptoRows.length > 0 && (
+                  <tr className="border-b border-term-line bg-term-bg">
+                    <td
+                      colSpan={5}
+                      className="py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-term-magenta"
+                    >
+                      Crypto mandate — {pct(cryptoShare)} of capital, sized to instruction rather
+                      than to the conviction ranking
+                    </td>
+                  </tr>
+                )}
+                {cryptoRows.map((row) => (
+                  <PositionRow
+                    key={row.position.ticker}
+                    row={row}
+                    nameCap={result.perNameCapPct}
+                    quote={snapshot?.quotes[row.position.ticker]}
                   />
                 ))}
               </tbody>

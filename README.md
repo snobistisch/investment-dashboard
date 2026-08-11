@@ -5,19 +5,39 @@ Live at **https://snobistisch.github.io/investment-dashboard/**
 
 Sections:
 
-- **Citrini Research Tracker** — a free, public-source-only tracker of
-  investment themes and calls disclosed by Citrini Research (@Citrini7): the
-  free Substack tier, public podcast pages, and public posts. The paid
-  Citrindex product is not accessed or reconstructed. Research notes with
-  per-entry sourcing live in
-  [research/citrini-tracker-research.md](research/citrini-tracker-research.md).
+- **Exposure** and **Allocator** — the two views that read across the research
+  sections: factor concentration over the whole book, and a risk-scaled
+  allocation built on it. Both show live prices and USD returns per name, and
+  state for every figure whether it came from a live quote or from the
+  transcription in [src/data/positions.ts](src/data/positions.ts).
 - **Digital Biology**, **Robotics**, **Quantum**, **Agentic**, **Crypto** and
   **Photonics** — self-contained research dashboards, embedded from
   [public/dashboards/](public/dashboards/). Sourced notes for the photonics
   section live in
   [research/photonics-tracker-research.md](research/photonics-tracker-research.md).
 
-Not affiliated with Citrini Research. Nothing here is investment advice.
+The Citrini Research tracker was removed on 11 August 2026. Its 70 idea-flow
+tickers came out of positions.ts with it, so the book is now the six thematic
+sections only. The section and its sourcing notes remain in git history.
+
+Nothing here is investment advice.
+
+## Live market data
+
+[scripts/fetch-market-data.ts](scripts/fetch-market-data.ts) fetches quotes,
+market caps, FX and a year of price history, and writes
+`public/data/market-data.json`, which
+[.github/workflows/refresh-market-data.yml](.github/workflows/refresh-market-data.yml)
+commits on a weekday schedule. No API key is involved: Yahoo Finance for
+equities, CoinGecko's keyless tier for the tokens, the ECB for FX.
+
+`positions.ts` is never written to by any of this. It stays a transcription
+with per-section sourcing; live values are merged at read time and every row on
+screen says which of the two it is showing. Run it locally with:
+
+```sh
+npm run fetch-market-data
+```
 
 ## Stack
 

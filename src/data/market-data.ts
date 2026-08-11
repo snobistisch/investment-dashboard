@@ -42,12 +42,36 @@ export interface MarketStats {
   julyDrawdownPct?: number
 }
 
+/** Price return per window, in percent, measured in USD so venues compare.
+ *  A window the price history does not cover is absent, never approximated. */
+export interface MarketReturns {
+  d1?: number
+  w1?: number
+  m1?: number
+  m3?: number
+  m6?: number
+  y1?: number
+}
+
+export const RETURN_COLUMNS = [
+  ['d1', '1D'],
+  ['w1', '1W'],
+  ['m1', '1M'],
+  ['m3', '3M'],
+  ['m6', '6M'],
+  ['y1', '1Y'],
+] as const
+
 export interface MarketQuote {
   symbol: string
   provider: 'yahoo' | 'coingecko'
   providerName: string
   currency: string
+  /** Last close in the listing currency. */
   priceLocal: number
+  /** Last close in USD, converted at the snapshot's FX rate. */
+  priceUsd?: number
+  returns?: MarketReturns
   /** USD billions, matching the units positions.ts uses. */
   marketCapUsd?: number
   asOf: string
@@ -98,8 +122,14 @@ let inFlight: Promise<Omit<SnapshotState, 'loading'>> | null = null
 
 function loadSnapshot() {
   inFlight ??= (async () => {
-    const remote = await load(RAW_URL)
-    if (remote) return { snapshot: remote, source: 'remote' as const }
+    // In dev the local file is the one being worked on, and the copy on main
+    // is whatever was last deployed — older, and on an older schema after a
+    // change like adding returns. Preferring remote there means testing
+    // against production data and seeing empty columns for fields that exist.
+    if (!import.meta.env.DEV) {
+      const remote = await load(RAW_URL)
+      if (remote) return { snapshot: remote, source: 'remote' as const }
+    }
     const bundled = await load(BUNDLED_URL)
     return bundled
       ? { snapshot: bundled, source: 'bundled' as const }
@@ -148,6 +178,11 @@ export interface EffectivePosition extends Position {
   providerSymbol?: string
   providerName?: string
   stats?: MarketStats
+  /** Last close in USD, and the return over each window. Absent on rows no
+   *  snapshot priced — there is no transcribed price to fall back to, since
+   *  positions.ts never carried one. */
+  priceUsd?: number
+  returns?: MarketReturns
 }
 
 export function mergePositions(snapshot: MarketSnapshot | null): EffectivePosition[] {
@@ -167,6 +202,8 @@ export function mergePositions(snapshot: MarketSnapshot | null): EffectivePositi
       providerSymbol: q?.symbol,
       providerName: q?.providerName,
       stats: q?.stats,
+      priceUsd: q?.priceUsd,
+      returns: q?.returns,
     }
   })
 }

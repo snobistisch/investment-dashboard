@@ -8,7 +8,10 @@ import type { EffectivePosition } from '../../data/market-data'
 const thematic = new Set<string>(THEMATIC_SECTIONS)
 
 /** A position is part of the research book if any of its sections is thematic.
- *  Citrini-only rows are third-party idea flow, not exposure. */
+ *  Every row now is: the Citrini idea-flow section was removed on 11 Aug 2026.
+ *  The predicate stays because THEMATIC_SECTIONS is still what defines the
+ *  book, and a future non-thematic section would otherwise land in the
+ *  concentration figures unnoticed. */
 export function isThematic(p: Position) {
   return p.sections.some((s) => thematic.has(s))
 }
@@ -22,7 +25,6 @@ export function isContext(p: Position) {
 }
 
 export const thematicPositions = positions.filter(isThematic)
-export const citriniOnly = positions.filter((p) => !isThematic(p))
 export const activeBook = thematicPositions.filter((p) => !isContext(p))
 
 export interface FactorRow {

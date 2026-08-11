@@ -18,6 +18,7 @@ const sections = [
   'agentic',
   'crypto',
   'photonics',
+  'defense',
 ] as const
 type Section = (typeof sections)[number]
 
@@ -30,6 +31,7 @@ const navLabels: Record<Section, string> = {
   agentic: 'AGENTIC',
   crypto: 'CRYPTO',
   photonics: 'PHOTONICS',
+  defense: 'DEFENCE',
 }
 
 function sectionFromHash(): Section {
@@ -106,6 +108,12 @@ function App() {
           <EmbeddedDashboard
             src="dashboards/photonics.html"
             title="Photonics and optical interconnect dashboard"
+          />
+        )}
+        {active === 'defense' && (
+          <EmbeddedDashboard
+            src="dashboards/defense.html"
+            title="Defence and autonomy research dashboard"
           />
         )}
       </main>

@@ -10,11 +10,18 @@ Sections:
   allocation built on it. Both show live prices and USD returns per name, and
   state for every figure whether it came from a live quote or from the
   transcription in [src/data/positions.ts](src/data/positions.ts).
-- **Digital Biology**, **Robotics**, **Quantum**, **Agentic**, **Crypto** and
-  **Photonics** — self-contained research dashboards, embedded from
-  [public/dashboards/](public/dashboards/). Sourced notes for the photonics
-  section live in
-  [research/photonics-tracker-research.md](research/photonics-tracker-research.md).
+- **Digital Biology**, **Robotics**, **Quantum**, **Agentic**, **Crypto**,
+  **Photonics** and **Defence** — self-contained research dashboards, embedded
+  from [public/dashboards/](public/dashboards/). Sourced notes live in
+  [research/photonics-tracker-research.md](research/photonics-tracker-research.md)
+  and
+  [research/defense-tracker-research.md](research/defense-tracker-research.md).
+
+The Defence section ranks its 53 names by an explicit three-scenario expected
+value rather than by a composite score: the probabilities and returns are
+published in the table and the ranking is computed from them in the page, so a
+reader who disagrees with a number can recompute it. Its research note carries a
+corrections log against the brief it was built from.
 
 The Citrini Research tracker was removed on 11 August 2026. Its 70 idea-flow
 tickers came out of positions.ts with it, so the book is now the six thematic

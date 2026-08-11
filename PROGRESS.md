@@ -10,6 +10,45 @@ deploys on every push to main).
 
 ## Done
 
+- **Defence tab (11 Aug 2026).** Ninth section, embedded from
+  [public/dashboards/defense.html](public/dashboards/defense.html), built on the
+  photonics skeleton. Two things make it different from the other embedded
+  tabs.
+
+  **Live market data instead of transcribed.** All 53 market caps, forward
+  multiples and 52-week ranges were pulled from a provider at build time rather
+  than remembered. That single change reversed the note's conclusion: the source
+  brief described a theme with opening procurement doors, and the data describes
+  one in a 24%-median drawdown, with the high-beta half 40–68% off its highs
+  while the cash-return primes sit at records. The brief's market-cap column was
+  wrong on nearly every row — Palantir by 5.3x, Rocket Lab by 8.3x, Unusual
+  Machines by 13x — because it had been carried over from a period before the
+  2025–26 de-rating.
+
+  **An explicit EV model instead of a 0–100 score.** Each name carries three
+  scenarios with published probabilities and three-year returns; the ranking is
+  computed in the page from those inputs, and the page warns in the console if a
+  probability set does not sum to 1. A composite score cannot be argued with,
+  which is the problem: this one can be recomputed by anyone who disagrees with
+  a number. Two lenses are shown, because they disagree — raw EV favours the
+  deep drawdowns (Rheinmetall, Kratos, RENK, AeroVironment), EV/σ favours the
+  cheap unglamorous names (Leidos, QinetiQ, L3Harris). The correlation problem
+  is stated rather than solved: the top ten share one driver, so the ranking
+  ranks names and does not size a book.
+
+  Corrections against the source brief are logged in
+  [research/defense-tracker-research.md](research/defense-tracker-research.md)
+  §6 rather than quietly fixed — including an unverifiable $74bn FY27 drone
+  budget that was carrying the brief's central claim and has been removed as
+  evidence, a NATO framing one summit out of date, and two references to
+  companies that no longer exist as listed vehicles.
+
+  **Deliberately not done.** Order intake and book-to-bill are absent, because
+  no free quote endpoint carries them. That is the single largest upgrade
+  available to this tab and it is also what resolves the claim the whole ranking
+  rests on — whether the 2026 drawdown is a de-rating or a demand signal. Stated
+  on the tab as an open question instead of being implied.
+
 - **Phase 0 — Scaffold.** Vite + React + TypeScript + Tailwind v4
   (`@tailwindcss/vite` plugin, no config file). `base: './'` in
   [vite.config.ts](vite.config.ts) so builds work on GitHub Pages without

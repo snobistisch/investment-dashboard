@@ -102,7 +102,7 @@ function App() {
           <EmbeddedDashboard src="dashboards/agentic.html" title="Agent economy dashboard" />
         )}
         {active === 'crypto' && (
-          <EmbeddedDashboard src="dashboards/crypto.html" title="Digital assets research tracker" />
+          <EmbeddedDashboard src="dashboards/crypto.html" title="Crypto and innovation research dashboard" />
         )}
         {active === 'photonics' && (
           <EmbeddedDashboard

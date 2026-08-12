@@ -13,15 +13,19 @@ Sections:
 - **Digital Biology**, **Robotics**, **Quantum**, **Agentic**, **Crypto**,
   **Photonics** and **Defence** — self-contained research dashboards, embedded
   from [public/dashboards/](public/dashboards/). Sourced notes live in
-  [research/photonics-tracker-research.md](research/photonics-tracker-research.md)
+  [research/photonics-tracker-research.md](research/photonics-tracker-research.md),
+  [research/defense-tracker-research.md](research/defense-tracker-research.md)
   and
-  [research/defense-tracker-research.md](research/defense-tracker-research.md).
+  [research/crypto-tracker-research.md](research/crypto-tracker-research.md).
 
-The Defence section ranks its 53 names by an explicit three-scenario expected
-value rather than by a composite score: the probabilities and returns are
-published in the table and the ranking is computed from them in the page, so a
-reader who disagrees with a number can recompute it. Its research note carries a
-corrections log against the brief it was built from.
+**Defence** and **Crypto** rank their universes by an explicit three-scenario
+expected value rather than by a composite score: the probabilities and returns
+are published in the table and the ranking is computed from them in the page, so
+a reader who disagrees with a number can recompute it. Both research notes carry
+a corrections log against the brief they were built from. The Crypto section
+additionally puts bitcoin in the ranking as the benchmark — in an asset class
+that is one factor with thirty tickers, the question is not whether an asset has
+positive expected value but whether it beats simply holding BTC.
 
 The Citrini Research tracker was removed on 11 August 2026. Its 70 idea-flow
 tickers came out of positions.ts with it, so the book is now the six thematic

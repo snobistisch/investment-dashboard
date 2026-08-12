@@ -10,6 +10,45 @@ deploys on every push to main).
 
 ## Done
 
+- **Crypto tab rebuilt (11 Aug 2026).** Replaces the five-position deep dive
+  with a 30-asset ranking on the same expected-value method as Defence, and one
+  addition that changes the conclusion: **bitcoin is in the ranking as the
+  benchmark.** In an asset class that is one factor with thirty tickers, "does
+  this have positive expected value in dollars" is close to meaningless — in a
+  liquidity upcycle nearly everything does. On the published probabilities BTC
+  carries +18.5% a year with the tightest dispersion in the report; nine of the
+  other twenty-nine beat it on raw EV and **one beats it after dividing by
+  dispersion**, Ethereum, by 0.03.
+
+  **Live supply data, and it reversed the source's own rule.** The strongest
+  idea in the research package this replaced is a float rule: avoid tokens where
+  most of the eventual supply has not been issued. It is correct, and it was
+  applied to remembered supply figures. Checked live, ENA is 66% circulating and
+  not 12%, StarkNet 68% and not 10%, Celestia 81% and not 25% — the overhang the
+  avoid list warned about had already cleared. Meanwhile the only two assets
+  still failing the rule are Hyperliquid (22% float, FDV 4.5x) and Lighter (25%,
+  4.0x), which the package ranks #3 and #8. That contradiction is stated on the
+  tab rather than quietly resolved, with both readings costed.
+
+  **The twelve researched tokens were accurate; the twenty padded ones were
+  not.** EigenLayer was carried at "$2B+" against $129m actual, Helium at
+  "$500M+" against $33m, The Graph at "$800M+" against $149m — one-directional,
+  3–15x, and traceable to a single cause: they were pre-drawdown figures in a
+  market whose median asset has fallen 69% in twelve months. Also fixed: MKR no
+  longer exists as the instrument described (migrated to SKY), and Zcash's
+  "−85% from all-time high" refers to its October 2016 listing print, which is
+  why the tab uses one-year returns as the headline drawdown metric and prints
+  the all-time-high month next to the percentage.
+
+  **Deliberately not done.** `positions.ts` still transcribes the July version
+  of this page and has not been rewritten to match — it is a dated transcription
+  with per-section sourcing, and re-transcribing it from a new source would
+  destroy the property that makes it trustworthy. Whether the book's four crypto
+  convictions should move in light of this is Matthias's call, not a side-effect
+  of rebuilding a research tab. Per-protocol fee revenue is also absent: for a
+  category whose central question is whether value reaches the token, that is
+  the series that matters most and no free price API carries it.
+
 - **Defence tab (11 Aug 2026).** Ninth section, embedded from
   [public/dashboards/defense.html](public/dashboards/defense.html), built on the
   photonics skeleton. Two things make it different from the other embedded

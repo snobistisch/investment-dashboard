@@ -25,7 +25,14 @@ name and homepage returned by the API.
 ranking on an explicit expected-value method, with bitcoin added as the
 benchmark.
 
-**12 Aug 2026 — v2, this document.** Matthias flagged that the data was wrong
+**12 Aug 2026 — v3, this document.** Matthias culled thirteen assets on the
+thesis that they are dead, unused, or fully extracted by their venture backers,
+and named eight additions. The cull was checked against trailing-year protocol
+fees rather than accepted; twelve of the thirteen are supported by that data and
+**one is not** (§1a). The eight additions were researched from scratch. Universe
+45 → 40.
+
+**12 Aug 2026 — v2.** Matthias flagged that the data was wrong
 and that some tokens described as unavailable were in fact live. He was right.
 A full line-by-line review followed. Fifteen assets were added, one factual
 claim in the ranking data was corrected, five substantive prose claims were
@@ -159,6 +166,87 @@ negative-expected-value assets here.
   from +1,186% to +1,165%, HYPE from +29% to +30%, and the median one-year
   return from −69% (n=27) to **−74%** (n=34), the added assets being down harder
   than the original set.
+
+---
+
+## 1a. The cull, checked against fee data
+
+The instruction was that most of these are dead, have no users, or were milked
+by venture investors. Checked against DefiLlama trailing-year protocol fees at
+12 August 2026, twelve of thirteen support that reading:
+
+| Removed | Fees, trailing year | Market cap | Note |
+| --- | ---: | ---: | --- |
+| TIA · Celestia | **$42K** | $293m | Blobspace demand collapsed when incentivised L2s stopped paying for users |
+| AR · Arweave | $392K | $117m | Permanent storage, almost nobody paying to store |
+| GRT · The Graph | $503K | $150m | Indexing every dApp supposedly needs |
+| OP · Optimism | $1.5m | $204m | Sequencer fees accrue to the Collective, not the holder |
+| STRK · Starknet | $1.9m | $158m | Bridge deposits declining with Linea, World Chain, Mantle; insider unlocks continued |
+| RENDER | $2.2m | $649m | An AI-compute story earning rendering-sized fees |
+| HNT · Helium | $2.3m | $33m | Zero fees in the last thirty days |
+| PYTH | $2.9m | $321m | Feeds the perp DEXs, captures almost none of it |
+| DYDX | $7.7m | $93m | Fourth by volume and falling |
+| ARB · Arbitrum | $12.4m | $520m | $1.2bn chain TVL; ~92m ARB unlocking monthly, ~1.5% of supply |
+| SCRT · Secret | not tracked | $11m | $1m of chain TVL |
+| ZKC · Boundless | not tracked | $11m | Reference ZK proving marketplace with no measurable fee line |
+
+**The exception: Centrifuge (CFG).** $1.63bn of tokenised real-world assets and
+**$59.1m of trailing-year fees against a $59m market capitalisation** — the
+highest fee-to-cap ratio of anything that was in this universe. It is not dead
+and it is not unused. The defensible objection is the one this dashboard already
+makes to Ondo: most of that yield belongs to depositors, not to the token
+holder. Removed on instruction; the evidence is recorded here because "no users"
+is not what the data says.
+
+*Caveat on the metric.* DefiLlama fees are not revenue to token holders. For
+Lido, Ethena and Maple most of the line accrues to depositors; for Aave and
+Uniswap a fraction is redirected to the token; for Hyperliquid and Lighter
+nearly all of it is. The column establishes whether an economy exists, which is
+the question the cull turns on.
+
+## 1b. The eight additions
+
+Researched from scratch. The organising fact is that they split cleanly in two.
+
+| Added | What it is | Float | FDV/cap | Fees 1y | EV rank |
+| --- | --- | ---: | ---: | ---: | ---: |
+| SYRUP · Maple | Institutional on-chain credit, $2.39bn TVL | 94% | 1.07x | **$108m** | **5** |
+| NEAR | L1 whose Intents product earns $41m; base chain earns $1.6m | 100% | 1.00x | $42m | 20 |
+| VIRTUAL | AI-agent launchpad, $102m daily volume | 66% | 1.52x | $20m | 21 |
+| XPL · Plasma | Stablecoin L1, $631m TVL, zero-fee USDT by design | 27% | 3.72x | $8m | 18 |
+| CAP | Stablecoin credit engine on MegaETH, $274m TVL | 16% | 6.41x | $7m | 29 |
+| MON · Monad | Parallel-EVM L1, $876m TVL — tenth-largest chain | 12% | 8.51x | $1.4m | 34 |
+| UP · Superform | Cross-chain yield router, $17.6m TVL | 22% | 4.52x | $0.5m | 22 |
+| MEGA · MegaETH | Real-time L2, $470m raised; TVL fell $580m → $43m | 11% | 8.85x | $0.5m | 32 |
+
+**Three are strong on both frameworks** — Maple, NEAR and Virtuals are
+float-settled or near it, and all three earn real fees. Maple is the best
+addition by a distance: $108m of fees against a $176m capitalisation at 94%
+float.
+
+**Five are the worst assets in the report on the float rule.** MegaETH is 11%
+circulating at 8.85× fully diluted; Monad 12% at 8.51×; CAP 16% at 6.41×;
+Superform 22%; Plasma 27%. Three of the five are worse on that measure than
+Hyperliquid, which §5 already flags as the contradiction inside the source
+research.
+
+**The rotation argument, stated fairly.** The case for the new layer ones is not
+that they earn today. It is that an old token with a five-year vesting schedule
+and an exhausted holder base has a structural seller and no marginal buyer,
+while a new one has attention and a motivated team. Secondary accounts of GCR's
+writing put it as the majority trending to zero and being *"replaced with new
+narratives and new rotations"*. **I could not verify the primary post — only
+paraphrases in secondary sources — so it is carried as an argument, not a
+citation.** The mechanism has independent support: over a hundred crypto
+projects shut down or went dark in the first eight months of 2026, and the
+general-purpose chains that survived the airdrop era mostly did not keep users.
+
+**Where the two rules collide, this dashboard applies the float rule**, which is
+why the new layer ones rank 18th, 32nd and 34th of forty. The probabilities are
+published so a reader who backs rotation can raise those base cases and re-rank.
+Monad is the cleanest live test: $876m of TVL against $1.4m of annual fees —
+roughly $7,000 a day — with the first major unlock beginning November 2026.
+Watch chain fees rather than TVL to find out which rule was right.
 
 ---
 

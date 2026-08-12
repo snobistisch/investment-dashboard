@@ -10,6 +10,36 @@ deploys on every push to main).
 
 ## Done
 
+- **Crypto tab: thirteen out, eight in (12 Aug 2026).** Matthias culled the
+  assets he judged dead, unused or fully extracted by their venture backers, and
+  named eight additions. Both halves were checked rather than accepted.
+
+  **The cull holds on twelve of thirteen.** Added trailing-year protocol fees as
+  a column, which is the metric that separates "cheap after a 90% fall" from "a
+  claim on nothing": Celestia earned **$42,000** of fees in a year against a
+  $293m capitalisation, The Graph $503K, Arweave $392K, Helium zero in the last
+  thirty days, Secret and Boundless not tracked at all. Arbitrum has $1.2bn of
+  chain TVL and unlocks ~1.5% of supply every month, indefinitely. **The
+  exception is Centrifuge** — $1.63bn of TVL and $59.1m of fees against a $59m
+  cap, the highest fee-to-cap ratio in the universe. Removed on instruction, but
+  the note records that "no users" is not what its data says; the defensible
+  objection is the Ondo one, that the yield belongs to depositors.
+
+  **The additions split in two, and the tab now says so.** Maple, NEAR and
+  Virtuals are float-settled or near it and earn real fees — Maple is the best
+  addition by a distance at $108m of fees against a $176m cap on 94% float, and
+  ranks 5th. The new layer ones are the worst assets in the report on the float
+  rule: MegaETH 11% float at 8.85x FDV, Monad 12% at 8.51x, CAP 16% at 6.41x.
+
+  **New §4 carries the collision instead of hiding it.** The rotation argument —
+  capital goes where it has not already been extracted — is stated in its own
+  terms alongside the float rule that contradicts it, with Monad as the live
+  test: $876m of TVL against $1.4m of annual fees, roughly $7,000 a day, and the
+  first unlock in November 2026. The dashboard applies the float rule, which
+  puts the new L1s 18th, 32nd and 34th of forty, and publishes the probabilities
+  so a reader who backs rotation can re-rank. The GCR attribution is flagged as
+  unverified — only secondary paraphrases were found.
+
 - **Crypto tab peer-reviewed and corrected (12 Aug 2026).** Matthias flagged
   that the data was wrong and that assets described as unavailable were live. He
   was right, and the cause is worth naming because it is the same failure the

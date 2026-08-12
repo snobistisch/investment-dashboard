@@ -24,8 +24,10 @@ are published in the table and the ranking is computed from them in the page, so
 a reader who disagrees with a number can recompute it. Both research notes carry
 a corrections log against the brief they were built from. The Crypto section
 additionally puts bitcoin in the ranking as the benchmark — in an asset class
-that is one factor with thirty tickers, the question is not whether an asset has
-positive expected value but whether it beats simply holding BTC.
+that is one factor with forty-five tickers, the question is not whether an asset
+has positive expected value but whether it beats simply holding BTC. Its note
+also logs the corrections made to an earlier version of the tab itself, and
+which protocol facts have been verified against a source rather than carried.
 
 The Citrini Research tracker was removed on 11 August 2026. Its 70 idea-flow
 tickers came out of positions.ts with it, so the book is now the six thematic

@@ -10,6 +10,41 @@ deploys on every push to main).
 
 ## Done
 
+- **Crypto tab peer-reviewed and corrected (12 Aug 2026).** Matthias flagged
+  that the data was wrong and that assets described as unavailable were live. He
+  was right, and the cause is worth naming because it is the same failure the
+  tab accused its source of: the previous pass checked the source's *market
+  data* carefully and carried its *characterisation of what exists* without
+  checking it at all. Verifying one column and trusting the rest produces
+  something that looks rigorous and is not.
+
+  **The big one.** The tab claimed the verifiable-compute reference
+  implementations were private — "RISC Zero has no token", "Zama pre-TGE". All
+  live: RISC Zero's proving marketplace as Boundless, plus Succinct, Zama,
+  Aztec, Arcium, Lagrange, Nillion, Irys, Gensyn, Aleo and Octra. Thirteen
+  listed verifiable-compute assets, median 21% float, ten under 30%, median 83%
+  below their highs. The corrected finding is stronger than the wrong one: it is
+  the float rule landing on exactly the cohort that was supposed to be exempt.
+
+  **Four more substantive fixes.** Aave's fee switch is not "discussed for years
+  and never delivered" — Aavenomics 3.0 has been buying ~292 AAVE a day since 27
+  June 2026 on ~$400M of annualised revenue, which is why it ranks first.
+  Hyperliquid's "$900M revenue / 61% share" is ~$765M trailing and ~44% of
+  on-chain perp volume. Lighter's insider cliff is 27 December 2026, not "Q1
+  2027" — four months out, on a position the book holds. Jupiter's float was
+  computed off a stale 10bn maximum; 3bn JUP were burned in January 2025, so it
+  is 48%, not 33%. Aster, the second-largest perp DEX at $1.6bn, was missing
+  entirely and ranks 44th of 45.
+
+  Universe 30 → 45 assets, all data refreshed to 12 August. Every protocol fact
+  in the deep dives is now either verified against public reporting or removed,
+  and the research note carries a table saying which is which.
+
+  **Deliberately not done.** `positions.ts` still transcribes the July version
+  of this page. Two items in it are worth Matthias's attention rather than a
+  silent edit: Lighter's cliff is four months out, and Nockchain now has four
+  listed proving competitors where the July note implied it had none.
+
 - **Crypto tab rebuilt (11 Aug 2026).** Replaces the five-position deep dive
   with a 30-asset ranking on the same expected-value method as Defence, and one
   addition that changes the conclusion: **bitcoin is in the ranking as the

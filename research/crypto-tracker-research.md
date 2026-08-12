@@ -1,91 +1,190 @@
 # Crypto & innovation — research notes
 
-Research date: **11 August 2026**. Market data as of **11 August 2026** from the
-CoinGecko public API, retrieved directly rather than transcribed. Informational
-research only — not investment advice.
+Research date: **12 August 2026** (peer-reviewed revision of the 11 August
+build). Market data from the CoinGecko public API, retrieved directly rather
+than transcribed. Informational research only — not investment advice.
 
 **Vintage warning.** Crypto re-prices in hours, not quarters. Every price,
-market capitalisation and drawdown below has a shelf life measured in days, and
-the one-year returns that carry most of the argument in this note will look
-different within a month. The float and supply figures are the durable part;
-the prices are not.
+market capitalisation and drawdown below has a shelf life measured in days. The
+float and supply figures are the durable part; the prices are not.
 
-**Identifier warning, and it is not cosmetic.** Three of the thirty assets here
-share a ticker with an unrelated liquid token. `LIT` matches Lighter, Litentry
-and Timeless; `PRL` matches the AI-compute network plus two others; `NOCK`
-matches both Nock and Nockchain. A symbol lookup returns the wrong asset for
-three of thirty rows. Every identifier in this note and in the dashboard is
-pinned per protocol by hand, following the same rule the repository's own
-market-data script uses.
-
----
-
-## 0. What this note is, and what it replaced
-
-This replaces a research package dated 11 August 2026 that proposed a 32-token
-universe with a weighted 0–100 score per asset. Its structure survives; a large
-part of its data did not. Two changes carry everything else:
-
-1. **Live market data replaces remembered market data.** Market cap, fully
-   diluted valuation, circulating and maximum supply, and one-year returns are
-   pulled from an API rather than recalled. This changed the conclusion, not
-   just the decimals.
-2. **An explicit expected-value model replaces the composite score, and
-   bitcoin is in the ranking as the benchmark.** In an asset class where
-   everything is one factor, "positive expected value in dollars" is close to
-   meaningless. The question is whether an asset beats simply holding BTC.
-
-The second change produces the finding the note is built around: **on these
-scenario probabilities, nine of twenty-nine tokens beat bitcoin on raw expected
-value and one beats it after dividing by dispersion.** That one is Ethereum,
-and it wins by 0.03.
+**Identifier warning, and it is not cosmetic.** Six of the forty-five assets
+here share a ticker with an unrelated liquid token. `LIT` matches Lighter,
+Litentry and Timeless; `PRL` matches the AI-compute network plus two others;
+`NOCK` matches both Nock and Nockchain; `JUP` matches a dead "Jupiter Project";
+`CFG` matches a deprecated Centrifuge contract; `HYPE` matches Hyperbolic
+Protocol. A symbol lookup returns the wrong asset for six of forty-five rows.
+Every identifier is pinned per protocol and was verified against the project
+name and homepage returned by the API.
 
 ---
 
-## 1. The finding that reorganised the note
+## 0. Revision history, and why this document was rewritten
 
-The source package reads as a bull thesis for crypto's next five to ten years,
-with a portfolio construction section, position weights and an 8% dry-powder
-allocation. Nothing in it tells the reader what the market has just done.
+**11 Aug 2026 — v1.** Replaced a 32-token research package with a 30-asset
+ranking on an explicit expected-value method, with bitcoin added as the
+benchmark.
 
-| Asset | One-year USD return to 11 Aug 2026 |
-| --- | ---: |
-| Zcash | **+1,186%** |
-| Hyperliquid | **+29%** |
-| Sky (ex-Maker) | −35% |
-| Bitcoin | −47% |
-| Ethereum · Solana | −57% |
-| Chainlink | −62% |
-| Ondo · Pyth | −67% |
-| Uniswap | −69% |
-| Aave | −71% |
-| Arweave | −77% |
-| Lido | −81% |
-| StarkNet · Arbitrum · Celestia · dYdX | −82% to −83% |
-| The Graph | −85% |
-| EigenLayer | −87% |
-| Optimism | −88% |
-| Ethena | −89% |
-| Helium | −94% |
+**12 Aug 2026 — v2, this document.** Matthias flagged that the data was wrong
+and that some tokens described as unavailable were in fact live. He was right.
+A full line-by-line review followed. Fifteen assets were added, one factual
+claim in the ranking data was corrected, five substantive prose claims were
+found wrong, and every protocol fact carried over from the source package was
+either verified against public reporting or removed.
 
-Twenty-five of the twenty-seven assets with a full year of history are down.
-The median is **−69%**. Nineteen of the twenty-five fell by 60% or more. Only
-Zcash and Hyperliquid are worth more than they were a year ago.
-
-That is the context every claim in the source package needed and did not get.
-Its structural arguments are mostly right — stablecoins do settle real volume,
-tokenised treasuries are operational, perpetual DEXs are genuinely taking share
-from centralised venues — and the assets attached to those arguments fell by a
-median of 69% while the arguments got stronger. **That gap is the whole
-subject.** Either it is a liquidity de-rating against intact usage, in which
-case the top of the ranking is a discount, or it is the market correctly
-concluding that these protocols will not pay their token holders. That is H1 on
-the dashboard, my confidence in it is moderate rather than high, and if it is
-wrong the ranking is systematically upside-down.
+**The v1 failure has a single cause and it is worth naming**, because it is the
+same failure v1 accused the source package of: I carried the source's
+conclusions about *availability* and *protocol facts* without checking them,
+while carefully checking its market data. Verifying one column and trusting the
+rest produces a document that looks rigorous and is not.
 
 ---
 
-## 2. The expected-value method
+## 1. What v1 got wrong
+
+### 1.1 The largest error: "the good companies are private"
+
+v1's §4 argued that the reference implementations of verifiable compute were
+private and that listed proxies were second-best substitutes, echoing the source
+package's *"RISC Zero — no token yet"*, *"=nil; Foundation — no liquid token"*,
+*"Zama — pre-TGE"*.
+
+**All false at the time of writing.** The category is listed and liquid:
+
+| Asset | Ticker | Market cap | FDV / cap | Float | 24h volume | vs ATH |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| Zama (FHE) | ZAMA | $101m | 5.00x | 20% | $11.7m | −31% (Jul 2026) |
+| Aztec | AZTEC | $37m | 3.51x | 29% | $1.6m | −69% (Feb 2026) |
+| Irys | IRYS | $33m | 5.00x | 20% | $4.9m | −81% (May 2026) |
+| Succinct | PROVE | $29m | 5.13x | 20% | $4.2m | −91% (Aug 2025) |
+| Gensyn | AI | $28m | 7.66x | 13% | $4.6m | −80% (Apr 2026) |
+| Arcium | ARX | $24m | 4.79x | 21% | $3.3m | −75% (Jun 2026) |
+| Nillion | NIL | $22m | 2.02x | 49% | $28.0m | −95% (Mar 2025) |
+| Aleo | ALEO | $21m | 1.53x | 27% | $0.6m | −100% (Sep 2024) |
+| Octra | OCT | $15m | 1.00x | 63% | $0.1m | −83% (Jun 2026) |
+| Boundless (RISC Zero) | ZKC | $11m | 3.66x | 27% | $1.8m | −98% (Sep 2025) |
+| Lagrange | LA | $9m | 5.18x | 19% | $6.9m | −97% (Jun 2025) |
+
+Together with Nockchain and Pearl that is **thirteen listed verifiable-compute
+assets**. Only `=nil;`, `ezkl`, Ingonyama and Cysic remain genuinely private,
+and they are now named individually rather than used to characterise a category.
+
+**The corrected finding is stronger than the wrong one.** Median float across
+the cohort is **21%**; ten of thirteen are under 30%; nine carry FDV above three
+times market capitalisation; the median is **83% below its all-time high**. This
+is the float rule from §3 landing precisely on the category that was supposed to
+be exempt from it. These are not companies that stayed private to protect
+shareholders — they sold a fifth of their supply into a bull market and let the
+rest vest into a bear one.
+
+### 1.2 Aave's value accrual is live, and v1 said the opposite
+
+v1's deep dive stated the fee switch had been *"discussed for years and
+delivered never"*, and used that to call AAVE a governance token wearing a
+revenue story.
+
+**Aavenomics 3.0 went live on 27 June 2026.** A rules-based engine routes a
+fixed share of protocol revenue into open-market AAVE purchases without a
+per-tranche governance vote, currently removing roughly **292 AAVE a day**
+against approximately **$400m of annualised protocol revenue**. Aave is one of
+the few assets here where usage already converts mechanically into token demand.
+
+The correction strengthens the #1 ranking and supplies a better bear case: in
+March 2026 governance *cut* the annual buyback budget from roughly $50m to $30m,
+citing a 25% decline in borrow-fee revenue from its peak. The mechanism is real;
+the fuel is shrinking.
+
+### 1.3 Hyperliquid's headline numbers were too flattering
+
+v1 repeated the source package's *"~$900M/yr revenue"* and *"~61% perp DEX
+share"*. Neither survives checking:
+
+- **Holder revenue** is nearer **$765m** on a trailing-year basis. The
+  annualised run-rate swings between roughly $694m and $1.25bn depending on
+  which thirty-day window is annualised — August 2026 set a record at about
+  $106m of monthly fees on nearly $400bn of volume. Quoting one figure without
+  the window is itself misleading.
+- **Share** depends entirely on the denominator. Hyperliquid is about **44% of
+  all on-chain perpetual volume** (up from 36.4% in January 2026) and about
+  **73% of the top three venues** — $198bn of thirty-day volume against Aster's
+  $40bn and Lighter's $33.8bn. "61%" corresponds to neither.
+
+### 1.4 Lighter's cliff is four months away, not five quarters
+
+v1 and the source package both placed the insider cliff in "Q1 2027". It is
+**27 December 2026**, after which the half of supply held by team and investors
+vests linearly at roughly **3.2m LIT a week until 2029**. For a position the
+book holds, a four-month-out dated event is a different thing from a vague
+next-year risk.
+
+Also verified and corrected: buybacks are now **burned** rather than held in
+treasury; roughly 15.5m LIT (~6.3% of circulating supply) has been repurchased
+since the token generation event; Robinhood integrated the engine into Robinhood
+Wallet in July 2026 and is both distribution partner and early investor, having
+committed $11m in LIT to its community programme. Lighter's trailing holder
+revenue is **$24m** against Hyperliquid's $765m.
+
+### 1.5 Jupiter's float was computed from a stale maximum supply
+
+v1 reported JUP float at **33%**, derived mechanically from the provider's
+10bn maximum supply. **3bn JUP were burned in January 2025** (a 95%-approved
+governance vote in which the team relinquished 30% of its allocation), with a
+further ~135m burned later, so the eventual supply is the ~6.86bn total and the
+correct float is **48%**.
+
+This is the only asset in the set where the provider's maximum is stale, and it
+is now a documented exception in the data layer rather than a silent one. Note
+that the FDV column was always right: the provider computes FDV from total
+supply, so the 2.07× ratio already reflected the post-burn reality.
+
+### 1.6 Aster was missing entirely
+
+The **second-largest perpetual DEX by volume** was absent from a report with a
+perpetual-DEX section. ASTER carries a **$1.62bn** capitalisation — larger than
+Aave — on 34% float, having held roughly 70% of perp DEX volume as recently as
+September 2025 and fallen to about 15% of the top three. It returned **$12m** to
+holders over the trailing year. It ranks 44th of 45 and is one of two
+negative-expected-value assets here.
+
+### 1.7 Smaller corrections
+
+- **Octra is FHE, not TEE.** v1 described it as a TEE network; the project
+  describes itself as an FHE blockchain with isolated execution environments.
+- **EigenLayer has rebranded to EigenCloud.**
+- **Starknet**, not "StarkNet".
+- **Bittensor (TAO, $1.92bn)** was absent — the largest AI-native token by
+  capitalisation, missing from a report with an AI × crypto thesis. Added.
+- **Aethir, Nosana** added to the GPU-compute set alongside Akash and Render.
+- All market data refreshed from 11 to 12 August: ZEC's one-year return moved
+  from +1,186% to +1,165%, HYPE from +29% to +30%, and the median one-year
+  return from −69% (n=27) to **−74%** (n=34), the added assets being down harder
+  than the original set.
+
+---
+
+## 2. Claims verified rather than carried
+
+Everything below was checked against public reporting during the review. This
+list exists so a future reader knows which figures have been through a source
+and which have not.
+
+| Claim | Status |
+| --- | --- |
+| Aavenomics 3.0 live 27 Jun 2026; ~292 AAVE/day; ~$400m annualised revenue; budget cut $50m→$30m Mar 2026 | **Verified** |
+| Hyperliquid ~$765m trailing holder revenue; ~44% of on-chain perp volume; $106m fees in Aug 2026 | **Verified** |
+| Lighter cliff 27 Dec 2026; ~3.2m LIT/week to 2029; 15.5m LIT repurchased; Robinhood Wallet Jul 2026; $24m holder revenue | **Verified** |
+| Uniswap fee switch live 28 Dec 2025, extended to L2s Mar/Jun 2026 and to v4 pools 27 Jul 2026 across seven chains; ~$23m 2026 protocol revenue | **Verified** |
+| Ethereum staking record 41.7m ETH on 10 Aug 2026, ~34.5% of supply (v1 said ~32%) | **Verified** |
+| Ethereum settles about half of ~$320bn stablecoin supply | **Verified** |
+| Zcash shielded pool 11% → ~29.9% of supply in one year | **Verified** |
+| Jupiter ~95% of Solana aggregator volume (v1 said ~80%); 3bn JUP burned Jan 2025 | **Verified** |
+| Nockchain listed on Kraken 26 Jun 2026; ~2.27bn circulating; no external paying customer found | **Verified (absence)** |
+| Verifiable-compute tokens live: Zama, Succinct, Boundless, Octra, Aztec, Arcium, Lagrange, Nillion, Irys, Gensyn, Aleo | **Verified** |
+| Market-size projections ("verifiable compute $10B+ by 2031", "stablecoins $1T+", "RWA → $500B+") | **Not verified — vendor estimates, used as ordering information only, never as an EV input** |
+
+---
+
+## 3. The expected-value method
 
 Three scenarios per asset over a **three-year horizon to August 2029**,
 probabilities summing to 1, total dollar return in each:
@@ -100,273 +199,158 @@ EVann = (1 + EV)^(1/3) − 1
 - **Base** — the protocol persists, adoption grinds, no re-rating.
 - **Bear** — the category does not matter, or the unlock schedule wins.
 
-Most of these have no earnings multiple to lean on, so scenarios are set
-against a price path directly. For Tier C the bear case explicitly carries the
-dilution arithmetic from §3.
+For Tier C the bear case explicitly carries the dilution arithmetic: if
+FDV/cap = k, holding to full dilution needs network value to grow k× just to
+keep the price flat.
 
 **Bitcoin is a row, not a footnote.** It carries an expected +18.5% per year
-with the tightest outcome distribution in the report (σ 86%). Every other asset
-is measured against that.
+with the tightest outcome distribution in the report (σ 86%). Everything else is
+measured against that.
 
-**What the method cannot do.**
-
-- It is not a forecast and has no track record. The probabilities are
-  calibrated against nothing but my own reading of each situation.
-- **Correlation is unmodelled, and here that matters more than on any other tab
-  in this repo.** These are not thirty independent bets; they are one factor
-  with thirty tickers, and in the bear case they fall together.
-- **It is mechanically kind to drawdowns, and in crypto that is dangerous.** A
-  90% fall raises expected return arithmetically if the asset survives — and
-  "down 90%" is more often terminal here than cheap. The Graph is down 85% and
-  ranks 26th; Aave is down 71% and ranks first. That distinction rests on float
-  quality and business durability, which is judgement, not data.
+**What the method cannot do.** It is not a forecast and has no track record.
+Correlation is unmodelled — these are one factor with forty-five tickers. And it
+is mechanically kind to drawdowns, which in crypto is dangerous: a 90% fall
+raises expected return arithmetically if the asset survives, and "down 90%" is
+more often terminal here than cheap.
 
 ---
 
-## 3. The ranking
-
-Full detail — probabilities, drivers and risks per asset — is on the dashboard
-in §5, sortable and filterable. Summary against the source package's own rank:
+## 4. The ranking
 
 | EV rank | Asset | EV %/yr | EV/σ | FDV/cap | Float | 1-year | Source rank |
 | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | 1 | AAVE | +24.2% | 0.66 | 1.04x | 96% | −71% | 7 |
-| 2 | AKT | +23.6% | 0.48 | 1.00x | 76% | −58% | 14 |
+| 2 | AKT | +23.6% | 0.48 | 1.00x | 76% | −59% | 14 |
 | 3 | **ETH** | +21.6% | **0.80** | 1.00x | 100% | −57% | 1 |
 | 4 | TIA | +20.9% | 0.42 | 1.23x | 81% | −83% | 12 |
 | 5 | NOCK | +20.8% | 0.22 | 1.89x | 53% | n/a | 15 |
-| 6 | JUP | +19.9% | 0.48 | 2.07x | 33% | −66% | 4 |
-| 7 | SOL | +19.6% | 0.63 | 1.08x | 92% | −57% | 5 |
-| 8 | HNT | +19.3% | 0.36 | 1.00x | 82% | −94% | 17 |
+| 6 | JUP | +19.9% | 0.48 | 2.07x | 48% | −66% | 4 |
+| 7 | SOL | +19.6% | 0.63 | 1.08x | 92% | −58% | 5 |
 | 9 | LINK | +18.7% | 0.58 | 1.34x | 75% | −62% | 6 |
 | **10** | **BTC — benchmark** | **+18.5%** | **0.77** | 1.00x | 96% | −47% | not covered |
+| 11 | UNI | +17.7% | 0.53 | 1.43x | 62% | −69% | 10 |
 | 12 | LIT | +16.8% | 0.35 | 4.00x | 25% | n/a | 8 |
-| 19 | SKY (ex-MKR) | +11.4% | 0.53 | 1.00x | 100% | −35% | 9 |
-| 24 | ZEC | +8.9% | 0.27 | 1.00x | 80% | **+1,186%** | 2 |
-| 25 | HYPE | +8.9% | 0.32 | **4.49x** | 22% | +29% | 3 |
-| 29 | ONDO | +5.5% | 0.17 | 2.05x | 49% | −67% | 21 |
-| 30 | PRL | **−9.7%** | −0.25 | **8.23x** | 12% | n/a | 25 |
+| 18 | ZKC (Boundless) | +12.2% | 0.23 | 3.66x | 27% | n/a | not covered |
+| 21 | SKY (ex-MKR) | +11.4% | 0.53 | 1.00x | 100% | −36% | 9 |
+| 26 | PROVE (Succinct) | +10.3% | 0.22 | 5.13x | 20% | −90% | not covered |
+| 30 | ZEC | +8.9% | 0.27 | 1.00x | 80% | **+1,165%** | 2 |
+| 31 | HYPE | +8.9% | 0.32 | **4.49x** | 22% | +30% | 3 |
+| 37 | ZAMA | +6.3% | 0.15 | 5.00x | 20% | n/a | unscored |
+| 40 | ONDO | +5.5% | 0.17 | 2.05x | 49% | −67% | 21 |
+| 42 | AI (Gensyn) | +4.0% | 0.08 | **7.66x** | 13% | n/a | not covered |
+| 44 | ASTER | **−2.2%** | −0.08 | 2.90x | 34% | n/a | not covered |
+| 45 | PRL | **−9.7%** | −0.25 | **8.23x** | 12% | n/a | 25 |
 
-Median expected return: **+12.8% per year** — below bitcoin's +18.5%. One asset
-carries negative expected value.
+Median expected return: **+11.3% per year** — below bitcoin's +18.5%. Nine of
+forty-four beat bitcoin on raw expected value; **one beats it after dividing by
+dispersion**, Ethereum, at 0.80 against 0.77. Two assets carry negative expected
+value.
 
-**Where the ranking disagrees most with the source package:**
-
-- **ZEC 2 → 24.** The adoption evidence is genuinely good and the shielded-pool
-  growth from 11% to 30% of supply is the best usage datapoint in the report.
-  But it is up 1,186% in twelve months and the package calls it undervalued.
-  Those two statements need reconciling and the package does not attempt it.
-- **HYPE 3 → 25.** The best business here by a distance, and the only asset
-  that fails the package's own float rule other than the one it correctly
-  rejects. See §4.
-- **AAVE 7 → 1 and AKT 14 → 2.** Both are float-settled survivors trading at a
-  fraction of their prior valuations. Neither has a story; that is the point.
-- **ONDO 21 → 29.** The one avoid verdict that survives contact with live data
-  completely intact. Governance token, no fee capture, real product.
+Tier counts: **A 21, B 13, C 11.** Nine of the eleven Tier C assets are
+verifiable-compute projects.
 
 ---
 
-## 4. The float rule, and the contradiction inside it
+## 5. The float rule, and the contradiction inside it
 
 The strongest idea in the source package is a rule: do not buy a token where
-most of the eventual supply has not been issued, because the unlock schedule is
-a guaranteed seller unrelated to whether the protocol succeeds. It is correct
-and unusually falsifiable.
+most of the eventual supply has not been issued. It is correct and unusually
+falsifiable. It was applied to stale supply data, and float moves:
 
-It is also applied to stale supply data, and float moves. Checked live:
-
-| Token | Float assumed | Float, 11 Aug 2026 | Consequence |
+| Token | Float assumed | Actual, 12 Aug 2026 | Consequence |
 | --- | ---: | ---: | --- |
-| ENA | ~12% | **66%** | The "88% still to unlock" objection is gone. The real objection — ENA has no claim on USDe revenue — stands, and is different. |
-| STRK | ~10% | **68%** | FDV is $231m, not $5bn. Not an expensive low-float launch; a small cap with dilution behind it. |
-| TIA | ~25% | **81%** | Moves to Tier A. The open question is whether data availability is a business at all. |
-| EIGEN | ~20% | **40%** | Overhang halved while the market cap fell 15-fold. |
-| AKT | ~62% | **76%** | Effectively float-settled. |
-| HNT | ~63% | **82%** | Effectively float-settled. |
-| RENDER | ~50% | **81%** | Effectively float-settled. |
-| **HYPE** | 22% | **22%** | Unchanged — and it is a core pick with a 12% portfolio weight. |
-| **LIT** | 25% | **25%** | Unchanged, with the team and investor cliff beginning Q1 2027, inside any three-year horizon. |
+| ENA | ~12% | **66%** | The "88% still to unlock" objection is gone. The real objection — no claim on USDe revenue — stands, and is different. |
+| STRK | ~10% | **68%** | FDV is $231m, not $5bn. |
+| TIA | ~25% | **81%** | Moves to Tier A. |
+| EIGEN | ~20% | **40%** | Overhang halved while the cap fell 15-fold. |
+| AKT · HNT · RENDER | ~62% · ~63% · ~50% | **76% · 82% · 81%** | Effectively float-settled. |
+| JUP | ~47% | **48%** | Correct — but only against the post-burn 6.86bn supply. |
+| HYPE | 22% | **22%** | Unchanged, and it is a core pick. |
+| LIT | 25% | **25%** | Unchanged, and the cliff is four months out. |
 
-**The contradiction, stated plainly.** The package sets the rule — avoid tokens
-under roughly 30% float with FDV above 3× circulating capitalisation — and then
-makes Hyperliquid its #3 conviction pick (22%, 4.49×) and Lighter its #8 (25%,
-4.00×). Those two are the only assets in the universe failing the rule apart
-from Pearl, which the package does correctly reject. Either the rule has
-exceptions worth naming, or the picks do not survive it.
-
-The dashboard keeps the rule and prices the dilution into the Tier C bear
-cases. **A reader who thinks no-VC issuance is genuinely different from
-investor unlocks has a serious argument** — there is no fund with a return
-deadline behind Hyperliquid's supply — and should lift its base case and
-re-rank. That is exactly the kind of disagreement the published probabilities
-exist to support.
+**The contradiction.** The package sets the rule — avoid under ~30% float with
+FDV above 3× — then makes Hyperliquid its #3 pick (22%, 4.49×) and Lighter its
+#8 (25%, 4.00×). The dashboard keeps the rule and prices dilution into the Tier
+C bear cases. A reader who thinks no-VC issuance differs from investor unlocks
+has a serious argument and should lift HYPE's base case and re-rank.
 
 ---
 
-## 5. Corrections log
+## 6. What the source package got right
 
-### 5.1 Two universes, two data qualities
+A corrections log that only lists errors misrepresents the source.
 
-The twelve "mandatory" tokens were clearly fetched live and are accurate to
-within a few percent — ZEC $8.1bn against $8.20bn actual, HYPE $12.1bn against
-$12.53bn, LIT $588m against $573m, ONDO and ENA both within 2%. The twenty
-tokens added afterwards, all marked "(est.)", were filled from memory:
-
-| Token | Package figure | Actual, 11 Aug 2026 | Overstatement |
-| --- | ---: | ---: | ---: |
-| EIGEN | $2B+ | **$129M** | 15x |
-| HNT | $500M+ | **$33M** | 15x |
-| SCRT | $100M+ | **$11M** | 9x |
-| DYDX | $600M+ | **$93M** | 6x |
-| GRT | $800M+ | **$149M** | 5x |
-| TIA | $1.5B+ | **$294M** | 5x |
-| OP | $1B+ | **$204M** | 5x |
-| LDO | $1B+ | **$244M** | 4x |
-| ARB | $1.5B+ | **$519M** | 3x |
-| STRK | $500M+ | **$157M** | 3x |
-| AR | $300M+ | **$117M** | 2.6x |
-| RENDER | $1B+ | **$649M** | 1.5x |
-| AAVE | $2B+ | **$1.38B** | 1.4x |
-| UNI | $3B+ | **$2.19B** | 1.4x |
-| AKT | $80M | **$154M** | understated 1.9x |
-| NOCK | $46M | **$28M** | 1.6x |
-| PRL | $108M | **$67M** | 1.6x |
-
-The pattern is one-directional and it has a cause: these are pre-drawdown
-numbers. A universe sized from memory in a market that has fallen 69% at the
-median will be systematically too large, and the scores built on top of it
-inherit the error.
-
-### 5.2 MKR no longer exists as the instrument described
-
-The package lists Maker (MKR) at "$1.5B+ circ, ~100% unlocked" as an emerging
-winner. MKR has migrated to SKY; its own circulating market capitalisation is
-now negligible and a data provider returns a market cap of zero against a
-$108m fully diluted valuation. **SKY at $1.25bn with 100% float is the live
-instrument** and is what the dashboard ranks. The thesis is unaffected; the
-ticker is wrong, and buying the wrong one is a live hazard.
-
-### 5.3 Zcash's all-time high is a data artefact
-
-The package writes "−35% from the Nov 2025 cycle high (~$750)", which is
-consistent with the current price and correct. A data provider will instead
-return "−85% from all-time high", referring to the **October 2016 listing print
-of roughly $3,192** set on near-zero float in the first hours of trading. That
-figure is not a meaningful reference price and must not enter a valuation
-argument.
-
-This generalises. For nine of the thirty assets — LINK, UNI, AAVE, GRT, AR,
-HNT, SCRT, LDO, AKT — the all-time high is from the 2021 cycle, five years ago.
-"Down 97%" for those says more about which cycle a token launched in than about
-what it is worth now. **The dashboard therefore uses the one-year return as the
-headline drawdown metric and shows the all-time-high month alongside the
-percentage** so the reader can see which cycle is being referenced.
-
-### 5.4 The unverifiable and the unverified
-
-- **"$900M/yr revenue" for Hyperliquid and "$10T+ annual on-chain stablecoin
-  volume"** are carried from the package and are not independently verified
-  here. They are used as context, never as an input to an expected-value
-  number. The Hyperliquid figure is load-bearing for its bull case and is worth
-  checking against protocol data before acting on it.
-- **Market-size projections** — "verifiable compute $10B+ by 2031", "stablecoins
-  $1T+", "RWA $34B → $500B+" — are vendor and analyst estimates. Kept as
-  ordering information for the segments, dropped as evidence.
-- **The Reddit and Crypto Twitter sentiment layer** was not carried over.
-  Sentiment from investment forums is not evidence at the resolution this note
-  needs, and including it as a section would give it a standing it has not
-  earned.
-
-### 5.5 Where the package was right and this note simply agrees
-
-Worth recording, because a corrections log that only lists errors misrepresents
-the source:
-
-- **ONDO and ENA: product ≠ token.** The distinction between a protocol working
-  and a token holder being paid is the single best idea in the package, and it
-  is correct on both names.
-- **PRL is the right thing to avoid.** 12% float against an 8.23× fully diluted
-  ratio; it is the only negative-expected-value asset in this report.
-- **AI × crypto is a 2029 market, not a 2026 one.** ZK proving is one to two
-  orders of magnitude too slow and expensive for real-time inference, and the
-  package says so plainly. It then sizes the category as though the timing were
-  nearer, which is the only inconsistency.
-- **The best verifiable-compute companies are private.** RISC Zero, Succinct,
-  =nil; Foundation and Zama have no liquid token. Stated rather than papered
-  over, and it mirrors the same structural problem on the defence tab.
-
----
-
-## 6. Universe changes
-
-**Added:** BTC as the benchmark row — the single most consequential addition,
-since it is the hurdle every other asset has to clear and the package places it
-only in a risk-mitigation footnote. SKY replaces MKR. Total: 30 assets.
-
-**Dropped:** CFG was kept, but Zama and Octra are excluded entirely — Zama is
-pre-token and Octra has too little market data to price. The package lists both
-as moonshots with "TBD" in every quantitative field, which is not a position.
-
-**Kept and reclassified:** all four tokens the book actually holds — ETH, ZEC,
-LIT and NOCK — are ranked here on the same basis as everything else, at 3, 24,
-12 and 5 respectively. Two of those rankings are uncomfortable and both are
-argued in full in dashboard §6 rather than softened.
+- **The float rule itself** is the best idea in the package and survives as the
+  organising principle of this dashboard.
+- **ONDO and ENA: product ≠ token.** Correct on both, and the distinction
+  between a protocol working and a holder being paid is the report's spine.
+- **PRL is the right thing to avoid.** 12% float, 8.23× FDV; the worst
+  expected value of forty-five.
+- **AI × crypto is a later market than its prices imply.** Correct on timing,
+  wrong only on availability — which is what §1.1 corrects.
+- **Zcash's adoption evidence** is real, verified, and the best usage datapoint
+  in the report.
 
 ---
 
 ## 7. Relationship to positions.ts
 
-[src/data/positions.ts](../src/data/positions.ts) transcribes the crypto
-section from the **previous** version of `crypto.html`, dated `2026-07-09`, and
-it has deliberately not been rewritten to match this one. That file is a dated
-transcription with per-section sourcing, and quietly re-transcribing it from a
-new source would destroy the property that makes it trustworthy.
+[src/data/positions.ts](../src/data/positions.ts) transcribes the crypto section
+from the **July 2026** version of `crypto.html`, dated `2026-07-09`, and has
+deliberately not been rewritten. It is a dated transcription with per-section
+sourcing; re-transcribing it from a new source would destroy the property that
+makes it trustworthy.
 
-Two consequences a reader should know:
+Two consequences:
 
 1. Its four crypto rows carry July market caps (ETH 210.9, ZEC 8.14, LIT 0.588,
-   NOCK 0.0459). Live values are merged at read time by the market-data layer;
-   the transcribed figures are labelled with their own `asOf` date.
-2. Its `edge` and `note` text quotes the previous page. Those quotes remain
-   accurate about that page. **Whether the book's conviction levels should
-   change in light of this research is a decision for Matthias, not a
-   side-effect of rebuilding a research tab.**
+   NOCK 0.0459). Live values are merged at read time; transcribed figures carry
+   their own `asOf` date.
+2. Its `edge` and `note` text quotes the previous page and remains accurate
+   about that page. **Whether the book's conviction levels should change in
+   light of this research is a decision for Matthias, not a side-effect of
+   rebuilding a research tab.** Two items are worth his attention specifically:
+   Lighter's cliff is four months out, and Nockchain now has four listed
+   competitors where the July note implied it had none.
 
 ---
 
 ## 8. Open questions
 
-1. **Protocol revenue is missing.** For a category whose central question is
-   whether value reaches the token, per-protocol fee revenue and its split
-   between treasury and holder is the series that matters most, and none of it
-   is available from a free price API. Collecting it — even for the ten largest
-   — is the single largest upgrade available to this tab.
+1. **Protocol revenue is still not systematically collected.** Aave, Uniswap,
+   Hyperliquid and Lighter figures were verified by hand for the deep dives; the
+   other forty-one rows have none. For a category whose central question is
+   whether value reaches the token, that is the series that matters most.
 2. **The probabilities have no calibration.** Internally consistent, externally
-   untested. Re-running this note in twelve months against realised outcomes is
-   the only thing that changes that.
-3. **The unlock calendar is not modelled per date.** Tier C carries dilution in
-   its bear case as a level, not as a schedule. Lighter's Q1 2027 cliff is the
-   one date specific enough to act on and it is called out individually.
-4. **H1 is unresolved and everything rests on it.** Whether the 69% median
+   untested.
+3. **Liquidity is now shown but not modelled.** Five assets trade under $1m a
+   day — Octra, Pearl, Nosana, Nockchain and Aleo. A ranking position is not an
+   execution plan.
+4. **H1 is unresolved and everything rests on it.** Whether the 74% median
    decline is a de-rating against intact usage or a correct verdict decides
-   whether this ranking is a shopping list or a trap. Usage series against
-   price, quarterly, is the test.
+   whether this ranking is a shopping list or a trap.
+5. **This document has now been wrong once.** The v1 failure was trusting a
+   source's characterisation of what exists. The generalised lesson is that
+   "what is investable" is itself a data field and needs the same treatment as a
+   price.
 
 ---
 
 ## 9. Sources
 
-- **Market data:** CoinGecko public API, 11 Aug 2026 — price, circulating,
+- **Market data:** CoinGecko public API, 12 Aug 2026 — price, circulating,
   total and maximum supply, market capitalisation, fully diluted valuation,
-  all-time high and date, trailing one-year return. Identifiers pinned per
-  protocol by hand.
-- **Protocol context:** the source research package; project documentation and
-  whitepapers for Zcash, Nockchain, Lighter, Hyperliquid, Ethena and Pearl;
-  third-party dashboards for TVL, stablecoin supply and unlock schedules. Not
-  independently verified here and used as context only.
+  24-hour volume, all-time high and date, trailing one-year return. Identifiers
+  pinned per protocol and verified against project name and homepage.
+- **Protocol facts:** The Defiant and CryptoDaily on Aavenomics 3.0;
+  CoinMarketCap and DefiLlama on Hyperliquid fees and volume; 21Shares and
+  Buildix on perpetual DEX share; Unlocks and CoinMarketCap on Lighter
+  tokenomics; CryptoBriefing on the Uniswap fee switch; CoinOtag on Ethereum
+  staking; The Block, crypto.news and Delphi Digital on the Zcash shielded pool;
+  Jupiter documentation and SolanaFloor on the JUP burn; Kraken on the Nockchain
+  listing.
 - **Not used:** sentiment from investment forums and social platforms.
 
-**Not investment advice.** Informational research prepared to prioritise further
-due diligence. The expected-value figures are constructed from subjective
-probabilities and are not forecasts. Digital assets can and regularly do lose
-their entire value. Verify all figures independently.
+**Not investment advice.** The expected-value figures are constructed from
+subjective probabilities and are not forecasts. Digital assets can and regularly
+do lose their entire value. Verify all figures independently.

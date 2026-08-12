@@ -381,27 +381,39 @@ A corrections log that only lists errors misrepresents the source.
 
 ---
 
-## 7. Relationship to positions.ts
+## 7. positions.ts, re-transcribed
 
-[src/data/positions.ts](../src/data/positions.ts) transcribes the crypto section
-from the **July 2026** version of `crypto.html`, dated `2026-07-09`, and has
-deliberately not been rewritten. It is a dated transcription with per-section
-sourcing; re-transcribing it from a new source would destroy the property that
-makes it trustworthy.
+[src/data/positions.ts](../src/data/positions.ts) previously transcribed the
+July 2026 version of `crypto.html` and was deliberately left alone through two
+rebuilds, on the grounds that re-transcribing a dated record from a new source
+destroys the provenance that makes it worth having. On 12 August 2026 Matthias
+instructed that it be brought up to date, so it now transcribes the current page
+with `asOf: '2026-08-12'`.
 
-Two consequences:
+What changed, and why each one mattered:
 
-1. Its four crypto rows carry July market caps (ETH 210.9, ZEC 8.14, LIT 0.588,
-   NOCK 0.0459). Live values are merged at read time; transcribed figures carry
-   their own `asOf` date.
-2. Its `edge` and `note` text quotes the previous page and remains accurate
-   about that page. **Whether the book's conviction levels should change in
-   light of this research is a decision for Matthias, not a side-effect of
-   rebuilding a research tab.** Two items are worth his attention specifically:
-   Lighter's cliff is four months out, and Nockchain now has four listed
-   competitors where the July note implied it had none.
+- **NOCK.** The July note described a proof market with no listed competitors.
+  That stopped being true when Succinct, Lagrange and Boundless began trading.
+  The note now names the listed cohort and states that Nockchain is the smallest
+  and least liquid of the listed proving assets at ~$0.6m of daily volume — not
+  an early option on an unavailable category. Conviction stays at 1; the
+  evidence grade was already the lowest available and the new information
+  reinforces it rather than changing it. **A market cap going stale is
+  cosmetic; a note that misdescribes the competitive set is not.**
+- **LIT.** The cliff had no date on it — "the turn of 2026/27". It is
+  **27 December 2026**, and the note now carries the date, the ~3.2m LIT/week
+  vesting rate to 2029, and the offsetting buyback-and-burn. The revenue gap was
+  also restated: $943m to holders at Hyperliquid against $72m at Lighter over
+  the trailing year, not the "$202M vs <$10M" quarterly figures.
+- **ETH.** Staking corrected from "31–32%" to the 41.7m ETH / ~34.5% record of
+  10 August 2026, drawdown from −65% to −62%.
+- **ZEC.** The note now records that conviction is an evidence grade and that
+  the evidence and the price point opposite ways: ZEC is up ~1,165% over twelve
+  months and ranks 25th of 40 on expected value. The provider's "−85% from
+  all-time high" is flagged as the October 2016 listing print.
 
----
+Conviction levels are unchanged on all four. The evidence grades still hold;
+what was wrong was the surrounding description.
 
 ## 8. Open questions
 

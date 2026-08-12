@@ -1219,7 +1219,7 @@ export const positions: Position[] = [
   },
 
   // =========================================================================
-  // CRYPTO — 4 held. Single CoinGecko snapshot, 9 July 2026.
+  // CRYPTO — 4 held. Single CoinGecko snapshot, 12 August 2026.
   // Narrowed from 5 held + the HYPE benchmark on Matthias's instruction
   // (11 Aug 2026): this section covers ETH, ZEC, LIT and NOCK only. Pearl and
   // the Hyperliquid benchmark row came out of dashboards/crypto.html in the
@@ -1227,6 +1227,14 @@ export const positions: Position[] = [
   // quietly disagreeing with it. Hyperliquid still appears in that page as
   // the competitor Lighter is measured against: it is no longer a tracked
   // position, which is not the same as pretending it does not exist.
+  //
+  // Re-transcribed 12 Aug 2026 on Matthias's instruction, against the rebuilt
+  // dashboards/crypto.html. Two of the four notes had gone stale in a way that
+  // mattered rather than cosmetically: Lighter's cliff had no date on it, and
+  // the NOCK note implied a proof market with no listed competitors, which
+  // stopped being true when Succinct, Lagrange and Boundless began trading.
+  // Market caps move; a note that misdescribes the competitive set does not
+  // age, it misleads.
   // This section has no A/B/C tiers; conviction is derived from its own
   // "evidence grade" column instead (institutional/strong -> 3, contested -> 2,
   // early -> 1), then capped by the no-edge rule.
@@ -1237,12 +1245,12 @@ export const positions: Position[] = [
     name: 'Ethereum',
     sections: ['crypto'],
     factors: ['risk-appetite'],
-    marketCapUsd: 210.9,
-    asOf: '2026-07-09',
+    marketCapUsd: 228.39,
+    asOf: '2026-08-12',
     conviction: 3,
-    edge: 'The institutional-infrastructure evidence is the strongest in the section and the price action the weakest: ~52% of global stablecoin supply, ~60% of tokenised RWA value, 31–32% of supply staked — against −65% from the Aug 2025 high. The section frames it explicitly as fundamentals vs flows.',
+    edge: 'The institutional-infrastructure evidence is the strongest in the section and the price action the weakest: about half of global stablecoin supply settles here, most tokenised RWA is issued here, and staking hit a record 41.7M ETH (~34.5% of supply) on 10 Aug 2026 — against −62% from the Aug 2025 high and −57% over twelve months. The section frames it explicitly as fundamentals vs flows.',
     stance: 'long',
-    note: 'Counter-evidence carried in the source: ETF outflows, and BitMine holding 5.62M ETH with ~$9B unrealised loss — the same treasury-company overhang the ZEC thesis criticises in Bitcoin.',
+    note: 'The only asset in the crypto section that clears the bitcoin hurdle risk-adjusted, and narrowly: EV/σ 0.80 against BTC 0.77. Counter-evidence carried in the source: ETF outflows, BitMine holding 5.62M ETH at a large unrealised loss, and the value-accrual objection — adoption can keep compounding on L2s while the asset captures a shrinking share of it.',
   },
   {
     ticker: 'ZEC',
@@ -1250,12 +1258,12 @@ export const positions: Position[] = [
     name: 'Zcash',
     sections: ['crypto'],
     factors: ['risk-appetite'],
-    marketCapUsd: 8.14,
-    asOf: '2026-07-09',
+    marketCapUsd: 8.18,
+    asOf: '2026-08-12',
     conviction: 3,
-    edge: 'Hard on-chain usage growth: the shielded pool went from 11% to ~30% of supply in one year, with the Orchard pool absorbing nearly all of it. Usage, not narrative.',
+    edge: 'Hard on-chain usage growth: the shielded pool went from 11% to ~29.9% of supply in one year, with the Orchard pool absorbing nearly all of it. Usage, not narrative — and it is the best-evidenced adoption datapoint in the crypto section.',
     stance: 'long',
-    note: 'The rotation/Saylor leg was deliberately DOWNGRADED by the source to "narrative tailwind, causality unproven" — no flow-level evidence ties BTC outflows to ZEC inflows. Entire ECC dev team resigned Jan 2026.',
+    note: 'Conviction is an evidence grade, not a price call, and the two now point opposite ways: ZEC is up ~1,165% over twelve months while the median asset in the section fell 66%, which puts it 25th of 40 on expected value. The rotation/Saylor leg stays DOWNGRADED to "narrative tailwind, causality unproven". Entire ECC dev team resigned Jan 2026. Note also that a provider "−85% from all-time high" for ZEC refers to the Oct 2016 listing print and is not a usable reference price.',
   },
   {
     ticker: 'LIT',
@@ -1263,11 +1271,11 @@ export const positions: Position[] = [
     name: 'Lighter',
     sections: ['crypto'],
     factors: ['risk-appetite'],
-    marketCapUsd: 0.588,
-    asOf: '2026-07-09',
+    marketCapUsd: 0.576,
+    asOf: '2026-08-12',
     conviction: 2,
     stance: 'long',
-    note: 'Source graded it "contested; incumbent still winning". Cheap per volume ($588M mcap vs HYPE $14.9B on a ~5x volume gap) but not on revenue (HL ~$202M in Q2 2026 vs Lighter <$10M and declining). Team+investor cliff at the turn of 2026/27 is a major unlock overhang.',
+    note: 'Source graded it "contested; incumbent still winning", and the revenue gap has widened rather than closed: Hyperliquid returned ~$943M to holders over the trailing year against Lighter\'s ~$72M, on $198bn of 30-day volume against $33.8bn. Still materially cheaper per unit of volume. THE DATE THAT MATTERS: the team and investor cliff is 27 Dec 2026 — four months out, not "the turn of the year" — after which roughly half of supply vests at ~3.2M LIT a week until 2029. 25% float, FDV 4.0x. Offsetting it: since Jun 2026 all trading fees fund buybacks that are burned, ~15.5M LIT (~6.3% of float) so far, and Robinhood Wallet routes to it.',
   },
   {
     ticker: 'NOCK',
@@ -1275,11 +1283,11 @@ export const positions: Position[] = [
     name: 'Nockchain',
     sections: ['crypto'],
     factors: ['risk-appetite', 'ai-capex'],
-    marketCapUsd: 0.0459,
-    asOf: '2026-07-09',
+    marketCapUsd: 0.028,
+    asOf: '2026-08-12',
     conviction: 1,
     stance: 'long',
-    note: 'Graded "earliest; venture-grade risk". The proof market is internal-only today: no verified evidence of external paid demand for proofs. −90% from the Oct 2025 ATH; ~48% of supply still to be mined.',
+    note: 'Graded "earliest; venture-grade risk", and the competitive picture changed materially in Aug 2026: the verifiable-compute cohort the July note treated as private is listed and liquid — Succinct (SP1, in production use by rollups), Lagrange, Boundless (RISC Zero), Zama, Aztec, Arcium, Nillion, Irys, Gensyn. NOCK is now the smallest and least liquid of the listed proving assets at ~$0.6M of daily volume, not an early option on an unavailable category. Unchanged and still decisive: the proof market is internal-only, with no verified external paying customer. −94% from the Oct 2025 ATH; ~47% of supply still to be mined. Ranks 4th of 40 on expected value and 25th on expected value per unit of dispersion — that gap is the whole description.',
   },
 
 

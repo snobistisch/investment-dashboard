@@ -265,7 +265,7 @@
 <header class="hero">
   <div class="wrap">
     <div class="kicker">Digital assets research · market data 12 August 2026</div>
-    <h1>Thirteen came out. Eight went in. Only one of the additions earns anything.</h1>
+    <h1>Thirteen came out on $42,000 of fees. Eight went in, and five of them earn almost nothing either.</h1>
     <p class="lede">This revision culls thirteen assets that turned out to have almost no economic activity behind them — Celestia earned <b>$42,000</b> of fees in a year against a $293m capitalisation — and adds eight, most of them new layer ones. Bitcoin is 50% below its October 2025 high and down 47% over twelve months; of the twenty-five remaining assets with a full year of history, twenty-three are down, fourteen of them by 60% or more, and the median lost 66%. <b>The additions are the worst assets here on the float rule this dashboard is built on, and the best on the argument that capital rotates to whatever is new.</b> Both readings are carried in §4 rather than resolved.</p>
     <div class="meta-row">
       <div class="m"><div class="k">Assets ranked</div><div class="v">40, incl. BTC as benchmark</div></div>
@@ -277,7 +277,7 @@
     <div class="spectrum">
       <div class="head"><span>◄ Down hardest over twelve months</span><span>The only two that are up ►</span></div>
       <svg id="spectrumSvg" viewBox="0 0 1000 132" preserveAspectRatio="xMidYMid meet" aria-label="Spectrum plotting selected tokens by their one-year dollar return, from Helium at minus 94 percent to Zcash which is off-scale to the upside"></svg>
-      <div class="cap">One-year dollar return to 12 Aug 2026. Eleven of the forty have under a year of history and are not plotted. Zcash is clamped at the right edge: its actual figure is <b>+1,165%</b>, which is the single most important fact about the position and does not fit on an axis with everything else.</div>
+      <div class="cap">One-year dollar return to 12 Aug 2026. Fifteen of the forty have under a year of history and are not plotted. Zcash is clamped at the right edge: its actual figure is <b>+1,165%</b>, which is the single most important fact about the position and does not fit on an axis with everything else.</div>
     </div>
   </div>
 </header>
@@ -446,7 +446,7 @@
     <div class="sec-head"><div class="sec-num">05</div><h2>The verifiable-compute companies did not stay private. They listed at 20% float and fell 83%.</h2></div>
     <div class="prose wide">
       <p class="lead-p">The most interesting claim in the source research is that computation itself becomes a tradable, auditable commodity — that zero-knowledge proofs, FHE and trusted hardware turn "trust the API provider" into "verify the output," and that this is what finally makes AI × crypto infrastructure rather than narrative. It then concludes that the good implementations are private and unavailable: <em>"RISC Zero — ZK-prover infrastructure (private; no token yet)"</em>, <em>"=nil; Foundation (no liquid token)"</em>, <em>"Zama — pre-TGE"</em>.</p>
-      <p><b>That is no longer true, and it is the single largest factual correction on this tab.</b> RISC Zero's proving marketplace listed as Boundless. Succinct listed. Zama listed in July 2026 and is the largest of them. Aztec, Arcium, Lagrange, Nillion, Irys, Gensyn and Aleo are all liquid. Twelve verifiable-compute assets are ranked in §6, and the category is not unavailable — it is available, and it has been repriced brutally.</p>
+      <p><b>That is no longer true, and it is the single largest factual correction on this tab.</b> RISC Zero's proving marketplace listed as Boundless. Succinct listed. Zama listed in July 2026 and is the largest of them. Aztec, Arcium, Lagrange, Nillion, Irys, Gensyn and Aleo are all liquid. Twelve are ranked in §6 — Boundless was culled in §4 for having no measurable fee line, which is a judgement about its economics, not about whether it exists. The category is not unavailable. It is available, and it has been repriced brutally.</p>
       <p>The corrected finding is more useful than the original one, because it is the float rule landing on exactly the cohort that was supposed to be exempt from it. <b>Nine of the twelve listed at under 30% float. Eight carry FDV above three times market cap. The median is 21% float and 81% below its all-time high.</b> These are not companies that stayed private to protect shareholders. They are companies that sold a fifth of their supply into a bull market and let the other four fifths vest into a bear one.</p>
     </div>
     <div class="kpis" style="margin-top:8px">
@@ -1139,13 +1139,20 @@ render();
   const svg=document.getElementById('spectrumSvg');
   if(!svg) return;
   const NS='http://www.w3.org/2000/svg';
-  const pick=['HNT','ALEO','PROVE','EIGEN','ARB','UNI','LINK','ETH','BTC','SKY','HYPE','ZEC'];
+  /* Spread across the axis rather than chosen to flatter anything. Filtered
+     against TOKENS rather than assumed: a name culled from the universe used to
+     throw here and take every script below it — the scatter, the bar fills and
+     the scroll-spy — down with it. Silently. */
+  const pick=['ALEO','ENA','LDO','UNI','LINK','ETH','BTC','NEAR','SKY','HYPE','ZEC'];
   const LO=-100, HI=40;
-  const pts=pick.map(tk=>{
-    const c=TOKENS.find(x=>x.tk===tk);
-    const v=Math.min(HI, Math.max(LO, c.y1));
-    return {tk:c.tk, pos:(v-LO)/(HI-LO)*100, tier:c.tier, clamped:c.y1>HI};
-  }).sort((a,b)=>a.pos-b.pos);
+  const pts=pick
+    .map(tk=>TOKENS.find(x=>x.tk===tk))
+    .filter(c=>c && c.y1!==null && c.y1!==undefined)
+    .map(c=>{
+      const v=Math.min(HI, Math.max(LO, c.y1));
+      return {tk:c.tk, pos:(v-LO)/(HI-LO)*100, tier:c.tier, clamped:c.y1>HI};
+    }).sort((a,b)=>a.pos-b.pos);
+  if(pts.length<4) console.warn('spectrum: only', pts.length, 'plottable names');
   const x0=40, x1=960, y=70;
   const line=document.createElementNS(NS,'line');
   line.setAttribute('x1',x0);line.setAttribute('x2',x1);line.setAttribute('y1',y);line.setAttribute('y2',y);

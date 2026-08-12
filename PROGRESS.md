@@ -10,6 +10,32 @@ deploys on every push to main).
 
 ## Done
 
+- **Crypto: a live bug, a corrected headline, and positions.ts re-transcribed
+  (12 Aug 2026).**
+
+  **The bug, and how it hid.** Culling thirteen assets left two of them — HNT
+  and ARB — in the hero spectrum's hard-coded pick list. `TOKENS.find()`
+  returned undefined, `c.y1` threw, and every script below it died with it: the
+  scatter plot, the bar fills and the scroll-spy. The table still rendered
+  because it runs earlier, so the page looked fine. **My verification asserted
+  "no label collisions" and got an empty array — which meant no labels at all,
+  not no collisions, and I read it as a pass.** The pick list now filters
+  against TOKENS and warns if too few names survive; the check now asserts that
+  the graphics contain elements, not merely that they contain nothing wrong.
+
+  **The headline overclaimed.** "Only one of the additions earns anything" was
+  false — Maple earns $108M, NEAR $42M, Virtuals $20M. Corrected to the claim
+  the data supports: five of the eight earn almost nothing.
+
+  **positions.ts is now current.** Left alone through two rebuilds on provenance
+  grounds, updated on instruction. The NOCK note had implied a proof market with
+  no listed competitors, which stopped being true when Succinct, Lagrange and
+  Boundless started trading — that is the kind of staleness that misleads rather
+  than merely ages. Lighter's cliff now carries its date (27 Dec 2026) instead
+  of "the turn of the year". ETH staking corrected to 34.5%. ZEC's note records
+  that its evidence grade and its price now point opposite ways. Conviction
+  levels unchanged on all four: the grades held, the descriptions did not.
+
 - **Crypto tab: thirteen out, eight in (12 Aug 2026).** Matthias culled the
   assets he judged dead, unused or fully extracted by their venture backers, and
   named eight additions. Both halves were checked rather than accepted.

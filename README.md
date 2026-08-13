@@ -20,24 +20,39 @@ Sections:
   came from a live quote or from the transcription in
   [src/data/positions.ts](src/data/positions.ts).
 - Equities: **Digital Biology**, **Robotics**, **Quantum**, **Agentic**,
-  **Photonics** and **Defence**. Crypto: **Assets**. Self-contained research
-  dashboards, embedded from [public/dashboards/](public/dashboards/). Sourced
-  notes live in
+  **Photonics** and **Defence**. Crypto: **Assets** and **VC Research**.
+  Self-contained research dashboards, embedded from
+  [public/dashboards/](public/dashboards/). Sourced notes live in
   [research/photonics-tracker-research.md](research/photonics-tracker-research.md),
   [research/defense-tracker-research.md](research/defense-tracker-research.md)
   and
   [research/crypto-tracker-research.md](research/crypto-tracker-research.md).
 
-Three further crypto research notes sit alongside those and are **deliberately
-not wired into any tab** — they are screening and mapping work, not a ranked
-section:
+The Assets ranking is organised into seven themes, derived from the category
+tags already on its 40 assets rather than chosen in advance: **Settlement**,
+**Exchanges**, **DeFi & stablecoins**, **Middleware & oracles**,
+**New layer ones**, **Privacy & Verifiable Compute** and **GPU & DePIN**. Four
+further research files go deeper into specific themes than the ranked 40
+does, and are **deliberately not wired into the ranking** — they are
+screening and mapping work, not a ranked section, and a tab asserts a ranking
+these do not yet carry:
 [crypto-screen-candidates.md](research/crypto-screen-candidates.md) (a
-fees-and-holders-revenue screen over 177 protocols),
+fees-and-holders-revenue screen over 177 protocols, deepening DeFi),
 [crypto-universe-map.md](research/crypto-universe-map.md) (107 tokens plus 22
-pre-token projects, 40 of them on Base) and
-[crypto-hooks-mev-research.md](research/crypto-hooks-mev-research.md) (51 tokens
-across programmable AMMs and MEV infrastructure). A Base deep dive is the
-outstanding second half of that last one.
+pre-token projects, 40 of them on Base),
+[crypto-hooks-mev-research.md](research/crypto-hooks-mev-research.md) (51
+tokens across programmable AMMs and MEV infrastructure, deepening Exchanges)
+and
+[crypto-vc-research.md](research/crypto-vc-research.md) with its two full
+fund profiles,
+[crypto-vc-haun-ventures.md](research/crypto-vc-haun-ventures.md) and
+[crypto-vc-paradigm.md](research/crypto-vc-paradigm.md) — the one file in
+this group that now has a page:
+**VC Research** (`crypto-vc.html`) presents both funds' complete round
+histories, sourced from a self-scraped database of 5,868 funding rounds.
+[crypto-research-index.md](research/crypto-research-index.md) maps every
+crypto research file onto its theme and states which are ranked versus
+notes-only.
 
 **Defence** and **Crypto** rank their universes by an explicit three-scenario
 expected value rather than by a composite score: the probabilities and returns

@@ -10,6 +10,45 @@ deploys on every push to main).
 
 ## Done
 
+- **Crypto reorganised around its real themes; VC Research shipped as a tab
+  (13 Aug 2026).** Matthias asked for crypto to consist of named categories —
+  privacy (ZK), DeFi, decentralised exchanges, VC research — and to derive the
+  full theme set from the research rather than assume it.
+
+  **The themes were already there.** The 40-asset ranking has carried category
+  tags since it was built; counting them rather than inventing new ones gave
+  seven themes, matching almost exactly what was asked: Settlement (5),
+  Exchanges (5, renamed from "Trading venues"), DeFi & stablecoins (7),
+  Middleware & oracles (3), New layer ones (3), Privacy & Verifiable Compute
+  (12, renamed from "Verifiable compute" — the largest theme by a wide margin),
+  GPU & DePIN (5). Only the labels changed; the ranking and its expected-value
+  model did not.
+
+  **VC research got a real tab, not a placeholder.** The Haun Ventures and
+  Paradigm databases built in the previous session were sitting only in
+  scratchpad, never committed. They are now `research/crypto-vc-*.md` and a
+  new page, `public/dashboards/crypto-vc.html` — 153 fund-round rows rendered
+  client-side from the actual scraped data, sortable and filterable by fund
+  and by lead-vs-join. The page surfaces a finding the two separate research
+  passes hadn't connected: **Haun and Paradigm invested in the same round
+  seven times** (Conduit, Euler Finance, Exponential, Farcaster, Fireblocks,
+  Liquid, TaxBit) despite sitting at opposite ends of a third-party tier list.
+  Whatever separates them, it is not deal access.
+
+  **`research/crypto-research-index.md` is new** and maps all eleven crypto
+  research files onto the seven asset themes plus VC research, stating
+  plainly which have a live ranking (the 40-asset tab) and which are deep but
+  unranked (Hooks & MEV at 51 tokens — more than double any other file — and
+  the Base universe map at 40 tokens). Neither of those becomes a tab today;
+  a tab asserts a ranking they do not carry yet, and that is named as the
+  next logical step rather than done here.
+
+  **A build bug from the VC page, caught before commit:** the generated
+  data array landed outside any `<script>` tag, so the page rendered its
+  static sections but the table silently stayed empty with a console error.
+  Verified in the browser before shipping — 153 rows, correct 37/116 fund
+  split, filters and sort all producing the right subsets.
+
 - **Split into two asset classes (13 Aug 2026).** The dashboard now opens on a
   chooser — Equities or Crypto — and each side carries its own Exposure and
   Allocator.

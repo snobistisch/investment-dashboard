@@ -42,13 +42,22 @@ const EQUITY_TABS: Tab[] = [
   { id: 'defense', label: 'DEFENCE', kind: 'embed', src: 'dashboards/defense.html', title: 'Defence and autonomy research dashboard' },
 ]
 
-// Crypto themes. Deliberately fewer than the equity side: a tab asserts a ranked
-// view, and only the assets tab currently has one. Hooks & MEV and Base have
-// research notes in research/ but no ranking yet, so they are not tabs.
+// Crypto themes. Deliberately fewer tabs than the equity side: a tab asserts a
+// ranked view, and only two currently have one. The themes underneath both are
+// the real categories the research settled on (see research/crypto-research-index.md):
+// Assets covers Settlement, Exchanges, DeFi, Infra & Oracles, Privacy &
+// Verifiable Compute, Compute & DePIN and New Layer Ones as filterable
+// categories inside its 40-asset ranking. VC Research is a different axis
+// entirely — who funds these themes, not which asset within them to hold — and
+// gets its own tab because it answers a different question, not because it is
+// itself a theme. Hooks & MEV (deepens Exchanges) and Base (deepens all of them
+// through one chain's distribution) have research notes and no ranking yet, so
+// they stay notes rather than tabs.
 const CRYPTO_TABS: Tab[] = [
   { id: 'exposure', label: 'EXPOSURE', kind: 'exposure' },
   { id: 'allocator', label: 'ALLOCATOR', kind: 'allocator' },
   { id: 'assets', label: 'ASSETS', kind: 'embed', src: 'dashboards/crypto.html', title: 'Crypto and innovation research dashboard' },
+  { id: 'vc', label: 'VC RESEARCH', kind: 'embed', src: 'dashboards/crypto-vc.html', title: 'Venture capital research — who funds what in crypto' },
 ]
 
 const TABS: Record<AssetClass, Tab[]> = { equities: EQUITY_TABS, crypto: CRYPTO_TABS }

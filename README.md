@@ -18,6 +18,17 @@ Sections:
   and
   [research/crypto-tracker-research.md](research/crypto-tracker-research.md).
 
+Three further crypto research notes sit alongside those and are **deliberately
+not wired into any tab** — they are screening and mapping work, not a ranked
+section:
+[crypto-screen-candidates.md](research/crypto-screen-candidates.md) (a
+fees-and-holders-revenue screen over 177 protocols),
+[crypto-universe-map.md](research/crypto-universe-map.md) (107 tokens plus 22
+pre-token projects, 40 of them on Base) and
+[crypto-hooks-mev-research.md](research/crypto-hooks-mev-research.md) (51 tokens
+across programmable AMMs and MEV infrastructure). A Base deep dive is the
+outstanding second half of that last one.
+
 **Defence** and **Crypto** rank their universes by an explicit three-scenario
 expected value rather than by a composite score: the probabilities and returns
 are published in the table and the ranking is computed from them in the page, so

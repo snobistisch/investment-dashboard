@@ -10,6 +10,44 @@ deploys on every push to main).
 
 ## Done
 
+- **Three crypto research notes added, none wired into a tab (12 Aug 2026).**
+  Screening and mapping work that deliberately stays out of `public/dashboards/`:
+  a ranked section implies a conviction these do not yet carry.
+
+  **[crypto-screen-candidates.md](research/crypto-screen-candidates.md)** — a
+  mechanical screen over the 177 protocols with a resolvable token and ≥$3M of
+  trailing fees. The useful part is the metric it added: DefiLlama
+  `dailyHoldersRevenue`, which is what actually reaches a token holder. Without
+  it the screen returns **Compound** as a top candidate — $1.22bn of TVL, 100%
+  float, 1.00x FDV, down 70%, and **zero** to the token. Same for Rocket Pool
+  ($40M of fees, all of it pass-through to node operators) and Drift.
+
+  **[crypto-universe-map.md](research/crypto-universe-map.md)** — 107 tokens and
+  22 pre-token projects, 40 on Base, built after Matthias pointed out that
+  float had been promoted from a correction into the primary gate and was
+  excluding exactly the category he wanted: new architecture with real activity.
+  His rule replaces it — low float is a risk that a market maker and retail
+  volume can absorb — so every table now prints **Vol/mcap next to Float**.
+  That pairing is the whole test: low float with volume has a buyer for the
+  unlock, low float without volume does not.
+
+  **[crypto-hooks-mev-research.md](research/crypto-hooks-mev-research.md)** — 51
+  tokens where the map had 27. The names missed were not the small ones:
+  Shutter, API3, UMA, Enso, Espresso, Anoma, Everclear, Brevis, Axiom. Two
+  findings worth keeping: **MEV mostly cannot be monetised through a token, and
+  that is structural** — Jito earns $205M and pays holders $0, CoW $41M and $0,
+  because well-designed MEV mitigation returns value to the *user*; the
+  exceptions are the layers that sell MEV services, with Chainlink at 92%
+  capture. And **Bunni is the cautionary tale for hooks**: exploited for ~$8.4M
+  on 2 Sep 2025 through a rounding flaw, despite audits from Trail of Bits and
+  Cyfrin, then shut down. A hook sits between the pool and every swap.
+
+  **Outstanding:** the Base deep dive, split off deliberately because
+  distribution and Coinbase support are a different argument from market
+  structure. Also unresolved and flagged in the note: Balancer at a $7.3M
+  capitalisation while paying $3M to holders — either a data error or the
+  sharpest dislocation in the set.
+
 - **Crypto: a live bug, a corrected headline, and positions.ts re-transcribed
   (12 Aug 2026).**
 

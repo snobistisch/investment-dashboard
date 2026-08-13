@@ -3,16 +3,26 @@
 Personal dashboard of research trackers built exclusively from public sources.
 Live at **https://snobistisch.github.io/investment-dashboard/**
 
+The dashboard opens on a chooser: **Equities** or **Crypto**. They are split
+because the hypotheses differ — equities here bet on a named industrial
+bottleneck, crypto on float and fee capture against a bitcoin benchmark — and
+because averaging a $228bn settlement layer with a photonics small cap in one
+factor bucket answers neither question. Each side carries its own **Exposure**
+and **Allocator**; the sizing model still solves the whole book in one pass, so
+what splits is the view, not the arithmetic. Routing is `#<class>/<tab>`, and the
+old flat links (`#crypto`, `#defense`, …) still resolve.
+
 Sections:
 
-- **Exposure** and **Allocator** — the two views that read across the research
-  sections: factor concentration over the whole book, and a risk-scaled
-  allocation built on it. Both show live prices and USD returns per name, and
-  state for every figure whether it came from a live quote or from the
-  transcription in [src/data/positions.ts](src/data/positions.ts).
-- **Digital Biology**, **Robotics**, **Quantum**, **Agentic**, **Crypto**,
-  **Photonics** and **Defence** — self-contained research dashboards, embedded
-  from [public/dashboards/](public/dashboards/). Sourced notes live in
+- **Exposure** and **Allocator**, once per asset class — factor concentration
+  over that half of the book, and a risk-scaled allocation built on it. Both show
+  live prices and USD returns per name, and state for every figure whether it
+  came from a live quote or from the transcription in
+  [src/data/positions.ts](src/data/positions.ts).
+- Equities: **Digital Biology**, **Robotics**, **Quantum**, **Agentic**,
+  **Photonics** and **Defence**. Crypto: **Assets**. Self-contained research
+  dashboards, embedded from [public/dashboards/](public/dashboards/). Sourced
+  notes live in
   [research/photonics-tracker-research.md](research/photonics-tracker-research.md),
   [research/defense-tracker-research.md](research/defense-tracker-research.md)
   and

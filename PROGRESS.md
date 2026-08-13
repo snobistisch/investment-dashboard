@@ -10,6 +10,36 @@ deploys on every push to main).
 
 ## Done
 
+- **Split into two asset classes (13 Aug 2026).** The dashboard now opens on a
+  chooser — Equities or Crypto — and each side carries its own Exposure and
+  Allocator.
+
+  **The reason is analytical, not cosmetic**, and it is Matthias's: the
+  hypotheses differ. One Exposure tab was computing factor concentration across
+  82 equity positions and 4 crypto ones, which put a $228bn settlement layer in
+  the same buckets as a photonics small cap and read them against one risk
+  model. At 82-to-4 the distortion is invisible. It was still there.
+
+  **The allocation model already agreed.** `allocation.ts` has carried a separate
+  `cryptoUniverse` on a fixed 10% mandate for months, so the split follows the
+  existing structure rather than fighting it. The solver still sizes the whole
+  book in one pass — splitting that would change the answer, not the view — so
+  what the toggle switches is which sleeves render. Equities shows 9 thesis and 7
+  diversifiers; crypto shows the 4-position mandate at 10% of capital. All
+  146,872 allocation invariants still hold.
+
+  Routing became `#<class>/<tab>`, with every old flat hash aliased so shared
+  links keep working.
+
+  **Known inconsistency, deliberately left.** The stress panel and the provenance
+  book below the allocation table still cover the whole book in both views. That
+  is defensible — the allocation genuinely is one book — but it reads oddly under
+  a crypto-only heading and is the first thing to fix next.
+
+  **Crypto has one theme tab, not six.** A tab asserts a ranked view. Assets has
+  one; Hooks & MEV and Base have research notes in `research/` and no ranking, so
+  they stay notes until they earn a ranking.
+
 - **Three crypto research notes added, none wired into a tab (12 Aug 2026).**
   Screening and mapping work that deliberately stays out of `public/dashboards/`:
   a ranked section implies a conviction these do not yet carry.

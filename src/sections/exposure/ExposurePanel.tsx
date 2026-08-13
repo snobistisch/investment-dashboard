@@ -70,14 +70,25 @@ const factorColor: Record<Factor, string> = {
   'rates-macro': 'text-term-dim',
 }
 
-export function ExposurePanel() {
+export function ExposurePanel({ assetClass = 'equities' }: { assetClass?: 'equities' | 'crypto' }) {
   const { snapshot, source, loading } = useMarketSnapshot()
 
   // The merged book. Every figure below runs over these rows, so a live
   // snapshot changes the numbers and the absence of one leaves them exactly as
   // they were when positions.ts was the only source.
   const merged = useMemo(() => mergePositions(snapshot), [snapshot])
-  const thematicPositions = useMemo(() => merged.filter(isThematic), [merged])
+  // Split by asset class before anything is computed. Concentration, factor
+  // weights and the July drawdown anchor are all averages, and averaging a
+  // $228bn settlement layer with a photonics small cap answers neither
+  // question. Crypto rows are the ones carrying the 'crypto' section.
+  const inClass = useMemo(
+    () =>
+      merged.filter((p) =>
+        assetClass === 'crypto' ? p.sections.includes('crypto') : !p.sections.includes('crypto'),
+      ),
+    [merged, assetClass],
+  )
+  const thematicPositions = useMemo(() => inClass.filter(isThematic), [inClass])
   const activeBook = useMemo(() => thematicPositions.filter((p) => !isContext(p)), [thematicPositions])
   // The whole researched book in one list, largest first. Context names are
   // included so the table is complete; they are marked and dimmed.

@@ -2,76 +2,140 @@ import { useEffect, useState } from 'react'
 import { ExposurePanel } from './sections/exposure/ExposurePanel'
 import { AllocatorPanel } from './sections/allocator/AllocatorPanel'
 import { EmbeddedDashboard } from './components/EmbeddedDashboard'
+import { Landing } from './components/Landing'
 
-// The dashboard's sections. React panels render inline and scroll; embedded
-// sections host a self-contained HTML dashboard in an iframe.
-// To add another: drop its file in public/dashboards/ and add one entry here.
-// Exposure comes first on purpose: it is the only view that reads across the
-// others, and the concentration question should be answered before the
-// individual theses are read.
-const sections = [
-  'exposure',
-  'allocator',
-  'biology',
-  'robotics',
-  'quantum',
-  'agentic',
-  'crypto',
-  'photonics',
-  'defense',
-] as const
-type Section = (typeof sections)[number]
+// ---------------------------------------------------------------------------
+// Two asset classes, split on purpose
+// ---------------------------------------------------------------------------
+// The book is 82 equity positions and 4 crypto positions. Until August 2026 one
+// Exposure tab computed factor concentration across both, which put a $228bn ETH
+// in the same buckets as a photonics small cap and sized them with one risk
+// model. At 82-to-4 that distortion is invisible; it is still a distortion.
+//
+// Matthias's instruction (13 Aug 2026) is the analytical reason to split rather
+// than the cosmetic one: the hypotheses differ. Equities here are a bet on a
+// named industrial bottleneck; crypto is a bet on float, fee capture and a
+// benchmark that is bitcoin rather than zero. Averaging two different questions
+// produces an answer to neither.
+//
+// The allocation model already agreed with that — allocation.ts has carried a
+// separate cryptoUniverse on a fixed 10% mandate for months. This change makes
+// the interface say what the model already did.
+type AssetClass = 'equities' | 'crypto'
 
-const navLabels: Record<Section, string> = {
-  exposure: 'EXPOSURE',
-  allocator: 'ALLOCATOR',
-  biology: 'DIGITAL BIOLOGY',
-  robotics: 'ROBOTICS',
-  quantum: 'QUANTUM',
-  agentic: 'AGENTIC',
-  crypto: 'CRYPTO',
-  photonics: 'PHOTONICS',
-  defense: 'DEFENCE',
+type Tab = {
+  id: string
+  label: string
+  kind: 'exposure' | 'allocator' | 'embed'
+  src?: string
+  title?: string
 }
 
-function sectionFromHash(): Section {
-  const hash = window.location.hash.replace('#', '')
-  return (sections as readonly string[]).includes(hash) ? (hash as Section) : 'exposure'
+const EQUITY_TABS: Tab[] = [
+  { id: 'exposure', label: 'EXPOSURE', kind: 'exposure' },
+  { id: 'allocator', label: 'ALLOCATOR', kind: 'allocator' },
+  { id: 'biology', label: 'DIGITAL BIOLOGY', kind: 'embed', src: 'dashboards/digital-biology.html', title: 'Digital Biology dashboard' },
+  { id: 'robotics', label: 'ROBOTICS', kind: 'embed', src: 'dashboards/robotics.html', title: 'Robotics landscape dashboard' },
+  { id: 'quantum', label: 'QUANTUM', kind: 'embed', src: 'dashboards/quantum.html', title: 'Quantum computing dashboard' },
+  { id: 'agentic', label: 'AGENTIC', kind: 'embed', src: 'dashboards/agentic.html', title: 'Agent economy dashboard' },
+  { id: 'photonics', label: 'PHOTONICS', kind: 'embed', src: 'dashboards/photonics.html', title: 'Photonics and optical interconnect dashboard' },
+  { id: 'defense', label: 'DEFENCE', kind: 'embed', src: 'dashboards/defense.html', title: 'Defence and autonomy research dashboard' },
+]
+
+// Crypto themes. Deliberately fewer than the equity side: a tab asserts a ranked
+// view, and only the assets tab currently has one. Hooks & MEV and Base have
+// research notes in research/ but no ranking yet, so they are not tabs.
+const CRYPTO_TABS: Tab[] = [
+  { id: 'exposure', label: 'EXPOSURE', kind: 'exposure' },
+  { id: 'allocator', label: 'ALLOCATOR', kind: 'allocator' },
+  { id: 'assets', label: 'ASSETS', kind: 'embed', src: 'dashboards/crypto.html', title: 'Crypto and innovation research dashboard' },
+]
+
+const TABS: Record<AssetClass, Tab[]> = { equities: EQUITY_TABS, crypto: CRYPTO_TABS }
+const CLASS_LABEL: Record<AssetClass, string> = { equities: 'EQUITIES', crypto: 'CRYPTO' }
+
+// Routing is `#<class>/<tab>`. The bare `#crypto` and `#defense` links that were
+// shared before this change still resolve, so nothing already sent out breaks.
+const LEGACY: Record<string, string> = {
+  crypto: 'crypto/assets',
+  defense: 'equities/defense',
+  photonics: 'equities/photonics',
+  biology: 'equities/biology',
+  robotics: 'equities/robotics',
+  quantum: 'equities/quantum',
+  agentic: 'equities/agentic',
+  exposure: 'equities/exposure',
+  allocator: 'equities/allocator',
+}
+
+type Route = { cls: AssetClass; tab: string } | null
+
+function routeFromHash(): Route {
+  let h = window.location.hash.replace(/^#/, '')
+  if (!h) return null
+  if (LEGACY[h]) h = LEGACY[h]
+  const [cls, tab] = h.split('/')
+  if (cls !== 'equities' && cls !== 'crypto') return null
+  const tabs = TABS[cls]
+  const found = tabs.find((t) => t.id === tab)
+  return { cls, tab: found ? found.id : tabs[0].id }
 }
 
 function App() {
-  const [active, setActive] = useState<Section>(sectionFromHash)
-  // The footer used to assert "unlevered by construction" unconditionally,
-  // while the Allocator was busy sizing up to 17.5% of capital into OTM calls.
-  // The claim is true only while that sleeve is off, so it now follows it.
+  const [route, setRoute] = useState<Route>(routeFromHash)
+  // Leverage state is the single most important risk fact about any book — the
+  // difference between the July 2026 drawdown being survivable and terminal.
   const [leverageActive, setLeverageActive] = useState(false)
 
   useEffect(() => {
-    const onHashChange = () => setActive(sectionFromHash())
+    const onHashChange = () => setRoute(routeFromHash())
     window.addEventListener('hashchange', onHashChange)
     return () => window.removeEventListener('hashchange', onHashChange)
   }, [])
 
+  if (!route) return <Landing />
+
+  const { cls, tab } = route
+  const tabs = TABS[cls]
+  const active = tabs.find((t) => t.id === tab) ?? tabs[0]
+  const other: AssetClass = cls === 'equities' ? 'crypto' : 'equities'
+
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-term-bg font-mono text-term-text">
       <header className="border-b border-term-line bg-term-bg">
-        <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-2">
-          <span className="text-xs font-bold uppercase tracking-[0.2em] text-term-amber">
+        <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2">
+          <a
+            href="#"
+            className="text-xs font-bold uppercase tracking-[0.2em] text-term-amber hover:underline"
+            title="Back to the asset-class chooser"
+          >
             Investment Intelligence
+          </a>
+          <span className="text-term-line">/</span>
+          <span className="text-xs font-bold uppercase tracking-[0.2em] text-term-cyan">
+            {CLASS_LABEL[cls]}
           </span>
-          <nav className="flex gap-px text-xs">
-            {sections.map((id, i) => (
+          <a
+            href={`#${other}`}
+            className="ml-auto text-[10px] uppercase tracking-wider text-term-dim hover:text-term-amber"
+          >
+            switch to {CLASS_LABEL[other]} →
+          </a>
+        </div>
+        <div className="mx-auto w-full max-w-7xl px-4 pb-2">
+          <nav className="flex flex-wrap gap-px text-xs">
+            {tabs.map((t, i) => (
               <a
-                key={id}
-                href={`#${id}`}
-                aria-current={active === id ? 'page' : undefined}
+                key={t.id}
+                href={`#${cls}/${t.id}`}
+                aria-current={active.id === t.id ? 'page' : undefined}
                 className={`px-3 py-1.5 uppercase tracking-wider transition-colors ${
-                  active === id
+                  active.id === t.id
                     ? 'bg-term-amber font-bold text-black'
                     : 'text-term-dim hover:bg-term-panel hover:text-term-amber'
                 }`}
               >
-                {i + 1} {navLabels[id]}
+                {i + 1} {t.label}
               </a>
             ))}
           </nav>
@@ -79,54 +143,23 @@ function App() {
       </header>
 
       <main className="min-h-0 flex-1">
-        {active === 'exposure' && (
+        {active.kind === 'exposure' && (
           <div className="h-full overflow-y-auto">
-            <ExposurePanel />
+            <ExposurePanel assetClass={cls} />
           </div>
         )}
-        {active === 'allocator' && (
+        {active.kind === 'allocator' && (
           <div className="h-full overflow-y-auto">
-            <AllocatorPanel onLeverageChange={setLeverageActive} />
+            <AllocatorPanel assetClass={cls} onLeverageChange={setLeverageActive} />
           </div>
         )}
-        {active === 'biology' && (
-          <EmbeddedDashboard src="dashboards/digital-biology.html" title="Digital Biology dashboard" />
-        )}
-        {active === 'robotics' && (
-          <EmbeddedDashboard src="dashboards/robotics.html" title="Robotics landscape dashboard" />
-        )}
-        {active === 'quantum' && (
-          <EmbeddedDashboard src="dashboards/quantum.html" title="Quantum computing dashboard" />
-        )}
-        {active === 'agentic' && (
-          <EmbeddedDashboard src="dashboards/agentic.html" title="Agent economy dashboard" />
-        )}
-        {active === 'crypto' && (
-          <EmbeddedDashboard src="dashboards/crypto.html" title="Crypto and innovation research dashboard" />
-        )}
-        {active === 'photonics' && (
-          <EmbeddedDashboard
-            src="dashboards/photonics.html"
-            title="Photonics and optical interconnect dashboard"
-          />
-        )}
-        {active === 'defense' && (
-          <EmbeddedDashboard
-            src="dashboards/defense.html"
-            title="Defence and autonomy research dashboard"
-          />
+        {active.kind === 'embed' && active.src && (
+          <EmbeddedDashboard src={active.src} title={active.title ?? active.label} />
         )}
       </main>
 
       <footer className="border-t border-term-line bg-term-bg">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-1 text-[10px] uppercase tracking-wider text-term-dim">
-          {/* Leverage state is the single most important risk fact about any
-              book — the difference between the July 2026 drawdown being
-              survivable and being terminal. Stated explicitly, per Matthias
-              (2026-08-08): this is research, not a live book. It is derived
-              from the Allocator's sleeve rather than asserted, because a
-              standing claim of "unlevered" next to a tab that sizes options is
-              the one disclosure error that cannot be argued away. */}
           <span>
             Research only · no positions held ·{' '}
             {leverageActive ? (

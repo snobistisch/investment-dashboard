@@ -13,6 +13,7 @@ import { fileURLToPath } from 'node:url'
 const HERE = dirname(fileURLToPath(import.meta.url))
 const RISK_JSON = resolve(HERE, '../public/data/risk-rating.json')
 const HISTORY_JSON = resolve(HERE, '../public/data/crypto-history.json')
+const CRYPTO_HTML = resolve(HERE, '../public/dashboards/crypto.html')
 
 type Close = { d: string; c: number }
 
@@ -72,11 +73,14 @@ function maxDrawdownPct(closes: number[]) {
 
 const risk = JSON.parse(readFileSync(RISK_JSON, 'utf8')) as RiskFile
 const history = JSON.parse(readFileSync(HISTORY_JSON, 'utf8')) as HistoryFile
+const cryptoHtml = readFileSync(CRYPTO_HTML, 'utf8')
 
 assert(risk.method.daysPerYear === 365, 'crypto volatility must annualise over 365 trading days')
 assert(risk.fetchedAt === history.fetchedAt, 'derived risk data must retain the history data vintage')
 assert(risk.rows.length === 40, `expected 40 risk rows, got ${risk.rows.length}`)
 assert(new Set(risk.rows.map((row) => row.coingeckoId)).size === 40, 'CoinGecko ids must be unique')
+assert(!cryptoHtml.includes('EV_poker'), 'retired poker EV must not return to the live dashboard')
+assert(!cryptoHtml.includes('fstar'), 'retired f* sizing must not return to the live dashboard')
 
 for (const row of risk.rows) {
   const series = history.series[row.ticker]

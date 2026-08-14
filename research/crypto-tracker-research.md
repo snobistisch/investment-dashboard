@@ -423,7 +423,21 @@ other.
 
 ---
 
-## 4c. Risk rating and poker EV
+## 4c. Risk rating; poker EV retired
+
+**Current status, 15 August 2026.** The live dashboard keeps R as a separate
+warning beside scenario-implied EV. It no longer computes `EV_poker` or `f*`.
+Multiplying only the bear payoff by `(1 + R)` is a risk penalty, not expected
+value, and can count dilution, illiquidity and failure twice when those are
+already in the bear scenario. `f*` was not Kelly and had no defensible sizing
+interpretation. The decision column now shows one transparent quantity:
+annualised scenario EV minus bitcoin's, with the subjective inputs left visible.
+
+Volatility in R is annualised with `sqrt(365)`. The first implementation used
+the equity convention `sqrt(252)`, understating every volatility input by about
+17%. The generated data and the live page have been corrected. The material
+below under “retired implementation record” describes what was removed and
+preserves why; its quoted ratings and poker outputs are not current values.
 
 Added 14 August 2026. §4b ranks forty assets on expected value. This section
 adds the two things that ranking cannot see, and it exists because of one row.
@@ -477,7 +491,7 @@ three live coins are called "Cap" (the one ranked here is `cap-4`, cap.app,
 against two others worth $3.3k and $7.7k), and EigenCloud lists under
 `eigenlayer` as "EigenCloud (prev. EigenLayer)".
 
-### Formula 2 — the poker EV
+### Retired implementation record — poker EV
 
 ```
 EV_poker(i) = p_bull·r_bull + p_base·r_base − p_bear·|r_bear|·(1 + R)
@@ -627,10 +641,8 @@ sample for a volatility estimate and a very small one for a drawdown.
 
 ## 4d. Portfolio construction, and the finding that contradicts this file
 
-Added 15 August 2026, and it supersedes §4c as the answer to "what do I actually
-hold". §4c stays because the risk rating R is still used, as a screen input and
-as a column. What it does not stay as is a sizing rule — see §4c's own
-limitations, and then this.
+Added 15 August 2026. It supersedes the retired sizing rule in §4c. The risk
+rating R remains as a screen input and a column; the poker-EV and `f*` do not.
 
 **The objective changed, stated by Matthias on 15 August 2026:** bitcoin is the
 benchmark and never a holding, the book should beat it, and it is allowed to be

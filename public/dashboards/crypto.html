@@ -294,7 +294,7 @@
     <div class="meta-row">
       <div class="m"><div class="k">Assets ranked</div><div class="v">40, incl. BTC as benchmark</div></div>
       <div class="m"><div class="k">Method</div><div class="v">Explicit 3-year EV</div></div>
-      <div class="m"><div class="k">Beat BTC on EV/σ</div><div class="v">1 of 39</div></div>
+      <div class="m"><div class="k">Scenario EV above BTC</div><div class="v">8 of 39</div></div>
       <div class="m"><div class="k">Status</div><div class="v">Not investment advice</div></div>
     </div>
 
@@ -635,28 +635,24 @@
         <span class="lbl">What this method cannot do</span>
         <p><b>It is not a forecast and it has no track record.</b> The probabilities are calibrated against nothing except my own reading of each situation. The honest claim is narrower than a prediction: this makes a judgement auditable, comparable across forty assets, and falsifiable line by line.</p>
         <p><b>Correlation is not modelled, and here that matters more than anywhere.</b> These are not forty independent bets — they are one factor with forty tickers. In the bear case they do not fall independently; they fall together, which is exactly when a portfolio needs them not to. EV ranks assets; it does not size a book.</p>
-        <p style="margin-bottom:0"><b>It is mechanically kind to drawdowns.</b> A 90% fall raises expected return arithmetically if the asset survives — and in crypto, unlike equities, "down 90%" is often terminal rather than cheap. Aster earns nothing and ranks 39th; Aave is down 71% and ranks first. Float quality and revenue do some of that work; judgement does the rest, and judgement is what is on trial here. <b>The Poker EV column below is the answer to this paragraph</b> — it charges measured risk to the loss leg instead of leaving it to judgement.</p>
+        <p style="margin-bottom:0"><b>It is mechanically kind to drawdowns.</b> A 90% fall raises expected return arithmetically if the asset survives — and in crypto, unlike equities, "down 90%" is often terminal rather than cheap. Aster earns nothing and ranks 39th; Aave is down 71% and ranks first. Float quality and revenue do some of that work; judgement does the rest, and judgement is what is on trial here. <b>The risk rating beside the EV is a warning, not a correction to expected value.</b></p>
       </div>
       <div class="mc">
-        <span class="lbl">Risk rating R, and the poker EV that uses it</span>
+        <span class="lbl">Risk rating R — a separate warning, not another EV</span>
         <p>The expected value above is kind to a zero-or-hero asset, and Nockchain is the case that proves it: a bull case worth ten times the price lifts EV whatever the odds of reaching it, and NOCK came <b>fourth of forty</b> on exactly that arithmetic. R measures what the probabilities do not — how violently the asset moves, how far it has already fallen, how much supply is still to arrive, and whether you could sell it.</p>
         <div class="formula">R = 0.25·V + 0.25·D + 0.25·F + 0.25·L<br>
         V = clamp((vol<sub>ann</sub> − 30) / (300 − 30), 0, 1)<br>
         D = clamp((|drawdown| − 20) / (95 − 20), 0, 1)<br>
         F = clamp((FDV/cap − 1) / (8 − 1), 0, 1)<br>
         L = clamp(1 − (log₁₀vol₂₄ − log₁₀0.5m) / (log₁₀50m − log₁₀0.5m), 0, 1)</div>
-        <p><b>V and D are measured, not assumed</b>: a year of daily closes per asset from CoinGecko, annualised volatility of daily log returns and worst peak-to-trough inside the window. Drawdown runs from the one-year peak rather than the all-time high, for the reason this tab already gives about ZEC — a 2016 listing print is not a price anyone could pay. F and L are read off this table. Buckets: <b>Low</b> below 0.25, <b>Medium</b> to 0.50, <b>High</b> to 0.75, <b>Extreme</b> above.</p>
-        <p>Then the poker question, which is the only one a decision actually asks — what do I win times how often, against what I lose times how often:</p>
-        <div class="formula">EV<sub>poker</sub> = p<sub>bull</sub>·r<sub>bull</sub> + p<sub>base</sub>·r<sub>base</sub> − p<sub>bear</sub>·|r<sub>bear</sub>|·(1 + R)<br>
-        <span style="color:var(--ink-3)">fold unless</span> EV<sub>poker</sub>(asset) &gt; EV<sub>poker</sub>(BTC)<br>
-        f* = min( 10%, ( EV<sub>poker</sub> − EV<sub>poker</sub>(BTC) ) / G<sub>loss</sub> ), G<sub>loss</sub> = |r<sub>bear</sub>|·(1 + R)</div>
-        <p style="margin-bottom:0"><b>Why the loss leg carries (1 + R).</b> In poker your loss is capped at what you put in, so p·W − q·L is the whole calculation. In crypto it is not. A high-R asset loses more than its bear scenario says, for the three reasons R is built from: volatility means the trough sits below the median bear case, dilution means the unlock schedule is selling into you on the way down, and illiquidity means you cannot leave at the printed price — the exit <em>is</em> the loss. At R = 0.75 the downside weighs 1.75 times what the scenario claims.</p>
+        <p><b>V and D are measured, not assumed</b>: a year of daily closes per asset from CoinGecko, annualised over 365 trading days, and worst peak-to-trough inside the window. Drawdown runs from the one-year peak rather than the all-time high, for the reason this tab already gives about ZEC — a 2016 listing print is not a price anyone could pay. F and L are read off this table. Buckets: <b>Low</b> below 0.25, <b>Medium</b> to 0.50, <b>High</b> to 0.75, <b>Extreme</b> above.</p>
+        <p style="margin-bottom:0"><b>R does not change a scenario payoff or its probability.</b> Doing that would count the same risk twice when the bear case already contains dilution, illiquidity or failure. Use R to reject or investigate a candidate whose scenario EV looks attractive for the wrong reason.</p>
       </div>
     </div>
     <div class="prose wide" style="margin-top:26px">
-      <p class="lead-p" style="font-size:1.02rem">Two hurdles, and they are not the same test. Keeping both, with the hierarchy stated:</p>
-      <p><b>The fold rule is the decision. EV/σ stays as a description.</b> They use different inputs and answer different questions, which is why replacing one with the other would lose something. <b>EV/σ</b> divides expected value by the dispersion of the published scenarios — it is computed entirely from probabilities on this page, so a reader who disagrees with a probability can recompute it without leaving the tab. <b>EV<sub>poker</sub></b> charges <em>measured market risk</em> to the loss leg, using volatility, drawdown, dilution and liquidity that no scenario probability contains. A row can clear one and fail the other, and when it does that disagreement is information: Chainlink beats bitcoin on raw expected value by 0.2 points and <b>folds</b>, because its R of 0.22 charges twice as much to the downside as bitcoin's 0.12.</p>
-      <p style="margin-bottom:0"><b>What the rule does to this ranking: 6 of 39 play, 33 fold.</b> The default sort is unchanged — still raw expected value, so the two columns can be read against each other. Nockchain is the case the whole exercise was built for: <b>4th of forty on raw EV at +20.8% a year, and folded at +12.7%</b> once a 232% realised volatility, a 97% drawdown and $0.6m of daily volume are charged to the bear case. Nothing about the thesis changed. The arithmetic stopped flattering it.</p>
+      <p class="lead-p" style="font-size:1.02rem">One decision lens, with its uncertainty left visible:</p>
+      <p><b>Scenario-implied EV must clear bitcoin.</b> The new <b>vs BTC</b> column is simply each asset's annualised scenario EV minus bitcoin's. Positive means the published assumptions imply outperformance; it does not mean the market has supplied an objective edge.</p>
+      <p style="margin-bottom:0"><b>Eight of thirty-nine clear that hurdle.</b> They are candidates for diligence, not automatic buys. Nockchain shows why the second step matters: its scenarios imply +2.3 percentage points over BTC, while measured risk is Extreme and daily volume is below the Portfolio Builder's default minimum. The formula exposes the judgement; it does not overrule contrary data.</p>
     </div>
 
     <div class="scatter">
@@ -690,10 +686,9 @@
             <th data-key="fee" data-type="num">Fees 1y<span class="ar">↕</span></th>
             <th data-key="y1" data-type="num">1-year<span class="ar">↕</span></th>
             <th data-key="ann" data-type="num">EV % / yr<span class="ar">↕</span></th>
+            <th data-key="edgeAnn" data-type="num">vs BTC<span class="ar">↕</span></th>
             <th data-key="ratio" data-type="num">EV / σ<span class="ar">↕</span></th>
             <th data-key="R" data-type="num">Risk R<span class="ar">↕</span></th>
-            <th data-key="pevAnn" data-type="num">Poker EV<span class="ar">↕</span></th>
-            <th data-key="fstar" data-type="num">f*<span class="ar">↕</span></th>
             <th data-key="scenSort" data-type="num">Scenarios (p → 3y return)<span class="ar">↕</span></th>
             <th data-key="drv" data-type="txt">What drives it<span class="ar">↕</span></th>
             <th data-key="risk" data-type="txt">What breaks it<span class="ar">↕</span></th>
@@ -703,9 +698,9 @@
       </table>
     </div>
     <div class="table-note">
-      Tier ● A float-settled (FDV ≤1.5× cap) · ● B dilution pending (1.5–3×) · ● C float cliff (&gt;3×). Default sort: expected value, descending — deliberately unchanged, so Poker EV can be read against the raw number it corrects. <b>BTC is shown in the ranking as the benchmark, not as a pick.</b><br>
-      <b>Risk R</b> is the 0–1 rating from the method panel; hover any cell for its four components and the measured inputs behind them. The bucket is applied to the unrounded rating, so a row can display 0.25 and still read Low — Aave is 0.2494; hover for the exact figure. <b>Nothing here reaches Extreme</b>, which is itself information: no asset in this universe is maximally bad on all four axes at once, and Pearl comes closest at 0.75 on a perfect dilution and liquidity score with only moderate volatility. A <span class="mono">p</span> marks an asset with less than a year of history, where the peak inside the window may be its listing print — for a recent listing that print <em>is</em> the cycle high, so it is flagged rather than corrected. <b>Poker EV</b> is the annualised EV<sub>poker</sub>, tagged <span style="color:#00d264">play</span> or <span style="color:#ff5c5c">fold</span> against the bitcoin row. <b>f*</b> is a Kelly-shaped stake suggestion capped at a stated 10% per name — the Allocator's own ceiling at balanced risk is 10.2% of capital, so the two read on one scale. <b>f* is a suggestion and not an allocator override</b>: the Allocator sizes crypto as a fixed 10% mandate on stated weights, and wiring f* into it is a separate decision that has not been taken. Hover for the uncapped fraction.<br>
-      <b>What the risk rating still cannot see.</b> Correlation, which here is the largest omission — forty tickers are one liquidity bet, so in the bear case they do not fall independently and R is measured per asset as if they did. And the probabilities remain a judgement; R disciplines the loss leg, it does not audit the odds.<br>
+      Tier ● A float-settled (FDV ≤1.5× cap) · ● B dilution pending (1.5–3×) · ● C float cliff (&gt;3×). Default sort: scenario-implied expected value, descending. <b>BTC is shown as the benchmark, never as a pick.</b><br>
+      <b>vs BTC</b> is the annualised scenario-EV difference in percentage points. Positive means the assumptions on this page imply outperformance. <b>Risk R</b> is the separate 0–1 warning from the method panel; it does not alter EV. Hover any cell for its four components and measured inputs. A <span class="mono">p</span> marks an asset with less than a year of history, where the peak inside the window may be its listing print. Three assets now rate Extreme after correcting crypto volatility to 365 trading days.<br>
+      <b>What the risk rating still cannot see.</b> Portfolio correlation. And the probabilities remain a judgement; R does not audit the odds or turn them into a forecast.<br>
       Market data 12 August 2026 from the CoinGecko public API — price, circulating, total and maximum supply, market capitalisation, fully diluted valuation, 24-hour volume, all-time high and one-year return. Retrieved directly rather than transcribed, with every identifier pinned per protocol by hand. Market caps are <b>est.</b> and move continuously.<br>
       <b>Float</b> is circulating supply over maximum supply where a cap exists, otherwise over total supply. <b>JUP is a documented exception</b>: 3bn JUP were burned in January 2025, so the provider's 10bn maximum is stale and the 6.86bn total is the eventual supply. <b>Fees 1y</b> is DefiLlama trailing-year protocol fees; <span class="mono">n/t</span> means no fee line is tracked, which applies to twenty of the forty and is itself information. <b>Fees are not revenue to token holders</b> — for Lido, Ethena and Maple most of the line accrues to depositors. <b>1-year</b> is blank for the fifteen assets with less than a full year of trading. <b>All-time-high comparisons are deliberately not the headline metric</b>: for nine assets the high is the 2021 cycle, and for ZEC it is the October 2016 listing print — figures that say more about which cycle an asset launched in than about what it is worth now.
     </div>
@@ -835,7 +830,7 @@
 
     <!-- LIT -->
     <div class="dd">
-      <div class="top"><span class="tk">LIT</span><span class="nm">Lighter</span><span class="cat">Tier C · EV rank 11 · held position</span></div>
+      <div class="top"><span class="tk">LIT</span><span class="nm">Lighter</span><span class="cat">Tier C · EV rank 11 · not held</span></div>
       <div class="stats">
         <div class="stat"><div class="k">Market cap</div><div class="v">$576M est.</div></div>
         <div class="stat"><div class="k">FDV</div><div class="v neg">$2.30B · 4.00x</div></div>
@@ -854,19 +849,19 @@
 
     <!-- NOCK -->
     <div class="dd">
-      <div class="top"><span class="tk">NOCK</span><span class="nm">Nockchain</span><span class="cat">Tier B · EV rank 4 · EV/σ rank 25 of 40 · <b style="color:#ff5c5c">R 0.71 High · FOLD</b> · held position</span></div>
+      <div class="top"><span class="tk">NOCK</span><span class="nm">Nockchain</span><span class="cat">Tier B · EV rank 4 · EV/σ rank 25 of 40 · <b style="color:#ff5c5c">R 0.75 Extreme</b> · not held</span></div>
       <div class="stats">
         <div class="stat"><div class="k">Market cap</div><div class="v">$28M est.</div></div>
         <div class="stat"><div class="k">FDV</div><div class="v">$54M · 1.89x</div></div>
         <div class="stat"><div class="k">Mined</div><div class="v">53%</div></div>
         <div class="stat"><div class="k">Volume / 24h</div><div class="v neg">$0.6M</div></div>
         <div class="stat"><div class="k">EV / σ</div><div class="v neg">0.22</div></div>
-        <div class="stat"><div class="k">Risk R</div><div class="v neg">0.71 High</div></div>
-        <div class="stat"><div class="k">Poker EV</div><div class="v neg">+12.7% / yr</div></div>
+        <div class="stat"><div class="k">Risk R</div><div class="v neg">0.75 Extreme</div></div>
+        <div class="stat"><div class="k">Scenario EV vs BTC</div><div class="v">+2.3pp / yr</div></div>
       </div>
       <div class="body">
         <p><span class="lab">Why it ranks fourth and why that is misleading</span>Nockchain is fourth on expected value and twenty-fifth of forty on expected value per unit of dispersion. <b>Both numbers are correct and the second one is the useful one.</b> A $28m capitalisation on a fair-launched network with no premine is small enough that a bull case worth ten times the current price is not absurd — and a 15% probability on that outcome drags the expected value above almost everything else. That is arithmetic, not conviction. Its dispersion of 347% is nearly twice the next widest in the report. The 55%-weighted bear case is that it goes to approximately zero, and that is the modal outcome.</p>
-        <p><span class="lab">And now it follows from the formula, not from a caveat</span>The risk rating measures what the scenarios do not: <b>232% annualised volatility, a 97% peak-to-trough over 359 days of history, 47% of supply still to mine and $0.6m of daily volume</b> — R = 0.25(0.75 vol + 1.00 drawdown + 0.13 dilution + 0.96 liquidity) = <b>0.71, High</b>. Charging that to the loss leg turns +20.8% a year into <b>+12.7%</b>, against a bitcoin hurdle of +18.2%. <b>EV<sub>poker</sub> 0.43 &lt; 0.65 → fold.</b> The drawdown component is clamped: the measured 97% is past the 95% bound where a further fall stops carrying information. Nothing about the thesis below changed. The arithmetic simply stopped flattering it, which is the whole reason the column exists.</p>
+        <p><span class="lab">The contradiction stays visible</span>The scenarios imply +20.8% a year, 2.3 points above bitcoin. The measured warning is harsher: <b>280% annualised volatility, a 97% peak-to-trough over 359 days, 47% of supply still to mine and $0.6m of daily volume</b> — R = 0.25(0.92 vol + 1.00 drawdown + 0.13 dilution + 0.96 liquidity) = <b>0.75, Extreme</b>. The Portfolio Builder excludes it at the default $1m liquidity gate. That conflict is a reason for more evidence, not a licence to invent a second EV.</p>
         <p><span class="lab">The bet, precisely</span>Miners generate STARK proofs rather than hashes, and the proofs are meant to become a traded commodity. If verifiable computation becomes a market at all, a network whose block production <em>is</em> proof production is early to it. That is a real idea and it is why this belongs in a research book at a size that can go to zero without mattering.</p>
         <p><span class="lab">The competitive picture has changed, and not in its favour</span><b>There is still no verified external customer paying for a proof</b> — the proof market is internal, and the protocol consumes what it produces. What is new since the source research is that the comparison set is now listed and priced. Succinct and Lagrange are both trading, with real proving products and, in Succinct's case, production use by rollups. Nockchain is no longer an early option on an unavailable category; it is the smallest and least liquid of the listed proving assets, at $0.6m of daily volume. The first external paying customer is still the event that converts this from a story into a business.</p>
       </div>
@@ -1288,6 +1283,8 @@ function fmtPct(r){ return (r>=0?'+':'−') + Math.abs(Math.round(r*100)) + '%';
 
 TOKENS.forEach(c=> Object.assign(c, scoreOne(c)));
 TOKENS.sort((a,b)=> b.ev3-a.ev3).forEach((c,i)=> c.rank = i+1);
+const BTC = TOKENS.find(c=> c.tk==='BTC');
+TOKENS.forEach(c => { c.edgeAnn = c.ann - BTC.ann; });
 
 /* ---------- formula 1: the risk rating R, 0..1 ----------
    Four components, equally weighted, each a linear ramp between two named
@@ -1326,8 +1323,7 @@ function riskOne(c){
   const m = RISK_MEASURED[c.tk];
   if(!m){
     /* Three quarters of the evidence is not a rating. An unmeasured row says
-       so and drops out of the fold rule rather than being scored on what
-       happens to be available. */
+       so rather than being scored on what happens to be available. */
     return {rv:undefined, rd:undefined, rf:f, rl:l, R:undefined, bucket:undefined};
   }
   const v = ramp(m.vol, VOL_BOUNDS.safe, VOL_BOUNDS.extreme);
@@ -1338,64 +1334,7 @@ function riskOne(c){
   return {rv:v, rd:d, rf:f, rl:l, R, bucket, volPct:m.vol, ddPct:m.dd, obs:m.d, partial:!!m.p};
 }
 
-/* ---------- formula 2: the poker EV ----------
-   EV_poker = p_bull·r_bull + p_base·r_base − p_bear·|r_bear|·(1 + R)
-
-   In poker the loss is capped at what you put in, so p·W − q·L is the whole
-   calculation. In crypto it is not: a high-R asset loses more than its bear
-   scenario says, for the three reasons R is built from. Volatility means the
-   trough is below the median bear case. Dilution means the unlock schedule is
-   selling into you on the way down. Illiquidity means you cannot leave at the
-   printed price — the exit IS the loss. (1 + R) charges that to the loss leg,
-   so at R = 0.75 the downside weighs 1.75 times what the scenario claims.
-
-   The p_base·r_base term is the grind — the middle outcome poker does not
-   have and a three-scenario model does. It is allowed to be negative. */
-function pokerOne(c){
-  if(c.R === undefined) return {};
-  const [[pb,rb],[pm,rm],[pr,rr]] = c.sc;
-  const gLoss = Math.abs(rr) * (1 + c.R);
-  const pev = pb*rb + pm*rm - pr*gLoss;
-  /* A three-year multiple below −100% has no real cube root. Anything that
-     far gone is a total loss and is shown as one rather than as NaN. */
-  const pevAnn = pev <= -1 ? -1 : Math.pow(1 + pev, 1/3) - 1;
-  return {gLoss, pev, pevAnn};
-}
-
 TOKENS.forEach(c => Object.assign(c, riskOne(c)));
-TOKENS.forEach(c => Object.assign(c, pokerOne(c)));
-
-/* ---------- the fold rule ----------
-   Investeer alleen als EV_poker(i) > EV_poker(BTC). Bitcoin is already the
-   benchmark row in this table; this is literally the poker fold — if the pot
-   odds are worse than putting the hand down, put it down. */
-const HURDLE = TOKENS.find(c => c.tk === 'BTC');
-const POKER_HURDLE = HURDLE ? HURDLE.pev : undefined;
-
-/* ---------- sizing: f*, a Kelly-shaped suggestion ----------
-   f* = min( KELLY_NAME_CAP , (EV_poker − EV_poker(BTC)) / G_loss )
-
-   Bet in proportion to the risk-weighted edge over the hurdle, divided by how
-   heavy the loss is. An asset with a large G_loss stays small even with a
-   large edge — the NOCK lesson written as arithmetic rather than as a warning.
-
-   THIS IS NOT AN ALLOCATOR OVERRIDE. The Allocator sizes crypto as a fixed
-   10% mandate on stated weights; wiring f* into it is a separate, deliberate
-   decision that has not been taken. The cap below mirrors the allocator's own
-   per-name ceiling at balanced risk (10.2% of capital) rounded to a stated
-   number, so the two are read on the same scale. */
-const KELLY_NAME_CAP = 0.10;
-TOKENS.forEach(c => {
-  if(c.pev === undefined || POKER_HURDLE === undefined || !(c.gLoss > 0)) return;
-  c.edge = c.pev - POKER_HURDLE;
-  c.fold = c.tk !== 'BTC' && c.edge <= 0;
-  c.kellyRaw = c.edge / c.gLoss;
-  c.fstar = c.tk === 'BTC' ? undefined : Math.max(0, Math.min(KELLY_NAME_CAP, c.kellyRaw));
-});
-
-/* The benchmark row. Everything in the prose that says "beats bitcoin" is
-   derived from this rather than asserted. */
-const BTC = TOKENS.find(c=> c.tk==='BTC');
 
 /* ---------- render table ---------- */
 const tbody = document.getElementById('tbody');
@@ -1403,9 +1342,6 @@ let curFilter = 'all';
 let sortKey = 'rank', sortDir = 1, sortType = 'num';
 
 
-/* The three new cells. Kept out of the row template because each has a real
-   absent-case and burying that in a ternary chain is how "no data" starts
-   rendering as a number. */
 function riskCell(c){
   if(c.R === undefined) return '<span style="color:var(--ink-3)" title="No price history resolved for this asset, so V and D could not be measured. Three of four components is not a rating.">not rated</span>';
   const tip = 'R = ' + c.R.toFixed(4) + ' = 0.25(' + c.rv.toFixed(2) + ' vol + ' + c.rd.toFixed(2) + ' drawdown + '
@@ -1415,30 +1351,6 @@ function riskCell(c){
   return '<span title="' + tip + '" style="color:' + RISK_COLOR[c.bucket] + '">'
        + c.R.toFixed(2) + ' <span style="font-size:.7rem">' + c.bucket + '</span></span>'
        + (c.partial ? '<span style="color:var(--ink-3)" title="Less than a year of history"> p</span>' : '');
-}
-function pokerCell(c){
-  if(c.pev === undefined) return '<span style="color:var(--ink-3)">—</span>';
-  const pct = (c.pevAnn>=0?'+':'−') + Math.abs(c.pevAnn*100).toFixed(1) + '%';
-  const tip = 'EV_poker = ' + c.pev.toFixed(3) + ' over three years. Loss leg charged at |r_bear| x (1+R) = '
-            + c.gLoss.toFixed(2) + '. Hurdle is BTC at ' + (POKER_HURDLE===undefined?'n/a':POKER_HURDLE.toFixed(3)) + '.';
-  if(c.tk === 'BTC') return '<span class="num" title="' + tip + '">' + pct + ' <span style="color:var(--ochre);font-size:.7rem">hurdle</span></span>';
-  const cls = c.fold ? 'neg' : 'pos';
-  const tag = c.fold
-    ? '<span style="color:#ff5c5c;font-size:.7rem" title="Below the bitcoin hurdle after risk. Fold.">fold</span>'
-    : '<span style="color:#00d264;font-size:.7rem" title="Clears the bitcoin hurdle after risk.">play</span>';
-  return '<span class="' + cls + '" title="' + tip + '">' + pct + '</span> ' + tag;
-}
-function fstarCell(c){
-  if(c.tk === 'BTC') return '<span style="color:var(--ink-3)" title="The hurdle does not size against itself.">hurdle</span>';
-  if(c.fstar === undefined) return '<span style="color:var(--ink-3)">—</span>';
-  if(c.fstar === 0) return '<span style="color:var(--ink-3)" title="No edge over the hurdle, so no stake.">0%</span>';
-  const capped = c.kellyRaw > KELLY_NAME_CAP;
-  const tip = 'Kelly-shaped: edge ' + c.edge.toFixed(3) + ' / G_loss ' + c.gLoss.toFixed(2)
-            + ' = ' + (c.kellyRaw*100).toFixed(1) + '%'
-            + (capped ? ', capped at the stated ' + (KELLY_NAME_CAP*100).toFixed(0) + '% per name.' : '.')
-            + ' A suggestion, not the allocator.';
-  return '<span title="' + tip + '">' + (c.fstar*100).toFixed(1) + '%'
-       + (capped ? '<span style="color:var(--ink-3)"> cap</span>' : '') + '</span>';
 }
 
 function render(){
@@ -1466,10 +1378,9 @@ function render(){
       '<td class="num">'+(c.fee===null?'<span style="color:var(--ink-3)">n/t</span>':'$'+(c.fee>=1?c.fee.toFixed(0):c.fee.toFixed(1))+'M')+'</td>'+
       '<td class="num">'+y1+'</td>'+
       '<td class="'+annCls+'">'+(c.ann>=0?'+':'−')+Math.abs(c.ann*100).toFixed(1)+'%</td>'+
+      '<td class="num '+(c.edgeAnn>0?'pos':c.edgeAnn<0?'neg':'')+'">'+(bench?'hurdle':(c.edgeAnn>=0?'+':'−')+Math.abs(c.edgeAnn*100).toFixed(1)+'pp')+'</td>'+
       '<td class="num'+(c.ratio>BTC.ratio?' pos':'')+'">'+c.ratio.toFixed(2)+'</td>'+
       '<td class="num">'+riskCell(c)+'</td>'+
-      '<td class="num">'+pokerCell(c)+'</td>'+
-      '<td class="num">'+fstarCell(c)+'</td>'+
       '<td class="scen">'+c.scen+'</td>'+
       '<td class="small">'+c.drv+'</td>'+
       '<td class="small">'+c.risk+'</td>'+
@@ -1617,7 +1528,7 @@ render();
     svg.appendChild(t);
   });
   const cnt=document.getElementById('scatterCount');
-  if(cnt) cnt.textContent=TOKENS.length+' assets · '+TOKENS.filter(c=>c.ratio>BTC.ratio&&c.tk!=='BTC').length+' beat BTC risk-adjusted';
+  if(cnt) cnt.textContent=TOKENS.length+' assets · '+TOKENS.filter(c=>c.edgeAnn>0&&c.tk!=='BTC').length+' have scenario EV above BTC';
 })();
 
 /* ---------- reveal + bar fill ---------- */

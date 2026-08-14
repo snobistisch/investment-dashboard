@@ -305,6 +305,24 @@ more often terminal here than cheap.
 
 ## 4. The ranking
 
+**Skip to §4b if you want the live numbers.** This section has two tables
+and they describe two different universes, which is the thing that was wrong
+with it: §4a below is the **pre-cull 45-asset ranking**, kept because it is the
+working that produced the cull, and §4b is the **final 40 assets** that the tab
+actually ranks. Until 14 August 2026 only the first table was here, which meant
+TIA and ZKC appeared at #4 and #18 in the ranking on this page while §1a
+explained why both had been removed. A reader got two rankings and no way to
+tell which one the dashboard was running.
+
+### 4a. Pre-cull ranking (45 assets, superseded)
+
+**Historical.** This is the ranking as it stood before the cull in §1a. It
+still contains TIA · Celestia and ZKC · Boundless, both of which were removed
+on fee data, and it still carries the *Source rank* column comparing each asset
+to the position the source research gave it — which is why it is kept rather
+than deleted. **Do not quote a rank from this table.** Rank numbers are
+non-contiguous because it is an excerpt of the 45, not the whole list.
+
 | EV rank | Asset | EV %/yr | EV/σ | FDV/cap | Float | 1-year | Source rank |
 | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | 1 | AAVE | +24.2% | 0.66 | 1.04x | 96% | −71% | 7 |
@@ -329,13 +347,78 @@ more often terminal here than cheap.
 | 44 | ASTER | **−2.2%** | −0.08 | 2.90x | 34% | n/a | not covered |
 | 45 | PRL | **−9.7%** | −0.25 | **8.23x** | 12% | n/a | 25 |
 
-Median expected return: **+11.3% per year** — below bitcoin's +18.5%. Nine of
-forty-four beat bitcoin on raw expected value; **one beats it after dividing by
-dispersion**, Ethereum, at 0.80 against 0.77. Two assets carry negative expected
-value.
+On that 45-asset universe: median expected return **+11.3% per year** against
+bitcoin's +18.5%; nine of forty-four beat bitcoin on raw expected value, one
+after dividing by dispersion (Ethereum, 0.80 against 0.77); two assets carry
+negative expected value; tier counts **A 21, B 13, C 11**, nine of the eleven
+Tier C assets verifiable-compute projects. **All of those figures describe the
+superseded universe.** The equivalents for the live one are under §4b.
 
-Tier counts: **A 21, B 13, C 11.** Nine of the eleven Tier C assets are
-verifiable-compute projects.
+### 4b. Final ranking (40 assets, live)
+
+Generated 14 August 2026 from the `TOKENS` array in
+`public/dashboards/crypto.html` — the same array the tab ranks in the browser,
+so these numbers cannot drift from what a reader sees. Expected values are
+annualised from the published three-scenario probabilities; EV/σ divides that
+by the dispersion of the same three scenarios. Bitcoin is in the table as the
+benchmark, not as a holding.
+
+Neither TIA nor ZKC appears here. That is the point of the table.
+
+| EV rank | Asset | EV %/yr | EV/σ | FDV/cap | Float | 1-year | Tier |
+| ---: | --- | ---: | ---: | ---: | ---: | ---: | :-: |
+| 1 | AAVE | +24.2% | 0.66 | 1.04x | 96% | −71% | A |
+| 2 | AKT | +23.6% | 0.48 | 1.00x | 76% | −59% | A |
+| 3 | **ETH** | +21.6% | **0.80** | 1.00x | 100% | −57% | A |
+| 4 | NOCK | +20.8% | 0.22 | 1.89x | 53% | n/a | B |
+| 5 | SYRUP | +20.0% | 0.60 | 1.07x | 94% | −69% | A |
+| 6 | JUP | +19.9% | 0.48 | 2.07x | 48% | −66% | B |
+| 7 | SOL | +19.6% | 0.63 | 1.08x | 92% | −58% | A |
+| 8 | LINK | +18.7% | 0.58 | 1.34x | 75% | −62% | A |
+| **9** | **BTC — benchmark** | **+18.5%** | **0.77** | 1.00x | 96% | −47% | A |
+| 10 | UNI | +17.7% | 0.53 | 1.43x | 62% | −69% | A |
+| 11 | LIT | +16.8% | 0.35 | 4.00x | 25% | n/a | C |
+| 12 | ENA | +12.5% | 0.35 | 1.53x | 66% | −89% | B |
+| 13 | ATH | +11.6% | 0.27 | 2.09x | 48% | −88% | B |
+| 14 | SKY | +11.4% | 0.53 | 1.00x | 100% | −36% | A |
+| 15 | EIGEN | +11.3% | 0.23 | 2.47x | 40% | −87% | B |
+| 16 | TAO | +11.3% | 0.36 | 2.19x | 46% | −47% | B |
+| 17 | NIL | +11.0% | 0.24 | 2.02x | 49% | −86% | B |
+| 18 | XPL | +10.8% | 0.24 | 3.72x | 27% | n/a | C |
+| 19 | PROVE | +10.3% | 0.22 | 5.13x | 20% | −90% | C |
+| 20 | NEAR | +10.2% | 0.33 | 1.00x | 100% | −39% | A |
+| 21 | VIRTUAL | +10.0% | 0.25 | 1.52x | 66% | −55% | B |
+| 22 | UP | +9.9% | 0.18 | 4.52x | 22% | n/a | C |
+| 23 | NOS | +9.5% | 0.22 | 1.00x | 100% | −49% | A |
+| 24 | LDO | +9.2% | 0.24 | 1.20x | 84% | −81% | A |
+| 25 | ZEC | +8.9% | 0.27 | 1.00x | 80% | **+1,165%** | A |
+| 26 | HYPE | +8.9% | 0.32 | 4.49x | 22% | +30% | C |
+| 27 | LA | +8.8% | 0.17 | 5.18x | 19% | −88% | C |
+| 28 | AZTEC | +8.6% | 0.18 | 3.51x | 29% | n/a | C |
+| 29 | CAP | +6.7% | 0.15 | 6.41x | 16% | n/a | C |
+| 30 | ARX | +6.5% | 0.14 | 4.79x | 21% | n/a | C |
+| 31 | ZAMA | +6.3% | 0.15 | 5.00x | 20% | n/a | C |
+| 32 | MEGA | +6.1% | 0.12 | 8.85x | 11% | n/a | C |
+| 33 | ALEO | +6.0% | 0.13 | 1.53x | 27% | −94% | B |
+| 34 | MON | +5.9% | 0.13 | 8.51x | 12% | n/a | C |
+| 35 | ONDO | +5.5% | 0.17 | 2.05x | 49% | −67% | B |
+| 36 | IRYS | +5.4% | 0.12 | 5.00x | 20% | n/a | C |
+| 37 | AI (Gensyn) | +4.0% | 0.08 | **7.66x** | 13% | n/a | C |
+| 38 | OCT | +1.8% | 0.04 | 1.00x | 63% | n/a | A |
+| 39 | ASTER | **−2.2%** | −0.08 | 2.90x | 34% | n/a | B |
+| 40 | PRL | **−9.7%** | −0.25 | **8.23x** | 12% | n/a | C |
+
+Median expected return: **+10.1% per year** — below bitcoin's +18.5%. **Eight
+of forty beat bitcoin on raw expected value; one beats it after dividing by
+dispersion**, Ethereum, at 0.80 against 0.77. Two assets carry negative
+expected value, ASTER and PRL.
+
+Tier counts: **A 14, B 11, C 15.** Eight of the fifteen Tier C assets are
+privacy or verifiable-compute projects. Note what the swap did to the shape:
+A fell from 21 to 14, B from 13 to 11, and C rose from 11 to 15, so Tier C went
+from the smallest tier to the largest. Thirteen removals and eight additions
+produced that between them; this table does not attribute it to one or the
+other.
 
 ---
 

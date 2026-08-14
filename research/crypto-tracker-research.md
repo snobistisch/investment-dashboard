@@ -305,7 +305,8 @@ more often terminal here than cheap.
 
 ## 4. The ranking
 
-**Skip to §4b if you want the live numbers.** This section has two tables
+**Skip to §4b if you want the live numbers, or §4c for the risk-adjusted
+ones.** This section has two tables
 and they describe two different universes, which is the thing that was wrong
 with it: §4a below is the **pre-cull 45-asset ranking**, kept because it is the
 working that produced the cull, and §4b is the **final 40 assets** that the tab
@@ -419,6 +420,208 @@ A fell from 21 to 14, B from 13 to 11, and C rose from 11 to 15, so Tier C went
 from the smallest tier to the largest. Thirteen removals and eight additions
 produced that between them; this table does not attribute it to one or the
 other.
+
+---
+
+## 4c. Risk rating and poker EV
+
+Added 14 August 2026. §4b ranks forty assets on expected value. This section
+adds the two things that ranking cannot see, and it exists because of one row.
+
+**The problem, named.** Expected value is mechanically kind to a zero-or-hero
+asset. A bull case worth ten times the price lifts EV whatever the odds of
+reaching it, and Nockchain came **fourth of forty** on exactly that arithmetic
+— a $28m network with no external customer, ranked above Solana and Chainlink.
+Nothing in the three-scenario model was wrong. The model simply had no term for
+how violently the thing moves, how far it has already fallen, how much supply is
+still to arrive, or whether you could sell it.
+
+### Formula 1 — the risk rating R, 0 to 1
+
+Four components, equally weighted, each a linear ramp between two named bounds.
+Every threshold is a constant in `scripts/fetch-risk-rating.ts`, so the rating
+retunes without touching the logic.
+
+```
+R = 0.25·V + 0.25·D + 0.25·F + 0.25·L
+
+V = clamp((realisedVolPct  − 30) / (300 − 30), 0, 1)     30% → 0,  ≥300% → 1
+D = clamp((|drawdownPct|   − 20) / ( 95 − 20), 0, 1)     20% → 0,  ≥95%  → 1
+F = clamp((fdvx            −  1) / (  8 −  1), 0, 1)      1× → 0,  ≥8×   → 1
+L = clamp(1 − (log₁₀vol₂₄ − log₁₀0.5e6) / (log₁₀50e6 − log₁₀0.5e6), 0, 1)
+                                                        $0.5m → 1, $50m → 0
+```
+
+Buckets: **Low** below 0.25 · **Medium** to 0.50 · **High** to 0.75 ·
+**Extreme** above. The bucket is applied to the unrounded rating.
+
+**V and D are measured, not assumed.** `scripts/fetch-risk-rating.ts` pulls a
+year of daily closes per asset from CoinGecko and computes annualised
+volatility of daily log returns and worst peak-to-trough inside the window,
+using the same method `fetch-market-data.ts` already applies to the four held
+rows. Output goes to `public/data/risk-rating.json` and, as a generated block,
+into `crypto.html` — the page stays static and fetches nothing at runtime.
+F and L come off the ranking table.
+
+**Drawdown runs from the one-year peak, not the all-time high.** This report
+already documents why: ZEC's "−85% from ATH" refers to its October 2016 listing
+print on near-zero float, which says something about which cycle an asset
+launched in and nothing about what it is worth. Fourteen of the forty have less
+than a year of history and are flagged `p` on the tab — for those the peak
+inside the window may be the listing print, and for a recent listing that print
+*is* the cycle high, so it is flagged rather than corrected.
+
+**All forty resolved.** No asset is unrated, and CoinGecko identifiers were
+pinned by symbol *and* project name, with two checked against their homepage:
+three live coins are called "Cap" (the one ranked here is `cap-4`, cap.app,
+against two others worth $3.3k and $7.7k), and EigenCloud lists under
+`eigenlayer` as "EigenCloud (prev. EigenLayer)".
+
+### Formula 2 — the poker EV
+
+```
+EV_poker(i) = p_bull·r_bull + p_base·r_base − p_bear·|r_bear|·(1 + R)
+```
+
+In poker the loss is capped at what you put in, so `p·W − q·L` is the whole
+calculation. In crypto it is not. A high-R asset loses **more** than its bear
+scenario says, for the three reasons R is built from: volatility means the
+trough sits below the median bear case, dilution means the unlock schedule is
+selling into you on the way down, and illiquidity means you cannot leave at the
+printed price — the exit *is* the loss. At R = 0.75 the downside weighs 1.75×
+what the scenario claims. The `p_base·r_base` term is the grind: the middle
+outcome poker does not have and a three-scenario model does, and it is allowed
+to be negative.
+
+**The fold rule:**
+
+```
+play only if  EV_poker(i) > EV_poker(BTC)
+```
+
+Bitcoin is already a row in this ranking rather than a footnote, so this is
+literally the poker fold — if the pot odds are worse than putting the hand
+down, put it down.
+
+**Sizing, as a shown suggestion:**
+
+```
+f*(i) = min( 10% , ( EV_poker(i) − EV_poker(BTC) ) / G_loss(i) )
+G_loss(i) = |r_bear(i)| · (1 + R(i))
+```
+
+Bet in proportion to the risk-weighted edge over the hurdle, divided by how
+heavy the loss is. A large `G_loss` keeps the stake small even with a large
+edge. **`f*` is not an allocator override.** `allocation.ts` sizes crypto as a
+fixed 10% mandate on stated weights; wiring `f*` into it is a separate decision
+that has not been taken. The 10% cap mirrors the allocator's own per-name
+ceiling at balanced risk (10.2% of capital) so the two read on one scale.
+
+### The calibration check, run before publishing
+
+| | V | D | F | L | R | EV_poker | annualised |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| NOCK | 0.750 | 1.000 | 0.127 | 0.960 | **0.7093** | 0.431 | +12.7% |
+| BTC | 0.020 | 0.440 | 0.000 | 0.000 | **0.1151** | 0.652 | +18.2% |
+
+Measured inputs: NOCK 232.4% annualised volatility and a 96.8% peak-to-trough
+over 359 daily closes; BTC 35.5% and 53.0% over 366. **EV_poker(NOCK) 0.43 <
+EV_poker(BTC) 0.65 → fold.** NOCK's drawdown component is clamped — the
+measured 96.8% is past the 95% bound, where a further fall stops carrying
+information.
+
+No threshold was tuned to produce this. The bounds were set from the reference
+points the brief named (NVDA at ~37% volatility landing near zero, MegaETH at
+8.85× FDV landing at 1.0) and the calibration was checked afterwards.
+
+### What it does to the ranking
+
+**Six of thirty-nine play. Thirty-three fold.** The default sort on the tab is
+unchanged — still raw expected value, so the two columns can be read against
+each other.
+
+Two rows are worth naming. **Nockchain**, 4th on raw EV at +20.8% a year, folds
+at +12.7%: the thesis did not change, the arithmetic stopped flattering it.
+**Chainlink** beats bitcoin on raw expected value by 0.2 points and still folds,
+because R = 0.22 charges nearly twice as much to its downside as bitcoin's 0.12
+— which is the clearest single demonstration that the two hurdles are different
+tests.
+
+Bucket distribution: **Low 7 · Medium 17 · High 16 · Extreme 0.** Nothing
+reaches Extreme, which is information rather than an empty band: no asset here
+is maximally bad on all four axes at once. Pearl comes closest at 0.746, on a
+perfect dilution and liquidity score with only moderate volatility.
+
+| # | Asset | R | Bucket | Vol 1y | Drawdown 1y | EV %/yr | Poker EV %/yr | f* | Verdict |
+| ---: | --- | ---: | --- | ---: | ---: | ---: | ---: | ---: | --- |
+| 1 | AAVE | 0.25 | Low | 71% | -83% | +24.2% | +23.3% | 10.0% (cap) | play |
+| 2 | AKT | 0.38 | Medium | 90.5% | -78.8% | +23.6% | +21.5% | 10.0% (cap) | play |
+| 3 | ETH | 0.18 | Low | 53.3% | -67.5% | +21.6% | +21.1% | 10.0% (cap) | play |
+| 4 | SOL | 0.21 | Low | 57.3% | -74.9% | +19.6% | +18.8% | 3.3% | play |
+| 5 | SYRUP | 0.37 | Medium | 71.1% | -75.9% | +20.0% | +18.6% | 1.9% | play |
+| 6 | JUP | 0.31 | Medium | 79.7% | -74.6% | +19.9% | +18.4% | 1.1% | play |
+| 7 | BTC | 0.12 | Low | 35.5% | -53% | +18.5% | +18.2% | — | **hurdle** |
+| 8 | LINK | 0.22 | Low | 64.1% | -73.1% | +18.7% | +17.8% | 0% | **fold** |
+| 9 | UNI | 0.26 | Medium | 79% | -79.1% | +17.7% | +16.6% | 0% | **fold** |
+| 10 | LIT | 0.37 | Medium | 106.8% | -74.1% | +16.8% | +14.3% | 0% | **fold** |
+| 11 | NOCK | 0.71 | High | 232.4% | -96.8% | +20.8% | +12.7% | 0% | **fold** |
+| 12 | SKY | 0.24 | Low | 58.2% | -46.2% | +11.4% | +10.6% | 0% | **fold** |
+| 13 | ENA | 0.31 | Medium | 85.2% | -91.2% | +12.5% | +10.6% | 0% | **fold** |
+| 14 | TAO | 0.26 | Medium | 84.7% | -69.4% | +11.3% | +9.7% | 0% | **fold** |
+| 15 | NEAR | 0.21 | Low | 80.5% | -69.8% | +10.2% | +8.9% | 0% | **fold** |
+| 16 | VIRTUAL | 0.26 | Medium | 101.5% | -71.5% | +10.0% | +8.1% | 0% | **fold** |
+| 17 | ATH | 0.46 | Medium | 97.1% | -94.3% | +11.6% | +7.9% | 0% | **fold** |
+| 18 | ZEC | 0.26 | Medium | 125.8% | -71.7% | +8.9% | +7.1% | 0% | **fold** |
+| 19 | HYPE | 0.32 | Medium | 77.8% | -64% | +8.9% | +7.0% | 0% | **fold** |
+| 20 | XPL | 0.48 | Medium | 122.1% | -96.2% | +10.8% | +6.9% | 0% | **fold** |
+| 21 | NIL | 0.52 | High | 254% | -92.3% | +11.0% | +6.5% | 0% | **fold** |
+| 22 | LDO | 0.41 | Medium | 180.1% | -84.4% | +9.2% | +6.2% | 0% | **fold** |
+| 23 | EIGEN | 0.57 | High | 244.1% | -92.3% | +11.3% | +6.1% | 0% | **fold** |
+| 24 | PROVE | 0.57 | High | 90.1% | -89.1% | +10.3% | +5.1% | 0% | **fold** |
+| 25 | NOS | 0.56 | High | 138.4% | -82.5% | +9.5% | +4.8% | 0% | **fold** |
+| 26 | AZTEC | 0.51 | High | 114% | -66.8% | +8.6% | +3.6% | 0% | **fold** |
+| 27 | ZAMA | 0.38 | Medium | 94.3% | -48.9% | +6.3% | +2.6% | 0% | **fold** |
+| 28 | ONDO | 0.36 | Medium | 175.3% | -77.9% | +5.5% | +2.6% | 0% | **fold** |
+| 29 | LA | 0.55 | High | 93.7% | -91.3% | +8.8% | +2.5% | 0% | **fold** |
+| 30 | CAP | 0.43 | Medium | 191.7% | -45.9% | +6.7% | +2.3% | 0% | **fold** |
+| 31 | UP | 0.68 | High | 164.6% | -73.2% | +9.9% | +2.1% | 0% | **fold** |
+| 32 | ARX | 0.53 | High | 132.6% | -66.2% | +6.5% | +0.5% | 0% | **fold** |
+| 33 | MON | 0.52 | High | 98% | -64% | +5.9% | +0.3% | 0% | **fold** |
+| 34 | IRYS | 0.56 | High | 131.4% | -79.4% | +5.4% | −0.9% | 0% | **fold** |
+| 35 | MEGA | 0.64 | High | 93.5% | -85.9% | +6.1% | −2.0% | 0% | **fold** |
+| 36 | ALEO | 0.74 | High | 275.3% | -95.8% | +6.0% | −2.7% | 0% | **fold** |
+| 37 | AI | 0.70 | High | 167.7% | -81.3% | +4.0% | −5.2% | 0% | **fold** |
+| 38 | ASTER | 0.35 | Medium | 110% | -79.7% | −2.2% | −6.1% | 0% | **fold** |
+| 39 | OCT | 0.64 | High | 208.8% | -88.5% | +1.8% | −7.9% | 0% | **fold** |
+| 40 | PRL | 0.75 | High | 127.7% | -66.6% | −9.7% | −26.6% | 0% | **fold** |
+
+### Two hurdles, kept on purpose
+
+The brief allowed either replacing the "beats bitcoin on EV/σ" rule with the
+fold rule or keeping both. **Both are kept, with the hierarchy stated: the fold
+rule is the decision, EV/σ is a description.** They use different inputs and
+answer different questions. EV/σ divides expected value by the dispersion of
+the published scenarios and is computable entirely from numbers on the page, so
+a reader who disagrees with a probability can recompute it without leaving the
+tab. EV_poker charges *measured market risk* — volatility, drawdown, dilution,
+liquidity — that no scenario probability contains. When they disagree, the
+disagreement is the finding.
+
+### What this still does not model
+
+**Correlation, and here it is the largest omission.** R is measured per asset
+as if the forty were independent. They are not: they are one liquidity bet with
+forty tickers, and in the bear case they fall together, which is exactly when a
+portfolio needs them not to. A per-asset risk rating cannot see that, and the
+fold rule inherits the blindness.
+
+**The probabilities remain a judgement.** R disciplines the loss leg; it does
+not audit the odds. Every `p` in the model is still mine and still visible in
+the table, which is the only defence on offer.
+
+**One year of history is one regime.** The window covers the July 2026
+drawdown, which flatters nothing, but a single year of daily closes is a small
+sample for a volatility estimate and a very small one for a drawdown.
 
 ---
 

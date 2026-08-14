@@ -9,7 +9,8 @@
     "verify": "jiti scripts/verify-allocation.ts",
     "fetch-market-data": "jiti scripts/fetch-market-data.ts",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "fetch-risk-rating": "jiti scripts/fetch-risk-rating.ts"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.2",

@@ -65,9 +65,10 @@ has positive expected value but whether it beats simply holding BTC. Its note
 also logs the corrections made to an earlier version of the tab itself, and
 which protocol facts have been verified against a source rather than carried.
 
-The Citrini Research tracker was removed on 11 August 2026. Its 70 idea-flow
-tickers came out of positions.ts with it, so the book is now the six thematic
-sections only. The section and its sourcing notes remain in git history.
+The idea-flow tracker that ran alongside the thematic sections was removed on
+11 August 2026. Its 70 tickers came out of positions.ts with it, so the book is
+now the six thematic sections only. The section and its sourcing notes remain in
+git history; PROGRESS.md keeps the log of what it was and why it went.
 
 Nothing here is investment advice.
 
@@ -103,11 +104,14 @@ npm run build   # typecheck + production build
 
 Two patterns, depending on the content:
 
-- **Native tracker** (like Citrini): a self-contained folder under
-  `src/sections/<name>/` with a component and a `data.ts` typed as
-  `TrackerEntry[]` ([src/types.ts](src/types.ts)). Copy `src/sections/citrini/`,
-  point it at its own data. Shared layout lives in
-  [src/components/Section.tsx](src/components/Section.tsx).
+- **Native tracker**: a self-contained folder under `src/sections/<name>/`
+  holding a component and a `data.ts` typed as `TrackerEntry[]`
+  ([src/types.ts](src/types.ts)). No entry-list tracker currently ships — the
+  live examples of the folder pattern are
+  [src/sections/exposure/](src/sections/exposure/) and
+  [src/sections/allocator/](src/sections/allocator/), which compute rather than
+  list, so copy the folder shape from either and swap the body. Shared layout
+  lives in [src/components/Section.tsx](src/components/Section.tsx).
 - **Embedded dashboard** (like Digital Biology / Robotics): drop a
   self-contained `.html` file into `public/dashboards/` and render it with
   `<EmbeddedDashboard src="dashboards/your-file.html" />`.

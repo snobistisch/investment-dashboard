@@ -8,10 +8,10 @@ import type { EffectivePosition } from '../../data/market-data'
 const thematic = new Set<string>(THEMATIC_SECTIONS)
 
 /** A position is part of the research book if any of its sections is thematic.
- *  Every row now is: the Citrini idea-flow section was removed on 11 Aug 2026.
- *  The predicate stays because THEMATIC_SECTIONS is still what defines the
- *  book, and a future non-thematic section would otherwise land in the
- *  concentration figures unnoticed. */
+ *  Every row now is: the one non-thematic section this book ever carried, an
+ *  idea-flow tracker, was removed on 11 Aug 2026. The predicate stays because
+ *  THEMATIC_SECTIONS is still what defines the book, and a future non-thematic
+ *  section would otherwise land in the concentration figures unnoticed. */
 export function isThematic(p: Position) {
   return p.sections.some((s) => thematic.has(s))
 }

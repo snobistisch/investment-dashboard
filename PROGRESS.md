@@ -1,8 +1,10 @@
 # Progress
 
-Personal, open-sourceable dashboard for research trackers. Three sections so
-far: Citrini Research Tracker (native React), plus Digital Biology and Robotics
-(pre-built standalone dashboards, embedded).
+Personal, open-sourceable dashboard for research trackers. Two native React
+sections (Exposure, Allocator) over seven embedded standalone dashboards
+(Digital Biology, Robotics, Quantum, Agentic, Photonics, Defence, Crypto, plus
+VC Research). The entries below are a log in reverse date order: they describe
+what was true when they were written, not what is true now.
 
 Repo: https://github.com/snobistisch/investment-dashboard — live at
 https://snobistisch.github.io/investment-dashboard/ (Pages via Actions,
@@ -296,17 +298,19 @@ deploys on every push to main).
   Section architecture: one folder per tracker under `src/sections/<name>/`
   containing a component + `data.ts`. Shared pieces: `TrackerEntry` type in
   [src/types.ts](src/types.ts) and the `Section` shell in
-  [src/components/Section.tsx](src/components/Section.tsx). To add tracker two:
-  copy `src/sections/citrini/`, swap in its own data, render it from
-  [src/App.tsx](src/App.tsx). No registry, no plugin system — on purpose.
+  [src/components/Section.tsx](src/components/Section.tsx). Adding a tracker
+  meant copying the existing section folder, swapping in its own data and
+  rendering it from [src/App.tsx](src/App.tsx). No registry, no plugin system —
+  on purpose. (The current instruction lives in the README; this entry records
+  the shape the architecture had in July 2026.)
 
 - **Phase 2 — Build.** Research table approved and rendered as the Citrini
-  section: 18 entries in [src/sections/citrini/data.ts](src/sections/citrini/data.ts)
-  (typed `TrackerEntry[]`), table UI with status badges in
-  [CitriniTracker.tsx](src/sections/citrini/CitriniTracker.tsx). Verified in
+  section: 18 entries in `src/sections/citrini/data.ts` (typed
+  `TrackerEntry[]`), table UI with status badges in
+  `CitriniTracker.tsx` — both removed 11 Aug 2026, in git history. Verified in
   the browser (no console errors) and `npm run build` passes.
 - **Phase 1 — Research (approved).** Full table in
-  [research/citrini-tracker-research.md](research/citrini-tracker-research.md):
+  `research/citrini-tracker-research.md` (deleted 14 Aug 2026; in git history):
   17 verified entries, 1 flagged unverified/ambiguous (25 Trades for 2025 —
   contents in a PDF not publicly enumerable), 4 excluded for lack of free
   source (bird flu, India infra, defense/drones, humanoid robots). Method:
@@ -644,17 +648,17 @@ deploys on every push to main).
 
 ## Two kinds of section
 
-- **Native tracker** (Citrini): folder under `src/sections/<name>/` with a
-  component + `data.ts` typed `TrackerEntry[]`. Copy the citrini folder to add
-  another.
+- **Native tracker**: folder under `src/sections/<name>/` with a component +
+  `data.ts` typed `TrackerEntry[]`. No entry-list tracker ships today; copy the
+  folder shape from `src/sections/exposure/` or `src/sections/allocator/`.
 - **Embedded dashboard** (biology, robotics): drop a self-contained `.html`
   into `public/dashboards/`, render `<EmbeddedDashboard src="dashboards/x.html">`,
   and add one entry to the `sections` array + `navLabels` in App.tsx.
 
 ## Next
 
-- Possible follow-ups: periodic re-check of Citrini's free output for new
-  entries/status changes; a third tracker when Matthias picks one.
+- Possible follow-ups: a native entry-list tracker when Matthias picks a
+  subject for one.
 
 ## Working agreements
 

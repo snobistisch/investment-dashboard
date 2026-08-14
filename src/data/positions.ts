@@ -78,8 +78,9 @@ export const FACTOR_LABELS: Record<Factor, string> = {
 
 /** Which side the dashboard describes. Several names are flagged by their own
  *  section as context, not exposure — counting one as a long would misstate
- *  the book. 'short' and 'pair' are retained: the removed Citrini section used
- *  them, and a future section may. */
+ *  the book. 'short' and 'pair' are retained even though no current row uses
+ *  them: the idea-flow section that was removed on 11 Aug 2026 did, and a
+ *  future section that carries pair trades would need them back. */
 export type Stance = 'long' | 'short' | 'pair' | 'context'
 
 /** Which side of a named technical fork a position sits on.

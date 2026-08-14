@@ -231,6 +231,16 @@
   .vintage .age{color:var(--ink-2)}
   .vintage.stale{border-bottom-color:#fb8b1e}
   .vintage.stale .age{color:#fb8b1e; font-weight:600}
+
+  /* Sub-thesis, as a field. The tab flew three different bets under one flag:
+     an AI-native discovery bet whose catalyst is trial data, a tooling bet on
+     instrument and software cycles, and conventional biotech that happened to
+     be in the table. They do not share a catalyst, a timeline or a falsifier. */
+  .sub{font-family:var(--mono); font-size:.62rem; letter-spacing:.07em; text-transform:uppercase; border:1px solid var(--line); padding:2px 5px; white-space:nowrap; color:var(--ink-2)}
+  .sub-discovery{border-color:#fb8b1e; color:#fb8b1e}
+  .sub-tooling{border-color:#4dd0e1; color:#4dd0e1}
+  .sub-conventional{border-color:#00d264; color:#00d264}
+  .sub-context{color:var(--ink-3)}
 </style>
 </head>
 <body>
@@ -243,6 +253,7 @@
       <a href="#why">Why now</a>
       <a href="#map">Landscape</a>
       <a href="#deep">Deep dives</a>
+      <a href="#subtheses">Sub-theses</a>
       <a href="#table">Comparison</a>
       <a href="#hyp">Hypotheses</a>
       <a href="#risk">Risks</a>
@@ -265,7 +276,7 @@
   <div class="wrap">
     <div class="kicker">Equity research overview · Q1 2026 reporting cycle</div>
     <h1>The theme is real. The clean basket is not.</h1>
-    <p class="lede">Digital biology — AI, automation and biology converging on molecule and protein design — is inflecting for reasons that hold up to scrutiny. But <b>"digital biology" is not a coherent thing to buy.</b> Public exposure splits into three profiles that behave nothing alike, and the purest plays carry the most binary risk while the names with real cash and moats are only fractionally exposed. This dashboard maps that spread.</p>
+    <p class="lede">Digital biology — AI, automation and biology converging on molecule and protein design — is inflecting for reasons that hold up to scrutiny. But <b>"digital biology" is not a coherent thing to buy.</b> Public exposure splits into three sub-theses that share a flag and nothing else: <b>five AI-native discovery platforms</b> whose only real catalyst is trial data, <b>six compute-and-tooling names</b> that run on instrument and software cycles, and <b>two conventional biotechs</b> that are in this table because of what they treat, not how they found it. <b>The thesis this tab actually argues is the first one.</b> The other two are here because they set the price of the inputs and because leaving them out would flatter the basket.</p>
     <div class="meta-row">
       <div class="m"><div class="k">Names covered</div><div class="v">15 listed + context</div></div>
       <div class="m"><div class="k">Deep dives</div><div class="v">6 profiles</div></div>
@@ -463,6 +474,22 @@
   </div>
 </section>
 
+<!-- SUB-THESES -->
+<section id="subtheses">
+  <div class="wrap">
+    <div class="sec-head"><div class="sec-num">04b</div><h2>Three sub-theses, three timelines, three different ways to be wrong</h2></div>
+    <div class="prose wide">
+      <p class="lead-p">The audit question this section answers: is the thesis about digital biology, or does it quietly mix biotech, AI, healthcare and tooling? It mixed them. Below is the split, with the catalyst, the horizon and the falsifier stated per group — because an antibody platform and a sequencing incumbent do not fail for the same reason and should not be read in one column.</p>
+    </div>
+    <div class="segs">
+      <div class="seg"><div class="lbl" style="color:#fb8b1e">Sub-thesis 1 · AI-native discovery</div><h3>Trial data is the only real catalyst</h3><p><b>What it claims:</b> that a computational platform finds molecules a conventional programme would not, faster or cheaper. <b>Catalyst:</b> clinical readouts, nothing else — partnership headlines and compute deals move the price and do not test the claim. <b>Horizon:</b> three to seven years, set by trial timetables rather than by product cycles. <b>Regulatory dependency:</b> total. Every one of these is gated by the FDA on the same terms as any other sponsor; being AI-native buys no regulatory relief. <b>Data and compute dependency:</b> high and mostly rented — the constraint is proprietary experimental data, not GPUs. <b>Falsifier:</b> a platform's own molecules failing in the clinic at the industry base rate. If discovery is not better, the platform is a services business with a story.</p><div class="tk">RXRX · ABSI · GENB · EIKN · ABCL</div></div>
+      <div class="seg"><div class="lbl" style="color:#4dd0e1">Sub-thesis 2 · Compute &amp; tooling</div><h3>Instrument and software cycles, priced as capex</h3><p><b>What it claims:</b> that whoever sells the picks earns whether or not any particular platform works. <b>Catalyst:</b> pharma R&amp;D budgets, instrument replacement cycles and software renewals — quarterly and observable, unlike a readout. <b>Horizon:</b> one to three years. <b>Regulatory dependency:</b> low and indirect. <b>Data and compute dependency:</b> these names <em>are</em> the dependency for sub-thesis 1. <b>Falsifier:</b> a pharma capex downturn that hits revenue while the discovery names keep raising — which would prove the two groups are not one trade. Note that positions.ts already factors TXG, TWST and ILMN as <span class="mono">industrial-cycle</span>, not biotech; this grouping follows the repository's own factoring rather than the theme label.</p><div class="tk">SDGR · TXG · TWST · TEM · ILMN · DNA</div></div>
+      <div class="seg"><div class="lbl" style="color:#00d264">Sub-thesis 3 · Conventional biotech under the flag</div><h3>Here because of the disease, not the method</h3><p><b>What it claims:</b> nothing about digital biology. Iovance is TIL cell therapy — the page's own row calls it non-AI. Relay reads as conventional oncology now. <b>Catalyst:</b> single-asset clinical and commercial execution. <b>Horizon:</b> event-driven, not thematic. <b>Regulatory dependency:</b> total and idiosyncratic. <b>Falsifier:</b> not applicable — there is no digital-biology claim here to falsify, which is exactly the finding. <b>These two should not be counted as evidence for or against the theme,</b> and the sub-thesis label exists so that they cannot be.</p><div class="tk">IOVA · RLAY</div></div>
+    </div>
+    <p style="margin-top:18px; font-size:.9rem; color:var(--ink-2); max-width:82ch"><b>One deviation from the audit that prompted this, stated rather than buried.</b> The audit filed ILMN and DNA under "conventional biotech in the table". They sit under compute &amp; tooling here because their exposure is instrument and foundry cycles rather than trial outcomes, which is also how positions.ts already factors them. The disagreement is about which shelf, not about whether they are AI-native — they are not, and no row here claims otherwise.</p>
+  </div>
+</section>
+
 <!-- 5 · COMPARISON TABLE -->
 <section id="table">
   <div class="wrap">
@@ -483,6 +510,7 @@
             <th data-key="tk" data-type="txt">Ticker<span class="ar">↕</span></th>
             <th data-key="nm" data-type="txt">Company<span class="ar">↕</span></th>
             <th data-key="seg" data-type="txt">Segment<span class="ar">↕</span></th>
+            <th data-key="subd" data-type="txt">Sub-thesis<span class="ar">↕</span></th>
             <th data-key="rev" data-type="num">Rev (last qtr)<span class="ar">↕</span></th>
             <th data-key="yoy" data-type="num">YoY<span class="ar">↕</span></th>
             <th data-key="cash" data-type="num">Cash<span class="ar">↕</span></th>
@@ -624,45 +652,59 @@
 /* ---------- data ---------- */
 const COMPANIES = [
   {tk:'RXRX', nm:'Recursion', cat:'platform', tier:'C', seg:'AI drug platform',
+   sub:'discovery', subd:'AI-native discovery',
    rev:6.5, revd:'$6.5M', yoy:-56, cash:665, cashd:'$665M', run:'Runway into 2028',
    val:'Micro-rev vs ~$20B partnership headline; ~$3–4', risk:'Revenue tiny/lumpy; scale ≠ drugs yet'},
   {tk:'SDGR', nm:'Schrödinger', cat:'platform', tier:'B', seg:'Computational + AI',
+   sub:'tooling', subd:'Compute & tooling',
    rev:58.6, revd:'$58.6M', yoy:-2, cash:406, cashd:'$406M', run:'ACV $201M trailing, +12%',
    val:'~$13 share vs ~$20 PT; Ajax exit $2.3B', risk:'Own agentic AI may commoditise software edge'},
   {tk:'TEM', nm:'Tempus AI', cat:'data', tier:'A', seg:'Data & diagnostics',
+   sub:'tooling', subd:'Compute & tooling',
    rev:348, revd:'$348M', yoy:36, cash:644, cashd:'$644M', run:'FY26 ~$1.6B; NRR ~126%',
    val:'~$9.4B cap prices much of the growth', risk:'Path to GAAP profit; reimbursement; competition'},
   {tk:'TXG', nm:'10x Genomics', cat:'tools', tier:'A', seg:'Tools / data gen',
+   sub:'tooling', subd:'Compute & tooling',
    rev:150.8, revd:'$150.8M', yoy:-3, cash:540, cashd:'$540M', run:'Razor/blade; Atera H2\'26',
    val:'Growth flat-ish; +9% ex one-time', risk:'Instrument cyclicality; academic funding; rivals'},
   {tk:'NVDA', nm:'NVIDIA', cat:'tools', tier:'A', seg:'Compute (context)',
+   sub:'context', subd:'Context',
    rev:null, revd:'n/d', yoy:null, cash:null, cashd:'—', run:'Platform: BioNeMo/Clara',
    val:'Mega-cap; not theme-priced', risk:'Bio immaterial to P&L — not real theme exposure'},
   {tk:'TWST', nm:'Twist Bioscience', cat:'tools', tier:'A', seg:'Synthetic DNA',
+   sub:'tooling', subd:'Compute & tooling',
    rev:111, revd:'~$111M', yoy:19, cash:172, cashd:'$172M', run:'Breakeven target late FY26',
    val:'Fair-value cluster ~$35–42', risk:'Tighter runway; breakeven execution; litigation'},
   {tk:'ABCL', nm:'AbCellera', cat:'antibody', tier:'C', seg:'AI antibody + royalties',
+   sub:'discovery', subd:'AI-native discovery',
    rev:null, revd:'n/m', yoy:null, cash:690, cashd:'~$690M', run:'~$30M/qtr burn; >3 yrs',
    val:'Trades near cash vs ~$1.6B cap', risk:'ABCL635 Phase 2 is binary (Q3 2026)'},
   {tk:'ABSI', nm:'Absci', cat:'antibody', tier:'C', seg:'Generative-AI antibody',
+   sub:'discovery', subd:'AI-native discovery',
    rev:0.2, revd:'$0.2M', yoy:null, cash:126, cashd:'$126M', run:'Funded into H1 2028',
    val:'PT range ~$4–11', risk:'Binary clinical; minimal revenue; eventual dilution'},
   {tk:'IOVA', nm:'Iovance', cat:'clinical', tier:'C', seg:'TIL cell therapy (non-AI)',
+   sub:'conventional', subd:'Conventional biotech',
    rev:71.4, revd:'$71.4M', yoy:45, cash:319, cashd:'$319M', run:'FY26 $350–370M; into 2028',
    val:'Near 52-wk low; big analyst upside PTs', risk:'Commercial execution; dilution; manufacturing; interim CEO'},
   {tk:'RLAY', nm:'Relay Therapeutics', cat:'clinical', tier:'C', seg:'Computational-adjacent biotech',
+   sub:'conventional', subd:'Conventional biotech',
    rev:3.0, revd:'$3.0M', yoy:null, cash:642, cashd:'$642M', run:'Runway into 2029',
    val:'Reads as conventional oncology biotech now', risk:'Clinical binary; heavy ATM dilution'},
   {tk:'ILMN', nm:'Illumina', cat:'tools', tier:'A', seg:'Sequencing incumbent',
+   sub:'tooling', subd:'Compute & tooling',
    rev:1090, revd:'$1.09B', yoy:4.8, cash:null, cashd:'FCF $251M/qtr', run:'FY26 $4.52–4.62B; ~23% op margin',
    val:'Profitable; $1.5B buyback', risk:'Low growth; academic funding; China; tangential AI'},
   {tk:'DNA', nm:'Ginkgo Bioworks', cat:'tools', tier:'C', seg:'Bio-foundry (cautionary)',
+   sub:'tooling', subd:'Compute & tooling',
    rev:19, revd:'$19M', yoy:-49, cash:373, cashd:'$373M', run:'Into late 2028; no top-line guide',
    val:'Cash-rich, revenue-pinched restructuring', risk:'Legacy revenue collapsing; unproven autonomous-lab pivot'},
   {tk:'GENB', nm:'Generate Biomedicines', cat:'platform', tier:'C', seg:'Generative biology (2026 IPO)',
+   sub:'discovery', subd:'AI-native discovery',
    rev:null, revd:'pre-rev', yoy:null, cash:400, cashd:'~$400M raised', run:'IPO Feb\'26 @ $16; ~$1.9B val',
    val:'Down 20%+ post-IPO; PT ~$25', risk:'Pre-revenue; Ph3 asthma competition; post-IPO volatility'},
   {tk:'EIKN', nm:'Eikon Therapeutics', cat:'platform', tier:'C', seg:'Imaging platform + onc (2026 IPO)',
+   sub:'discovery', subd:'AI-native discovery',
    rev:null, revd:'pre-rev', yoy:null, cash:381, cashd:'~$381M raised', run:'IPO Feb\'26 @ $18; >$1B VC',
    val:'Down ~23% since IPO', risk:'Clinical binary; platform-to-pipeline unproven'}
 ];
@@ -696,6 +738,7 @@ function render(){
       '<td class="tk"><span class="tier-dot" style="background:'+TIER_COLOR[c.tier]+'"></span>'+c.tk+'</td>'+
       '<td class="nm">'+c.nm+'</td>'+
       '<td><span class="seglbl">'+c.seg+'</span></td>'+
+      '<td><span class="sub sub-'+c.sub+'">'+c.subd+'</span></td>'+
       '<td class="num">'+revTxt+'</td>'+
       '<td class="'+yoyCls+'">'+yoyTxt+'</td>'+
       '<td class="num">'+cashTxt+'</td>'+

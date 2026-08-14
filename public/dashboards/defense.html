@@ -239,6 +239,19 @@
   :focus-visible{outline:2px solid var(--viridian); outline-offset:2px}
 
 *{scrollbar-color:#333333 #0a0a0a}
+
+  /* ---------- vintage badge ----------
+     Every page in this set is a frozen snapshot and none of them said so. The
+     date below is the page's own claim about itself; the age is computed
+     against the reader's clock, so the badge cannot go quietly out of date the
+     way a hardcoded "recent" would. */
+  .vintage{border-bottom:1px solid var(--line); background:var(--panel)}
+  .vintage .wrap{display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 14px; padding:9px 0; font-family:var(--mono); font-size:.7rem; letter-spacing:.04em}
+  .vintage .lbl{color:var(--ink-3); text-transform:uppercase; letter-spacing:.14em}
+  .vintage .src{color:var(--ink-2)}
+  .vintage .age{color:var(--ink-2)}
+  .vintage.stale{border-bottom-color:#fb8b1e}
+  .vintage.stale .age{color:#fb8b1e; font-weight:600}
 </style>
 </head>
 <body>
@@ -259,6 +272,15 @@
     </div>
   </div>
 </nav>
+
+<div class="vintage" id="vintageBadge" data-vintage="2026-08-11" data-label="market data 11 August 2026">
+  <div class="wrap">
+    <span class="lbl">Data vintage</span>
+    <span class="src"></span>
+    <span class="age"></span>
+  </div>
+</div>
+
 
 <header class="hero">
   <div class="wrap">
@@ -1159,5 +1181,24 @@ const spy=new IntersectionObserver((entries)=>{
 },{rootMargin:'-45% 0px -50% 0px'});
 secs.forEach(s=> s && spy.observe(s));
 </script>
+
+<script>
+/* The one thing on this page that knows what today is. Fourteen days is the
+   threshold because it is roughly one reporting cycle: past it, a price here is
+   decoration and the reader should be told so rather than left to check the
+   footer. */
+(function(){
+  var el = document.getElementById('vintageBadge');
+  if(!el) return;
+  var approx = el.getAttribute('data-approx') === '1';
+  var days = Math.floor((Date.now() - Date.parse(el.getAttribute('data-vintage') + 'T00:00:00Z')) / 86400000);
+  el.querySelector('.src').textContent = (approx ? '\u2248 ' : '') + el.getAttribute('data-label');
+  var age = el.querySelector('.age');
+  if(!isFinite(days) || days < 0){ age.textContent = ''; return; }
+  age.textContent = '\u00b7 ' + days + ' day' + (days === 1 ? '' : 's') + ' old' + (days > 14 ? ' \u00b7 treat as stale' : '');
+  if(days > 14) el.classList.add('stale');
+})();
+</script>
+
 </body>
 </html>

@@ -72,6 +72,21 @@ git history; PROGRESS.md keeps the log of what it was and why it went.
 
 Nothing here is investment advice.
 
+## Working on this with an AI agent
+
+[AGENTS.md](AGENTS.md) is the brief: what not to open, which rules are
+load-bearing, and what looks like a bug but is not. Start any session with
+
+```sh
+npm run summary
+```
+
+which prints the state of the whole repository — counts, data vintages, cluster
+statistics — in about fifty lines, generated from the files themselves. Five
+files are half the tracked bytes here and reading one of them costs a large part
+of a context window; the summary answers most opening questions without touching
+them.
+
 ## Live market data
 
 [scripts/fetch-market-data.ts](scripts/fetch-market-data.ts) fetches quotes,

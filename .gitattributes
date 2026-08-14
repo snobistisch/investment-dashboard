@@ -1,0 +1,6 @@
+# Generated artefacts. Marked so GitHub collapses them in diffs and reviews,
+# and so an agent scanning the tree can tell at a glance which files are output
+# rather than source. They are rewritten by their scripts — see AGENTS.md §4.
+public/data/*.json          linguist-generated=true
+public/data/crypto-history.json  -diff
+package-lock.json           linguist-generated=true

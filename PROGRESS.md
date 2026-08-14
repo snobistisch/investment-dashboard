@@ -657,6 +657,23 @@ deploys on every push to main).
 
 ## Next
 
+- **Not done from the 13 Aug 2026 audit, deliberately.** Two items were scoped
+  out rather than half-built, and both are recorded here so they are decisions
+  rather than omissions:
+  - *Template de-duplication (audit TE-03).* The eight dashboards in
+    `public/dashboards/` share roughly 200 lines of CSS and the same table and
+    sort machinery, copied. A design fix still has to be made eight times, and
+    this pass made it worse by adding the vintage badge to all eight — which is
+    exactly why `scripts/add-vintage-badge.py` exists: one table, one
+    implementation, applied idempotently. Extracting the shared stylesheet is
+    the real fix and it changes every page at once, which is a bad thing to do
+    in the same pass as content edits. Next session.
+  - *Generating the embedded data from `market-data.json` at build time (audit
+    TE-01).* The right fix for "the live-data promise covers two of nine tabs".
+    The vintage badge is the cheap stop that makes the pages honest in the
+    meantime; it does not make them current.
+
+
 - Possible follow-ups: a native entry-list tracker when Matthias picks a
   subject for one.
 

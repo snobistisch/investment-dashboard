@@ -142,7 +142,8 @@ export const THEMATIC_SECTIONS = [
 
 export const positions: Position[] = [
   // =========================================================================
-  // PHOTONICS — 33 tickers. Market data 7 Aug 2026 close.
+  // PHOTONICS — 33 tagged 'photonics', 33 transcribed here. Market data
+  // 7 Aug 2026 close.
   // Market caps transcribed from the `capUsd` field of the section's own
   // comparison table (USD bn). Asian caps there are already converted at the
   // note's stated FX assumption (USD/CNY 6.7372, USD/JPY 157.65,
@@ -606,7 +607,9 @@ export const positions: Position[] = [
   },
 
   // =========================================================================
-  // DIGITAL BIOLOGY — 14 tickers. Data vintage "Q1 2026 reported".
+  // DIGITAL BIOLOGY — 14 tagged 'biology', 13 transcribed here. NVDA is the
+  // fourteenth and is transcribed under photonics, where it was first sourced.
+  // Data vintage "Q1 2026 reported".
   // The source table carries revenue, cash and runway. It carries NO market
   // cap column. The two caps below are the only ones stated anywhere in the
   // section prose; everything else is left absent rather than estimated.
@@ -759,7 +762,8 @@ export const positions: Position[] = [
   },
 
   // =========================================================================
-  // ROBOTICS — 14 equities, 0 tokens. Data vintage "Q1 2026 reported".
+  // ROBOTICS — 15 tagged 'robotics', 14 transcribed here. Zero tokens.
+  // Data vintage "Q1 2026 reported".
   // (NVDA is also flagged robotics but is transcribed under photonics, where
   // it was first sourced. Counting it here would double it.)
   // The three machine-economy tokens the research note carried — peaq,
@@ -949,7 +953,8 @@ export const positions: Position[] = [
   },
 
   // =========================================================================
-  // QUANTUM — 17 tickers. Point-in-time early/mid-July 2026.
+  // QUANTUM — 17 tagged 'quantum', 15 transcribed here. The other two (NVDA,
+  // AMAT) are transcribed under photonics. Point-in-time early/mid-July 2026.
   // Market caps transcribed from the section's "Mkt cap" column (USD bn),
   // which the section itself labels a volatile approximation.
   // Per the brief: quantum names are gov-capital first, risk-appetite second.
@@ -1134,7 +1139,8 @@ export const positions: Position[] = [
   },
 
   // =========================================================================
-  // AGENTIC — 7 tickers. Figures are AS SUPPLIED from a note dated July 2026
+  // AGENTIC — 7 tagged 'agentic', 7 transcribed here. Figures are AS SUPPLIED
+  // from a note dated July 2026
   // and were not independently re-verified against primary filings.
   // =========================================================================
   {
@@ -1230,7 +1236,8 @@ export const positions: Position[] = [
   },
 
   // =========================================================================
-  // CRYPTO — 4 held. Single CoinGecko snapshot, 12 August 2026.
+  // CRYPTO — 4 tagged 'crypto', 4 transcribed here. Single CoinGecko snapshot,
+  // 12 August 2026.
   // Narrowed from 5 held + the HYPE benchmark on Matthias's instruction
   // (11 Aug 2026): this section covers ETH, ZEC, LIT and NOCK only. Pearl and
   // the Hyperliquid benchmark row came out of dashboards/crypto.html in the

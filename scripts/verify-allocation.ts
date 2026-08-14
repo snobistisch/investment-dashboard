@@ -34,10 +34,8 @@ let checks = 0
 // The snapshot is committed to the repo, so it is checked here rather than
 // trusted at runtime. It is optional: a fresh clone that has never run the
 // fetch still deploys, and the site falls back to transcribed values.
-const SNAPSHOT_PATH = resolve(
-  dirname(fileURLToPath(import.meta.url)),
-  '../public/data/market-data.json',
-)
+const HERE = dirname(fileURLToPath(import.meta.url))
+const SNAPSHOT_PATH = resolve(HERE, '../public/data/market-data.json')
 function readSnapshot(): MarketSnapshot | null {
   if (!existsSync(SNAPSHOT_PATH)) return null
   try {
@@ -385,6 +383,47 @@ if (snapshot) {
       }
     }
   }
+}
+
+// Section header counts, checked against the data rather than trusted.
+//
+// Three of the six headers had drifted away from their arrays by 14 Aug 2026,
+// and a header nobody checks is worse than no header — "82 researched
+// positions" stops being verifiable the moment one of them is wrong. The
+// headers now state two numbers each, because there are two and conflating
+// them is what produced the drift: how many rows carry the section tag, and
+// how many are physically transcribed in that block. NVDA carries four tags
+// and is transcribed once.
+const POSITIONS_SRC = readFileSync(resolve(HERE, '../src/data/positions.ts'), 'utf8')
+const HEADER_RE = /\/\/ [A-Z ]+ — (\d+) tagged '([a-z-]+)', (\d+) transcribed here/g
+const headerClaims = [...POSITIONS_SRC.matchAll(HEADER_RE)]
+
+check(
+  headerClaims.length === 6,
+  `section headers: found ${headerClaims.length} parseable headers, expected 6`,
+)
+
+// Where each block starts, so "transcribed here" can be counted rather than
+// asserted. A block runs from its header to the next one.
+const headerOffsets = [...POSITIONS_SRC.matchAll(/\/\/ [A-Z ]+ — \d+ tagged '[a-z-]+'/g)].map(
+  (m) => m.index ?? 0,
+)
+
+for (const [i, m] of headerClaims.entries()) {
+  const [, taggedClaim, section, transcribedClaim] = m
+  const tagged = ALL.filter((p) => p.sections.includes(section)).length
+  check(
+    tagged === Number(taggedClaim),
+    `section ${section}: header claims ${taggedClaim} tagged, data has ${tagged}`,
+  )
+
+  const from = headerOffsets[i]
+  const to = i + 1 < headerOffsets.length ? headerOffsets[i + 1] : POSITIONS_SRC.length
+  const transcribed = (POSITIONS_SRC.slice(from, to).match(/\n {4}ticker: '/g) ?? []).length
+  check(
+    transcribed === Number(transcribedClaim),
+    `section ${section}: header claims ${transcribedClaim} transcribed in the block, found ${transcribed}`,
+  )
 }
 
 // Every mandate name has to carry the research's own verdict on it. Without

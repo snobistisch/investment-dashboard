@@ -18,6 +18,7 @@ import {
   chainBreakdown,
   crossSectionOverlap,
   drawdownIllustration,
+  exposureAxes,
   factorBreakdown,
   hiddenFactorOverlap,
   isContext,
@@ -77,6 +78,8 @@ export function ExposurePanel({ assetClass = 'equities' }: { assetClass?: 'equit
   // snapshot changes the numbers and the absence of one leaves them exactly as
   // they were when positions.ts was the only source.
   const merged = useMemo(() => mergePositions(snapshot), [snapshot])
+
+
   // Split by asset class before anything is computed. Concentration, factor
   // weights and the July drawdown anchor are all averages, and averaging a
   // $228bn settlement layer with a photonics small cap answers neither
@@ -90,6 +93,10 @@ export function ExposurePanel({ assetClass = 'equities' }: { assetClass?: 'equit
   )
   const thematicPositions = useMemo(() => inClass.filter(isThematic), [inClass])
   const activeBook = useMemo(() => thematicPositions.filter((p) => !isContext(p)), [thematicPositions])
+
+  // The eight axes, computed over the same merged book as everything else on
+  // this tab so a share here means what a share means anywhere above.
+  const axes = useMemo(() => exposureAxes(merged), [merged])
   // The whole researched book in one list, largest first. Context names are
   // included so the table is complete; they are marked and dimmed.
   const allNames = useMemo(
@@ -703,6 +710,61 @@ export function ExposurePanel({ assetClass = 'equities' }: { assetClass?: 'equit
             </li>
           </ul>
         </Panel>
+
+      {/* ---------------------------------------------------------------- */}
+      {/* The eight axes. The factor table above proves the concentration;
+          this answers the question a reader actually asks, which is what they
+          are exposed to if they hold the book. DERIVED rows are computed from
+          positions.ts and change when it does. STATED rows are judgements with
+          named constituents — the model has no field for them, and inventing
+          one would move the allocation to fix a display problem. */}
+      <Panel title="Cross-theme exposure map — eight axes, several invisible to the factor model">
+        <p className="mb-3 text-[11px] leading-relaxed text-term-dim">
+          Six tabs, and fewer bets than tabs.{' '}
+          <span className="text-term-text">
+            This panel is the one figure on the tab that is not split by asset class
+          </span>{' '}
+          — the split exists because averaging a settlement layer with a photonics small cap
+          answers neither question, and this map exists precisely to show what the two halves have
+          in common. Each row names its constituents so it can be checked against the book rather
+          than taken on trust.{' '}
+          <span className="text-term-cyan">Derived</span> rows are computed from positions.ts.{' '}
+          <span className="text-term-amber">Stated</span> rows are judgements: the data model has no
+          field for them, and adding one — a <span className="text-term-text">china</span> factor,
+          say — would change the allocation itself, since factors[0] drives the thesis derivation
+          and the diversifier caps. That is a decision about the book, not a display fix.
+        </p>
+        <div className="space-y-3">
+          {axes.map((axis) => (
+            <div key={axis.id} className="border-l border-term-line pl-3">
+              <div className="flex flex-wrap items-baseline gap-x-2">
+                <span className="text-xs font-bold text-term-text">{axis.label}</span>
+                <span
+                  className={`border px-1 text-[9px] uppercase tracking-wider ${
+                    axis.basis === 'derived'
+                      ? 'border-term-cyan text-term-cyan'
+                      : 'border-term-amber text-term-amber'
+                  }`}
+                >
+                  {axis.basis}
+                </span>
+                {axis.capShare !== undefined && (
+                  <span className="text-[10px] tabular-nums text-term-dim">
+                    {(axis.capShare * 100).toFixed(1)}% of book cap
+                  </span>
+                )}
+                <span className="text-[10px] text-term-dim">
+                  {axis.tickers.length} {axis.tickers.length === 1 ? 'name' : 'names'}
+                </span>
+              </div>
+              <p className="mt-1 text-[11px] leading-relaxed text-term-dim">{axis.claim}</p>
+              <div className="mt-1">
+                <Tickers items={axis.tickers.map((ticker) => ({ ticker }))} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </Panel>
 
       </div>
     </Section>

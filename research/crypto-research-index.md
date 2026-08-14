@@ -1,11 +1,16 @@
 # Crypto research index — the themes, and what is wired versus written
 
-**Date:** 13 August 2026. This document exists because the crypto research grew
-into eight separate files before it had an organising structure. It does not
-add new findings — it maps what already exists onto the themes the research
-actually settled on, states which theme has a live ranking on the Assets tab
-and which is a research note without one yet, and says where each of the
-eight files sits.
+**Date:** 13 August 2026, updated 14 August 2026. This document exists because
+the crypto research grew into ten separate files before it had an organising
+structure. It does not add new findings — it maps what already exists onto the
+themes the research actually settled on, states which theme has a live ranking
+on the Assets tab and which is a research note without one yet, and says where
+each file sits.
+
+Counting rule, so the number is checkable: every `research/crypto*` file except
+this index. That was ten on 13 August. The 14 August update adds an eleventh,
+[crypto-genius-stablecoins.md](crypto-genius-stablecoins.md), under §3 — the
+first note in the set that reads a statute rather than a market.
 
 **How the themes were derived.** Not chosen in advance. The Assets tab
 (`public/dashboards/crypto.html`) already tags each of its 40 ranked assets
@@ -98,10 +103,22 @@ earns from what a token holder actually receives. Compound is the clearest
 example the screen produced — $1.22bn of TVL, 100% float, and zero dollars to
 the token — and every theme below inherits that same holders-revenue check.
 
+**The regulatory half of this theme now exists too.**
+[crypto-genius-stablecoins.md](crypto-genius-stablecoins.md) (14 Aug 2026)
+reads Public Law 119–27 directly and separates what the statute settles from
+what follows only as a hypothesis. Its load-bearing finding is a provision the
+commentary usually skips: §4(a)(11) bars a compliant issuer from paying holders
+any interest or yield, so the reserve income is the issuer's by law. That is
+what makes CRCL a short-rate business rather than a crypto proxy — and it puts
+the yield-bearing dollar tokens ranked here (ENA, SKY, ONDO, CAP) *outside* the
+§17 security carve-out rather than inside it. Written because the theme had a
+market ranking and no legal one.
+
 **Status:** live, ranked, on the Assets tab (7 assets); a wider unranked
-screen exists alongside it. **Primary sources:**
-[crypto-tracker-research.md](crypto-tracker-research.md) and
-[crypto-screen-candidates.md](crypto-screen-candidates.md).
+screen exists alongside it, plus one regulatory note. **Primary sources:**
+[crypto-tracker-research.md](crypto-tracker-research.md),
+[crypto-screen-candidates.md](crypto-screen-candidates.md) and
+[crypto-genius-stablecoins.md](crypto-genius-stablecoins.md).
 
 ---
 

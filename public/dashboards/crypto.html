@@ -253,6 +253,7 @@
       <a href="#float">Float rule</a>
       <a href="#cull">The cull</a>
       <a href="#tech">Verifiable compute</a>
+      <a href="#stables">Stablecoins</a>
       <a href="#ev">EV ranking</a>
       <a href="#deep">Deep dives</a>
       <a href="#risk">What breaks it</a>
@@ -382,7 +383,7 @@
   <div class="wrap">
     <div class="sec-head"><div class="sec-num">04</div><h2>Thirteen assets removed, eight added, and the two rules disagree about the swap</h2></div>
     <div class="prose wide">
-      <p class="lead-p">This revision cuts thirteen assets and adds eight. The cut is defensible on a single number that the previous version did not carry: <b>trailing-year protocol fees.</b> An asset that processes almost no economic activity is not cheap after a 90% fall — it is a claim on nothing, and the expected-value method in §6 cannot tell those apart on price alone.</p>
+      <p class="lead-p">This revision cuts thirteen assets and adds eight. The cut is defensible on a single number that the previous version did not carry: <b>trailing-year protocol fees.</b> An asset that processes almost no economic activity is not cheap after a 90% fall — it is a claim on nothing, and the expected-value method in §07 cannot tell those apart on price alone.</p>
       <p>The additions come from a different argument, and it is worth stating in its own terms rather than smuggling it in. It is the rotation thesis associated with the trader GCR: capital does not return to the assets that just extracted it, it moves to whatever is new — and, in his framing, a team that has not yet been paid is more motivated than one that has. Secondary accounts of his writing put it as the majority trending to zero and being <span class="mono">"replaced with new narratives and new rotations"</span>. <b>Flagged: I could not verify the primary post, only paraphrases in secondary sources, so it is used here as an argument rather than as a citation.</b></p>
     </div>
 
@@ -479,10 +480,50 @@
   </div>
 </section>
 
-<!-- 6 · EV RANKING -->
+<!-- 6 · STABLECOINS & PAYMENTS -->
+<section id="stables">
+  <div class="wrap">
+    <div class="sec-head"><div class="sec-num">06</div><h2>The stablecoin law pays the issuer and bars the holder. That single clause decides the whole theme.</h2></div>
+    <div class="prose wide">
+      <p class="lead-p">Until this section existed, the entire repository's treatment of the GENIUS Act was one clause inside an equity row. That is a conclusion with no analysis under it, and the theme is too big for that: on-chain dollars are the only part of crypto with a finished US statute rather than an enforcement posture.</p>
+      <p><b>Public Law 119–27, approved 18 July 2025.</b> Senate 68–30 on 17 June, House 308–122 on 17 July. The Act is read here directly rather than through commentary, because the commentary consistently omits the provision that matters most. Reserves must back outstanding coins <em>"on an at least 1 to 1 basis"</em> and the eligible list is a money-market list — cash, demand deposits, <b>Treasury bills, notes or bonds with 93 days or less remaining</b>, overnight repo against those bills, and government money-market funds holding only the above. Then §4(a)(11):</p>
+      <p style="border-left:2px solid var(--viridian-soft); padding-left:16px; font-style:italic; color:var(--ink-1)">"No permitted payment stablecoin issuer or foreign payment stablecoin issuer shall pay the holder of any payment stablecoin any form of interest or yield (whether in cash, tokens, or other consideration) solely in connection with the holding, use, or retention of such payment stablecoin."</p>
+      <p><b>The reserve earns the bill yield. The holder is barred by statute from receiving it. The issuer keeps it.</b> Every second-order effect below is that sentence propagating outward. And §17 carves payment stablecoins out of the definitions of "security" and "commodity" by amending the 1933, 1934, 1940 and Advisers Acts themselves — a definitional carve-out, not a case-by-case exemption, which is why it is worth more than a no-action letter.</p>
+    </div>
+    <div class="kpis" style="margin-top:8px">
+      <div class="kpi"><div class="n">≤93d</div><div class="l">Maximum remaining maturity of Treasuries in the reserve — duration risk legislated out, rate risk legislated in</div></div>
+      <div class="kpi"><div class="n">$10bn</div><div class="l">Consolidated issuance above which a state-regulated issuer has 360 days to move federal, or stop issuing</div></div>
+      <div class="kpi"><div class="n">0%</div><div class="l">Yield a compliant issuer may pass to a holder. Stablecoins cannot compete for balances on rate</div></div>
+      <div class="kpi"><div class="n">18 Jan 2027</div><div class="l">Latest effective date — earlier if final regulations land first. The regime is not yet fully in force</div></div>
+    </div>
+    <div class="prose wide" style="margin-top:30px"><p class="lead-p" style="font-size:1.02rem">Three layers, kept apart on purpose. Confusing them is how this subject is normally got wrong:</p></div>
+    <div class="segs">
+      <div class="seg"><div class="lbl">Layer A · Directly regulated</div><h3>What the statute settles</h3><p>1:1 identifiable reserves in ≤93-day paper. No yield to holders. Carve-out from security and commodity definitions. A $10bn ceiling on the state route. No FDIC insurance — a run is met by the reserve and the redemption process, which is what the maturity cap is for. These are facts about the text, not forecasts.</p><div class="tk">Pub. L. 119–27 §4, §17, §20</div></div>
+      <div class="seg"><div class="lbl">Layer B · Second-order</div><h3>Hypotheses, and they are labelled</h3><p>Issuers with balances already get the compliance certainty first (CRCL is the only listed pure-play here). The yield ban pushes yield-seeking one layer out, into wrappers the carve-out does not cover. Card rails are the displaced party. Settlement layers capture volume, not necessarily margin. Every one of these is an inference, not a provision.</p><div class="tk">CRCL · MQ · ENA · SKY · ONDO · CAP</div></div>
+      <div class="seg"><div class="lbl">Layer C · The narrative jump</div><h3>"GENIUS is bullish for crypto" — no</h3><p>The carve-out is written into the definition of a <em>payment stablecoin</em> issued by a <em>permitted issuer</em>. It does nothing for a governance token, a layer one, a privacy coin or a proving network. The route from this law to any asset ranked in §07 runs: more on-chain dollars → more settlement volume → possibly more fees → possibly a token that captures some. Four "possiblys" is not a thesis.</p><div class="tk"><span style="color:var(--ink-3)">not ETH · not SOL · not the L2s</span></div></div>
+      <div class="seg"><div class="lbl">The sharp end</div><h3>Yield-bearing dollars sit outside the safe harbour</h3><p>If a holder cannot be paid for holding a payment stablecoin, the yield gets manufactured where the Act does not reach. That is precisely what USDe, sUSDS and tokenised-treasury products are. They gain from the category's new legitimacy and lose from being visibly outside its carve-out — the Act legitimises the thing <em>next</em> to them.</p><div class="tk">ENA · SKY · ONDO · CAP</div></div>
+      <div class="seg"><div class="lbl">Held, and pointing the wrong way</div><h3>The book is long the displaced party</h3><p>Marqeta's own edge field in positions.ts names the thing that breaks it: "stablecoin rails bypassing cards entirely." A legitimised on-chain dollar is the condition under which that break happens. MQ is held as a long on the Agentic tab. On this reading it is closer to a short leg against the stablecoin thesis than an expression of it.</p><div class="tk">MQ (Agentic tab)</div></div>
+      <div class="seg"><div class="lbl">Not analysed</div><h3>Foreign issuers, and the silence is not a finding</h3><p>The Act carries separate foreign-issuer provisions with a comparability determination. USDT's treatment under them is the largest open question for anything routed through it, Plasma included. This note has not read that part of the statute. Do not infer from the omission.</p><div class="tk"><span style="color:var(--ink-3)">USDT · XPL</span></div></div>
+    </div>
+    <div class="prose wide" style="margin-top:30px"><p class="lead-p" style="font-size:1.02rem">Losers, named — a theme with only winners in it has not been thought about:</p></div>
+    <table class="mini" style="max-width:82ch">
+      <thead><tr><th>Loser</th><th>Why</th><th>Confidence</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Algorithmic stablecoins</td><td>The 1:1 identifiable reserve is a definitional bar, not a target. Anything that cannot meet it stays outside the carve-out and keeps the securities analysis the compliant issuers just escaped.</td><td>High — it follows from the text</td></tr>
+        <tr><td class="k">Yield-bearing dollar tokens</td><td>Gain the category's legitimacy, lose the safe harbour. Direction is clear; the regulatory outcome for these specific tokens is not.</td><td>Moderate direction, low outcome</td></tr>
+        <tr><td class="k">Card networks and issuers</td><td>On-chain dollars become a legitimate rail. Long-dated, and card interchange has outlived every previous replacement.</td><td>Moderate mechanism, low timing</td></tr>
+        <tr><td class="k">Privacy coins</td><td>As the compliant dollar becomes the default settlement instrument, listing venues inherit its compliance posture. ZEC's own risk 6 already names tier-1 delisting as the position-breaking event.</td><td>Hypothesis — no delisting verified</td></tr>
+        <tr><td class="k">Offshore issuers</td><td>Subject to the foreign-issuer provisions above, which this pass did not read.</td><td>Unassessed</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:18px; font-size:.9rem; color:var(--ink-2); max-width:80ch"><b>Two things this section will not claim.</b> First, the Act is not fully in force: §20 sets the effective date at the earlier of 18 months after enactment — 18 January 2027 — or 120 days after final implementing regulations, and whether those regulations had issued by August 2026 is <b>not verified here</b>. Second, the criticisms are real and carried second-hand: thin consumer protection (Consumer Reports), no requirement to return stolen funds to fraud victims (NY Attorney General), free-banking parallels (Harris and Rogoff). The underlying documents were not read this session. Full working, with the statutory quotes and the falsification triggers, is in <b>research/crypto-genius-stablecoins.md</b>.</p>
+  </div>
+</section>
+
+<!-- 7 · EV RANKING -->
 <section id="ev">
   <div class="wrap">
-    <div class="sec-head"><div class="sec-num">06</div><h2>Forty assets ranked by expected value, with the arithmetic shown</h2></div>
+    <div class="sec-head"><div class="sec-num">07</div><h2>Forty assets ranked by expected value, with the arithmetic shown</h2></div>
     <div class="prose wide"><p class="lead-p">A composite score out of 100 hides the two things that decide an investment: how big the outcomes are and how likely each one is. This ranking replaces the score with an explicit three-scenario expected value per asset. <b>Every probability below is my judgement and is visible in the table</b> — disagree with a number and you can recompute the ranking yourself, which is the entire point of showing it this way.</p></div>
     <div class="method">
       <div class="mc">
@@ -550,7 +591,7 @@
 <!-- 7 · DEEP DIVES -->
 <section id="deep">
   <div class="wrap">
-    <div class="sec-head"><div class="sec-num">07</div><h2>Eight profiles: the top of the ranking, the two new names that matter, and the disagreements</h2></div>
+    <div class="sec-head"><div class="sec-num">08</div><h2>Eight profiles: the top of the ranking, the two new names that matter, and the disagreements</h2></div>
     <div class="prose wide"><p class="lead-p" style="margin-bottom:34px">Aave and Ethereum come from the top of §6. Maple and Monad are the two additions that matter most — the best of the new names, and the one that embodies the collision in §4. Zcash and Hyperliquid are here because the source research ranks them second and third and this one ranks them 25th and 26th, a disagreement that deserves defending in full rather than in a table cell. Lighter and Nockchain are positions the book actually holds, and both have something specific and unpleasant inside the three-year window.</p></div>
 
     <!-- AAVE -->
@@ -711,7 +752,7 @@
 <!-- 8 · RISKS -->
 <section id="risk">
   <div class="wrap">
-    <div class="sec-head"><div class="sec-num">08</div><h2>What breaks the thesis — seven ways, each with a falsification trigger</h2></div>
+    <div class="sec-head"><div class="sec-num">09</div><h2>What breaks the thesis — seven ways, each with a falsification trigger</h2></div>
     <div class="prose wide"><p class="lead-p">A risk without a trigger is a disclaimer. Each of these carries a specific, observable event that would tell you the risk is materialising while there is still time to act on it — that is the only property that makes a risk list useful.</p></div>
     <div class="riskgrid">
       <div class="risk"><h3>1 · It is one factor, and it is global liquidity</h3><p>Every asset here is a levered claim on the same thing. Correlation with equities sits in the 0.6–0.8 range and rises toward 1 in exactly the drawdowns where diversification is supposed to pay. A forty-name ranking looks like a portfolio and is a single position.<span class="fals"><b>Trigger:</b> a 20%+ equity drawdown in which the median asset here falls further than bitcoin — confirming there is no idiosyncratic support anywhere in the list.</span></p></div>
@@ -728,7 +769,7 @@
 <!-- 9 · HYPOTHESES -->
 <section id="hyp">
   <div class="wrap">
-    <div class="sec-head"><div class="sec-num">09</div><h2>Five claims that have to be true — and what would change each one</h2></div>
+    <div class="sec-head"><div class="sec-num">10</div><h2>Five claims that have to be true — and what would change each one</h2></div>
     <div class="prose wide"><p class="lead-p">These are not a stacked bull case. H1 and H2 pull against each other: if settlement value accrues cleanly to Ethereum, the application layer captures less of it. Which one you back determines which half of §5 you should be reading.</p></div>
     <div class="hyps">
       <div class="hyp">
@@ -781,8 +822,8 @@
 <!-- 10 · SYNTHESIS -->
 <section id="synth">
   <div class="wrap">
-    <div class="sec-head"><div class="sec-num">10</div><h2>Where to point due diligence next — mapped to which claim you back</h2></div>
-    <div class="prose wide"><p class="lead-p">Not a buy list. The ranking in §5 orders assets; it does not build a portfolio, and the correlation problem in risk 1 means the whole list is one bet wearing forty tickers. <b>What to diligence depends on which of the five claims in §8 you actually believe</b>, and the three routes below imply genuinely different books — including one that concludes you should own less of this than you already do.</p></div>
+    <div class="sec-head"><div class="sec-num">11</div><h2>Where to point due diligence next — mapped to which claim you back</h2></div>
+    <div class="prose wide"><p class="lead-p">Not a buy list. The ranking in §07 orders assets; it does not build a portfolio, and the correlation problem in risk 1 means the whole list is one bet wearing forty tickers. <b>What to diligence depends on which of the five claims in §10 you actually believe</b>, and the three routes below imply genuinely different books — including one that concludes you should own less of this than you already do.</p></div>
     <div class="synth">
       <div class="sc">
         <div class="bet">If you back H2 · Settlement is durable</div>

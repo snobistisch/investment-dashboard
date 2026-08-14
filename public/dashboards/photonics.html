@@ -245,6 +245,7 @@
       <a href="#deep">Deep dives</a>
       <a href="#table">Comparison</a>
       <a href="#chain">Supply chain</a>
+      <a href="#rates">Rates &amp; duration</a>
       <a href="#risk">What breaks it</a>
       <a href="#hyp">Signals</a>
       <a href="#synth">Synthesis</a>
@@ -573,6 +574,32 @@
       </tbody>
     </table>
     <p style="margin-top:18px; font-size:.9rem; color:var(--ink-2); max-width:80ch">Combined 2026 capex guidance: Amazon ~$200bn, Alphabet $175–185bn, Meta $125–145bn, Microsoft $110–120bn — roughly <b>$690–725bn, up ~77%</b>, with about 75% AI-related. <b>Assumption:</b> these are guidance figures compiled from company statements and press tallies, not audited spend, and Meta's range was raised mid-year citing higher component pricing — itself a data point for the shortage thesis.</p>
+  </div>
+</section>
+
+<!-- 6b · RATES & DURATION -->
+<section id="rates">
+  <div class="wrap">
+    <div class="sec-head"><div class="sec-num">06b</div><h2>A 472x multiple is a bet on the discount rate, and this report had not said so anywhere</h2></div>
+    <div class="prose wide">
+      <p class="lead-p">The thesis in this dashboard is a physical one — copper runs out of reach above 200G per lane, substrates and lasers are the constraint — and it is well evidenced. The prices attached to it are something else. Trailing multiples across these thirty-three tickers run from <b>16.6x</b> to <b>472x</b>, and nothing in the previous eight sections discussed what a change in the discount rate does to that spread. That was the gap.</p>
+      <p><b>The mechanism, stated plainly.</b> A high multiple is a statement about <em>when</em> the cash arrives, not only about how much. At 472x trailing earnings, essentially all of the value sits beyond any forecast horizon, so the price is dominated by the rate used to discount it. At 16.6x, most of the value is in cash flows close enough that the discount rate barely moves them. Same theme, same bottleneck, opposite duration.</p>
+      <p><b>The July 2026 drawdown is the evidence, and it is already in this repository.</b> SOX fell 28.6% from its 22 June peak; the MS Momentum TMT index fell 53.5% over the same window. <b>The momentum index fell roughly 1.9 times as far as the semiconductor index.</b> The bottleneck did not change in five weeks — no lane rate was revised, no substrate got easier to grow. What repriced was duration and positioning. A reader who holds the 100x+ cohort because the physics is right should understand they were paid, and then unpaid, for something other than the physics.</p>
+    </div>
+    <div class="prose wide" style="margin-top:26px"><p class="lead-p" style="font-size:1.02rem">Four cohorts by trailing multiple. The ranking is the duration ranking:</p></div>
+    <div style="overflow-x:auto; max-width:104ch">
+    <table class="mini" style="min-width:760px">
+      <thead><tr><th>Cohort</th><th>Names</th><th>Where the value sits</th><th>On a discount-rate rise</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Above 100x<br><span style="color:var(--ink-3)">9 names</span></td><td>688498 (472x) · 3081 (333x) · LITE (169x) · ALAB (164.6x) · COHR (158x) · 002281 (147x) · IPGP (139x) · CIEN (137x) · 300394 (115.9x)</td><td>Almost entirely beyond the forecast horizon. Yuanjie carries ¥872m of revenue against a ¥168bn capitalisation — the multiple <em>is</em> the thesis.</td><td><b>Devalues hardest, and first.</b> This is the cohort a rates move takes, and it is where the two Chinese and one Taiwanese listing a Dutch retail account cannot reach directly are concentrated.</td></tr>
+        <tr><td class="k">50x to 100x<br><span style="color:var(--ink-3)">10 names</span></td><td>TSEM (99.8x) · CRDO (99.6x) · MTSI (99x) · 4979 (90x) · GLW (76.4x) · MRVL (75.6x) · AVGO (71x) · 300308 (68.6x) · ANET (59.7x) · 300502 (54.7x)</td><td>Split. Forward multiples compress sharply here — AVGO 71x trailing to 27.1x forward, MRVL 75.6x to 48.2x — which means the market already expects most of the growth inside the forecast window.</td><td>Moderate. The forward number is the honest one to stress, and it is roughly a third to a half of the trailing figure across this cohort.</td></tr>
+        <tr><td class="k">Below 50x<br><span style="color:var(--ink-3)">7 names</span></td><td>FN (48.3x) · 5803 (41.6x) · 6965 (39.7x) · 000063 (37.7x) · NVDA (34.3x) · 5801 (23.5x) · 5802 (16.6x)</td><td>Near-dated. Sumitomo Electric at 16.6x is the cheapest name in the report and one of the least exposed to the rate.</td><td><b>Least affected.</b> Note what this cohort is: mostly Japanese and Chinese incumbents rather than the pure-play optical names the thesis points at. Duration and thesis-purity move together here, which is the uncomfortable part.</td></tr>
+        <tr><td class="k">No trailing multiple<br><span style="color:var(--ink-3)">7 names</span></td><td>AXTI · AAOI · POET · SMTC · MXL · LASR · LPTH</td><td>Unprofitable or not stated. POET carries a $1.5bn capitalisation on $1.4m of trailing revenue.</td><td><b>Longest duration of all</b>, and it does not show up in a P/E screen because there is no E. Excluding them from a duration discussion because the number is missing would invert the answer.</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p style="margin-top:18px; font-size:.9rem; color:var(--ink-2); max-width:82ch"><b>What this section does not do, and why.</b> It does not model a +100bp move into a price for any name. Doing that needs a cash-flow forecast per company and a defensible terminal assumption, and nothing in this repository supplies either — inventing them would produce a precise number with no support underneath it, which is the failure mode the rest of this dashboard is built to avoid. What is available and is used: the observed multiple spread, the observed forward-to-trailing compression, and one dated market event where duration repriced by 53.5% while the underlying physics did not move at all. That is enough to rank the exposure, which is what a reader needs, and not enough to price it.</p>
+    <p style="margin-top:14px; font-size:.9rem; color:var(--ink-2); max-width:82ch"><b>Provenance.</b> Multiples are as transcribed in §05 from the 7 August 2026 data pass. The drawdown figures are the <span class="mono">JULY_2026_DRAWDOWN</span> constant in <span class="mono">src/data/positions.ts</span>, which carries its own provenance note: supplied by Matthias in August 2026, not independently verified in that session. Treated here as a stated historical fact with a named source rather than as repo-sourced data.</p>
   </div>
 </section>
 

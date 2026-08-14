@@ -50,7 +50,15 @@ Electrek/Tesery), Fanuc (6954.T), Yaskawa (6506.T), Keyence (6861.T), Nabtesco (
 Cognex (CGNX), ABB, UBTech (9880.HK), MP Materials (MP), Ouster (OUST — Q1'26 rev $48.6M +49%,
 >12,600 sensors, GAAP margin 43%, net loss $17.5M, Q2 guide $49.5–52.5M incl. Stereolabs — verified).
 
-## Tokenised / DePIN "machine economy" (section 8) — early, speculative, flag uncertainty
+## Tokenised / DePIN "machine economy" (section 8) — REMOVED FROM THE BOOK
+**All three names below — peaq, GEODNET, BitRobot — came out of `positions.ts`
+on 11 August 2026 and are not held.** The research stays because it was done
+and because the reasoning is worth keeping; it is no longer a live sleeve. The
+reason for removal is in `allocation.ts`: crypto is sized as a fixed mandate
+over four named assets, and a robotics-flavoured token does not become a
+robotics position by being about robots. Nothing below should be read as a
+position. Stated here rather than left to be inferred from an absence.
+
 Token mechanics ≠ equity; revenue tiny; unlock overhangs; mostly crypto-native sourcing.
 - **peaq (PEAQ)** — EVM L1 for the machine economy (DePIN / DePAI / machine-RWA). ~$180M TVL in
   machine wallets; ~12,000 daily active devices; 60+ DePINs across 22 industries. Serve Robotics

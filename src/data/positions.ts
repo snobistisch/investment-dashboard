@@ -759,10 +759,20 @@ export const positions: Position[] = [
   },
 
   // =========================================================================
-  // ROBOTICS — 15 equities + 3 tokens. Data vintage "Q1 2026 reported".
+  // ROBOTICS — 14 equities, 0 tokens. Data vintage "Q1 2026 reported".
+  // (NVDA is also flagged robotics but is transcribed under photonics, where
+  // it was first sourced. Counting it here would double it.)
+  // The three machine-economy tokens the research note carried — peaq,
+  // GEODNET, BitRobot — are out of the book as of 11 Aug 2026 and are NOT
+  // below. The header said "15 equities + 3 tokens" until 14 Aug 2026, which
+  // was wrong on both halves.
   // THE SOURCE CARRIES NO MARKET CAPS AT ALL. Its table columns are revenue,
-  // YoY, cash and runway. Every row below is therefore absent a cap, which is
-  // the single largest hole in the market-cap-weighted view.
+  // YoY, cash and runway, so every row below is transcribed without a cap —
+  // this file records what the source said, and inventing the missing column
+  // here would break that rule. The gap is closed at read time instead: the
+  // market-data snapshot prices 13 of the 14 (Unitree is deliberately
+  // unmapped, being CSRC-approved rather than trading), and the robotics
+  // dashboard now shows a market-cap column drawn from that same snapshot.
   // Six names are labelled "figures NOT refreshed this session" in the
   // research note; those are marked below.
   // =========================================================================

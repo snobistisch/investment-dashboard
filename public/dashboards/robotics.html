@@ -231,6 +231,13 @@
   .vintage .age{color:var(--ink-2)}
   .vintage.stale{border-bottom-color:#fb8b1e}
   .vintage.stale .age{color:#fb8b1e; font-weight:600}
+
+  /* Demo versus production, as a field rather than as prose. The distinction
+     the whole theme turns on was previously buried in the status column. */
+  .stage{font-family:var(--mono); font-size:.62rem; letter-spacing:.08em; text-transform:uppercase; border:1px solid var(--line); padding:2px 5px; white-space:nowrap; color:var(--ink-2)}
+  .stage-production{border-color:#00d264; color:#00d264}
+  .stage-pilot,.stage-early,.stage-pre-production{border-color:#fb8b1e; color:#fb8b1e}
+  .stage-shipping{border-color:#4dd0e1; color:#4dd0e1}
 </style>
 </head>
 <body>
@@ -481,6 +488,8 @@
             <th data-key="tk" data-type="txt">Ticker<span class="ar">↕</span></th>
             <th data-key="nm" data-type="txt">Company<span class="ar">↕</span></th>
             <th data-key="seg" data-type="txt">Layer<span class="ar">↕</span></th>
+            <th data-key="cap" data-type="num">Market cap<span class="ar">↕</span></th>
+            <th data-key="stage" data-type="txt">Demo or production<span class="ar">↕</span></th>
             <th data-key="rev" data-type="num">Rev (last qtr)<span class="ar">↕</span></th>
             <th data-key="yoy" data-type="num">YoY<span class="ar">↕</span></th>
             <th data-key="cash" data-type="num">Cash / liq.<span class="ar">↕</span></th>
@@ -492,7 +501,7 @@
         <tbody id="tbody"></tbody>
       </table>
     </div>
-    <div class="table-note">Tier ● Profile A (lower variance) · ● Profile B (platform) · ● Profile C (option value). Rev = most recent reported quarter; Harmonic = FY2026/3 full year; Unitree = 2025 full year (pre-listing). "n/d" = not disclosed / context only. Verify against filings.</div>
+    <div class="table-note">Tier ● Profile A (lower variance) · ● Profile B (platform) · ● Profile C (option value). Rev = most recent reported quarter; Harmonic = FY2026/3 full year; Unitree = 2025 full year (pre-listing). "n/d" = not disclosed / context only. Verify against filings.<br><b>Market cap</b> is transcribed from the repository's own market-data snapshot of 13 August 2026 (Yahoo Finance via scripts/fetch-market-data.ts, converted to USD at ECB reference rates). It is a later vintage than the Q1 2026 fundamentals beside it — that gap is real and is not smoothed over here. Unitree has no cap because it is not trading. <b>Demo or production</b> is a judgement about whether the robotics revenue in the row exists today, made from the evidence already in this table; hover the cell for the reasoning per name.</div>
   </div>
 </section>
 
@@ -578,6 +587,13 @@
     <h3>Sources &amp; method</h3>
     <p>Figures are drawn from primary company disclosures and specialist industry press for the Q1 2026 reporting cycle (fiscal year 2026/3 for Harmonic Drive; full-year 2025 for pre-listing Unitree), cross-checked across more than one source where possible. Token figures are from project documentation and crypto-native press and are flagged as lower-confidence throughout.</p>
     <div class="src">
+      <b>Primary documents for the five names carrying an actual edge</b> — these supersede the aggregator sources below, which is where their figures came from in the first pass:<br>
+      &nbsp;&nbsp;Harmonic Drive Systems (6324.T) — FY2026/3 tanshin and results presentation, TSE / TDnet disclosure<br>
+      &nbsp;&nbsp;Symbotic (SYM) — 10-Q and 8-K earnings release, SEC EDGAR<br>
+      &nbsp;&nbsp;Hesai Group (HSAI) — 6-K quarterly results, SEC EDGAR<br>
+      &nbsp;&nbsp;MP Materials (MP) — 10-Q and 8-K, SEC EDGAR<br>
+      &nbsp;&nbsp;Serve Robotics (SERV) — 10-Q and 8-K, SEC EDGAR<br>
+      <span style="color:var(--ink-3)">The document is named; the specific URL was not resolved in this pass, so every figure above is still carried from the secondary sources below and should be checked against the filing before it is acted on.</span><br>
       Company IR &amp; press releases · SEC filings (8-K, 10-Q) · CSRC / STAR filings · earnings-call transcripts (The Motley Fool, Globe &amp; Mail)<br>
       Specialist press: CNBC · Caixin · Rest of World · Electrek · TechCrunch · Blockworks · The Defiant · Protocol Labs · rareearthexchanges<br>
       Platform &amp; market: NVIDIA Newsroom &amp; Developer · State of Robotics 2026 · KraneShares · Value Add VC<br>
@@ -593,48 +609,63 @@
 /* ---------- data ---------- */
 const COMPANIES = [
   {tk:'6324.T', nm:'Harmonic Drive', cat:'transmission', tier:'A', seg:'Strain-wave reducers',
+   cap:4.01, capd:'$4.01B', stage:'Production', staged:"Component supplier shipping today; the humanoid line is FY27 guidance, not current revenue",
    rev:null, revd:'¥59.6B FY', yoy:7, cash:null, cashd:'—', run:'Component shovel; humanoid ramp FY27',
    val:'FY26 op profit −94%; FY27 guide +142%', risk:'Pricing power vs Chinese reducer makers'},
   {tk:'6268.T', nm:'Nabtesco', cat:'transmission', tier:'A', seg:'RV reducers',
+   cap:3.66, capd:'$3.66B', stage:'Production', staged:"RV-reducer duopolist; humanoid content immaterial so far",
    rev:null, revd:'n/d', yoy:null, cash:null, cashd:'—', run:'Context; RV-reducer duopolist',
    val:'Diversified industrials; humanoids small', risk:'Figures not refreshed this session'},
   {tk:'MP', nm:'MP Materials', cat:'transmission', tier:'A', seg:'Rare-earth magnets',
+   cap:9.91, capd:'$9.91B', stage:'Production', staged:"Magnet output is real and policy-driven; robotics is one end-market among several",
    rev:null, revd:'n/d', yoy:null, cash:null, cashd:'—', run:'Context; US NdFeB localisation',
    val:'DoD-backed; on China control list', risk:'Figures not refreshed; policy-driven'},
   {tk:'HSAI', nm:'Hesai Group', cat:'sensing', tier:'A', seg:'Lidar (ADAS + robotics)',
+   cap:24.25, capd:'$24.25B', stage:'Production', staged:"Q1 2026 lidar shipments 471,723 units, of which 118,282 robotics — volume, not pilots",
    rev:98.7, revd:'$98.7M', yoy:29.6, cash:null, cashd:'—', run:'Profitable; robotics ~25% of units',
    val:'Turned GAAP-positive; GM 39.1%', risk:'Lidar price war; China-listing overhang'},
   {tk:'OUST', nm:'Ouster', cat:'sensing', tier:'C', seg:'Lidar / perception',
+   cap:3.25, capd:'$3.25B', stage:'Production', staged:"Shipping at scale and still loss-making — the volume is not the constraint, the margin is",
    rev:48.6, revd:'$48.6M', yoy:49, cash:null, cashd:'—', run:'Growing; still loss-making',
    val:'GM fell to 43%; net loss $17.5M', risk:'Margin pressure; profitability path'},
   {tk:'CGNX', nm:'Cognex', cat:'sensing', tier:'A', seg:'Machine vision',
+   cap:10.36, capd:'$10.36B', stage:'Production', staged:"Machine-vision incumbent; robotics is embedded in existing factory demand",
    rev:null, revd:'n/d', yoy:null, cash:null, cashd:'—', run:'Context; vision incumbent',
    val:'Profitable; cyclical end-markets', risk:'Figures not refreshed this session'},
   {tk:'6861.T', nm:'Keyence', cat:'sensing', tier:'A', seg:'Sensors & vision',
+   cap:131.87, capd:'$131.87B', stage:'Production', staged:"Factory-automation sensing at scale; humanoid content immaterial",
    rev:null, revd:'n/d', yoy:null, cash:null, cashd:'—', run:'Context; high-margin FA sensing',
    val:'Very profitable; humanoids immaterial', risk:'Figures not refreshed this session'},
   {tk:'6954.T', nm:'Fanuc', cat:'integrator', tier:'A', seg:'Industrial robots & CNC',
+   cap:38.1, capd:'$38.10B', stage:'Production', staged:"Industrial arms in volume production; humanoids a rounding error",
    rev:null, revd:'n/d', yoy:null, cash:null, cashd:'—', run:'Context; arm/FA incumbent',
    val:'Profitable; cyclical; humanoids small', risk:'Figures not refreshed this session'},
   {tk:'6506.T', nm:'Yaskawa', cat:'integrator', tier:'A', seg:'Robots & servos',
+   cap:8.92, capd:'$8.92B', stage:'Production', staged:"Servos and arms in volume production",
    rev:null, revd:'n/d', yoy:null, cash:null, cashd:'—', run:'Context; servo/robot incumbent',
    val:'Profitable; cyclical', risk:'Figures not refreshed this session'},
   {tk:'Unitree', nm:'Unitree Robotics', cat:'humanoid', tier:'C', seg:'Humanoid maker (IPO)',
+   cap:null, capd:'—', stage:'Shipping, unlisted', staged:"Robots ship and the company is profitable — but CSRC-approved is not trading, so there is no price to take",
    rev:null, revd:'¥1.71B 25', yoy:335, cash:null, cashd:'~$618M IPO', run:'CSRC-approved STAR IPO; not yet trading',
    val:'~$6.2B target val; GM 62.9%, profitable', risk:'Humanoid demand binary; listing access'},
   {tk:'9880.HK', nm:'UBTech', cat:'humanoid', tier:'C', seg:'Humanoid maker',
+   cap:5.83, capd:'$5.83B', stage:'Pilot', staged:"Pilot deployments only; revenue does not yet reflect a production programme",
    rev:null, revd:'n/d', yoy:null, cash:null, cashd:'—', run:'Context; listed HK humanoid',
    val:'Loss-making; pilot deployments', risk:'Figures not refreshed; heavy cash burn'},
   {tk:'SERV', nm:'Serve Robotics', cat:'humanoid', tier:'C', seg:'Delivery robots',
+   cap:0.43, capd:'$0.43B', stage:'Early fleet', staged:"~2,000 units and $3.0M in the quarter against $160-170M of opex. A fleet, not yet a business",
    rev:3.0, revd:'$3.0M', yoy:578, cash:197, cashd:'$197M', run:'Fleet ~2,000; FY26 guide $26M',
    val:'Pre-scale; opex $160–170M vs $26M rev', risk:'Cash burn vs revenue; dilution'},
   {tk:'SYM', nm:'Symbotic', cat:'compute', tier:'B', seg:'Warehouse autonomy',
+   cap:25.3, capd:'$25.30B', stage:'Production', staged:"70 systems live against a ~$22.7B backlog — the clearest production evidence in the set",
    rev:676, revd:'$676M', yoy:23, cash:null, cashd:'—', run:'70 systems live; ~$22.7B backlog',
    val:'Turned GAAP-positive; adj EBITDA $78M', risk:'Customer concentration; EPS miss'},
   {tk:'NVDA', nm:'NVIDIA', cat:'compute', tier:'B', seg:'Compute / platform (context)',
+   cap:5456.99, capd:'$5.46tn', stage:'Platform', staged:"Context row. Isaac and Jetson ship; robotics is immaterial to the P&L either way",
    rev:null, revd:'n/d', yoy:null, cash:null, cashd:'—', run:'Isaac / Jetson Thor / Halos',
    val:'Mega-cap; robotics immaterial to P&L', risk:'Not real robotics exposure; AI-capex cycle'},
   {tk:'TSLA', nm:'Tesla', cat:'compute', tier:'B', seg:'Optimus (context)',
+   cap:1342.69, capd:'$1.34tn', stage:'Pre-production', staged:"Optimus output in the low thousands and 2026 volume called \"impossible to predict\" by the company",
    rev:null, revd:'n/d', yoy:null, cash:null, cashd:'—', run:'Fremont Optimus line; output low thousands',
    val:'Mega-cap; Optimus is optionality', risk:'Execution; 2026 volume "impossible to predict"'}
 ];
@@ -663,6 +694,8 @@ function render(){
       '<td class="tk"><span class="tier-dot" style="background:'+TIER_COLOR[c.tier]+'"></span>'+c.tk+'</td>'+
       '<td class="nm">'+c.nm+'</td>'+
       '<td><span class="seglbl">'+c.seg+'</span></td>'+
+      '<td class="num">'+c.capd+'</td>'+
+      '<td class="small" title="'+c.staged.replace(/"/g,'&quot;')+'"><span class="stage stage-'+c.stage.split(/[ ,]/)[0].toLowerCase()+'">'+c.stage+'</span></td>'+
       '<td class="num">'+revTxt+'</td>'+
       '<td class="'+yoyCls+'">'+yoyTxt+'</td>'+
       '<td class="num">'+cashTxt+'</td>'+

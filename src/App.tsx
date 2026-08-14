@@ -68,6 +68,7 @@ const CRYPTO_TABS: Tab[] = [
   { id: 'allocator', label: 'ALLOCATOR', kind: 'allocator' },
   { id: 'assets', label: 'ASSETS', kind: 'embed', src: 'dashboards/crypto.html', title: 'Crypto and innovation research dashboard' , vintage: '2026-08-12', status: 'confirmed' },
   { id: 'vc', label: 'VC RESEARCH', kind: 'embed', src: 'dashboards/crypto-vc.html', title: 'Venture capital research — who funds what in crypto' , vintage: '2026-08-13', status: 'confirmed' },
+  { id: 'builder', label: 'BUILDER', kind: 'embed', src: 'dashboards/portfolio.html', title: 'Portfolio builder — screen, cluster and weight against the bitcoin benchmark', vintage: '2026-08-15', status: 'confirmed' },
 ]
 
 

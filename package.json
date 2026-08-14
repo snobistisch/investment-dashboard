@@ -10,7 +10,8 @@
     "fetch-market-data": "jiti scripts/fetch-market-data.ts",
     "lint": "oxlint",
     "preview": "vite preview",
-    "fetch-risk-rating": "jiti scripts/fetch-risk-rating.ts"
+    "fetch-risk-rating": "jiti scripts/fetch-risk-rating.ts",
+    "build-portfolio": "jiti scripts/build-portfolio.ts"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.2",

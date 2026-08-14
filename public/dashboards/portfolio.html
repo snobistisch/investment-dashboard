@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio Builder — Screen, Cluster, Weight</title>
+<style>
+  :root{
+    /* terminal theme — mirrors src/index.css tokens */
+    --paper:#000000; --surface:#0a0a0a; --panel:#111111;
+    --ink:#d6d6d6; --ink-2:#a8a8a8; --ink-3:#8c8c8c;
+    --line:#262626; --line-2:#1c1c1c;
+    --viridian:#00d264; --viridian-soft:#00b457; --viridian-wash:#04150b;
+    --ochre:#fb8b1e; --ochre-wash:#180e02;
+    --slate:#4dd0e1;
+    /* dark title band */
+    --hero:#0a0a0a; --hero-2:#101010; --hero-ink:#d6d6d6; --hero-mut:#8c8c8c; --hero-accent:#fb8b1e;
+    /* type */
+    --serif:ui-monospace,'SF Mono','Cascadia Code','JetBrains Mono','Roboto Mono',Menlo,Consolas,monospace;
+    --sans:ui-monospace,'SF Mono','Cascadia Code','JetBrains Mono','Roboto Mono',Menlo,Consolas,monospace;
+    --mono:ui-monospace,'SF Mono','Cascadia Code','JetBrains Mono','Roboto Mono',Menlo,Consolas,monospace;
+    --maxw:1140px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--sans); font-size:17px; line-height:1.72;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px}
+  p{margin:0 0 1.05em}
+  a{color:var(--viridian); text-decoration:none; border-bottom:1px solid var(--line)}
+  a:hover{border-color:var(--viridian)}
+  .mono{font-family:var(--mono)}
+  .eyebrow{font-family:var(--mono); font-size:.7rem; letter-spacing:.18em; text-transform:uppercase; color:var(--viridian); font-weight:600}
+
+  /* ---------- top nav ---------- */
+  nav.top{position:sticky; top:0; z-index:50; background:rgba(0,0,0,.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--line)}
+  nav.top .wrap{display:flex; align-items:center; gap:22px; height:54px}
+  nav.top .brand{font-family:var(--mono); font-size:.74rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink); font-weight:600; white-space:nowrap}
+  nav.top .brand span{color:var(--viridian)}
+  nav.top .links{display:flex; gap:20px; margin-left:auto; overflow-x:auto}
+  nav.top .links a{font-family:var(--mono); font-size:.72rem; letter-spacing:.04em; color:var(--ink-2); border:none; text-transform:uppercase; white-space:nowrap; padding:4px 0; border-bottom:2px solid transparent}
+  nav.top .links a:hover{color:var(--ink)}
+  nav.top .links a.active{color:var(--viridian); border-bottom-color:var(--viridian)}
+  @media (max-width:820px){nav.top .links{display:none}}
+
+  /* ---------- hero ---------- */
+  header.hero{background:linear-gradient(160deg,var(--hero) 0%,var(--hero-2) 140%); color:var(--hero-ink); padding:64px 0 46px; border-bottom:3px solid var(--viridian)}
+  header.hero .kicker{font-family:var(--mono); font-size:.72rem; letter-spacing:.2em; text-transform:uppercase; color:var(--hero-accent); margin-bottom:22px}
+  header.hero h1{font-family:var(--serif); font-weight:600; font-size:clamp(2.2rem,5.4vw,3.5rem); line-height:1.04; letter-spacing:-.01em; margin:0 0 20px; max-width:18ch}
+  header.hero .lede{font-family:var(--serif); font-size:clamp(1.05rem,2.1vw,1.28rem); line-height:1.55; color:#a8a8a8; max-width:62ch; margin:0 0 30px}
+  header.hero .lede b{color:#fff; font-weight:600}
+  .meta-row{display:flex; flex-wrap:wrap; gap:26px 40px; padding-top:26px; border-top:1px solid rgba(255,255,255,.14)}
+  .meta-row .m .k{font-family:var(--mono); font-size:.64rem; letter-spacing:.16em; text-transform:uppercase; color:var(--hero-mut)}
+  .meta-row .m .v{font-family:var(--mono); font-size:1.02rem; color:#fff; margin-top:5px}
+
+  /* ---------- spectrum signature ---------- */
+  .spectrum{margin:38px 0 6px}
+  .spectrum .head{display:flex; justify-content:space-between; font-family:var(--mono); font-size:.66rem; letter-spacing:.14em; text-transform:uppercase; color:var(--hero-mut); margin-bottom:12px}
+  .spectrum svg{width:100%; height:132px; display:block; overflow:visible}
+  .spectrum .cap{font-family:var(--mono); font-size:.66rem; color:var(--hero-mut); margin-top:6px; text-align:center; letter-spacing:.04em}
+
+  /* ---------- section scaffold ---------- */
+  section{padding:66px 0; border-bottom:1px solid var(--line)}
+  .sec-head{display:flex; align-items:baseline; gap:16px; margin-bottom:28px}
+  .sec-num{font-family:var(--mono); font-size:.8rem; color:var(--viridian-soft); font-weight:600; padding-top:6px}
+  h2{font-family:var(--serif); font-weight:600; font-size:clamp(1.55rem,3vw,2.1rem); line-height:1.12; letter-spacing:-.01em; margin:0; max-width:24ch}
+  h3{font-family:var(--serif); font-weight:600; font-size:1.24rem; line-height:1.2; margin:0 0 .5em}
+  .prose{max-width:70ch}
+  .prose.wide{max-width:82ch}
+  .lead-p{font-size:1.12rem; line-height:1.62}
+  .lead-p b{color:var(--ink); font-weight:600}
+
+  /* callout / not-advice */
+  .note{background:var(--ochre-wash); border-left:3px solid var(--ochre); padding:16px 20px; border-radius:0; font-size:.96rem; color:#e8b06a; max-width:78ch}
+  .note b{color:#fb8b1e}
+
+  /* ---------- three risk profiles ---------- */
+  .profiles{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:30px}
+  .pf{background:var(--surface); border:1px solid var(--line); border-radius:0; padding:22px 22px 24px; border-top:3px solid var(--tier)}
+  .pf .tier{font-family:var(--mono); font-size:.66rem; letter-spacing:.12em; text-transform:uppercase; color:var(--tier); font-weight:600}
+  .pf h3{font-size:1.08rem; margin:10px 0 8px}
+  .pf p{font-size:.94rem; line-height:1.6; color:var(--ink-2); margin:0 0 12px}
+  .pf .names{font-family:var(--mono); font-size:.76rem; color:var(--ink); letter-spacing:.02em; border-top:1px solid var(--line-2); padding-top:11px}
+  .pf.a{--tier:#4dd0e1} .pf.b{--tier:#00d264} .pf.c{--tier:#fb8b1e}
+  @media (max-width:820px){.profiles{grid-template-columns:1fr}}
+
+  /* ---------- kpi strip ---------- */
+  .kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:0; border:1px solid var(--line); border-radius:0; overflow:hidden; background:var(--surface); margin-top:8px}
+  .kpi{padding:22px 20px; border-right:1px solid var(--line-2)}
+  .kpi:last-child{border-right:none}
+  .kpi .n{font-family:var(--mono); font-size:1.9rem; font-weight:600; color:var(--viridian); line-height:1}
+  .kpi .l{font-size:.82rem; color:var(--ink-2); margin-top:8px; line-height:1.35}
+  @media (max-width:820px){.kpis{grid-template-columns:1fr 1fr} .kpi{border-bottom:1px solid var(--line-2)}}
+
+  /* ---------- timeline ---------- */
+  .timeline{margin-top:26px; max-width:80ch}
+  .tl{display:grid; grid-template-columns:120px 1fr; gap:20px; padding:16px 0; border-top:1px solid var(--line)}
+  .tl:last-child{border-bottom:1px solid var(--line)}
+  .tl .when{font-family:var(--mono); font-size:.8rem; color:var(--viridian); font-weight:600; letter-spacing:.02em}
+  .tl .what{font-size:.98rem; line-height:1.55}
+  .tl .what b{color:var(--ink)}
+  @media (max-width:560px){.tl{grid-template-columns:1fr; gap:4px}}
+
+  /* ---------- segmentation grid ---------- */
+  .segs{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:26px}
+  .seg{background:var(--surface); border:1px solid var(--line); border-radius:0; padding:18px 18px 20px}
+  .seg .lbl{font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--viridian-soft); font-weight:600}
+  .seg h3{font-size:1rem; margin:8px 0 7px}
+  .seg p{font-size:.9rem; color:var(--ink-2); line-height:1.55; margin:0}
+  .seg .tk{font-family:var(--mono); font-size:.74rem; color:var(--ink); margin-top:10px; letter-spacing:.02em}
+  @media (max-width:820px){.segs{grid-template-columns:1fr 1fr}}
+  @media (max-width:560px){.segs{grid-template-columns:1fr}}
+
+  /* ---------- deep dive cards ---------- */
+  .dd{background:var(--surface); border:1px solid var(--line); border-radius:0; padding:30px 30px 28px; margin-bottom:22px}
+  .dd .top{display:flex; align-items:flex-start; gap:16px; flex-wrap:wrap; margin-bottom:6px}
+  .dd .tk{font-family:var(--mono); font-size:1rem; font-weight:600; color:#000; background:var(--viridian); padding:5px 10px; border-radius:0; letter-spacing:.03em}
+  .dd .nm{font-family:var(--serif); font-size:1.4rem; font-weight:600; line-height:1.1; align-self:center}
+  .dd .cat{font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3); border:1px solid var(--line); border-radius:0; padding:4px 11px; align-self:center; margin-left:auto}
+  .stats{display:grid; grid-template-columns:repeat(5,1fr); gap:0; border-top:1px solid var(--line-2); border-bottom:1px solid var(--line-2); margin:18px 0 20px}
+  .stat{padding:14px 14px 14px 0; border-right:1px solid var(--line-2)}
+  .stat:last-child{border-right:none; padding-right:0}
+  .stat .k{font-family:var(--mono); font-size:.6rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3)}
+  .stat .v{font-family:var(--mono); font-size:1.02rem; font-weight:600; color:var(--ink); margin-top:6px; line-height:1.15}
+  .stat .v.pos{color:var(--viridian)} .stat .v.neg{color:var(--ochre)}
+  .dd .body{max-width:74ch}
+  .dd .body p{font-size:.99rem; line-height:1.68}
+  .dd .body p:last-child{margin-bottom:0}
+  .dd .body .lab{font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--viridian-soft); font-weight:600; display:block; margin-bottom:4px}
+  .bar{height:6px; background:var(--panel); border-radius:0; overflow:hidden; margin-top:16px; max-width:74ch}
+  .bar > i{display:block; height:100%; background:var(--viridian-soft); border-radius:0; width:0; transition:width 1.1s cubic-bezier(.2,.7,.2,1)}
+  .bar-cap{font-family:var(--mono); font-size:.64rem; color:var(--ink-3); margin-top:6px; letter-spacing:.03em}
+  @media (max-width:760px){.stats{grid-template-columns:1fr 1fr 1fr} .stat{border-bottom:1px solid var(--line-2)} .dd{padding:24px 20px}}
+
+  /* ---------- table ---------- */
+  .filters{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 20px}
+  .filters button{font-family:var(--mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-2); background:var(--surface); border:1px solid var(--line); border-radius:0; padding:7px 14px; cursor:pointer; transition:all .15s}
+  .filters button:hover{border-color:var(--viridian-soft); color:var(--ink)}
+  .filters button.on{background:var(--viridian); color:#000; border-color:var(--viridian)}
+  .tbl-scroll{overflow-x:auto; border:1px solid var(--line); border-radius:0; background:var(--surface)}
+  table{border-collapse:collapse; width:100%; min-width:1480px; font-size:.86rem}
+  thead th{font-family:var(--mono); font-size:.64rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-2); text-align:left; padding:15px 12px; border-bottom:2px solid var(--line); background:var(--panel); cursor:pointer; user-select:none; white-space:nowrap; position:sticky; top:0}
+  thead th:hover{color:var(--viridian)}
+  thead th .ar{opacity:.35; margin-left:5px}
+  thead th.sorted .ar{opacity:1; color:var(--viridian)}
+  tbody td{padding:14px 12px; border-bottom:1px solid var(--line-2); vertical-align:top; line-height:1.45}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:var(--viridian-wash)}
+  td.tk{font-family:var(--mono); font-weight:600; color:var(--viridian); white-space:nowrap}
+  td.nm{font-weight:600; color:var(--ink); white-space:nowrap}
+  td .seglbl{font-family:var(--mono); font-size:.68rem; color:var(--ink-2); letter-spacing:.02em}
+  td.num{font-family:var(--mono); white-space:nowrap}
+  td.num.pos{color:var(--viridian)} td.num.neg{color:var(--ochre)}
+  td.num.bold{font-weight:600; text-align:right}
+  td.rk{font-family:var(--mono); color:var(--ink-3); text-align:right; white-space:nowrap}
+  td.small{font-size:.8rem; color:var(--ink-2); max-width:34ch; min-width:26ch}
+  td.scen{font-family:var(--mono); font-size:.72rem; color:var(--ink-2); white-space:nowrap; line-height:1.7}
+  td.scen b{color:var(--ink-3); font-weight:400; display:inline-block; width:4ch}
+  td.scen .up{color:var(--viridian)} td.scen .dn{color:var(--ochre)}
+  .tier-dot{display:inline-block; width:8px; height:8px; border-radius:0; margin-right:7px; vertical-align:middle}
+  .table-note{font-family:var(--mono); font-size:.66rem; color:var(--ink-3); margin-top:12px; letter-spacing:.02em; line-height:1.8}
+
+  /* ---------- EV method + scatter ---------- */
+  .method{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:26px}
+  .mc{background:var(--surface); border:1px solid var(--line); border-radius:0; padding:22px 24px}
+  .mc .lbl{font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--viridian-soft); font-weight:600; display:block; margin-bottom:8px}
+  .mc p{font-size:.92rem; line-height:1.6; color:var(--ink-2); margin:0 0 10px}
+  .mc p:last-child{margin-bottom:0}
+  .mc code{font-family:var(--mono); font-size:.84rem; color:var(--ink); background:var(--panel); padding:2px 6px}
+  .formula{font-family:var(--mono); font-size:.84rem; color:var(--ink); background:var(--panel); border-left:2px solid var(--viridian-soft); padding:12px 14px; margin:12px 0; line-height:1.7; overflow-x:auto}
+  @media (max-width:820px){.method{grid-template-columns:1fr}}
+  .scatter{margin-top:28px; background:var(--surface); border:1px solid var(--line); padding:22px 24px 14px}
+  .scatter .head{display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; font-family:var(--mono); font-size:.66rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3); margin-bottom:14px}
+  .scatter svg{width:100%; height:420px; display:block; overflow:visible}
+  .scatter .cap{font-family:var(--mono); font-size:.66rem; color:var(--ink-3); margin-top:10px; letter-spacing:.03em; line-height:1.7}
+
+  /* ---------- hypotheses ---------- */
+  .hyps{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:26px}
+  .hyp{background:var(--surface); border:1px solid var(--line); border-radius:0; padding:24px 24px 22px}
+  .hyp .hh{display:flex; align-items:center; gap:10px; margin-bottom:12px}
+  .hyp .id{font-family:var(--mono); font-size:.72rem; font-weight:600; color:#000; background:var(--ink); border-radius:0; padding:3px 8px}
+  .hyp h3{font-size:1.1rem; margin:0}
+  .hyp p{font-size:.93rem; line-height:1.6; color:var(--ink-2); margin:0 0 14px}
+  .conf{margin:0 0 12px}
+  .conf .cl{display:flex; justify-content:space-between; font-family:var(--mono); font-size:.64rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); margin-bottom:6px}
+  .conf .cl b{color:var(--ink)}
+  .conf .track{height:7px; background:var(--panel); border-radius:0; overflow:hidden}
+  .conf .track > i{display:block; height:100%; width:0; border-radius:0; transition:width 1.1s cubic-bezier(.2,.7,.2,1)}
+  .upd{border-top:1px dashed var(--line); padding-top:11px; font-size:.86rem; color:var(--ink-2)}
+  .upd .lab{font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:var(--viridian-soft); font-weight:600; display:block; margin-bottom:3px}
+  @media (max-width:820px){.hyps{grid-template-columns:1fr}}
+
+  /* risks */
+  .riskgrid{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:24px}
+  .risk{background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--ochre); border-radius:0; padding:18px 20px}
+  .risk h3{font-size:1rem; margin:0 0 6px}
+  .risk p{font-size:.92rem; color:var(--ink-2); line-height:1.55; margin:0}
+  .risk .fals{display:block; margin-top:10px; padding-top:9px; border-top:1px dashed var(--line); font-family:var(--mono); font-size:.74rem; color:var(--ink-3); line-height:1.6}
+  .risk .fals b{color:var(--ochre); font-weight:600}
+  @media (max-width:820px){.riskgrid{grid-template-columns:1fr}}
+
+  /* competition vs complementarity */
+  .vs{display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:26px}
+  .vs .col{background:var(--surface); border:1px solid var(--line); border-radius:0; padding:24px}
+  .vs .col.ss{border-top:3px solid var(--ochre)} .vs .col.th{border-top:3px solid var(--viridian)}
+  .vs .col .tag{font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; font-weight:600}
+  .vs .col.th .tag{color:var(--viridian)} .vs .col.ss .tag{color:var(--ochre)}
+  .vs .col h3{font-size:1.12rem; margin:8px 0 10px}
+  .vs .col p{font-size:.93rem; line-height:1.6; color:var(--ink-2)}
+  .mini{width:100%; border-collapse:collapse; margin-top:8px; font-size:.82rem; min-width:0}
+  .mini th{font-family:var(--mono); font-size:.6rem; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3); text-align:left; padding:8px 8px 8px 0; border-bottom:1px solid var(--line)}
+  .mini td{padding:9px 8px 9px 0; border-bottom:1px solid var(--line-2); vertical-align:top; line-height:1.4}
+  .mini td.k{font-family:var(--mono); font-weight:600; color:var(--viridian)}
+  @media (max-width:820px){.vs{grid-template-columns:1fr}}
+
+  /* synthesis */
+  .synth{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:26px}
+  .sc{background:var(--surface); border:1px solid var(--line); border-radius:0; padding:22px}
+  .sc .bet{font-family:var(--mono); font-size:.64rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3); font-weight:600}
+  .sc h3{font-size:1.02rem; margin:8px 0 10px; color:var(--viridian)}
+  .sc .picks{font-family:var(--mono); font-size:.82rem; color:var(--ink); line-height:1.7; letter-spacing:.02em}
+  .sc p{font-size:.88rem; color:var(--ink-2); line-height:1.55; margin:10px 0 0}
+  @media (max-width:820px){.synth{grid-template-columns:1fr}}
+
+  /* footer */
+  footer{background:var(--hero); color:var(--hero-mut); padding:48px 0 60px}
+  footer h3{font-family:var(--mono); font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; color:var(--hero-accent); margin:0 0 14px}
+  footer p{font-size:.86rem; line-height:1.6; max-width:80ch; color:#8c8c8c; margin:0 0 12px}
+  footer .src{font-family:var(--mono); font-size:.76rem; line-height:1.9; color:var(--hero-mut)}
+  footer .disc{border-top:1px solid rgba(255,255,255,.12); margin-top:26px; padding-top:22px; font-size:.8rem; color:var(--hero-mut)}
+
+  .reveal{opacity:0; transform:translateY(14px); transition:opacity .6s ease, transform .6s ease}
+  .reveal.in{opacity:1; transform:none}
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1; transform:none; transition:none} .bar>i,.conf .track>i{transition:none}}
+  :focus-visible{outline:2px solid var(--viridian); outline-offset:2px}
+
+*{scrollbar-color:#333333 #0a0a0a}
+
+  /* ---------- vintage badge ----------
+     Every page in this set is a frozen snapshot and none of them said so. The
+     date below is the page's own claim about itself; the age is computed
+     against the reader's clock, so the badge cannot go quietly out of date the
+     way a hardcoded "recent" would. */
+  .vintage{border-bottom:1px solid var(--line); background:var(--panel)}
+  .vintage .wrap{display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 14px; padding:9px 0; font-family:var(--mono); font-size:.7rem; letter-spacing:.04em}
+  .vintage .lbl{color:var(--ink-3); text-transform:uppercase; letter-spacing:.14em}
+  .vintage .src{color:var(--ink-2)}
+  .vintage .age{color:var(--ink-2)}
+  .vintage.stale{border-bottom-color:#fb8b1e}
+  .vintage.stale .age{color:#fb8b1e; font-weight:600}
+</style>
+<style>
+  /* ---------- builder-specific ---------- */
+  .ctl{display:flex; flex-wrap:wrap; gap:26px 34px; align-items:flex-end; border:1px solid var(--line); background:var(--panel); padding:18px 20px; margin-top:8px}
+  .ctl .f{display:flex; flex-direction:column; gap:6px}
+  .ctl label{font-family:var(--mono); font-size:.62rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-3)}
+  .ctl input[type=range]{width:210px; accent-color:var(--ochre)}
+  .ctl .val{font-family:var(--mono); font-size:1.5rem; color:var(--ink); line-height:1}
+  .ctl .hint{font-size:.72rem; color:var(--ink-3); max-width:34ch; line-height:1.5}
+  .lens{display:flex; gap:0; border:1px solid var(--line)}
+  .lens button{font-family:var(--mono); font-size:.66rem; letter-spacing:.08em; text-transform:uppercase; background:transparent; color:var(--ink-3); border:0; border-right:1px solid var(--line); padding:8px 12px; cursor:pointer}
+  .lens button:last-child{border-right:0}
+  .lens button.on{background:var(--ochre-wash); color:var(--ochre)}
+  .wbar{height:8px; background:var(--line-2); position:relative; min-width:70px}
+  .wbar > i{display:block; height:100%; background:var(--viridian-soft)}
+  .wbar.risk > i{background:var(--ochre)}
+  .cl-chip{font-family:var(--mono); font-size:.6rem; letter-spacing:.07em; text-transform:uppercase; border:1px solid var(--line); padding:1px 5px; color:var(--ink-3); white-space:nowrap}
+  .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:1px; background:var(--line); border:1px solid var(--line); margin-top:8px}
+  .card{background:var(--paper); padding:16px 18px}
+  .card .n{font-family:var(--mono); font-size:1.5rem; color:var(--ink); line-height:1.15}
+  .card .l{font-size:.74rem; color:var(--ink-3); margin-top:6px; line-height:1.5}
+  .excl{font-size:.78rem; color:var(--ink-3); line-height:1.7}
+  .excl b{color:var(--ink-2)}
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="wrap">
+    <div class="brand">Portfolio <span>/</span> Builder</div>
+    <div class="links">
+      <a href="#objective">Objective</a>
+      <a href="#screen">Screen</a>
+      <a href="#clusters">Clusters</a>
+      <a href="#build">Build</a>
+      <a href="#bench">Benchmarks</a>
+      <a href="#limits">Limits</a>
+    </div>
+  </div>
+</nav>
+
+<div class="vintage" id="vintageBadge" data-vintage="2026-08-15" data-label="price history to 15 August 2026">
+  <div class="wrap">
+    <span class="lbl">Data vintage</span>
+    <span class="src"></span>
+    <span class="age"></span>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">Portfolio construction · measured against bitcoin</div>
+    <h1>Picking is a screen. Balancing is a matrix. They are not the same job.</h1>
+    <p class="lede">This tool does not forecast returns, because the research says nobody can forecast them well enough for it to help. It does the two things that <em>are</em> measurable: it removes assets that fail a hard screen, and it weights what survives so that no single name and no single cluster decides the outcome alone. <b>Bitcoin is the benchmark and is never a position</b> — every number on this page is measured relative to it.</p>
+    <div class="meta-row">
+      <div class="m"><div class="k">Universe</div><div class="v" id="mUniverse">—</div></div>
+      <div class="m"><div class="k">Clusters found</div><div class="v" id="mClusters">—</div></div>
+      <div class="m"><div class="k">Median active corr.</div><div class="v" id="mCorr">—</div></div>
+      <div class="m"><div class="k">Status</div><div class="v">Not investment advice</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- 1 · OBJECTIVE -->
+<section id="objective">
+  <div class="wrap">
+    <div class="sec-head"><div class="sec-num">01</div><h2>The objective decides the mathematics, and this objective is unusual</h2></div>
+    <div class="prose wide">
+      <p class="lead-p">Most portfolio tools minimise volatility. That is the correct answer to a question this book is not asking. The stated objective here is to <b>beat bitcoin</b>, with a book that is allowed to be risky. Minimising volatility against that objective is a well-solved wrong problem: the least volatile assets in this universe are the most bitcoin-like, so weighting on absolute volatility converges on bitcoin's return minus costs.</p>
+      <p>So every statistic here is <b>active</b> — measured against the benchmark rather than against zero:</p>
+      <div class="formula">active return<sub>i,t</sub> = log r<sub>i,t</sub> − log r<sub>BTC,t</sub><br>
+      active volatility<sub>i</sub> = σ(active return<sub>i</sub>) · √365<br>
+      active correlation<sub>i,j</sub> = corr( active return<sub>i</sub> , active return<sub>j</sub> )</div>
+      <p><b>That changes what the numbers mean.</b> Active volatility is how far a name can travel away from bitcoin in a year — against this objective it is the resource, not the danger. A name with almost no active volatility is a bitcoin tracker with extra steps and cannot beat it. And active correlation answers the question the book has never been able to ask: <em>are these two names the same deviation from bitcoin</em>, rather than the useless one, <em>do they both go up when the market goes up</em>. In crypto everything goes up when the market goes up. That is not information.</p>
+    </div>
+    <div class="prose wide" style="margin-top:26px">
+      <p class="lead-p" style="font-size:1.02rem">Why there is no expected-return term anywhere in the weighting:</p>
+      <p>DeMiguel, Garlappi and Uppal tested fourteen optimisation models against simply splitting capital equally, across seven datasets. None beat equal weighting consistently out of sample, and the estimation window they compute as necessary for mean-variance to win is <b>around 3,000 months for 25 assets and 6,000 for 50</b> — two to five centuries. The Kelly criterion has the same disease in a different coat: research on practical implementation finds a hundred trades insufficient, a thousand insufficient, and roughly <b>ten thousand</b> as the point where full Kelly earns its theoretical advantage.</p>
+      <p style="margin-bottom:0">Expected return is the hardest input to estimate and the one every optimiser is most sensitive to. Volatility and correlation are estimable from a year of daily closes, and this repository has already measured them. <b>So the weighting uses only what can be measured, and the judgement lives entirely in the screen</b> — where it is visible, arguable, and cannot silently size a position.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 2 · SCREEN -->
+<section id="screen">
+  <div class="wrap">
+    <div class="sec-head"><div class="sec-num">02</div><h2>The screen: hard exclusions with a stated reason, not a score</h2></div>
+    <div class="prose wide"><p class="lead-p">A score lets a good number hide a fatal one. These are gates: fail one and the asset is out, with the reason printed next to it. Move the sliders below and the screen re-runs.</p></div>
+    <div class="ctl">
+      <div class="f">
+        <label for="minVol">Minimum daily volume</label>
+        <input type="range" id="minVol" min="0" max="20" step="0.5" value="1">
+        <div class="val"><span id="minVolV">$1.0M</span></div>
+        <div class="hint">Liquidity is the one risk you meet on the way out. Below a million a day the exit is the position.</div>
+      </div>
+      <div class="f">
+        <label for="maxFdv">Maximum FDV / cap</label>
+        <input type="range" id="maxFdv" min="1" max="9" step="0.25" value="3">
+        <div class="val"><span id="maxFdvV">3.00×</span></div>
+        <div class="hint">The float rule this dashboard is built on. Above 3× most of the supply has yet to be sold into you.</div>
+      </div>
+      <div class="f">
+        <label for="minDays">Minimum history</label>
+        <input type="range" id="minDays" min="30" max="366" step="1" value="90">
+        <div class="val"><span id="minDaysV">90 d</span></div>
+        <div class="hint">Below ninety overlapping days a correlation is noise wearing a decimal point.</div>
+      </div>
+    </div>
+    <div id="screenOut" style="margin-top:22px"></div>
+  </div>
+</section>
+
+<!-- 3 · CLUSTERS -->
+<section id="clusters">
+  <div class="wrap">
+    <div class="sec-head"><div class="sec-num">03</div><h2>How many bets are actually in here</h2></div>
+    <div class="prose wide">
+      <p class="lead-p">The repository has claimed for months that seven tabs are three bets. This is the first time it is computed rather than asserted — and computed on <em>active</em> correlation, so shared beta to the market does not count as similarity.</p>
+      <p>Names are grouped by average linkage on the distance <span class="mono">√(0.5·(1−ρ))</span>, cut where active correlation exceeds <span class="mono" id="clCut">0.6</span>. A pair with too little overlapping history is treated as maximally distant, so a recent listing sits in its own cluster rather than being merged on no evidence.</p>
+    </div>
+    <div id="clusterOut" style="margin-top:8px"></div>
+  </div>
+</section>
+
+<!-- 4 · BUILD -->
+<section id="build">
+  <div class="wrap">
+    <div class="sec-head"><div class="sec-num">04</div><h2>The builder: one dial for concentration, one for what you believe</h2></div>
+    <div class="prose wide">
+      <p class="lead-p">Two choices, and the tool does the rest. <b>How many positions</b> is the zero-or-hero dial — fewer names means each one has a bigger say in whether you beat bitcoin. <b>Which lens</b> decides who gets picked, and the three disagree on purpose.</p>
+    </div>
+    <div class="ctl">
+      <div class="f">
+        <label for="nPos">Positions</label>
+        <input type="range" id="nPos" min="3" max="20" step="1" value="8">
+        <div class="val"><span id="nPosV">8</span></div>
+        <div class="hint">Fewer names is not a mistake here — it is the stated preference, priced honestly below.</div>
+      </div>
+      <div class="f">
+        <label>Selection lens</label>
+        <div class="lens" id="lens">
+          <button data-l="ev" class="on">Research EV</button>
+          <button data-l="mom">Beat BTC 1y</button>
+          <button data-l="fee">Fee line</button>
+        </div>
+        <div class="hint" id="lensHint">The book's own expected-value ranking. Subjective probabilities, visible on the Assets tab.</div>
+      </div>
+      <div class="f">
+        <label for="cap">Per-name ceiling</label>
+        <input type="range" id="cap" min="10" max="60" step="1" value="30">
+        <div class="val"><span id="capV">30%</span></div>
+        <div class="hint">Applied after weighting. A cluster may not exceed twice this.</div>
+      </div>
+    </div>
+    <div class="cards" id="summary"></div>
+    <div class="prose wide" style="margin-top:26px">
+      <p class="lead-p" style="font-size:1.02rem">Weights are equal <em>active-risk</em> contribution, not equal money:</p>
+      <div class="formula">Σ<sub>ij</sub> = ρ<sub>ij</sub> · σ<sub>i</sub> · σ<sub>j</sub> &nbsp;&nbsp;(active covariance)<br>
+      solve w ≥ 0, Σw = 1 such that w<sub>i</sub>·(Σw)<sub>i</sub> is equal for all i<br>
+      then apply the per-name and per-cluster ceilings and renormalise</div>
+      <p style="margin-bottom:0">Equal money gives a quiet name and a violent one the same say in the outcome, which is not balance — it is arithmetic mistaken for balance. Equal active-risk contribution means every position has the same shot at deciding whether this book beats bitcoin. That is the honest reading of "balanced" for a benchmark-relative objective.</p>
+    </div>
+    <div id="buildOut" style="margin-top:22px"></div>
+  </div>
+</section>
+
+<!-- 5 · BENCHMARKS -->
+<section id="bench">
+  <div class="wrap">
+    <div class="sec-head"><div class="sec-num">05</div><h2>Does the machinery earn its complexity?</h2></div>
+    <div class="prose wide"><p class="lead-p">The same names, weighted three ways. If the clustering and the risk parity do not beat splitting the money equally, they are decoration and this table says so.</p></div>
+    <div id="benchOut" style="margin-top:8px"></div>
+    <p style="margin-top:18px; font-size:.9rem; color:var(--ink-2); max-width:84ch"><b>Read this as a risk statement, not a return statement.</b> Every figure is computed from measured volatility and correlation. None of it says which portfolio will earn more — that depends on returns nobody here can forecast. What it does say is how concentrated each version's <em>risk</em> is, and whether the largest position quietly decides the result.</p>
+  </div>
+</section>
+
+<!-- 6 · LIMITS -->
+<section id="limits">
+  <div class="wrap">
+    <div class="sec-head"><div class="sec-num">06</div><h2>What this tool cannot do, stated before you use it</h2></div>
+    <div class="segs">
+      <div class="seg"><div class="lbl">Horizon</div><h3>One year of history is one regime</h3><p>Every volatility and correlation here is measured over a single year that contains one large drawdown. Correlations rise in crashes — that is their defining inconvenience — so the diversification measured in calm is an overestimate of the diversification available when it matters.</p></div>
+      <div class="seg"><div class="lbl">Rebalancing</div><h3>These weights drift the day after you set them</h3><p>The stated approach is to rebalance by hand when the market moves. Drift bands are shown per position for that reason: a weight that has drifted past its band is where the book stopped being the book you chose. Nothing here assumes a schedule.</p></div>
+      <div class="seg"><div class="lbl">Costs</div><h3>Spread and slippage are not modelled</h3><p>The screen removes the least liquid names, which is the blunt version of a cost model. It is not a cost model. At the volumes at the bottom of this universe, the spread is a meaningful fraction of a year's edge.</p></div>
+      <div class="seg"><div class="lbl">Selection</div><h3>The lens is a judgement and stays one</h3><p>The weighting is measured; the picking is not. Research EV rests on subjective probabilities, momentum on the assumption that the last year says something about the next, the fee lens on the assumption that revenue reaches holders. Switch between them and watch the book change — that disagreement is the most useful thing on this page.</p></div>
+      <div class="seg"><div class="lbl">No forecast</div><h3>There is no expected return anywhere</h3><p>Deliberately. Every number is a risk number. A tool that told you what these assets will return would be lying with more decimals.</p></div>
+      <div class="seg"><div class="lbl">Benchmark</div><h3>Beating bitcoin is not the same as making money</h3><p>Everything is relative. A book that beats bitcoin by twenty points in a year bitcoin falls by half has done its job and lost you money. That is what choosing a benchmark means and it is worth deciding on purpose.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <h3>Sources &amp; method</h3>
+    <p>Volatility and correlation are computed from one year of daily USD closes per asset, fetched from the CoinGecko public API by <span class="mono">scripts/fetch-risk-rating.ts</span> and stored in <span class="mono">public/data/crypto-history.json</span>. Active statistics, clustering and the correlation matrix are computed by <span class="mono">scripts/build-portfolio.ts</span> and written into this page as a generated block — the page fetches nothing at runtime. Screen inputs (float, FDV/cap, volume, fees) and the selection lenses come from the Assets tab's own ranking table; the risk rating R comes from <span class="mono">public/data/risk-rating.json</span>.</p>
+    <div class="src">
+      Method sources: DeMiguel, Garlappi &amp; Uppal, <i>Optimal Versus Naive Diversification</i>, Review of Financial Studies 22(5), 2009 · Busseti, Ryu &amp; Boyd, <i>Risk-Constrained Kelly Gambling</i>, 2016 · López de Prado, <i>Building Diversified Portfolios that Outperform Out of Sample</i>, 2016<br>
+      Weighting is equal active-risk contribution with per-name and per-cluster ceilings. No expected-return input is used anywhere in the weighting.
+    </div>
+    <div class="disc">
+      <b>Not investment advice.</b> This is a research tool that reorganises measured risk statistics. It does not forecast returns, has no track record, and its selection lenses rest on assumptions stated on this page. Verify every figure before acting on it.
+    </div>
+  </div>
+</footer>
+
+<script>
+/* PORTFOLIO-DATA-START — generated by scripts/build-portfolio.ts, do not edit by hand.
+   Active statistics against BTC and the active-return correlation
+   matrix, measured from public/data/crypto-history.json. */
+const PORTFOLIO = {"schemaVersion":1,"builtAt":"2026-08-14T22:22:27.479Z","benchmark":"BTC","historyFetchedAt":"2026-08-14T22:22:15.513Z","riskFetchedAt":"2026-08-14T22:22:15.511Z","method":{"note":"All statistics are relative to the benchmark: daily active return = asset log return minus benchmark log return on the same day. Correlation is of active returns, so it answers \"are these the same deviation from bitcoin\", not \"do they both go up when the market goes up\".","minOverlapDays":90,"daysPerYear":365,"clusterCorrelation":0.6,"linkage":"average, on distance sqrt(0.5*(1-rho))"},"stats":{"assets":39,"medianPairwiseActiveCorrelation":0.1338,"clusters":35,"pairsWithTooLittleOverlap":111},"clusters":[{"id":0,"members":["ETH","SOL"],"label":"settle"},{"id":1,"members":["NEAR"],"label":"settle"},{"id":2,"members":["ZEC"],"label":"settle"},{"id":3,"members":["MON"],"label":"newl1"},{"id":4,"members":["XPL"],"label":"newl1"},{"id":5,"members":["MEGA"],"label":"newl1"},{"id":6,"members":["HYPE"],"label":"perp"},{"id":7,"members":["LIT"],"label":"perp"},{"id":8,"members":["JUP","LINK"],"label":"mixed"},{"id":9,"members":["ASTER"],"label":"perp"},{"id":10,"members":["UNI"],"label":"perp"},{"id":11,"members":["AAVE"],"label":"defi"},{"id":12,"members":["SYRUP"],"label":"defi"},{"id":13,"members":["SKY"],"label":"defi"},{"id":14,"members":["ENA"],"label":"defi"},{"id":15,"members":["ONDO"],"label":"defi"},{"id":16,"members":["CAP"],"label":"defi"},{"id":17,"members":["UP"],"label":"defi"},{"id":18,"members":["EIGEN","ALEO","LDO"],"label":"infra"},{"id":19,"members":["AKT"],"label":"compute"},{"id":20,"members":["ATH"],"label":"compute"},{"id":21,"members":["NOS"],"label":"compute"},{"id":22,"members":["TAO"],"label":"compute"},{"id":23,"members":["VIRTUAL"],"label":"compute"},{"id":24,"members":["NOCK"],"label":"zk"},{"id":25,"members":["ZAMA"],"label":"zk"},{"id":26,"members":["PROVE"],"label":"zk"},{"id":27,"members":["LA"],"label":"zk"},{"id":28,"members":["AZTEC"],"label":"zk"},{"id":29,"members":["ARX"],"label":"zk"},{"id":30,"members":["NIL"],"label":"zk"},{"id":31,"members":["IRYS"],"label":"zk"},{"id":32,"members":["AI"],"label":"zk"},{"id":33,"members":["OCT"],"label":"zk"},{"id":34,"members":["PRL"],"label":"zk"}],"rows":[{"ticker":"ETH","name":"Ethereum","category":"settle","tier":"A","cluster":0,"activeVolPct":33.3,"activeReturnPct":-22.7,"observations":364,"marketCapUsdBn":228.3865,"fdvx":1,"floatPct":100,"vol24hUsdM":7017.2,"feesUsdM":242.1,"riskRating":0.1799,"riskBucket":"Low"},{"ticker":"SOL","name":"Solana","category":"settle","tier":"A","cluster":0,"activeVolPct":40,"activeReturnPct":-27.2,"observations":364,"marketCapUsdBn":44.0877,"fdvx":1.08,"floatPct":92,"vol24hUsdM":1371.8,"feesUsdM":264.9,"riskRating":0.211,"riskBucket":"Low"},{"ticker":"NEAR","name":"NEAR Protocol","category":"settle","tier":"A","cluster":1,"activeVolPct":80.8,"activeReturnPct":10.7,"observations":364,"marketCapUsdBn":2.1302,"fdvx":1,"floatPct":100,"vol24hUsdM":179,"feesUsdM":42.5,"riskRating":0.2128,"riskBucket":"Low"},{"ticker":"ZEC","name":"Zcash","category":"settle","tier":"A","cluster":2,"activeVolPct":138.5,"activeReturnPct":2419.6,"observations":364,"marketCapUsdBn":8.176,"fdvx":1,"floatPct":80,"vol24hUsdM":189.1,"feesUsdM":null,"riskRating":0.261,"riskBucket":"Medium"},{"ticker":"MON","name":"Monad","category":"newl1","tier":"C","cluster":3,"activeVolPct":104.9,"activeReturnPct":13.1,"observations":263,"marketCapUsdBn":0.2623,"fdvx":8.51,"floatPct":12,"vol24hUsdM":15.6,"feesUsdM":1.4,"riskRating":0.5229,"riskBucket":"High"},{"ticker":"XPL","name":"Plasma","category":"newl1","tier":"C","cluster":4,"activeVolPct":131.2,"activeReturnPct":-89.7,"observations":323,"marketCapUsdBn":0.2019,"fdvx":3.72,"floatPct":27,"vol24hUsdM":22.6,"feesUsdM":8.1,"riskRating":0.4755,"riskBucket":"Medium"},{"ticker":"MEGA","name":"MegaETH","category":"newl1","tier":"C","cluster":5,"activeVolPct":105.5,"activeReturnPct":-82.6,"observations":106,"marketCapUsdBn":0.0372,"fdvx":8.85,"floatPct":11,"vol24hUsdM":5.9,"feesUsdM":0.5,"riskRating":0.6444,"riskBucket":"High"},{"ticker":"HYPE","name":"Hyperliquid","category":"perp","tier":"C","cluster":6,"activeVolPct":81.5,"activeReturnPct":127.5,"observations":364,"marketCapUsdBn":12.5148,"fdvx":4.49,"floatPct":22,"vol24hUsdM":266.7,"feesUsdM":942.7,"riskRating":0.3156,"riskBucket":"Medium"},{"ticker":"LIT","name":"Lighter","category":"perp","tier":"C","cluster":7,"activeVolPct":118,"activeReturnPct":16.8,"observations":227,"marketCapUsdBn":0.5758,"fdvx":4,"floatPct":25,"vol24hUsdM":37.3,"feesUsdM":72.3,"riskRating":0.3745,"riskBucket":"Medium"},{"ticker":"JUP","name":"Jupiter","category":"perp","tier":"B","cluster":8,"activeVolPct":80.2,"activeReturnPct":-37.8,"observations":364,"marketCapUsdBn":0.568,"fdvx":2.07,"floatPct":48,"vol24hUsdM":22.4,"feesUsdM":275.5,"riskRating":0.3098,"riskBucket":"Medium"},{"ticker":"ASTER","name":"Aster","category":"perp","tier":"B","cluster":9,"activeVolPct":122.9,"activeReturnPct":76,"observations":329,"marketCapUsdBn":1.6218,"fdvx":2.9,"floatPct":34,"vol24hUsdM":39.5,"feesUsdM":null,"riskRating":0.3537,"riskBucket":"Medium"},{"ticker":"UNI","name":"Uniswap","category":"perp","tier":"A","cluster":10,"activeVolPct":76.4,"activeReturnPct":-43.3,"observations":364,"marketCapUsdBn":2.1981,"fdvx":1.43,"floatPct":62,"vol24hUsdM":282.1,"feesUsdM":752.6,"riskRating":0.2577,"riskBucket":"Medium"},{"ticker":"AAVE","name":"Aave","category":"defi","tier":"A","cluster":11,"activeVolPct":63.5,"activeReturnPct":-48.5,"observations":364,"marketCapUsdBn":1.3775,"fdvx":1.04,"floatPct":96,"vol24hUsdM":135.2,"feesUsdM":860.5,"riskRating":0.2494,"riskBucket":"Low"},{"ticker":"SYRUP","name":"Maple Finance","category":"defi","tier":"A","cluster":12,"activeVolPct":69.9,"activeReturnPct":-35.2,"observations":364,"marketCapUsdBn":0.1755,"fdvx":1.07,"floatPct":94,"vol24hUsdM":3.8,"feesUsdM":108.2,"riskRating":0.3668,"riskBucket":"Medium"},{"ticker":"SKY","name":"Sky","category":"defi","tier":"A","cluster":13,"activeVolPct":57.2,"activeReturnPct":24.1,"observations":364,"marketCapUsdBn":1.2497,"fdvx":1,"floatPct":100,"vol24hUsdM":4.9,"feesUsdM":null,"riskRating":0.2395,"riskBucket":"Low"},{"ticker":"ENA","name":"Ethena","category":"defi","tier":"B","cluster":14,"activeVolPct":85,"activeReturnPct":-77.8,"observations":364,"marketCapUsdBn":0.8736,"fdvx":1.53,"floatPct":66,"vol24hUsdM":86.8,"feesUsdM":330.3,"riskRating":0.3074,"riskBucket":"Medium"},{"ticker":"ONDO","name":"Ondo","category":"defi","tier":"B","cluster":15,"activeVolPct":197.8,"activeReturnPct":-40.1,"observations":364,"marketCapUsdBn":1.6234,"fdvx":2.05,"floatPct":49,"vol24hUsdM":67.4,"feesUsdM":57.9,"riskRating":0.365,"riskBucket":"Medium"},{"ticker":"CAP","name":"Cap","category":"defi","tier":"C","cluster":16,"activeVolPct":243.6,"activeReturnPct":149.7,"observations":49,"marketCapUsdBn":0.091,"fdvx":6.41,"floatPct":16,"vol24hUsdM":78.3,"feesUsdM":7.2,"riskRating":0.4299,"riskBucket":"Medium"},{"ticker":"UP","name":"Superform","category":"defi","tier":"C","cluster":17,"activeVolPct":200.4,"activeReturnPct":-5.5,"observations":185,"marketCapUsdBn":0.0124,"fdvx":4.52,"floatPct":22,"vol24hUsdM":0.5,"feesUsdM":0.5,"riskRating":0.6773,"riskBucket":"High"},{"ticker":"LINK","name":"Chainlink","category":"infra","tier":"A","cluster":8,"activeVolPct":55.4,"activeReturnPct":-26.9,"observations":364,"marketCapUsdBn":6.5554,"fdvx":1.34,"floatPct":75,"vol24hUsdM":282.3,"feesUsdM":62.6,"riskRating":0.2207,"riskBucket":"Low"},{"ticker":"EIGEN","name":"EigenCloud","category":"infra","tier":"B","cluster":18,"activeVolPct":289.6,"activeReturnPct":-78.1,"observations":364,"marketCapUsdBn":0.1294,"fdvx":2.47,"floatPct":40,"vol24hUsdM":11.7,"feesUsdM":null,"riskRating":0.5706,"riskBucket":"High"},{"ticker":"LDO","name":"Lido DAO","category":"infra","tier":"A","cluster":18,"activeVolPct":211.1,"activeReturnPct":-60.9,"observations":364,"marketCapUsdBn":0.2428,"fdvx":1.2,"floatPct":84,"vol24hUsdM":19,"feesUsdM":697.2,"riskRating":0.4133,"riskBucket":"Medium"},{"ticker":"AKT","name":"Akash Network","category":"compute","tier":"A","cluster":19,"activeVolPct":91.5,"activeReturnPct":-22.8,"observations":364,"marketCapUsdBn":0.1534,"fdvx":1,"floatPct":76,"vol24hUsdM":4.6,"feesUsdM":1.9,"riskRating":0.3815,"riskBucket":"Medium"},{"ticker":"ATH","name":"Aethir","category":"compute","tier":"B","cluster":20,"activeVolPct":101.3,"activeReturnPct":-79.4,"observations":364,"marketCapUsdBn":0.0799,"fdvx":2.09,"floatPct":48,"vol24hUsdM":6.2,"feesUsdM":null,"riskRating":0.462,"riskBucket":"Medium"},{"ticker":"NOS","name":"Nosana","category":"compute","tier":"A","cluster":21,"activeVolPct":161.6,"activeReturnPct":-13.4,"observations":364,"marketCapUsdBn":0.0253,"fdvx":1,"floatPct":100,"vol24hUsdM":0.2,"feesUsdM":null,"riskRating":0.5587,"riskBucket":"High"},{"ticker":"TAO","name":"Bittensor","category":"compute","tier":"B","cluster":22,"activeVolPct":86.4,"activeReturnPct":0,"observations":364,"marketCapUsdBn":1.9179,"fdvx":2.19,"floatPct":46,"vol24hUsdM":94.8,"feesUsdM":null,"riskRating":0.2578,"riskBucket":"Medium"},{"ticker":"VIRTUAL","name":"Virtuals Protocol","category":"compute","tier":"B","cluster":23,"activeVolPct":99.8,"activeReturnPct":-8.9,"observations":364,"marketCapUsdBn":0.3982,"fdvx":1.52,"floatPct":66,"vol24hUsdM":102.4,"feesUsdM":20.1,"riskRating":0.2564,"riskBucket":"Medium"},{"ticker":"NOCK","name":"Nockchain","category":"zk","tier":"B","cluster":24,"activeVolPct":271.7,"activeReturnPct":8.1,"observations":357,"marketCapUsdBn":0.0285,"fdvx":1.89,"floatPct":53,"vol24hUsdM":0.6,"feesUsdM":null,"riskRating":0.7093,"riskBucket":"High"},{"ticker":"ZAMA","name":"Zama","category":"zk","tier":"C","cluster":25,"activeVolPct":113.7,"activeReturnPct":59.3,"observations":193,"marketCapUsdBn":0.1008,"fdvx":5,"floatPct":20,"vol24hUsdM":11.7,"feesUsdM":null,"riskRating":0.3774,"riskBucket":"Medium"},{"ticker":"PROVE","name":"Succinct","category":"zk","tier":"C","cluster":26,"activeVolPct":93,"activeReturnPct":-79.7,"observations":364,"marketCapUsdBn":0.029,"fdvx":5.13,"floatPct":20,"vol24hUsdM":4.2,"feesUsdM":null,"riskRating":0.5679,"riskBucket":"High"},{"ticker":"LA","name":"Lagrange","category":"zk","tier":"C","cluster":27,"activeVolPct":103.9,"activeReturnPct":-71.1,"observations":364,"marketCapUsdBn":0.0094,"fdvx":5.18,"floatPct":19,"vol24hUsdM":6.9,"feesUsdM":null,"riskRating":0.5534,"riskBucket":"High"},{"ticker":"AZTEC","name":"Aztec","category":"zk","tier":"C","cluster":28,"activeVolPct":123.8,"activeReturnPct":-43.4,"observations":183,"marketCapUsdBn":0.0366,"fdvx":3.51,"floatPct":29,"vol24hUsdM":1.6,"feesUsdM":null,"riskRating":0.5103,"riskBucket":"High"},{"ticker":"ARX","name":"Arcium","category":"zk","tier":"C","cluster":29,"activeVolPct":160.7,"activeReturnPct":-43.6,"observations":53,"marketCapUsdBn":0.024,"fdvx":4.79,"floatPct":21,"vol24hUsdM":3.3,"feesUsdM":null,"riskRating":0.5322,"riskBucket":"High"},{"ticker":"NIL","name":"Nillion","category":"zk","tier":"B","cluster":30,"activeVolPct":303.9,"activeReturnPct":-71.2,"observations":364,"marketCapUsdBn":0.0222,"fdvx":2.02,"floatPct":49,"vol24hUsdM":28,"feesUsdM":null,"riskRating":0.5163,"riskBucket":"High"},{"ticker":"IRYS","name":"Irys","category":"zk","tier":"C","cluster":31,"activeVolPct":157.1,"activeReturnPct":10.7,"observations":262,"marketCapUsdBn":0.033,"fdvx":5,"floatPct":20,"vol24hUsdM":4.9,"feesUsdM":null,"riskRating":0.5608,"riskBucket":"High"},{"ticker":"AI","name":"Gensyn","category":"zk","tier":"C","cluster":32,"activeVolPct":201.9,"activeReturnPct":-76.6,"observations":107,"marketCapUsdBn":0.0278,"fdvx":7.66,"floatPct":13,"vol24hUsdM":4.6,"feesUsdM":null,"riskRating":0.6992,"riskBucket":"High"},{"ticker":"ALEO","name":"ALEO","category":"zk","tier":"B","cluster":18,"activeVolPct":332.2,"activeReturnPct":-87.7,"observations":364,"marketCapUsdBn":0.021,"fdvx":1.53,"floatPct":27,"vol24hUsdM":0.6,"feesUsdM":null,"riskRating":0.7362,"riskBucket":"High"},{"ticker":"OCT","name":"Octra","category":"zk","tier":"A","cluster":33,"activeVolPct":246.5,"activeReturnPct":-37.9,"observations":116,"marketCapUsdBn":0.0154,"fdvx":1,"floatPct":63,"vol24hUsdM":0.1,"feesUsdM":null,"riskRating":0.6441,"riskBucket":"High"},{"ticker":"PRL","name":"Pearl","category":"zk","tier":"C","cluster":34,"activeVolPct":162.2,"activeReturnPct":-51.6,"observations":53,"marketCapUsdBn":0.0663,"fdvx":8.23,"floatPct":12,"vol24hUsdM":0.1,"feesUsdM":null,"riskRating":0.7458,"riskBucket":"High"}],"correlation":{"ETH":{"ETH":1,"SOL":0.6347,"NEAR":0.3891,"ZEC":0.1181,"MON":0.1323,"XPL":0.3626,"MEGA":0.1694,"HYPE":0.2567,"LIT":0.0958,"JUP":0.3055,"ASTER":0.1638,"UNI":0.3271,"AAVE":0.4661,"SYRUP":0.2977,"SKY":0.1623,"ENA":0.4063,"ONDO":0.1669,"UP":-0.1361,"LINK":0.503,"EIGEN":0.1151,"LDO":0.1188,"AKT":0.2888,"ATH":0.2546,"NOS":0.1195,"TAO":0.3088,"VIRTUAL":0.4212,"NOCK":0.1051,"ZAMA":-0.0015,"PROVE":0.2006,"LA":0.1745,"AZTEC":0.1768,"NIL":0.0499,"IRYS":-0.0737,"AI":0.1055,"ALEO":-0.0084,"OCT":0.0784},"SOL":{"ETH":0.6347,"SOL":1,"NEAR":0.4285,"ZEC":0.1386,"MON":0.2433,"XPL":0.3825,"MEGA":0.2456,"HYPE":0.3124,"LIT":0.2105,"JUP":0.4795,"ASTER":0.2267,"UNI":0.3928,"AAVE":0.4707,"SYRUP":0.2917,"SKY":0.1359,"ENA":0.502,"ONDO":0.2343,"UP":-0.1487,"LINK":0.5266,"EIGEN":0.1153,"LDO":0.1395,"AKT":0.3781,"ATH":0.3552,"NOS":0.1756,"TAO":0.4123,"VIRTUAL":0.4709,"NOCK":0.142,"ZAMA":0.1102,"PROVE":0.3088,"LA":0.185,"AZTEC":0.2416,"NIL":0.0835,"IRYS":-0.0246,"AI":0.1577,"ALEO":-0.0065,"OCT":0.1084},"NEAR":{"ETH":0.3891,"SOL":0.4285,"NEAR":1,"ZEC":0.2606,"MON":0.0954,"XPL":0.3564,"MEGA":0.257,"HYPE":0.3445,"LIT":0.2403,"JUP":0.3716,"ASTER":0.1549,"UNI":0.2764,"AAVE":0.2829,"SYRUP":0.2751,"SKY":0.2112,"ENA":0.4629,"ONDO":0.2217,"UP":-0.0824,"LINK":0.3544,"EIGEN":0.1714,"LDO":0.1195,"AKT":0.4215,"ATH":0.2841,"NOS":0.1412,"TAO":0.2771,"VIRTUAL":0.4826,"NOCK":0.1136,"ZAMA":0.0773,"PROVE":0.2545,"LA":0.1573,"AZTEC":0.2069,"NIL":0.0666,"IRYS":0.0593,"AI":0.0872,"ALEO":0.0205,"OCT":0.1648},"ZEC":{"ETH":0.1181,"SOL":0.1386,"NEAR":0.2606,"ZEC":1,"MON":0.065,"XPL":0.0144,"MEGA":0.0509,"HYPE":0.1702,"LIT":0.329,"JUP":0.1031,"ASTER":-0.0126,"UNI":0.0196,"AAVE":0.0871,"SYRUP":0.1132,"SKY":0.0346,"ENA":0.1287,"ONDO":0.1188,"UP":-0.0189,"LINK":0.0869,"EIGEN":0.0025,"LDO":0.0386,"AKT":0.0991,"ATH":0.0684,"NOS":-0.018,"TAO":0.1157,"VIRTUAL":0.1705,"NOCK":0.0962,"ZAMA":0.0189,"PROVE":0.098,"LA":0.05,"AZTEC":0.1843,"NIL":0.035,"IRYS":-0.006,"AI":-0.0041,"ALEO":-0.019,"OCT":0.1547},"MON":{"ETH":0.1323,"SOL":0.2433,"NEAR":0.0954,"ZEC":0.065,"MON":1,"XPL":0.2478,"MEGA":0.0856,"HYPE":0.2316,"LIT":0.2531,"JUP":0.1717,"ASTER":0.1346,"UNI":0.0883,"AAVE":0.1839,"SYRUP":0.1218,"SKY":-0.1179,"ENA":0.2637,"ONDO":0.0897,"UP":-0.1507,"LINK":0.0858,"EIGEN":0.0213,"LDO":0.0186,"AKT":0.059,"ATH":0.1622,"NOS":0.0003,"TAO":0.2302,"VIRTUAL":0.1929,"NOCK":0.055,"ZAMA":0.0055,"PROVE":0.2097,"LA":0.0869,"AZTEC":0.1845,"NIL":0.0076,"IRYS":0.1801,"AI":0.0344,"ALEO":0.0041,"OCT":-0.0736},"XPL":{"ETH":0.3626,"SOL":0.3825,"NEAR":0.3564,"ZEC":0.0144,"MON":0.2478,"XPL":1,"MEGA":0.1909,"HYPE":0.3104,"LIT":0.2808,"JUP":0.3227,"ASTER":0.2725,"UNI":0.2789,"AAVE":0.3255,"SYRUP":0.2127,"SKY":0.1031,"ENA":0.4375,"ONDO":0.1356,"UP":-0.0398,"LINK":0.3243,"EIGEN":0.1506,"LDO":0.1277,"AKT":0.2898,"ATH":0.2953,"NOS":0.2107,"TAO":0.2365,"VIRTUAL":0.4401,"NOCK":0.1001,"ZAMA":0.1538,"PROVE":0.247,"LA":0.1458,"AZTEC":0.2009,"NIL":0.1316,"IRYS":-0.0162,"AI":0.0432,"ALEO":0.0634,"OCT":0.0336},"MEGA":{"ETH":0.1694,"SOL":0.2456,"NEAR":0.257,"ZEC":0.0509,"MON":0.0856,"XPL":0.1909,"MEGA":1,"HYPE":0.1807,"LIT":0.1472,"JUP":0.257,"ASTER":0.0547,"UNI":0.1942,"AAVE":0.152,"SYRUP":0.028,"SKY":0.1663,"ENA":0.327,"ONDO":0.1445,"UP":-0.1916,"LINK":0.263,"EIGEN":0.2775,"LDO":0.1532,"AKT":0.1073,"ATH":0.1616,"NOS":0.146,"TAO":0.4574,"VIRTUAL":0.1675,"NOCK":0.1732,"ZAMA":0.0775,"PROVE":0.2772,"LA":0.2173,"AZTEC":0.0794,"NIL":0.0139,"IRYS":-0.0246,"AI":0.2139,"ALEO":0.1178,"OCT":-0.0967},"HYPE":{"ETH":0.2567,"SOL":0.3124,"NEAR":0.3445,"ZEC":0.1702,"MON":0.2316,"XPL":0.3104,"MEGA":0.1807,"HYPE":1,"LIT":0.3736,"JUP":0.2911,"ASTER":0.1153,"UNI":0.2139,"AAVE":0.234,"SYRUP":0.1152,"SKY":0.1943,"ENA":0.3423,"ONDO":0.1004,"UP":-0.0189,"LINK":0.2483,"EIGEN":0.1196,"LDO":0.1098,"AKT":0.2011,"ATH":0.2416,"NOS":0.0989,"TAO":0.2027,"VIRTUAL":0.3341,"NOCK":0.0942,"ZAMA":0.1942,"PROVE":0.1334,"LA":0.1338,"AZTEC":0.2042,"NIL":0.1354,"IRYS":0.0598,"AI":0.123,"ALEO":0.0237,"OCT":0.1864},"LIT":{"ETH":0.0958,"SOL":0.2105,"NEAR":0.2403,"ZEC":0.329,"MON":0.2531,"XPL":0.2808,"MEGA":0.1472,"HYPE":0.3736,"LIT":1,"JUP":0.2931,"ASTER":0.2042,"UNI":0.1442,"AAVE":0.249,"SYRUP":0.1449,"SKY":0.0823,"ENA":0.3871,"ONDO":0.0895,"UP":-0.0625,"LINK":0.2324,"EIGEN":0.0927,"LDO":0.0167,"AKT":0.1141,"ATH":0.1695,"NOS":0.0367,"TAO":0.1488,"VIRTUAL":0.3197,"NOCK":0.0305,"ZAMA":0.1414,"PROVE":0.2426,"LA":0.0642,"AZTEC":0.2462,"NIL":0.1524,"IRYS":-0.003,"AI":-0.015,"ALEO":0.0861,"OCT":0.0043},"JUP":{"ETH":0.3055,"SOL":0.4795,"NEAR":0.3716,"ZEC":0.1031,"MON":0.1717,"XPL":0.3227,"MEGA":0.257,"HYPE":0.2911,"LIT":0.2931,"JUP":1,"ASTER":0.1219,"UNI":0.4121,"AAVE":0.4847,"SYRUP":0.3153,"SKY":0.157,"ENA":0.4096,"ONDO":0.1204,"UP":0.0915,"LINK":0.6587,"EIGEN":0.4847,"LDO":0.3356,"AKT":0.3157,"ATH":0.4444,"NOS":0.2968,"TAO":0.3205,"VIRTUAL":0.4388,"NOCK":0.0904,"ZAMA":-0.0619,"PROVE":0.2516,"LA":0.1976,"AZTEC":0.178,"NIL":0.4622,"IRYS":0.0348,"AI":0.1909,"ALEO":0.4512,"OCT":0.0568},"ASTER":{"ETH":0.1638,"SOL":0.2267,"NEAR":0.1549,"ZEC":-0.0126,"MON":0.1346,"XPL":0.2725,"MEGA":0.0547,"HYPE":0.1153,"LIT":0.2042,"JUP":0.1219,"ASTER":1,"UNI":0.1319,"AAVE":0.1489,"SYRUP":0.136,"SKY":-0.0561,"ENA":0.1783,"ONDO":0.0137,"UP":0.0126,"LINK":0.2211,"EIGEN":0.1276,"LDO":0.1293,"AKT":0.1525,"ATH":0.2528,"NOS":0.0782,"TAO":0.1392,"VIRTUAL":0.1603,"NOCK":0.0344,"ZAMA":-0.0346,"PROVE":0.1156,"LA":0.0756,"AZTEC":0.0114,"NIL":0.0881,"IRYS":-0.0948,"AI":-0.092,"ALEO":0.0215,"OCT":0.0785},"UNI":{"ETH":0.3271,"SOL":0.3928,"NEAR":0.2764,"ZEC":0.0196,"MON":0.0883,"XPL":0.2789,"MEGA":0.1942,"HYPE":0.2139,"LIT":0.1442,"JUP":0.4121,"ASTER":0.1319,"UNI":1,"AAVE":0.4779,"SYRUP":0.2314,"SKY":0.1844,"ENA":0.3952,"ONDO":0.1339,"UP":-0.0854,"LINK":0.4469,"EIGEN":0.2938,"LDO":0.4401,"AKT":0.2931,"ATH":0.3061,"NOS":0.1402,"TAO":0.2461,"VIRTUAL":0.3805,"NOCK":0.1119,"ZAMA":-0.0296,"PROVE":0.2597,"LA":0.1795,"AZTEC":0.0467,"NIL":0.234,"IRYS":-0.0709,"AI":-0.0123,"ALEO":0.1695,"OCT":-0.0111},"AAVE":{"ETH":0.4661,"SOL":0.4707,"NEAR":0.2829,"ZEC":0.0871,"MON":0.1839,"XPL":0.3255,"MEGA":0.152,"HYPE":0.234,"LIT":0.249,"JUP":0.4847,"ASTER":0.1489,"UNI":0.4779,"AAVE":1,"SYRUP":0.3036,"SKY":0.0777,"ENA":0.392,"ONDO":0.0622,"UP":-0.0636,"LINK":0.5448,"EIGEN":0.326,"LDO":0.2792,"AKT":0.3161,"ATH":0.3635,"NOS":0.2284,"TAO":0.2808,"VIRTUAL":0.3902,"NOCK":0.0043,"ZAMA":-0.0394,"PROVE":0.2484,"LA":0.1863,"AZTEC":-0.0652,"NIL":0.1613,"IRYS":-0.0038,"AI":0.0499,"ALEO":0.1584,"OCT":-0.0261},"SYRUP":{"ETH":0.2977,"SOL":0.2917,"NEAR":0.2751,"ZEC":0.1132,"MON":0.1218,"XPL":0.2127,"MEGA":0.028,"HYPE":0.1152,"LIT":0.1449,"JUP":0.3153,"ASTER":0.136,"UNI":0.2314,"AAVE":0.3036,"SYRUP":1,"SKY":0.1142,"ENA":0.2297,"ONDO":0.0485,"UP":-0.0318,"LINK":0.328,"EIGEN":0.202,"LDO":0.1904,"AKT":0.2575,"ATH":0.2498,"NOS":0.1578,"TAO":0.2427,"VIRTUAL":0.3211,"NOCK":0.082,"ZAMA":-0.0594,"PROVE":0.2082,"LA":0.1056,"AZTEC":0.105,"NIL":0.1826,"IRYS":-0.0221,"AI":0.1267,"ALEO":0.1336,"OCT":-0.0427},"SKY":{"ETH":0.1623,"SOL":0.1359,"NEAR":0.2112,"ZEC":0.0346,"MON":-0.1179,"XPL":0.1031,"MEGA":0.1663,"HYPE":0.1943,"LIT":0.0823,"JUP":0.157,"ASTER":-0.0561,"UNI":0.1844,"AAVE":0.0777,"SYRUP":0.1142,"SKY":1,"ENA":0.2458,"ONDO":0.0298,"UP":-0.0337,"LINK":0.1786,"EIGEN":-0.01,"LDO":0.0101,"AKT":0.1773,"ATH":0.0884,"NOS":0.0541,"TAO":0.0519,"VIRTUAL":0.1684,"NOCK":0.0124,"ZAMA":0.0858,"PROVE":0.0972,"LA":0.0671,"AZTEC":0.0932,"NIL":0.051,"IRYS":0.1088,"AI":0.2986,"ALEO":-0.0041,"OCT":-0.1067},"ENA":{"ETH":0.4063,"SOL":0.502,"NEAR":0.4629,"ZEC":0.1287,"MON":0.2637,"XPL":0.4375,"MEGA":0.327,"HYPE":0.3423,"LIT":0.3871,"JUP":0.4096,"ASTER":0.1783,"UNI":0.3952,"AAVE":0.392,"SYRUP":0.2297,"SKY":0.2458,"ENA":1,"ONDO":0.181,"UP":-0.0647,"LINK":0.3961,"EIGEN":0.1537,"LDO":0.1656,"AKT":0.3433,"ATH":0.3047,"NOS":0.1327,"TAO":0.3121,"VIRTUAL":0.49,"NOCK":0.1587,"ZAMA":0.034,"PROVE":0.2764,"LA":0.2169,"AZTEC":0.1869,"NIL":0.104,"IRYS":0.01,"AI":0.0388,"ALEO":0.0406,"OCT":0.136},"ONDO":{"ETH":0.1669,"SOL":0.2343,"NEAR":0.2217,"ZEC":0.1188,"MON":0.0897,"XPL":0.1356,"MEGA":0.1445,"HYPE":0.1004,"LIT":0.0895,"JUP":0.1204,"ASTER":0.0137,"UNI":0.1339,"AAVE":0.0622,"SYRUP":0.0485,"SKY":0.0298,"ENA":0.181,"ONDO":1,"UP":-0.0959,"LINK":0.0531,"EIGEN":0.0128,"LDO":-0.089,"AKT":0.0436,"ATH":0.1113,"NOS":-0.0288,"TAO":0.0888,"VIRTUAL":0.168,"NOCK":0.0373,"ZAMA":-0.043,"PROVE":0.1029,"LA":0.0804,"AZTEC":0.4304,"NIL":-0.0593,"IRYS":-0.0255,"AI":0.0342,"ALEO":0.0232,"OCT":0.0793},"CAP":{"CAP":1},"UP":{"ETH":-0.1361,"SOL":-0.1487,"NEAR":-0.0824,"ZEC":-0.0189,"MON":-0.1507,"XPL":-0.0398,"MEGA":-0.1916,"HYPE":-0.0189,"LIT":-0.0625,"JUP":0.0915,"ASTER":0.0126,"UNI":-0.0854,"AAVE":-0.0636,"SYRUP":-0.0318,"SKY":-0.0337,"ENA":-0.0647,"ONDO":-0.0959,"UP":1,"LINK":0.0569,"EIGEN":0.0592,"LDO":0.0661,"AKT":-0.004,"ATH":0.0216,"NOS":0.1169,"TAO":-0.1375,"VIRTUAL":-0.0662,"NOCK":-0.0032,"ZAMA":0.1182,"PROVE":-0.0616,"LA":0.0139,"AZTEC":-0.0524,"NIL":0.0531,"IRYS":0.1258,"AI":-0.1463,"ALEO":0.0459,"OCT":-0.02},"LINK":{"ETH":0.503,"SOL":0.5266,"NEAR":0.3544,"ZEC":0.0869,"MON":0.0858,"XPL":0.3243,"MEGA":0.263,"HYPE":0.2483,"LIT":0.2324,"JUP":0.6587,"ASTER":0.2211,"UNI":0.4469,"AAVE":0.5448,"SYRUP":0.328,"SKY":0.1786,"ENA":0.3961,"ONDO":0.0531,"UP":0.0569,"LINK":1,"EIGEN":0.5258,"LDO":0.3832,"AKT":0.3932,"ATH":0.5459,"NOS":0.3856,"TAO":0.3592,"VIRTUAL":0.4775,"NOCK":0.0895,"ZAMA":-0.0529,"PROVE":0.3035,"LA":0.1922,"AZTEC":0.1337,"NIL":0.4299,"IRYS":-0.0155,"AI":0.0883,"ALEO":0.4502,"OCT":0.1703},"EIGEN":{"ETH":0.1151,"SOL":0.1153,"NEAR":0.1714,"ZEC":0.0025,"MON":0.0213,"XPL":0.1506,"MEGA":0.2775,"HYPE":0.1196,"LIT":0.0927,"JUP":0.4847,"ASTER":0.1276,"UNI":0.2938,"AAVE":0.326,"SYRUP":0.202,"SKY":-0.01,"ENA":0.1537,"ONDO":0.0128,"UP":0.0592,"LINK":0.5258,"EIGEN":1,"LDO":0.6851,"AKT":0.1671,"ATH":0.4346,"NOS":0.4747,"TAO":0.1481,"VIRTUAL":0.2029,"NOCK":0.038,"ZAMA":-0.0861,"PROVE":0.087,"LA":0.1768,"AZTEC":0.0617,"NIL":0.5676,"IRYS":-0.0759,"AI":0.0611,"ALEO":0.693,"OCT":0.1392},"LDO":{"ETH":0.1188,"SOL":0.1395,"NEAR":0.1195,"ZEC":0.0386,"MON":0.0186,"XPL":0.1277,"MEGA":0.1532,"HYPE":0.1098,"LIT":0.0167,"JUP":0.3356,"ASTER":0.1293,"UNI":0.4401,"AAVE":0.2792,"SYRUP":0.1904,"SKY":0.0101,"ENA":0.1656,"ONDO":-0.089,"UP":0.0661,"LINK":0.3832,"EIGEN":0.6851,"LDO":1,"AKT":0.1054,"ATH":0.3022,"NOS":0.3341,"TAO":0.171,"VIRTUAL":0.1858,"NOCK":0.0662,"ZAMA":-0.0622,"PROVE":0.1053,"LA":0.1778,"AZTEC":-0.1023,"NIL":0.5249,"IRYS":-0.0939,"AI":0.0747,"ALEO":0.5511,"OCT":0.0916},"AKT":{"ETH":0.2888,"SOL":0.3781,"NEAR":0.4215,"ZEC":0.0991,"MON":0.059,"XPL":0.2898,"MEGA":0.1073,"HYPE":0.2011,"LIT":0.1141,"JUP":0.3157,"ASTER":0.1525,"UNI":0.2931,"AAVE":0.3161,"SYRUP":0.2575,"SKY":0.1773,"ENA":0.3433,"ONDO":0.0436,"UP":-0.004,"LINK":0.3932,"EIGEN":0.1671,"LDO":0.1054,"AKT":1,"ATH":0.3502,"NOS":0.2342,"TAO":0.2867,"VIRTUAL":0.4542,"NOCK":0.0521,"ZAMA":0.084,"PROVE":0.2799,"LA":0.1362,"AZTEC":0.0947,"NIL":0.1698,"IRYS":-0.0018,"AI":-0.0563,"ALEO":0.0468,"OCT":0.1806},"ATH":{"ETH":0.2546,"SOL":0.3552,"NEAR":0.2841,"ZEC":0.0684,"MON":0.1622,"XPL":0.2953,"MEGA":0.1616,"HYPE":0.2416,"LIT":0.1695,"JUP":0.4444,"ASTER":0.2528,"UNI":0.3061,"AAVE":0.3635,"SYRUP":0.2498,"SKY":0.0884,"ENA":0.3047,"ONDO":0.1113,"UP":0.0216,"LINK":0.5459,"EIGEN":0.4346,"LDO":0.3022,"AKT":0.3502,"ATH":1,"NOS":0.4089,"TAO":0.2573,"VIRTUAL":0.38,"NOCK":0.0682,"ZAMA":-0.0533,"PROVE":0.2226,"LA":0.1297,"AZTEC":0.2444,"NIL":0.3306,"IRYS":0.0447,"AI":0.1362,"ALEO":0.3108,"OCT":0.0731},"NOS":{"ETH":0.1195,"SOL":0.1756,"NEAR":0.1412,"ZEC":-0.018,"MON":0.0003,"XPL":0.2107,"MEGA":0.146,"HYPE":0.0989,"LIT":0.0367,"JUP":0.2968,"ASTER":0.0782,"UNI":0.1402,"AAVE":0.2284,"SYRUP":0.1578,"SKY":0.0541,"ENA":0.1327,"ONDO":-0.0288,"UP":0.1169,"LINK":0.3856,"EIGEN":0.4747,"LDO":0.3341,"AKT":0.2342,"ATH":0.4089,"NOS":1,"TAO":0.1347,"VIRTUAL":0.1614,"NOCK":0.0745,"ZAMA":-0.0076,"PROVE":0.0853,"LA":0.1054,"AZTEC":-0.1592,"NIL":0.2699,"IRYS":0.0256,"AI":0.0604,"ALEO":0.4244,"OCT":0.1169},"TAO":{"ETH":0.3088,"SOL":0.4123,"NEAR":0.2771,"ZEC":0.1157,"MON":0.2302,"XPL":0.2365,"MEGA":0.4574,"HYPE":0.2027,"LIT":0.1488,"JUP":0.3205,"ASTER":0.1392,"UNI":0.2461,"AAVE":0.2808,"SYRUP":0.2427,"SKY":0.0519,"ENA":0.3121,"ONDO":0.0888,"UP":-0.1375,"LINK":0.3592,"EIGEN":0.1481,"LDO":0.171,"AKT":0.2867,"ATH":0.2573,"NOS":0.1347,"TAO":1,"VIRTUAL":0.3393,"NOCK":0.1825,"ZAMA":-0.023,"PROVE":0.2072,"LA":0.0381,"AZTEC":0.133,"NIL":0.1566,"IRYS":0.0293,"AI":0.0686,"ALEO":0.1406,"OCT":0.0601},"VIRTUAL":{"ETH":0.4212,"SOL":0.4709,"NEAR":0.4826,"ZEC":0.1705,"MON":0.1929,"XPL":0.4401,"MEGA":0.1675,"HYPE":0.3341,"LIT":0.3197,"JUP":0.4388,"ASTER":0.1603,"UNI":0.3805,"AAVE":0.3902,"SYRUP":0.3211,"SKY":0.1684,"ENA":0.49,"ONDO":0.168,"UP":-0.0662,"LINK":0.4775,"EIGEN":0.2029,"LDO":0.1858,"AKT":0.4542,"ATH":0.38,"NOS":0.1614,"TAO":0.3393,"VIRTUAL":1,"NOCK":0.1146,"ZAMA":-0.0061,"PROVE":0.3108,"LA":0.1586,"AZTEC":0.1785,"NIL":0.1632,"IRYS":0.0619,"AI":0.0634,"ALEO":0.0298,"OCT":0.0172},"NOCK":{"ETH":0.1051,"SOL":0.142,"NEAR":0.1136,"ZEC":0.0962,"MON":0.055,"XPL":0.1001,"MEGA":0.1732,"HYPE":0.0942,"LIT":0.0305,"JUP":0.0904,"ASTER":0.0344,"UNI":0.1119,"AAVE":0.0043,"SYRUP":0.082,"SKY":0.0124,"ENA":0.1587,"ONDO":0.0373,"UP":-0.0032,"LINK":0.0895,"EIGEN":0.038,"LDO":0.0662,"AKT":0.0521,"ATH":0.0682,"NOS":0.0745,"TAO":0.1825,"VIRTUAL":0.1146,"NOCK":1,"ZAMA":-0.0808,"PROVE":0.0607,"LA":0.1489,"AZTEC":0.094,"NIL":-0.0085,"IRYS":-0.1047,"AI":-0.1024,"ALEO":0.0367,"OCT":0.2453},"ZAMA":{"ETH":-0.0015,"SOL":0.1102,"NEAR":0.0773,"ZEC":0.0189,"MON":0.0055,"XPL":0.1538,"MEGA":0.0775,"HYPE":0.1942,"LIT":0.1414,"JUP":-0.0619,"ASTER":-0.0346,"UNI":-0.0296,"AAVE":-0.0394,"SYRUP":-0.0594,"SKY":0.0858,"ENA":0.034,"ONDO":-0.043,"UP":0.1182,"LINK":-0.0529,"EIGEN":-0.0861,"LDO":-0.0622,"AKT":0.084,"ATH":-0.0533,"NOS":-0.0076,"TAO":-0.023,"VIRTUAL":-0.0061,"NOCK":-0.0808,"ZAMA":1,"PROVE":0.1518,"LA":0.122,"AZTEC":0.1934,"NIL":-0.0511,"IRYS":0.0135,"AI":0.1654,"ALEO":-0.0781,"OCT":0.1001},"PROVE":{"ETH":0.2006,"SOL":0.3088,"NEAR":0.2545,"ZEC":0.098,"MON":0.2097,"XPL":0.247,"MEGA":0.2772,"HYPE":0.1334,"LIT":0.2426,"JUP":0.2516,"ASTER":0.1156,"UNI":0.2597,"AAVE":0.2484,"SYRUP":0.2082,"SKY":0.0972,"ENA":0.2764,"ONDO":0.1029,"UP":-0.0616,"LINK":0.3035,"EIGEN":0.087,"LDO":0.1053,"AKT":0.2799,"ATH":0.2226,"NOS":0.0853,"TAO":0.2072,"VIRTUAL":0.3108,"NOCK":0.0607,"ZAMA":0.1518,"PROVE":1,"LA":0.1734,"AZTEC":0.135,"NIL":0.1086,"IRYS":-0.029,"AI":-0.0095,"ALEO":0.0253,"OCT":-0.0601},"LA":{"ETH":0.1745,"SOL":0.185,"NEAR":0.1573,"ZEC":0.05,"MON":0.0869,"XPL":0.1458,"MEGA":0.2173,"HYPE":0.1338,"LIT":0.0642,"JUP":0.1976,"ASTER":0.0756,"UNI":0.1795,"AAVE":0.1863,"SYRUP":0.1056,"SKY":0.0671,"ENA":0.2169,"ONDO":0.0804,"UP":0.0139,"LINK":0.1922,"EIGEN":0.1768,"LDO":0.1778,"AKT":0.1362,"ATH":0.1297,"NOS":0.1054,"TAO":0.0381,"VIRTUAL":0.1586,"NOCK":0.1489,"ZAMA":0.122,"PROVE":0.1734,"LA":1,"AZTEC":-0.0143,"NIL":0.1306,"IRYS":-0.0723,"AI":0.0636,"ALEO":0.0844,"OCT":-0.0239},"AZTEC":{"ETH":0.1768,"SOL":0.2416,"NEAR":0.2069,"ZEC":0.1843,"MON":0.1845,"XPL":0.2009,"MEGA":0.0794,"HYPE":0.2042,"LIT":0.2462,"JUP":0.178,"ASTER":0.0114,"UNI":0.0467,"AAVE":-0.0652,"SYRUP":0.105,"SKY":0.0932,"ENA":0.1869,"ONDO":0.4304,"UP":-0.0524,"LINK":0.1337,"EIGEN":0.0617,"LDO":-0.1023,"AKT":0.0947,"ATH":0.2444,"NOS":-0.1592,"TAO":0.133,"VIRTUAL":0.1785,"NOCK":0.094,"ZAMA":0.1934,"PROVE":0.135,"LA":-0.0143,"AZTEC":1,"NIL":0.0931,"IRYS":0.0591,"AI":0.0513,"ALEO":0.0707,"OCT":0.0522},"ARX":{"ARX":1},"NIL":{"ETH":0.0499,"SOL":0.0835,"NEAR":0.0666,"ZEC":0.035,"MON":0.0076,"XPL":0.1316,"MEGA":0.0139,"HYPE":0.1354,"LIT":0.1524,"JUP":0.4622,"ASTER":0.0881,"UNI":0.234,"AAVE":0.1613,"SYRUP":0.1826,"SKY":0.051,"ENA":0.104,"ONDO":-0.0593,"UP":0.0531,"LINK":0.4299,"EIGEN":0.5676,"LDO":0.5249,"AKT":0.1698,"ATH":0.3306,"NOS":0.2699,"TAO":0.1566,"VIRTUAL":0.1632,"NOCK":-0.0085,"ZAMA":-0.0511,"PROVE":0.1086,"LA":0.1306,"AZTEC":0.0931,"NIL":1,"IRYS":-0.0682,"AI":0.0788,"ALEO":0.6466,"OCT":0.0794},"IRYS":{"ETH":-0.0737,"SOL":-0.0246,"NEAR":0.0593,"ZEC":-0.006,"MON":0.1801,"XPL":-0.0162,"MEGA":-0.0246,"HYPE":0.0598,"LIT":-0.003,"JUP":0.0348,"ASTER":-0.0948,"UNI":-0.0709,"AAVE":-0.0038,"SYRUP":-0.0221,"SKY":0.1088,"ENA":0.01,"ONDO":-0.0255,"UP":0.1258,"LINK":-0.0155,"EIGEN":-0.0759,"LDO":-0.0939,"AKT":-0.0018,"ATH":0.0447,"NOS":0.0256,"TAO":0.0293,"VIRTUAL":0.0619,"NOCK":-0.1047,"ZAMA":0.0135,"PROVE":-0.029,"LA":-0.0723,"AZTEC":0.0591,"NIL":-0.0682,"IRYS":1,"AI":-0.2111,"ALEO":-0.0472,"OCT":-0.2348},"AI":{"ETH":0.1055,"SOL":0.1577,"NEAR":0.0872,"ZEC":-0.0041,"MON":0.0344,"XPL":0.0432,"MEGA":0.2139,"HYPE":0.123,"LIT":-0.015,"JUP":0.1909,"ASTER":-0.092,"UNI":-0.0123,"AAVE":0.0499,"SYRUP":0.1267,"SKY":0.2986,"ENA":0.0388,"ONDO":0.0342,"UP":-0.1463,"LINK":0.0883,"EIGEN":0.0611,"LDO":0.0747,"AKT":-0.0563,"ATH":0.1362,"NOS":0.0604,"TAO":0.0686,"VIRTUAL":0.0634,"NOCK":-0.1024,"ZAMA":0.1654,"PROVE":-0.0095,"LA":0.0636,"AZTEC":0.0513,"NIL":0.0788,"IRYS":-0.2111,"AI":1,"ALEO":0.0195,"OCT":-0.1478},"ALEO":{"ETH":-0.0084,"SOL":-0.0065,"NEAR":0.0205,"ZEC":-0.019,"MON":0.0041,"XPL":0.0634,"MEGA":0.1178,"HYPE":0.0237,"LIT":0.0861,"JUP":0.4512,"ASTER":0.0215,"UNI":0.1695,"AAVE":0.1584,"SYRUP":0.1336,"SKY":-0.0041,"ENA":0.0406,"ONDO":0.0232,"UP":0.0459,"LINK":0.4502,"EIGEN":0.693,"LDO":0.5511,"AKT":0.0468,"ATH":0.3108,"NOS":0.4244,"TAO":0.1406,"VIRTUAL":0.0298,"NOCK":0.0367,"ZAMA":-0.0781,"PROVE":0.0253,"LA":0.0844,"AZTEC":0.0707,"NIL":0.6466,"IRYS":-0.0472,"AI":0.0195,"ALEO":1,"OCT":0.0427},"OCT":{"ETH":0.0784,"SOL":0.1084,"NEAR":0.1648,"ZEC":0.1547,"MON":-0.0736,"XPL":0.0336,"MEGA":-0.0967,"HYPE":0.1864,"LIT":0.0043,"JUP":0.0568,"ASTER":0.0785,"UNI":-0.0111,"AAVE":-0.0261,"SYRUP":-0.0427,"SKY":-0.1067,"ENA":0.136,"ONDO":0.0793,"UP":-0.02,"LINK":0.1703,"EIGEN":0.1392,"LDO":0.0916,"AKT":0.1806,"ATH":0.0731,"NOS":0.1169,"TAO":0.0601,"VIRTUAL":0.0172,"NOCK":0.2453,"ZAMA":0.1001,"PROVE":-0.0601,"LA":-0.0239,"AZTEC":0.0522,"NIL":0.0794,"IRYS":-0.2348,"AI":-0.1478,"ALEO":0.0427,"OCT":1},"PRL":{"PRL":1}}};
+/* PORTFOLIO-DATA-END */
+</script>
+
+<script>
+/* ---------- vintage badge (same implementation as the other dashboards) ---------- */
+(function(){
+  var el = document.getElementById('vintageBadge');
+  if(!el) return;
+  var days = Math.floor((Date.now() - Date.parse(el.getAttribute('data-vintage') + 'T00:00:00Z')) / 86400000);
+  el.querySelector('.src').textContent = el.getAttribute('data-label');
+  var age = el.querySelector('.age');
+  if(!isFinite(days) || days < 0){ age.textContent = ''; return; }
+  age.textContent = '· ' + days + ' day' + (days === 1 ? '' : 's') + ' old' + (days > 14 ? ' · treat as stale' : '');
+  if(days > 14) el.classList.add('stale');
+})();
+
+/* ---------- the builder ---------- */
+(function(){
+if(!PORTFOLIO){ document.getElementById('screenOut').innerHTML = '<p class="excl">No data block. Run <span class="mono">npm run build-portfolio</span>.</p>'; return; }
+
+const ROWS = PORTFOLIO.rows;
+const CORR = PORTFOLIO.correlation;
+const CLUSTERS = PORTFOLIO.clusters;
+const MEDIAN_CORR = PORTFOLIO.stats.medianPairwiseActiveCorrelation;
+
+document.getElementById('mUniverse').textContent = ROWS.length + ' assets';
+document.getElementById('mClusters').textContent = CLUSTERS.length;
+document.getElementById('mCorr').textContent = MEDIAN_CORR === undefined ? 'n/a' : MEDIAN_CORR.toFixed(2);
+document.getElementById('clCut').textContent = PORTFOLIO.method.clusterCorrelation;
+
+const $ = id => document.getElementById(id);
+const pct = (x, dp) => (x*100).toFixed(dp===undefined?1:dp) + '%';
+
+/* Correlation between two names, with the missing case made explicit rather
+   than defaulted to zero. Zero would claim independence we have not measured,
+   which flatters every diversification number on the page. The median is the
+   conservative stand-in and it is reported wherever it is used. */
+function rho(a, b){
+  if(a === b) return 1;
+  const r = CORR[a] && CORR[a][b];
+  return (r === undefined || r === null) ? (MEDIAN_CORR === undefined ? 0.5 : MEDIAN_CORR) : r;
+}
+function rhoIsMeasured(a, b){
+  if(a === b) return true;
+  const r = CORR[a] && CORR[a][b];
+  return !(r === undefined || r === null);
+}
+
+/* ---------- screen ---------- */
+function screenAll(){
+  const minVol = parseFloat($('minVol').value);
+  const maxFdv = parseFloat($('maxFdv').value);
+  const minDays = parseInt($('minDays').value, 10);
+  const kept = [], out = [];
+  for(const r of ROWS){
+    const reasons = [];
+    if(r.activeVolPct === undefined) reasons.push('no measurable price history');
+    if(r.observations < minDays) reasons.push(r.observations + ' days of history');
+    if(r.vol24hUsdM < minVol) reasons.push('$' + r.vol24hUsdM.toFixed(1) + 'M daily volume');
+    if(r.fdvx > maxFdv) reasons.push(r.fdvx.toFixed(2) + '× FDV');
+    if(reasons.length) out.push({r, reasons}); else kept.push(r);
+  }
+  return {kept, out};
+}
+
+/* ---------- lenses ---------- */
+const LENS_HINT = {
+  ev: "The book's own expected-value ranking. Subjective probabilities, visible on the Assets tab.",
+  mom: 'Measured active return against bitcoin over the fetched window. No opinion in it, and no promise that it repeats.',
+  fee: 'Trailing protocol fees. Twenty of the forty have no fee line at all, and they rank last here rather than being excluded.',
+};
+let lens = 'ev';
+function lensScore(r){
+  if(lens === 'mom') return r.activeReturnPct === undefined ? -1e9 : r.activeReturnPct;
+  if(lens === 'fee') return r.feesUsdM === null || r.feesUsdM === undefined ? -1 : r.feesUsdM;
+  /* Research EV: the Assets tab sorts on it, and this file carries the tab's
+     own order, so rank is recovered from the row order rather than restated. */
+  return -ROWS.indexOf(r);
+}
+
+/* ---------- equal active-risk contribution ---------- */
+/* Fixed point: weight inversely to marginal risk, iterated. At convergence
+   w_i * (Sigma w)_i is equal across i, which is the definition. Simple enough
+   to read, and it converges in well under a hundred passes on a matrix this
+   size — an optimiser nobody can check is worse than an iteration everybody
+   can. */
+function erc(names){
+  const n = names.length;
+  if(n === 0) return [];
+  if(n === 1) return [1];
+  const sig = names.map(t => (ROWS.find(r => r.ticker === t).activeVolPct || 0) / 100);
+  const S = [];
+  for(let i=0;i<n;i++){
+    S.push([]);
+    for(let j=0;j<n;j++) S[i].push(rho(names[i], names[j]) * sig[i] * sig[j]);
+  }
+  let w = new Array(n).fill(1/n);
+  for(let pass=0; pass<400; pass++){
+    const m = w.map((_, i) => S[i].reduce((s, v, j) => s + v*w[j], 0));
+    let tot = 0;
+    const next = m.map(v => { const x = v > 1e-12 ? 1/v : 1e12; tot += x; return x; });
+    w = next.map(x => x/tot);
+  }
+  return w;
+}
+
+/* Caps, applied by repeatedly clipping the offenders and redistributing to the
+   rest. Converges because each pass strictly reduces the amount over the cap. */
+function applyCaps(names, w, nameCap, clusterCap){
+  const clusterOf = t => ROWS.find(r => r.ticker === t).cluster;
+  for(let pass=0; pass<200; pass++){
+    let changed = false;
+    for(let i=0;i<w.length;i++){
+      if(w[i] > nameCap + 1e-9){ w[i] = nameCap; changed = true; }
+    }
+    const byCluster = new Map();
+    names.forEach((t, i) => {
+      const c = clusterOf(t);
+      byCluster.set(c, (byCluster.get(c) || []).concat(i));
+    });
+    for(const [, idx] of byCluster){
+      const sum = idx.reduce((s, i) => s + w[i], 0);
+      if(sum > clusterCap + 1e-9){
+        const f = clusterCap / sum;
+        idx.forEach(i => { w[i] *= f; });
+        changed = true;
+      }
+    }
+    const tot = w.reduce((a,b)=>a+b,0);
+    if(tot > 0) w = w.map(x => x/tot);
+    if(!changed) break;
+  }
+  return w;
+}
+
+/* Portfolio active volatility and each name's share of it. */
+function riskProfile(names, w){
+  const n = names.length;
+  const sig = names.map(t => (ROWS.find(r => r.ticker === t).activeVolPct || 0) / 100);
+  const S = [];
+  for(let i=0;i<n;i++){
+    S.push([]);
+    for(let j=0;j<n;j++) S[i].push(rho(names[i], names[j]) * sig[i] * sig[j]);
+  }
+  const m = w.map((_, i) => S[i].reduce((s, v, j) => s + v*w[j], 0));
+  const varp = w.reduce((s, wi, i) => s + wi*m[i], 0);
+  const vol = Math.sqrt(Math.max(0, varp));
+  const contrib = w.map((wi, i) => vol > 0 ? (wi*m[i])/varp : 0);
+  return {vol, contrib};
+}
+
+/* ---------- render ---------- */
+function fmtClusterLabel(id){
+  const c = CLUSTERS.find(x => x.id === id);
+  return c ? (c.label === 'mixed' ? 'mixed ' + id : c.label + ' ' + id) : '?';
+}
+
+function renderScreen(s){
+  const rows = s.out.map(o =>
+    '<tr><td class="k">' + o.r.ticker + '</td><td class="small">' + o.r.name + '</td><td class="small">' + o.reasons.join(' · ') + '</td></tr>').join('');
+  $('screenOut').innerHTML =
+    '<div class="cards">' +
+      '<div class="card"><div class="n">' + s.kept.length + '</div><div class="l">Assets through the screen</div></div>' +
+      '<div class="card"><div class="n">' + s.out.length + '</div><div class="l">Excluded, each with a reason below</div></div>' +
+      '<div class="card"><div class="n">' + new Set(s.kept.map(r => r.cluster)).size + '</div><div class="l">Clusters still represented after screening</div></div>' +
+    '</div>' +
+    (s.out.length ? '<div style="overflow-x:auto; margin-top:18px"><table class="mini" style="min-width:560px"><thead><tr><th>Excluded</th><th>Name</th><th>Why</th></tr></thead><tbody>' + rows + '</tbody></table></div>' : '');
+}
+
+function renderClusters(){
+  const rows = CLUSTERS.map(c => {
+    const members = c.members.map(t => {
+      const r = ROWS.find(x => x.ticker === t);
+      return '<span class="cl-chip">' + t + (r && r.activeVolPct !== undefined ? ' ' + r.activeVolPct.toFixed(0) + '%' : '') + '</span>';
+    }).join(' ');
+    return '<tr><td class="k">' + fmtClusterLabel(c.id) + '</td><td class="num">' + c.members.length + '</td><td>' + members + '</td></tr>';
+  }).join('');
+  $('clusterOut').innerHTML =
+    '<div style="overflow-x:auto"><table class="mini" style="min-width:640px"><thead><tr><th>Cluster</th><th>Names</th><th>Members, with active volatility</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+    '<p style="margin-top:14px; font-size:.86rem; color:var(--ink-2); max-width:84ch">Median pairwise active correlation across the universe is <b>' + (MEDIAN_CORR === undefined ? 'n/a' : MEDIAN_CORR.toFixed(2)) + '</b>. A cluster count close to the asset count means the names genuinely deviate from bitcoin in different ways; a small number means the book is fewer bets than it looks.</p>';
+}
+
+function renderBuild(kept){
+  const n = Math.min(parseInt($('nPos').value, 10), kept.length);
+  const nameCap = parseInt($('cap').value, 10) / 100;
+  const clusterCap = Math.min(1, nameCap * 2);
+  const picked = [...kept].sort((a,b) => lensScore(b) - lensScore(a)).slice(0, n);
+  const names = picked.map(r => r.ticker);
+  let w = erc(names);
+  w = applyCaps(names, w, nameCap, clusterCap);
+  const prof = riskProfile(names, w);
+
+  const order = names.map((t,i) => ({t, w: w[i], c: prof.contrib[i]})).sort((a,b) => b.w - a.w);
+  const top = order[0];
+  const clustersUsed = new Set(picked.map(r => r.cluster)).size;
+  const thin = names.reduce((acc, a, i) => acc + names.slice(i+1).filter(b => !rhoIsMeasured(a,b)).length, 0);
+
+  $('summary').innerHTML =
+    '<div class="card"><div class="n">' + pct(prof.vol, 0) + '</div><div class="l">Portfolio active volatility — how far this book can drift from bitcoin in a year, one standard deviation</div></div>' +
+    '<div class="card"><div class="n">' + pct(top.c, 0) + '</div><div class="l">Share of that risk carried by the largest position (' + top.t + ')</div></div>' +
+    '<div class="card"><div class="n">' + clustersUsed + ' / ' + n + '</div><div class="l">Distinct clusters among the picked names — equal numbers means no two are the same bet</div></div>' +
+    '<div class="card"><div class="n">' + (thin ? thin : '0') + '</div><div class="l">Pairs whose correlation could not be measured and use the median instead</div></div>';
+
+  const rows = order.map(o => {
+    const r = ROWS.find(x => x.ticker === o.t);
+    const band = Math.max(0.02, o.w * 0.25);
+    return '<tr>' +
+      '<td class="tk">' + o.t + '</td>' +
+      '<td class="nm">' + r.name + '</td>' +
+      '<td><span class="cl-chip">' + fmtClusterLabel(r.cluster) + '</span></td>' +
+      '<td class="num bold">' + pct(o.w) + '</td>' +
+      '<td><div class="wbar"><i style="width:' + (o.w*100).toFixed(1) + '%"></i></div></td>' +
+      '<td class="num">' + pct(o.c) + '</td>' +
+      '<td><div class="wbar risk"><i style="width:' + (o.c*100).toFixed(1) + '%"></i></div></td>' +
+      '<td class="num">' + (r.activeVolPct === undefined ? '—' : r.activeVolPct.toFixed(0) + '%') + '</td>' +
+      '<td class="num' + (r.activeReturnPct >= 0 ? ' pos' : ' neg') + '">' + (r.activeReturnPct === undefined ? '—' : (r.activeReturnPct >= 0 ? '+' : '−') + Math.abs(r.activeReturnPct).toFixed(0) + '%') + '</td>' +
+      '<td class="num">' + (r.riskRating === undefined ? '—' : r.riskRating.toFixed(2)) + '</td>' +
+      '<td class="small">' + pct(Math.max(0, o.w-band)) + ' – ' + pct(Math.min(1, o.w+band)) + '</td>' +
+    '</tr>';
+  }).join('');
+
+  $('buildOut').innerHTML =
+    '<div class="tbl-scroll"><table id="mainTable" style="min-width:1180px"><thead><tr>' +
+    '<th>Token</th><th>Name</th><th>Cluster</th><th>Weight</th><th></th><th>Risk share</th><th></th><th>Active vol</th><th>vs BTC, window</th><th>R</th><th>Drift band</th>' +
+    '</tr></thead><tbody>' + rows + '</tbody></table></div>' +
+    '<div class="table-note"><b>Weight</b> is the share of the crypto sleeve, not of total capital — the sleeve’s own size stays the Allocator’s fixed mandate. <b>Risk share</b> is this position’s contribution to the book’s active volatility; equal shares are what the weighting solves for, and the ceilings are what pull them apart. <b>vs BTC</b> is the measured active return over each asset’s own window, which differs per asset and is not annualised. <b>Drift band</b> is ±25% of the target weight: past it, rebalancing is a decision rather than housekeeping — useful because the stated approach here is to rebalance by hand rather than on a schedule.</div>';
+
+  renderBench(names, w, prof);
+}
+
+function renderBench(names, w, prof){
+  const n = names.length;
+  const eq = new Array(n).fill(1/n);
+  const eqProf = riskProfile(names, eq);
+  const caps = names.map(t => ROWS.find(r => r.ticker === t).marketCapUsdBn || 0);
+  const capTot = caps.reduce((a,b)=>a+b,0);
+  const cw = capTot > 0 ? caps.map(c => c/capTot) : eq;
+  const cwProf = riskProfile(names, cw);
+
+  const line = (label, weights, p, note) => {
+    const maxW = Math.max(...weights);
+    const maxC = Math.max(...p.contrib);
+    return '<tr><td class="k">' + label + '</td><td class="num">' + pct(p.vol, 0) + '</td><td class="num">' + pct(maxW, 0) +
+      '</td><td class="num">' + pct(maxC, 0) + '</td><td class="small">' + note + '</td></tr>';
+  };
+
+  $('benchOut').innerHTML =
+    '<div style="overflow-x:auto"><table class="mini" style="min-width:720px"><thead><tr><th>Weighting</th><th>Active vol</th><th>Largest weight</th><th>Largest risk share</th><th>What it does</th></tr></thead><tbody>' +
+    line('This tool', w, prof, 'Equal active-risk contribution, capped per name and per cluster.') +
+    line('Equal weight (1/N)', eq, eqProf, 'The benchmark that beats most optimisers out of sample. If the row above is not better on risk share, prefer this one.') +
+    line('Market-cap weighted', cw, cwProf, 'What an index would do. Concentrates in whatever is already large.') +
+    '</tbody></table></div>';
+}
+
+/* ---------- wiring ---------- */
+function refresh(){
+  $('minVolV').textContent = '$' + parseFloat($('minVol').value).toFixed(1) + 'M';
+  $('maxFdvV').textContent = parseFloat($('maxFdv').value).toFixed(2) + '×';
+  $('minDaysV').textContent = $('minDays').value + ' d';
+  $('nPosV').textContent = $('nPos').value;
+  $('capV').textContent = $('cap').value + '%';
+  $('lensHint').textContent = LENS_HINT[lens];
+  const s = screenAll();
+  renderScreen(s);
+  if(s.kept.length === 0){
+    $('summary').innerHTML = '';
+    $('buildOut').innerHTML = '<p class="excl">The screen removed everything. Loosen a gate above.</p>';
+    $('benchOut').innerHTML = '';
+    return;
+  }
+  renderBuild(s.kept);
+}
+
+['minVol','maxFdv','minDays','nPos','cap'].forEach(id => $(id).addEventListener('input', refresh));
+document.querySelectorAll('#lens button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('#lens button').forEach(x => x.classList.remove('on'));
+  b.classList.add('on');
+  lens = b.getAttribute('data-l');
+  refresh();
+}));
+
+renderClusters();
+refresh();
+})();
+</script>
+
+</body>
+</html>

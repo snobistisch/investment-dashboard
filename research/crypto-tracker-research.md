@@ -625,6 +625,179 @@ sample for a volatility estimate and a very small one for a drawdown.
 
 ---
 
+## 4d. Portfolio construction, and the finding that contradicts this file
+
+Added 15 August 2026, and it supersedes §4c as the answer to "what do I actually
+hold". §4c stays because the risk rating R is still used, as a screen input and
+as a column. What it does not stay as is a sizing rule — see §4c's own
+limitations, and then this.
+
+**The objective changed, stated by Matthias on 15 August 2026:** bitcoin is the
+benchmark and never a holding, the book should beat it, and it is allowed to be
+risky. That single decision invalidates most of what a standard portfolio tool
+does, because minimising volatility against a beat-bitcoin objective is a
+well-solved wrong problem — the least volatile assets here are the most
+bitcoin-like, so volatility-minimising weights converge on bitcoin's return
+minus costs.
+
+### Why there is no expected return in the weighting
+
+DeMiguel, Garlappi and Uppal (*Optimal Versus Naive Diversification*, RFS 22(5),
+2009) tested fourteen optimisation models against equal weighting across seven
+datasets. None beat 1/N consistently out of sample. The estimation window they
+compute as necessary for mean-variance to win is **about 3,000 months for 25
+assets and 6,000 for 50** — two to five centuries of data.
+
+The Kelly criterion has the same disease. Research on practical implementation
+finds 100 trades insufficient, 1,000 insufficient and roughly 10,000 as the
+point where full Kelly earns its theoretical advantage; full Kelly ran a 48.4%
+maximum drawdown against 25% for half Kelly in the same test. Thorp, who
+invented the application, ran roughly quarter Kelly at Princeton Newport.
+
+Expected return is the hardest input to estimate and the one every optimiser is
+most sensitive to. Volatility and correlation are estimable from a year of daily
+closes, and this repository has measured them. **So the weighting uses only
+measured inputs, and the judgement lives entirely in the screen and the
+selection lens** — where it is visible and cannot silently size a position.
+
+### The statistics are active, not absolute
+
+Everything is computed against the benchmark:
+
+```
+active return(i,t) = log r(i,t) − log r(BTC,t)
+active volatility  = sd(active return) · sqrt(365)
+active correlation = corr(active return i, active return j)
+```
+
+`scripts/build-portfolio.ts` computes these from
+`public/data/crypto-history.json`, which `scripts/fetch-risk-rating.ts` now
+persists — the first version of that script reduced a year of prices to two
+numbers and threw the series away, which made correlation unmeasurable without
+refetching all forty.
+
+### The finding: this file has been wrong about "one bet"
+
+The dashboard has claimed for months that forty tickers are one bet. **On
+active returns that is false, and the number is not close.**
+
+| | measured |
+| --- | ---: |
+| Median pairwise **active** correlation | **0.13** |
+| Clusters at a 0.6 cut, average linkage | **35 of 39** |
+| Multi-name clusters | 3: (ETH, SOL) · (JUP, LINK) · (EIGEN, ALEO, LDO) |
+| Pairs with too little overlap to measure | 111 of 741 |
+
+Both statements are true and they are about different things. In **absolute**
+terms these assets are one liquidity bet — they fall together, and the Exposure
+tab is right to say so. In **active** terms, once bitcoin is subtracted, what is
+left barely correlates at all. For a book whose objective is to beat bitcoin
+that is the relevant number, and it says there is real diversification available
+where this file assumed there was none.
+
+**Two reasons to hold that finding loosely.** Low measured active correlation is
+partly genuine and partly noise: the idiosyncratic return of an illiquid token
+is mostly measurement error, and measurement error is uncorrelated by
+construction, which flatters every diversification figure computed from it. And
+111 of 741 pairs could not be measured at all — the builder substitutes the
+median and says so on screen rather than assuming independence, which would
+flatter it further.
+
+### The weighting rule
+
+Equal **active-risk** contribution, with ceilings:
+
+```
+Sigma(i,j) = rho(i,j) · sigma(i) · sigma(j)        active covariance
+solve w >= 0, sum w = 1  such that  w(i)·(Sigma w)(i) is equal for all i
+then clip to the per-name and per-cluster ceilings and renormalise
+```
+
+Equal money gives a quiet name and a violent one the same say in the outcome,
+which is arithmetic mistaken for balance. Equal active-risk contribution means
+every position has the same shot at deciding whether the book beats bitcoin.
+That is the honest reading of "balanced" for a benchmark-relative objective.
+
+The solver is a fixed-point iteration — weight inversely to marginal risk,
+repeat — chosen over a proper optimiser because it is readable. An optimiser
+nobody can check is worse than an iteration everybody can.
+
+### Does it earn its complexity
+
+The tool reports this itself, on the same names, and would say so if it did not.
+At eight positions on the research-EV lens, 30% per-name ceiling:
+
+| Weighting | Active vol | Largest weight | Largest risk share |
+| --- | ---: | ---: | ---: |
+| This tool | 40% | 23% | **13%** |
+| Equal weight (1/N) | 45% | 13% | 19% |
+| Market-cap weighted | 32% | 79% | 80% |
+
+It beats 1/N on both measures, modestly. Market-cap weighting has the lowest
+active volatility and puts 80% of the risk in one name, which is the entire
+argument against it stated in one row.
+
+### The measured universe
+
+Active volatility against bitcoin, active return over each asset's own window
+(not annualised — the windows differ), observations, risk rating and cluster.
+Eleven of thirty-nine beat bitcoin over the measured window.
+
+| Asset | Active vol | vs BTC | Obs | R | Cluster |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| ALEO | 332% | −88% | 364 | 0.74 | 18 |
+| NIL | 304% | −71% | 364 | 0.52 | 30 |
+| EIGEN | 290% | −78% | 364 | 0.57 | 18 |
+| NOCK | 272% | +8% | 357 | 0.71 | 24 |
+| OCT | 246% | −38% | 116 | 0.64 | 33 |
+| CAP | 244% | +150% | 49 | 0.43 | 16 |
+| LDO | 211% | −61% | 364 | 0.41 | 18 |
+| AI | 202% | −77% | 107 | 0.70 | 32 |
+| UP | 200% | −6% | 185 | 0.68 | 17 |
+| ONDO | 198% | −40% | 364 | 0.36 | 15 |
+| PRL | 162% | −52% | 53 | 0.75 | 34 |
+| NOS | 162% | −13% | 364 | 0.56 | 21 |
+| ARX | 161% | −44% | 53 | 0.53 | 29 |
+| IRYS | 157% | +11% | 262 | 0.56 | 31 |
+| ZEC | 138% | +2420% | 364 | 0.26 | 2 |
+| XPL | 131% | −90% | 323 | 0.48 | 4 |
+| AZTEC | 124% | −43% | 183 | 0.51 | 28 |
+| ASTER | 123% | +76% | 329 | 0.35 | 9 |
+| LIT | 118% | +17% | 227 | 0.37 | 7 |
+| ZAMA | 114% | +59% | 193 | 0.38 | 25 |
+| MEGA | 106% | −83% | 106 | 0.64 | 5 |
+| MON | 105% | +13% | 263 | 0.52 | 3 |
+| LA | 104% | −71% | 364 | 0.55 | 27 |
+| ATH | 101% | −79% | 364 | 0.46 | 20 |
+| VIRTUAL | 100% | −9% | 364 | 0.26 | 23 |
+| PROVE | 93% | −80% | 364 | 0.57 | 26 |
+| AKT | 92% | −23% | 364 | 0.38 | 19 |
+| TAO | 86% | +0% | 364 | 0.26 | 22 |
+| ENA | 85% | −78% | 364 | 0.31 | 14 |
+| HYPE | 82% | +128% | 364 | 0.32 | 6 |
+| NEAR | 81% | +11% | 364 | 0.21 | 1 |
+| JUP | 80% | −38% | 364 | 0.31 | 8 |
+| UNI | 76% | −43% | 364 | 0.26 | 10 |
+| SYRUP | 70% | −35% | 364 | 0.37 | 12 |
+| AAVE | 64% | −48% | 364 | 0.25 | 11 |
+| SKY | 57% | +24% | 364 | 0.24 | 13 |
+| LINK | 55% | −27% | 364 | 0.22 | 8 |
+| SOL | 40% | −27% | 364 | 0.21 | 0 |
+| ETH | 33% | −23% | 364 | 0.18 | 0 |
+
+### What it does not do
+
+No expected return anywhere, deliberately. One year of history is one regime,
+and correlations rise in crashes, so the diversification measured in calm
+overstates what is available when it matters. Costs and spread are not modelled
+— the liquidity gate is the blunt version of a cost model, not a cost model.
+And the selection lens remains a judgement: research EV rests on subjective
+probabilities, momentum on the last year saying something about the next, the
+fee lens on revenue reaching holders. Switching between them changes the book,
+and that disagreement is the most useful thing the tool shows.
+
+---
+
 ## 5. The float rule, and the contradiction inside it
 
 The strongest idea in the source package is a rule: do not buy a token where

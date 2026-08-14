@@ -28,6 +28,12 @@ import { fileURLToPath } from 'node:url'
 const HERE = dirname(fileURLToPath(import.meta.url))
 const CRYPTO_HTML = resolve(HERE, '../public/dashboards/crypto.html')
 const OUT_JSON = resolve(HERE, '../public/data/risk-rating.json')
+/** The daily closes themselves, kept rather than discarded.
+ *  The first version of this script reduced a year of prices to two numbers and
+ *  threw the series away, which made the one thing the book most needs —
+ *  correlation between the assets — unmeasurable without refetching all forty.
+ *  Stored once, read by scripts/build-portfolio.ts. */
+const OUT_HISTORY = resolve(HERE, '../public/data/crypto-history.json')
 
 /** Schema version of risk-rating.json. Bump when the shape changes so a stale
  *  file is rejected rather than misread. */
@@ -262,6 +268,7 @@ async function main() {
     string,
     { vol?: number; dd?: number; days: number; from?: string; partial: boolean }
   > = {}
+  const history: Record<string, Series> = {}
   const failures: string[] = []
 
   for (const token of tokens) {
@@ -273,6 +280,7 @@ async function main() {
         failures.push(`${token.tk}: only ${series?.length ?? 0} closes`)
         measured[token.tk] = { days: series?.length ?? 0, partial: true }
       } else {
+        history[token.tk] = series
         const closes = series.map((p) => p.close)
         measured[token.tk] = {
           vol: round(realisedVolPct(closes), 1),
@@ -350,6 +358,24 @@ async function main() {
     ) + '\n',
   )
   console.log(`\nwrote ${OUT_JSON}`)
+
+  // Closes rounded to six significant figures: enough for a log return, and it
+  // keeps the file small enough to commit without thinking about it.
+  writeFileSync(
+    OUT_HISTORY,
+    JSON.stringify({
+      schemaVersion: SCHEMA_VERSION,
+      fetchedAt: new Date().toISOString(),
+      note: 'Daily USD closes per asset from CoinGecko market_chart, one year. Kept so correlation can be measured without refetching. Calendars differ per asset: align on date before computing returns.',
+      series: Object.fromEntries(
+        Object.entries(history).map(([tk, s]) => [
+          tk,
+          { from: s[0].date, to: s[s.length - 1].date, closes: s.map((p) => ({ d: p.date, c: Number(p.close.toPrecision(6)) })) },
+        ]),
+      ),
+    }) + '\n',
+  )
+  console.log(`wrote ${OUT_HISTORY}`)
 
   // --- the generated block inside crypto.html ---------------------------
   const html = readFileSync(CRYPTO_HTML, 'utf8')

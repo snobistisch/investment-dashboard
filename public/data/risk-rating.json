@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "fetchedAt": "2026-08-14T21:28:29.312Z",
+  "fetchedAt": "2026-08-14T22:22:15.511Z",
   "method": {
     "note": "R = 0.25*V + 0.25*D + 0.25*F + 0.25*L. V and D are measured from a year of daily CoinGecko closes; F and L are read from the tab. Every threshold below is a named constant in scripts/fetch-risk-rating.ts.",
     "windowDays": 365,
@@ -102,7 +102,7 @@
       "name": "Solana",
       "coingeckoId": "solana",
       "measured": {
-        "realisedVolPct": 57.3,
+        "realisedVolPct": 57.2,
         "drawdownPct": -74.9,
         "observations": 366,
         "from": "2025-08-15",
@@ -114,12 +114,12 @@
         "vol24hUsd": 1371800000
       },
       "components": {
-        "v": 0.1011,
+        "v": 0.1007,
         "d": 0.732,
         "f": 0.0114,
         "l": 0
       },
-      "r": 0.2111,
+      "r": 0.211,
       "bucket": "Low"
     },
     {
@@ -227,7 +227,7 @@
       "name": "MegaETH",
       "coingeckoId": "megaeth",
       "measured": {
-        "realisedVolPct": 93.5,
+        "realisedVolPct": 93.4,
         "drawdownPct": -85.9,
         "observations": 108,
         "from": "2026-04-30",
@@ -239,12 +239,12 @@
         "vol24hUsd": 5900000
       },
       "components": {
-        "v": 0.2352,
+        "v": 0.2348,
         "d": 0.8787,
         "f": 1,
         "l": 0.4641
       },
-      "r": 0.6445,
+      "r": 0.6444,
       "bucket": "High"
     },
     {
@@ -502,7 +502,7 @@
       "name": "Cap",
       "coingeckoId": "cap-4",
       "measured": {
-        "realisedVolPct": 191.7,
+        "realisedVolPct": 192.4,
         "drawdownPct": -45.9,
         "observations": 51,
         "from": "2026-06-26",
@@ -514,12 +514,12 @@
         "vol24hUsd": 78300000
       },
       "components": {
-        "v": 0.5989,
+        "v": 0.6015,
         "d": 0.3453,
         "f": 0.7729,
         "l": 0
       },
-      "r": 0.4293,
+      "r": 0.4299,
       "bucket": "Medium"
     },
     {
@@ -528,7 +528,7 @@
       "coingeckoId": "superform",
       "measured": {
         "realisedVolPct": 164.6,
-        "drawdownPct": -73.2,
+        "drawdownPct": -73.1,
         "observations": 187,
         "from": "2026-02-10",
         "partialWindow": true
@@ -540,11 +540,11 @@
       },
       "components": {
         "v": 0.4985,
-        "d": 0.7093,
+        "d": 0.708,
         "f": 0.5029,
         "l": 1
       },
-      "r": 0.6777,
+      "r": 0.6773,
       "bucket": "High"
     },
     {
@@ -777,7 +777,7 @@
       "name": "Zama",
       "coingeckoId": "zama",
       "measured": {
-        "realisedVolPct": 94.3,
+        "realisedVolPct": 94.1,
         "drawdownPct": -48.9,
         "observations": 195,
         "from": "2026-02-02",
@@ -789,12 +789,12 @@
         "vol24hUsd": 11700000
       },
       "components": {
-        "v": 0.2381,
+        "v": 0.2374,
         "d": 0.3853,
         "f": 0.5714,
         "l": 0.3154
       },
-      "r": 0.3776,
+      "r": 0.3774,
       "bucket": "Medium"
     },
     {
@@ -878,7 +878,7 @@
       "coingeckoId": "arcium",
       "measured": {
         "realisedVolPct": 132.6,
-        "drawdownPct": -66.2,
+        "drawdownPct": -66.3,
         "observations": 55,
         "from": "2026-06-22",
         "partialWindow": true
@@ -890,11 +890,11 @@
       },
       "components": {
         "v": 0.38,
-        "d": 0.616,
+        "d": 0.6173,
         "f": 0.5414,
         "l": 0.5902
       },
-      "r": 0.5319,
+      "r": 0.5322,
       "bucket": "High"
     },
     {
@@ -927,7 +927,7 @@
       "name": "Irys",
       "coingeckoId": "irys",
       "measured": {
-        "realisedVolPct": 131.4,
+        "realisedVolPct": 131.3,
         "drawdownPct": -79.4,
         "observations": 264,
         "from": "2025-11-25",
@@ -939,7 +939,7 @@
         "vol24hUsd": 4900000
       },
       "components": {
-        "v": 0.3756,
+        "v": 0.3752,
         "d": 0.792,
         "f": 0.5714,
         "l": 0.5044
@@ -1002,7 +1002,7 @@
       "name": "Octra",
       "coingeckoId": "octra",
       "measured": {
-        "realisedVolPct": 208.8,
+        "realisedVolPct": 209,
         "drawdownPct": -88.5,
         "observations": 118,
         "from": "2026-04-20",
@@ -1014,12 +1014,12 @@
         "vol24hUsd": 100000
       },
       "components": {
-        "v": 0.6622,
+        "v": 0.663,
         "d": 0.9133,
         "f": 0,
         "l": 1
       },
-      "r": 0.6439,
+      "r": 0.6441,
       "bucket": "High"
     },
     {

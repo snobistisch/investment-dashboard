@@ -1,9 +1,9 @@
 {
  "schemaVersion": 1,
- "builtAt": "2026-08-14T22:22:27.479Z",
+ "builtAt": "2026-08-14T23:47:40.775Z",
  "benchmark": "BTC",
  "historyFetchedAt": "2026-08-14T22:22:15.513Z",
- "riskFetchedAt": "2026-08-14T22:22:15.511Z",
+ "riskFetchedAt": "2026-08-14T22:22:15.513Z",
  "method": {
   "note": "All statistics are relative to the benchmark: daily active return = asset log return minus benchmark log return on the same day. Correlation is of active returns, so it answers \"are these the same deviation from bitcoin\", not \"do they both go up when the market goes up\".",
   "minOverlapDays": 90,
@@ -283,7 +283,7 @@
    "floatPct": 100,
    "vol24hUsdM": 7017.2,
    "feesUsdM": 242.1,
-   "riskRating": 0.1799,
+   "riskRating": 0.1899,
    "riskBucket": "Low"
   },
   {
@@ -300,7 +300,7 @@
    "floatPct": 92,
    "vol24hUsdM": 1371.8,
    "feesUsdM": 264.9,
-   "riskRating": 0.211,
+   "riskRating": 0.2219,
    "riskBucket": "Low"
   },
   {
@@ -317,7 +317,7 @@
    "floatPct": 100,
    "vol24hUsdM": 179,
    "feesUsdM": 42.5,
-   "riskRating": 0.2128,
+   "riskRating": 0.2279,
    "riskBucket": "Low"
   },
   {
@@ -334,7 +334,7 @@
    "floatPct": 80,
    "vol24hUsdM": 189.1,
    "feesUsdM": null,
-   "riskRating": 0.261,
+   "riskRating": 0.2847,
    "riskBucket": "Medium"
   },
   {
@@ -351,7 +351,7 @@
    "floatPct": 12,
    "vol24hUsdM": 15.6,
    "feesUsdM": 1.4,
-   "riskRating": 0.5229,
+   "riskRating": 0.5413,
    "riskBucket": "High"
   },
   {
@@ -368,7 +368,7 @@
    "floatPct": 27,
    "vol24hUsdM": 22.6,
    "feesUsdM": 8.1,
-   "riskRating": 0.4755,
+   "riskRating": 0.4985,
    "riskBucket": "Medium"
   },
   {
@@ -385,7 +385,7 @@
    "floatPct": 11,
    "vol24hUsdM": 5.9,
    "feesUsdM": 0.5,
-   "riskRating": 0.6444,
+   "riskRating": 0.662,
    "riskBucket": "High"
   },
   {
@@ -402,7 +402,7 @@
    "floatPct": 22,
    "vol24hUsdM": 266.7,
    "feesUsdM": 942.7,
-   "riskRating": 0.3156,
+   "riskRating": 0.3302,
    "riskBucket": "Medium"
   },
   {
@@ -419,7 +419,7 @@
    "floatPct": 25,
    "vol24hUsdM": 37.3,
    "feesUsdM": 72.3,
-   "riskRating": 0.3745,
+   "riskRating": 0.3946,
    "riskBucket": "Medium"
   },
   {
@@ -436,7 +436,7 @@
    "floatPct": 48,
    "vol24hUsdM": 22.4,
    "feesUsdM": 275.5,
-   "riskRating": 0.3098,
+   "riskRating": 0.3248,
    "riskBucket": "Medium"
   },
   {
@@ -453,7 +453,7 @@
    "floatPct": 34,
    "vol24hUsdM": 39.5,
    "feesUsdM": null,
-   "riskRating": 0.3537,
+   "riskRating": 0.3745,
    "riskBucket": "Medium"
   },
   {
@@ -470,7 +470,7 @@
    "floatPct": 62,
    "vol24hUsdM": 282.1,
    "feesUsdM": 752.6,
-   "riskRating": 0.2577,
+   "riskRating": 0.2726,
    "riskBucket": "Medium"
   },
   {
@@ -487,8 +487,8 @@
    "floatPct": 96,
    "vol24hUsdM": 135.2,
    "feesUsdM": 860.5,
-   "riskRating": 0.2494,
-   "riskBucket": "Low"
+   "riskRating": 0.2627,
+   "riskBucket": "Medium"
   },
   {
    "ticker": "SYRUP",
@@ -504,7 +504,7 @@
    "floatPct": 94,
    "vol24hUsdM": 3.8,
    "feesUsdM": 108.2,
-   "riskRating": 0.3668,
+   "riskRating": 0.3802,
    "riskBucket": "Medium"
   },
   {
@@ -521,8 +521,8 @@
    "floatPct": 100,
    "vol24hUsdM": 4.9,
    "feesUsdM": null,
-   "riskRating": 0.2395,
-   "riskBucket": "Low"
+   "riskRating": 0.2505,
+   "riskBucket": "Medium"
   },
   {
    "ticker": "ENA",
@@ -538,7 +538,7 @@
    "floatPct": 66,
    "vol24hUsdM": 86.8,
    "feesUsdM": 330.3,
-   "riskRating": 0.3074,
+   "riskRating": 0.3235,
    "riskBucket": "Medium"
   },
   {
@@ -555,7 +555,7 @@
    "floatPct": 49,
    "vol24hUsdM": 67.4,
    "feesUsdM": 57.9,
-   "riskRating": 0.365,
+   "riskRating": 0.398,
    "riskBucket": "Medium"
   },
   {
@@ -572,7 +572,7 @@
    "floatPct": 16,
    "vol24hUsdM": 78.3,
    "feesUsdM": 7.2,
-   "riskRating": 0.4299,
+   "riskRating": 0.4661,
    "riskBucket": "Medium"
   },
   {
@@ -589,7 +589,7 @@
    "floatPct": 22,
    "vol24hUsdM": 0.5,
    "feesUsdM": 0.5,
-   "riskRating": 0.6773,
+   "riskRating": 0.7084,
    "riskBucket": "High"
   },
   {
@@ -606,7 +606,7 @@
    "floatPct": 75,
    "vol24hUsdM": 282.3,
    "feesUsdM": 62.6,
-   "riskRating": 0.2207,
+   "riskRating": 0.2328,
    "riskBucket": "Low"
   },
   {
@@ -623,7 +623,7 @@
    "floatPct": 40,
    "vol24hUsdM": 11.7,
    "feesUsdM": null,
-   "riskRating": 0.5706,
+   "riskRating": 0.6165,
    "riskBucket": "High"
   },
   {
@@ -640,7 +640,7 @@
    "floatPct": 84,
    "vol24hUsdM": 19,
    "feesUsdM": 697.2,
-   "riskRating": 0.4133,
+   "riskRating": 0.4473,
    "riskBucket": "Medium"
   },
   {
@@ -657,7 +657,7 @@
    "floatPct": 76,
    "vol24hUsdM": 4.6,
    "feesUsdM": 1.9,
-   "riskRating": 0.3815,
+   "riskRating": 0.3987,
    "riskBucket": "Medium"
   },
   {
@@ -674,7 +674,7 @@
    "floatPct": 48,
    "vol24hUsdM": 6.2,
    "feesUsdM": null,
-   "riskRating": 0.462,
+   "riskRating": 0.4803,
    "riskBucket": "Medium"
   },
   {
@@ -691,7 +691,7 @@
    "floatPct": 100,
    "vol24hUsdM": 0.2,
    "feesUsdM": null,
-   "riskRating": 0.5587,
+   "riskRating": 0.5847,
    "riskBucket": "High"
   },
   {
@@ -708,7 +708,7 @@
    "floatPct": 46,
    "vol24hUsdM": 94.8,
    "feesUsdM": null,
-   "riskRating": 0.2578,
+   "riskRating": 0.2738,
    "riskBucket": "Medium"
   },
   {
@@ -725,7 +725,7 @@
    "floatPct": 66,
    "vol24hUsdM": 102.4,
    "feesUsdM": 20.1,
-   "riskRating": 0.2564,
+   "riskRating": 0.2755,
    "riskBucket": "Medium"
   },
   {
@@ -742,8 +742,8 @@
    "floatPct": 53,
    "vol24hUsdM": 0.6,
    "feesUsdM": null,
-   "riskRating": 0.7093,
-   "riskBucket": "High"
+   "riskRating": 0.7531,
+   "riskBucket": "Extreme"
   },
   {
    "ticker": "ZAMA",
@@ -759,7 +759,7 @@
    "floatPct": 20,
    "vol24hUsdM": 11.7,
    "feesUsdM": null,
-   "riskRating": 0.3774,
+   "riskRating": 0.3951,
    "riskBucket": "Medium"
   },
   {
@@ -776,7 +776,7 @@
    "floatPct": 20,
    "vol24hUsdM": 4.2,
    "feesUsdM": null,
-   "riskRating": 0.5679,
+   "riskRating": 0.5849,
    "riskBucket": "High"
   },
   {
@@ -793,7 +793,7 @@
    "floatPct": 19,
    "vol24hUsdM": 6.9,
    "feesUsdM": null,
-   "riskRating": 0.5534,
+   "riskRating": 0.5711,
    "riskBucket": "High"
   },
   {
@@ -810,7 +810,7 @@
    "floatPct": 29,
    "vol24hUsdM": 1.6,
    "feesUsdM": null,
-   "riskRating": 0.5103,
+   "riskRating": 0.5318,
    "riskBucket": "High"
   },
   {
@@ -827,7 +827,7 @@
    "floatPct": 21,
    "vol24hUsdM": 3.3,
    "feesUsdM": null,
-   "riskRating": 0.5322,
+   "riskRating": 0.5572,
    "riskBucket": "High"
   },
   {
@@ -844,7 +844,7 @@
    "floatPct": 49,
    "vol24hUsdM": 28,
    "feesUsdM": null,
-   "riskRating": 0.5163,
+   "riskRating": 0.5589,
    "riskBucket": "High"
   },
   {
@@ -861,7 +861,7 @@
    "floatPct": 20,
    "vol24hUsdM": 4.9,
    "feesUsdM": null,
-   "riskRating": 0.5608,
+   "riskRating": 0.5856,
    "riskBucket": "High"
   },
   {
@@ -878,7 +878,7 @@
    "floatPct": 13,
    "vol24hUsdM": 4.6,
    "feesUsdM": null,
-   "riskRating": 0.6992,
+   "riskRating": 0.7308,
    "riskBucket": "High"
   },
   {
@@ -895,8 +895,8 @@
    "floatPct": 27,
    "vol24hUsdM": 0.6,
    "feesUsdM": null,
-   "riskRating": 0.7362,
-   "riskBucket": "High"
+   "riskRating": 0.759,
+   "riskBucket": "Extreme"
   },
   {
    "ticker": "OCT",
@@ -912,7 +912,7 @@
    "floatPct": 63,
    "vol24hUsdM": 0.1,
    "feesUsdM": null,
-   "riskRating": 0.6441,
+   "riskRating": 0.6834,
    "riskBucket": "High"
   },
   {
@@ -929,8 +929,8 @@
    "floatPct": 12,
    "vol24hUsdM": 0.1,
    "feesUsdM": null,
-   "riskRating": 0.7458,
-   "riskBucket": "High"
+   "riskRating": 0.7698,
+   "riskBucket": "Extreme"
   }
  ],
  "correlation": {

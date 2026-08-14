@@ -20,6 +20,8 @@ import {
   diversifierUniverse,
   cryptoUniverse,
   CRYPTO_TARGET_SHARE,
+  CRYPTO_RESEARCH_RANKS,
+  CRYPTO_RESEARCH_UNIVERSE,
   THESIS_FACTOR,
   SLEEVE_CAP_AGGRESSIVE,
 } from '../src/sections/allocator/allocation'
@@ -382,6 +384,24 @@ if (snapshot) {
         }
       }
     }
+  }
+}
+
+// Every mandate name has to carry the research's own verdict on it. Without
+// this, a fifth crypto position could be added and simply not show a rank,
+// which is the failure mode the mandate line exists to prevent.
+for (const p of cryptoUniverse) {
+  const rank = CRYPTO_RESEARCH_RANKS[p.ticker]
+  check(rank !== undefined, `crypto research rank: ${p.ticker} has no entry`)
+  if (rank) {
+    check(
+      rank.ev >= 1 && rank.ev <= CRYPTO_RESEARCH_UNIVERSE,
+      `crypto research rank: ${p.ticker} EV rank ${rank.ev} outside 1..${CRYPTO_RESEARCH_UNIVERSE}`,
+    )
+    check(
+      rank.evSigma >= 1 && rank.evSigma <= CRYPTO_RESEARCH_UNIVERSE,
+      `crypto research rank: ${p.ticker} EV/sigma rank ${rank.evSigma} outside 1..${CRYPTO_RESEARCH_UNIVERSE}`,
+    )
   }
 }
 

@@ -279,6 +279,63 @@ export const CRYPTO_WEIGHTS: Record<string, number> = {
 export const CRYPTO_MANDATE_RATIONALE =
   'Held to a fixed 10% crypto mandate, not to a documented mispricing. No edge is recorded for this name in positions.ts.'
 
+/** How many assets the crypto tab ranks, bitcoin included as the benchmark. */
+export const CRYPTO_RESEARCH_UNIVERSE = 40
+
+/** Where each held name sits in the crypto tab's own ranking.
+ *
+ *  Both columns come out of public/dashboards/crypto.html, which computes them
+ *  in the page from the published three-scenario probabilities rather than
+ *  carrying a stored score. `ev` is the rank the table sorts on — expected
+ *  three-year return. `evSigma` is that same expected value divided by its own
+ *  dispersion.
+ *
+ *  They disagree, and the disagreement is the useful part: NOCK is 4th of 40
+ *  on expected value and 25th once its 3.47 standard deviation is charged for
+ *  it, while ZEC is 25th on expected value and 16th risk-adjusted because its
+ *  spread is narrow. Reporting only one of the two would let the sleeve pick
+ *  whichever number flatters it.
+ *
+ *  Transcribed 14 Aug 2026 from that file's TOKENS array, not recomputed here:
+ *  scripts/verify-allocation.ts fails if a sleeve name is missing an entry, so
+ *  a fifth crypto position cannot arrive without its rank arriving with it. */
+export const CRYPTO_RESEARCH_RANKS: Record<string, { ev: number; evSigma: number }> = {
+  ETH: { ev: 3, evSigma: 1 },
+  NOCK: { ev: 4, evSigma: 25 },
+  LIT: { ev: 11, evSigma: 13 },
+  ZEC: { ev: 25, evSigma: 16 },
+}
+
+/** The sleeve's weights against the research's own ordering of the same names.
+ *
+ *  Stated on the tab rather than left in this file, because a mandate that
+ *  contradicts the research is a decision and a decision belongs on screen.
+ *  The research ranks these four ETH, NOCK, LIT, ZEC on expected value; the
+ *  mandate pays LIT and ZEC 30% each and ETH 25%. So the two largest cheques
+ *  in the sleeve go to the names the research puts 11th and 25th of forty,
+ *  and the name it puts 3rd — first on a risk-adjusted basis — is third here.
+ *
+ *  TODO (Matthias): this is the open question the audit of 13 Aug 2026 raised
+ *  and it is not code's to answer. Either the weights follow the ranking, in
+ *  which case ETH carries the sleeve and ZEC drops to a watchlist line, or the
+ *  30% ZEC allocation stays and is an explicit bet against the tab's own EV
+ *  model — a bet on privacy repricing, or a hedge against the compliance
+ *  regime the stablecoin note describes, both of which are defensible and
+ *  neither of which is what "held to mandate" currently says.
+ *  Nothing below sizes on this constant; it is shown, not applied. */
+export const CRYPTO_MANDATE_DIVERGENCE =
+  'These weights are an instruction, not an output of the crypto research. Ranked by the tab’s own expected value over 40 assets, the sleeve holds #3 (ETH), #4 (NOCK), #11 (LIT) and #25 (ZEC) — and pays the largest weight to the two lowest-ranked of the four. Held anyway, and shown here so the divergence is visible in the allocation rather than only in the note.'
+
+/** Short per-row form of the same fact. Absent for a name with no recorded
+ *  rank rather than defaulted to something reassuring. */
+export function cryptoResearchNote(ticker: string): string | undefined {
+  const rank = CRYPTO_RESEARCH_RANKS[ticker]
+  if (!rank) return undefined
+  const weight = CRYPTO_WEIGHTS[ticker]
+  const weightText = weight === undefined ? '' : `${Math.round(weight * 100)}% of the sleeve · `
+  return `${weightText}research rank #${rank.ev} of ${CRYPTO_RESEARCH_UNIVERSE} on expected value, #${rank.evSigma} on EV/σ`
+}
+
 const inCrypto = (p: Position) => p.sections.includes('crypto')
 
 export const thesisUniverse = sizeableUniverse.filter(
@@ -335,6 +392,9 @@ export interface AllocatedPosition {
   /** (equity + premium) / capital — what the per-name cap is enforced on. */
   exposureWeight: number
   rationale: string
+  /** Crypto sleeve only: mandate weight and where the research ranks the name.
+   *  Absent everywhere else, because everywhere else the ranking IS the size. */
+  researchNote?: string
   sleeveName: 'thesis' | 'diversifier' | 'crypto'
   bottleneck: boolean
   nameCapped: boolean
@@ -766,6 +826,8 @@ export function buildAllocation(
       // Guaranteed present: sizeableUniverse filters on edge !== undefined.
       rationale:
         r.position.edge ?? (r.sleeveName === 'crypto' ? CRYPTO_MANDATE_RATIONALE : ''),
+      researchNote:
+        r.sleeveName === 'crypto' ? cryptoResearchNote(r.position.ticker) : undefined,
       sleeveName: r.sleeveName,
       bottleneck: isBottleneck(r.position),
       tradable: isDirectlyTradable(r.position),

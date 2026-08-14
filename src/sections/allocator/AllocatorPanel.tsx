@@ -14,6 +14,7 @@ import {
 import { VINTAGE_WARN_DAYS } from '../exposure/analysis'
 import {
   buildAllocation,
+  CRYPTO_MANDATE_DIVERGENCE,
   riskBand,
   SLEEVE_CAP_AGGRESSIVE,
   type AllocatedPosition,
@@ -152,7 +153,22 @@ function PositionRow({
           </span>
         )}
       </td>
-      <td className="py-2 align-top text-[11px] leading-relaxed text-term-dim">{row.rationale}</td>
+      <td className="py-2 align-top text-[11px] leading-relaxed text-term-dim">
+        {row.rationale}
+        {/* Crypto only. The size came from an instruction, so the row says what
+            the research thinks of the name next to what the mandate paid it. */}
+        {row.researchNote && (
+          <span className="mt-1 block">
+            <span
+              className="mr-1.5 border border-term-magenta px-1 text-[9px] uppercase tracking-wider text-term-magenta"
+              title="Sized to instruction, not to the crypto tab's ranking"
+            >
+              mandate
+            </span>
+            <span className="text-term-dim">{row.researchNote}</span>
+          </span>
+        )}
+      </td>
     </tr>
   )
 }
@@ -666,6 +682,13 @@ export function AllocatorPanel({
                     </td>
                   </tr>
                 )}
+                {cryptoRows.length > 0 && (
+                  <tr className="border-b border-term-line">
+                    <td colSpan={5} className="py-2 text-[11px] leading-relaxed text-term-dim">
+                      {CRYPTO_MANDATE_DIVERGENCE}
+                    </td>
+                  </tr>
+                )}
                 {cryptoRows.map((row) => (
                   <PositionRow
                     key={row.position.ticker}
@@ -684,7 +707,11 @@ export function AllocatorPanel({
             {pct(result.perNameCapPct * 0.6)} of capital against the core&rsquo;s{' '}
             {pct(result.perNameCapPct)} — so ballast stays ballast. No win-probability or
             Kelly-style math; nothing in positions.ts supports that precision. Each rationale is the
-            position&rsquo;s own <span className="text-term-text">edge</span> field, verbatim.
+            position&rsquo;s own <span className="text-term-text">edge</span> field, verbatim. Crypto
+            rows carry a second line because their size is not derived from anything: the{' '}
+            <span className="text-term-magenta">mandate</span> tag reports where the crypto tab
+            ranks the name, so an instruction that overrules the research is legible next to the
+            cheque it writes.
           </p>
         </Panel>
       </div>

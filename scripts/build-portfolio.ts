@@ -39,6 +39,7 @@ const HERE = dirname(fileURLToPath(import.meta.url))
 const CRYPTO_HTML = resolve(HERE, '../public/dashboards/crypto.html')
 const HISTORY_JSON = resolve(HERE, '../public/data/crypto-history.json')
 const RISK_JSON = resolve(HERE, '../public/data/risk-rating.json')
+const MARKET_JSON = resolve(HERE, '../public/data/crypto-market.json')
 const PORTFOLIO_HTML = resolve(HERE, '../public/dashboards/portfolio.html')
 const OUT_JSON = resolve(HERE, '../public/data/portfolio.json')
 
@@ -98,6 +99,7 @@ interface Token {
   fee: number | null
   y1: number | null
   sc: [number, number][]
+  priceUsd?: number
 }
 
 function readTokens(): Token[] {
@@ -106,7 +108,37 @@ function readTokens(): Token[] {
   const end = html.indexOf('\n];', start)
   if (start < 0 || end < 0) throw new Error('could not locate the TOKENS array in crypto.html')
   const literal = html.slice(start + 'const TOKENS = '.length, end + 2)
-  return new Function(`return ${literal}`)() as Token[]
+  const tokens = new Function(`return ${literal}`)() as Token[]
+  const market = JSON.parse(readFileSync(MARKET_JSON, 'utf8')) as {
+    fetchedAt: string
+    scenarioAsOf: string
+    scenarioHorizonYears: number
+    rows: {
+      ticker: string
+      priceUsd: number
+      marketCapUsd: number
+      fdvx: number
+      floatPct: number
+      vol24hUsd: number
+      return1yPct?: number
+      scenarioReturns: [number, number][]
+    }[]
+  }
+  const live = Object.fromEntries(market.rows.map((row) => [row.ticker, row]))
+  return tokens.map((token) => {
+    const row = live[token.tk]
+    if (!row) throw new Error(`${token.tk}: missing live crypto market row`)
+    return {
+      ...token,
+      priceUsd: row.priceUsd,
+      mcap: row.marketCapUsd / 1e9,
+      fdvx: row.fdvx,
+      flt: row.floatPct,
+      vol: row.vol24hUsd / 1e6,
+      y1: row.return1yPct ?? null,
+      sc: row.scenarioReturns,
+    }
+  })
 }
 
 const round = (n: number, dp: number) => Math.round(n * 10 ** dp) / 10 ** dp
@@ -236,13 +268,21 @@ function cluster(tickers: string[], rho: (a: string, b: string) => number | unde
 
 function main() {
   const tokens = readTokens()
+  const market = JSON.parse(readFileSync(MARKET_JSON, 'utf8')) as {
+    fetchedAt: string
+    scenarioAsOf: string
+    scenarioHorizonYears: number
+  }
   const tokenBy = Object.fromEntries(tokens.map((token) => [token.tk, token]))
   const benchmarkToken = tokenBy[BENCHMARK]
   if (!benchmarkToken) throw new Error(`benchmark ${BENCHMARK} is absent from the token universe`)
+  const scenarioTerminal = (token: Token) =>
+    token.sc.reduce((sum, [probability, outcome]) => sum + probability * outcome, 0)
   const scenarioAnnual = (token: Token) => {
-    const total = token.sc.reduce((sum, [probability, outcome]) => sum + probability * outcome, 0)
-    return total <= -1 ? -1 : (1 + total) ** (1 / 3) - 1
+    const total = scenarioTerminal(token)
+    return total <= -1 ? -1 : (1 + total) ** (1 / market.scenarioHorizonYears) - 1
   }
+  const benchmarkScenarioTerminal = scenarioTerminal(benchmarkToken)
   const benchmarkScenarioAnnual = scenarioAnnual(benchmarkToken)
   const history = JSON.parse(readFileSync(HISTORY_JSON, 'utf8')) as HistoryFile
   const risk = JSON.parse(readFileSync(RISK_JSON, 'utf8')) as RiskFile
@@ -326,6 +366,7 @@ function main() {
       const sd = stdev(values)
       const total = values.reduce((s, v) => s + v, 0)
       const r = riskBy[t.tk]
+      const terminalScenarioEv = scenarioTerminal(t)
       const annualScenarioEv = scenarioAnnual(t)
       return {
         ticker: t.tk,
@@ -343,6 +384,18 @@ function main() {
          *  the builder never mistakes source-array order for an EV ranking. */
         scenarioEvAnnualPct: round(annualScenarioEv * 100, 1),
         scenarioEdgeVsBtcPct: round((annualScenarioEv - benchmarkScenarioAnnual) * 100, 1),
+        /** Terminal edge is the arithmetic used by the robustness and cost
+         *  gate. Annualisation is display-only and preserves the sign. */
+        scenarioEvTerminalPct: round(terminalScenarioEv * 100, 2),
+        scenarioEdgeTerminalVsBtcPct: round((terminalScenarioEv - benchmarkScenarioTerminal) * 100, 2),
+        scenarioLegs: t.sc.map(([probability, outcome], index) => ({
+          label: ['bull', 'base', 'bear'][index],
+          probability,
+          returnPct: round(outcome * 100, 2),
+        })),
+        /** Current global reference price, used only to turn a target dollar
+         *  allocation into indicative units. The venue check remains manual. */
+        priceUsd: t.priceUsd,
         observations: values.length,
         marketCapUsdBn: t.mcap,
         fdvx: t.fdvx,
@@ -368,6 +421,9 @@ function main() {
     benchmark: BENCHMARK,
     historyFetchedAt: history.fetchedAt,
     riskFetchedAt: risk.fetchedAt,
+    marketFetchedAt: market.fetchedAt,
+    scenarioAsOf: market.scenarioAsOf,
+    scenarioHorizonYears: market.scenarioHorizonYears,
     method: {
       note:
         'All statistics are relative to the benchmark: daily active return = asset log return minus benchmark log return on the same day. Correlation is of active returns, so it answers "are these the same deviation from bitcoin", not "do they both go up when the market goes up".',

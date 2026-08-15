@@ -53,6 +53,21 @@ if (snap) {
   line('priced / with cap / unmapped', `${quotes.length} / ${quotes.filter((q) => q.marketCapUsd !== undefined).length} / ${snap.unmapped.length}`)
 } else line('status', 'absent — the site falls back to transcribed values')
 
+// --- crypto market and frozen forecast ----------------------------------
+interface CryptoMarket {
+  fetchedAt: string
+  scenarioAsOf: string
+  rows: { ticker: string; priceUsd: number; vol24hUsd: number; fdvx: number }[]
+}
+const cryptoMarket = readJson<CryptoMarket>('public/data/crypto-market.json')
+head('CRYPTO MARKET — public/data/crypto-market.json')
+if (cryptoMarket) {
+  line('fetched', cryptoMarket.fetchedAt.slice(0, 19) + 'Z')
+  line('age (hours)', ((Date.now() - Date.parse(cryptoMarket.fetchedAt)) / 3_600_000).toFixed(1))
+  line('priced / total', `${cryptoMarket.rows.filter((r) => r.priceUsd > 0).length} / ${cryptoMarket.rows.length}`)
+  line('scenario targets frozen', cryptoMarket.scenarioAsOf)
+} else line('status', 'absent — run npm run fetch-crypto-market')
+
 // --- risk rating ----------------------------------------------------------
 interface Risk {
   fetchedAt: string
@@ -86,6 +101,15 @@ interface Portfolio {
     pairsWithTooLittleOverlap: number
   }
   clusters: { id: number; members: string[]; label: string }[]
+  rows: {
+    ticker: string
+    scenarioEdgeVsBtcPct: number
+    scenarioEdgeTerminalVsBtcPct: number
+    scenarioLegs: { returnPct: number }[]
+    observations: number
+    vol24hUsdM: number
+    fdvx: number
+  }[]
 }
 const pf = readJson<Portfolio>('public/data/portfolio.json')
 head('PORTFOLIO — public/data/portfolio.json')
@@ -100,12 +124,20 @@ if (pf) {
   line('pairs too thin to measure', pf.stats.pairsWithTooLittleOverlap)
   const multi = pf.clusters.filter((c) => c.members.length > 1)
   line('multi-name clusters', multi.length ? multi.map((c) => `(${c.members.join(',')})`).join(' ') : 'none')
+  const raw = pf.rows.filter((r) => r.scenarioEdgeVsBtcPct > 0)
+  const robust = raw.filter((r) => {
+    const spread = r.scenarioLegs[0].returnPct - r.scenarioLegs[2].returnPct
+    return r.scenarioEdgeTerminalVsBtcPct - 1 - 0.05 * spread > 0 && r.observations >= 90 && r.vol24hUsdM >= 1 && r.fdvx <= 3
+  })
+  line('raw positive scenario edge', raw.map((r) => r.ticker).join(', ') || 'none')
+  line('pilot default (5pp + 1% cost)', robust.map((r) => r.ticker).join(', ') || 'none')
 } else line('status', 'absent — run npm run build-portfolio')
 
 // --- files not to open ----------------------------------------------------
 head('DO NOT READ WHOLE — query these with node -e or jq')
 for (const p of [
   'public/data/crypto-history.json',
+  'public/data/crypto-market.json',
   'public/data/portfolio.json',
   'public/data/market-data.json',
   'public/dashboards/crypto.html',
@@ -116,5 +148,6 @@ head('COMMANDS')
 line('npm run verify', 'allocation invariants — blocks the deploy')
 line('npm run lint && npm run build', 'oxlint, then typecheck + vite build')
 line('npm run fetch-risk-rating', 'CoinGecko, ~10 min, rewrites two data files')
+line('npm run fetch-crypto-market', 'refreshes all live crypto decision inputs')
 line('npm run build-portfolio', 'seconds, reads the history, patches portfolio.html')
 console.log()

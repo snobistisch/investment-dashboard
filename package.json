@@ -10,6 +10,8 @@
     "fetch-market-data": "jiti scripts/fetch-market-data.ts",
     "lint": "oxlint",
     "preview": "vite preview",
+    "fetch-crypto-market": "jiti scripts/fetch-crypto-market.ts",
+    "freeze-crypto-scenarios": "jiti scripts/freeze-crypto-scenarios.ts",
     "fetch-risk-rating": "jiti scripts/fetch-risk-rating.ts",
     "rebuild-risk-rating": "jiti scripts/fetch-risk-rating.ts --from-cache",
     "build-portfolio": "jiti scripts/build-portfolio.ts",

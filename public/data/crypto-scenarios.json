@@ -1,0 +1,928 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-08-12",
+  "horizonYears": 3,
+  "note": "Subjective probabilities and terminal USD price targets frozen from the published Assets scenarios. A refresh recomputes returns from the latest price but never changes these targets.",
+  "rows": [
+    {
+      "ticker": "BTC",
+      "name": "Bitcoin",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 63537.6,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.3,
+          "targetPriceUsd": 180446.78
+        },
+        {
+          "label": "base",
+          "probability": 0.45,
+          "targetPriceUsd": 95306.4
+        },
+        {
+          "label": "bear",
+          "probability": 0.25,
+          "targetPriceUsd": 34945.68
+        }
+      ]
+    },
+    {
+      "ticker": "ETH",
+      "name": "Ethereum",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 1880.49,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.3,
+          "targetPriceUsd": 5961.1533
+        },
+        {
+          "label": "base",
+          "probability": 0.45,
+          "targetPriceUsd": 2989.9791
+        },
+        {
+          "label": "bear",
+          "probability": 0.25,
+          "targetPriceUsd": 996.6597
+        }
+      ]
+    },
+    {
+      "ticker": "SOL",
+      "name": "Solana",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 76.2162,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.3,
+          "targetPriceUsd": 251.51346
+        },
+        {
+          "label": "base",
+          "probability": 0.42,
+          "targetPriceUsd": 110.51349
+        },
+        {
+          "label": "bear",
+          "probability": 0.28,
+          "targetPriceUsd": 30.48648
+        }
+      ]
+    },
+    {
+      "ticker": "NEAR",
+      "name": "NEAR Protocol",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 1.61785,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.26,
+          "targetPriceUsd": 4.85355
+        },
+        {
+          "label": "base",
+          "probability": 0.4,
+          "targetPriceUsd": 1.779635
+        },
+        {
+          "label": "bear",
+          "probability": 0.34,
+          "targetPriceUsd": 0.5662475
+        }
+      ]
+    },
+    {
+      "ticker": "ZEC",
+      "name": "Zcash",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 480.665,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.25,
+          "targetPriceUsd": 1485.2549
+        },
+        {
+          "label": "base",
+          "probability": 0.4,
+          "targetPriceUsd": 495.08495
+        },
+        {
+          "label": "bear",
+          "probability": 0.35,
+          "targetPriceUsd": 149.00615
+        }
+      ]
+    },
+    {
+      "ticker": "MON",
+      "name": "Monad",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 0.0214019,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.26,
+          "targetPriceUsd": 0.07490665
+        },
+        {
+          "label": "base",
+          "probability": 0.32,
+          "targetPriceUsd": 0.01284114
+        },
+        {
+          "label": "bear",
+          "probability": 0.42,
+          "targetPriceUsd": 0.00428038
+        }
+      ]
+    },
+    {
+      "ticker": "XPL",
+      "name": "Plasma",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 0.0785186,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.27,
+          "targetPriceUsd": 0.29837068
+        },
+        {
+          "label": "base",
+          "probability": 0.34,
+          "targetPriceUsd": 0.05496302
+        },
+        {
+          "label": "bear",
+          "probability": 0.39,
+          "targetPriceUsd": 0.01962965
+        }
+      ]
+    },
+    {
+      "ticker": "MEGA",
+      "name": "MegaETH",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 0.0331252,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.24,
+          "targetPriceUsd": 0.1325008
+        },
+        {
+          "label": "base",
+          "probability": 0.3,
+          "targetPriceUsd": 0.01821886
+        },
+        {
+          "label": "bear",
+          "probability": 0.46,
+          "targetPriceUsd": 0.00496878
+        }
+      ]
+    },
+    {
+      "ticker": "HYPE",
+      "name": "Hyperliquid",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 54.4425,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.28,
+          "targetPriceUsd": 144.81705
+        },
+        {
+          "label": "base",
+          "probability": 0.42,
+          "targetPriceUsd": 58.253475
+        },
+        {
+          "label": "bear",
+          "probability": 0.3,
+          "targetPriceUsd": 17.4216
+        }
+      ]
+    },
+    {
+      "ticker": "LIT",
+      "name": "Lighter",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 2.41679,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.27,
+          "targetPriceUsd": 10.561372
+        },
+        {
+          "label": "base",
+          "probability": 0.38,
+          "targetPriceUsd": 2.1026073
+        },
+        {
+          "label": "bear",
+          "probability": 0.35,
+          "targetPriceUsd": 0.5800296
+        }
+      ]
+    },
+    {
+      "ticker": "JUP",
+      "name": "Jupiter",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 0.175534,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.28,
+          "targetPriceUsd": 0.71793406
+        },
+        {
+          "label": "base",
+          "probability": 0.4,
+          "targetPriceUsd": 0.20537478
+        },
+        {
+          "label": "bear",
+          "probability": 0.32,
+          "targetPriceUsd": 0.0614369
+        }
+      ]
+    },
+    {
+      "ticker": "ASTER",
+      "name": "Aster",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 0.604865,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.22,
+          "targetPriceUsd": 1.5121625
+        },
+        {
+          "label": "base",
+          "probability": 0.38,
+          "targetPriceUsd": 0.45364875
+        },
+        {
+          "label": "bear",
+          "probability": 0.4,
+          "targetPriceUsd": 0.15121625
+        }
+      ]
+    },
+    {
+      "ticker": "UNI",
+      "name": "Uniswap",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 3.74742,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.28,
+          "targetPriceUsd": 12.853651
+        },
+        {
+          "label": "base",
+          "probability": 0.44,
+          "targetPriceUsd": 4.8341718
+        },
+        {
+          "label": "bear",
+          "probability": 0.28,
+          "targetPriceUsd": 1.3865454
+        }
+      ]
+    },
+    {
+      "ticker": "AAVE",
+      "name": "Aave",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 88.2143,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.3,
+          "targetPriceUsd": 345.80006
+        },
+        {
+          "label": "base",
+          "probability": 0.44,
+          "targetPriceUsd": 127.91073
+        },
+        {
+          "label": "bear",
+          "probability": 0.26,
+          "targetPriceUsd": 34.403577
+        }
+      ]
+    },
+    {
+      "ticker": "SYRUP",
+      "name": "Maple Finance",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 0.149941,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.3,
+          "targetPriceUsd": 0.5247935
+        },
+        {
+          "label": "base",
+          "probability": 0.42,
+          "targetPriceUsd": 0.20242035
+        },
+        {
+          "label": "bear",
+          "probability": 0.28,
+          "targetPriceUsd": 0.0599764
+        }
+      ]
+    },
+    {
+      "ticker": "SKY",
+      "name": "Sky",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 0.0533564,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.28,
+          "targetPriceUsd": 0.13018962
+        },
+        {
+          "label": "base",
+          "probability": 0.46,
+          "targetPriceUsd": 0.065094808
+        },
+        {
+          "label": "bear",
+          "probability": 0.26,
+          "targetPriceUsd": 0.028278892
+        }
+      ]
+    },
+    {
+      "ticker": "ENA",
+      "name": "Ethena",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 0.0900607,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.26,
+          "targetPriceUsd": 0.30350456
+        },
+        {
+          "label": "base",
+          "probability": 0.38,
+          "targetPriceUsd": 0.10086798
+        },
+        {
+          "label": "bear",
+          "probability": 0.36,
+          "targetPriceUsd": 0.030620638
+        }
+      ]
+    },
+    {
+      "ticker": "ONDO",
+      "name": "Ondo",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 0.335412,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.24,
+          "targetPriceUsd": 1.0028819
+        },
+        {
+          "label": "base",
+          "probability": 0.4,
+          "targetPriceUsd": 0.3018708
+        },
+        {
+          "label": "bear",
+          "probability": 0.36,
+          "targetPriceUsd": 0.09056124
+        }
+      ]
+    },
+    {
+      "ticker": "CAP",
+      "name": "Cap",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 0.0549255,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.27,
+          "targetPriceUsd": 0.19223925
+        },
+        {
+          "label": "base",
+          "probability": 0.31,
+          "targetPriceUsd": 0.0329553
+        },
+        {
+          "label": "bear",
+          "probability": 0.42,
+          "targetPriceUsd": 0.0109851
+        }
+      ]
+    },
+    {
+      "ticker": "UP",
+      "name": "Superform",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 0.0578105,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.24,
+          "targetPriceUsd": 0.26014725
+        },
+        {
+          "label": "base",
+          "probability": 0.3,
+          "targetPriceUsd": 0.0346863
+        },
+        {
+          "label": "bear",
+          "probability": 0.46,
+          "targetPriceUsd": 0.008671575
+        }
+      ]
+    },
+    {
+      "ticker": "LINK",
+      "name": "Chainlink",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 8.77023,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.28,
+          "targetPriceUsd": 29.994187
+        },
+        {
+          "label": "base",
+          "probability": 0.44,
+          "targetPriceUsd": 12.015215
+        },
+        {
+          "label": "bear",
+          "probability": 0.28,
+          "targetPriceUsd": 3.508092
+        }
+      ]
+    },
+    {
+      "ticker": "EIGEN",
+      "name": "EigenCloud",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 0.17684,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.22,
+          "targetPriceUsd": 0.79578
+        },
+        {
+          "label": "base",
+          "probability": 0.35,
+          "targetPriceUsd": 0.141472
+        },
+        {
+          "label": "bear",
+          "probability": 0.43,
+          "targetPriceUsd": 0.04421
+        }
+      ]
+    },
+    {
+      "ticker": "LDO",
+      "name": "Lido DAO",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 0.293649,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.24,
+          "targetPriceUsd": 1.0277715
+        },
+        {
+          "label": "base",
+          "probability": 0.38,
+          "targetPriceUsd": 0.2642841
+        },
+        {
+          "label": "bear",
+          "probability": 0.38,
+          "targetPriceUsd": 0.09396768
+        }
+      ]
+    },
+    {
+      "ticker": "AKT",
+      "name": "Akash Network",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 0.515211,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.28,
+          "targetPriceUsd": 2.4781649
+        },
+        {
+          "label": "base",
+          "probability": 0.38,
+          "targetPriceUsd": 0.59764476
+        },
+        {
+          "label": "bear",
+          "probability": 0.34,
+          "targetPriceUsd": 0.14941119
+        }
+      ]
+    },
+    {
+      "ticker": "ATH",
+      "name": "Aethir",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 0.00402953,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.26,
+          "targetPriceUsd": 0.015312214
+        },
+        {
+          "label": "base",
+          "probability": 0.36,
+          "targetPriceUsd": 0.0034251005
+        },
+        {
+          "label": "bear",
+          "probability": 0.38,
+          "targetPriceUsd": 0.0010073825
+        }
+      ]
+    },
+    {
+      "ticker": "NOS",
+      "name": "Nosana",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 0.261945,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.24,
+          "targetPriceUsd": 0.995391
+        },
+        {
+          "label": "base",
+          "probability": 0.36,
+          "targetPriceUsd": 0.209556
+        },
+        {
+          "label": "bear",
+          "probability": 0.4,
+          "targetPriceUsd": 0.0733446
+        }
+      ]
+    },
+    {
+      "ticker": "TAO",
+      "name": "Bittensor",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 201.451,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.28,
+          "targetPriceUsd": 604.353
+        },
+        {
+          "label": "base",
+          "probability": 0.38,
+          "targetPriceUsd": 221.5961
+        },
+        {
+          "label": "bear",
+          "probability": 0.34,
+          "targetPriceUsd": 70.50785
+        }
+      ]
+    },
+    {
+      "ticker": "VIRTUAL",
+      "name": "Virtuals Protocol",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 0.537046,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.26,
+          "targetPriceUsd": 1.879661
+        },
+        {
+          "label": "base",
+          "probability": 0.36,
+          "targetPriceUsd": 0.4564891
+        },
+        {
+          "label": "bear",
+          "probability": 0.38,
+          "targetPriceUsd": 0.1611138
+        }
+      ]
+    },
+    {
+      "ticker": "NOCK",
+      "name": "Nockchain",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 0.0128129,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.15,
+          "targetPriceUsd": 0.128129
+        },
+        {
+          "label": "base",
+          "probability": 0.3,
+          "targetPriceUsd": 0.00768774
+        },
+        {
+          "label": "bear",
+          "probability": 0.55,
+          "targetPriceUsd": 0.001921935
+        }
+      ]
+    },
+    {
+      "ticker": "ZAMA",
+      "name": "Zama",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 0.0459154,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.25,
+          "targetPriceUsd": 0.1607039
+        },
+        {
+          "label": "base",
+          "probability": 0.35,
+          "targetPriceUsd": 0.03214078
+        },
+        {
+          "label": "bear",
+          "probability": 0.4,
+          "targetPriceUsd": 0.00918308
+        }
+      ]
+    },
+    {
+      "ticker": "PROVE",
+      "name": "Succinct",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 0.150821,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.25,
+          "targetPriceUsd": 0.603284
+        },
+        {
+          "label": "base",
+          "probability": 0.35,
+          "targetPriceUsd": 0.11311575
+        },
+        {
+          "label": "bear",
+          "probability": 0.4,
+          "targetPriceUsd": 0.0301642
+        }
+      ]
+    },
+    {
+      "ticker": "LA",
+      "name": "Lagrange",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 0.0519712,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.22,
+          "targetPriceUsd": 0.2338704
+        },
+        {
+          "label": "base",
+          "probability": 0.33,
+          "targetPriceUsd": 0.03637984
+        },
+        {
+          "label": "bear",
+          "probability": 0.45,
+          "targetPriceUsd": 0.00779568
+        }
+      ]
+    },
+    {
+      "ticker": "AZTEC",
+      "name": "Aztec",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 0.0128862,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.24,
+          "targetPriceUsd": 0.0515448
+        },
+        {
+          "label": "base",
+          "probability": 0.34,
+          "targetPriceUsd": 0.00902034
+        },
+        {
+          "label": "bear",
+          "probability": 0.42,
+          "targetPriceUsd": 0.00257724
+        }
+      ]
+    },
+    {
+      "ticker": "ARX",
+      "name": "Arcium",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 0.11869,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.23,
+          "targetPriceUsd": 0.47476
+        },
+        {
+          "label": "base",
+          "probability": 0.33,
+          "targetPriceUsd": 0.0771485
+        },
+        {
+          "label": "bear",
+          "probability": 0.44,
+          "targetPriceUsd": 0.0201773
+        }
+      ]
+    },
+    {
+      "ticker": "NIL",
+      "name": "Nillion",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 0.0350651,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.25,
+          "targetPriceUsd": 0.1402604
+        },
+        {
+          "label": "base",
+          "probability": 0.35,
+          "targetPriceUsd": 0.02805208
+        },
+        {
+          "label": "bear",
+          "probability": 0.4,
+          "targetPriceUsd": 0.007714322
+        }
+      ]
+    },
+    {
+      "ticker": "IRYS",
+      "name": "Irys",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 0.0157844,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.23,
+          "targetPriceUsd": 0.05998072
+        },
+        {
+          "label": "base",
+          "probability": 0.34,
+          "targetPriceUsd": 0.01025986
+        },
+        {
+          "label": "bear",
+          "probability": 0.43,
+          "targetPriceUsd": 0.002841192
+        }
+      ]
+    },
+    {
+      "ticker": "AI",
+      "name": "Gensyn",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 0.020801,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.22,
+          "targetPriceUsd": 0.083204
+        },
+        {
+          "label": "base",
+          "probability": 0.32,
+          "targetPriceUsd": 0.01144055
+        },
+        {
+          "label": "bear",
+          "probability": 0.46,
+          "targetPriceUsd": 0.00312015
+        }
+      ]
+    },
+    {
+      "ticker": "ALEO",
+      "name": "ALEO",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 0.0157842,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.22,
+          "targetPriceUsd": 0.0631368
+        },
+        {
+          "label": "base",
+          "probability": 0.33,
+          "targetPriceUsd": 0.01104894
+        },
+        {
+          "label": "bear",
+          "probability": 0.45,
+          "targetPriceUsd": 0.002841156
+        }
+      ]
+    },
+    {
+      "ticker": "OCT",
+      "name": "Octra",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 0.0209845,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.2,
+          "targetPriceUsd": 0.083938
+        },
+        {
+          "label": "base",
+          "probability": 0.3,
+          "targetPriceUsd": 0.0125907
+        },
+        {
+          "label": "bear",
+          "probability": 0.5,
+          "targetPriceUsd": 0.003147675
+        }
+      ]
+    },
+    {
+      "ticker": "PRL",
+      "name": "Pearl",
+      "anchorDate": "2026-08-12",
+      "anchorPriceUsd": 0.269719,
+      "legs": [
+        {
+          "label": "bull",
+          "probability": 0.18,
+          "targetPriceUsd": 0.809157
+        },
+        {
+          "label": "base",
+          "probability": 0.3,
+          "targetPriceUsd": 0.12137355
+        },
+        {
+          "label": "bear",
+          "probability": 0.52,
+          "targetPriceUsd": 0.03236628
+        }
+      ]
+    }
+  ]
+}

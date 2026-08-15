@@ -1,10 +1,10 @@
 /** Measures the two inputs to the risk rating that cannot be read off the tab.
  *
- *  The crypto tab already publishes float, FDV/cap and daily volume per asset.
- *  It does not publish realised volatility or drawdown, and those are half the
- *  risk rating — so this fetches a year of daily closes for all forty ranked
- *  assets from CoinGecko and computes them with the same method
- *  `fetch-market-data.ts` uses for the four held rows.
+ *  The live market snapshot publishes float, FDV/cap and daily volume per
+ *  asset. It does not publish realised volatility or drawdown, and those are
+ *  half the risk rating — so this fetches a year of daily closes for all forty
+ *  ranked assets from CoinGecko and computes them with the same method
+ *  `fetch-market-data.ts` uses for the market snapshot.
  *
  *  Run it, do not call it. Output goes to two places:
  *    public/data/risk-rating.json   the machine-readable artefact, with inputs,
@@ -13,10 +13,10 @@
  *                                   the page stays a static file that fetches
  *                                   nothing at runtime
  *
- *  The page then computes R, the poker EV and f* in the browser from numbers
- *  printed in its own table. That is deliberate: every figure on the tab has to
- *  be recomputable by a reader who disagrees with it, and a precomputed score
- *  cannot be argued with.
+ *  The page then computes R in the browser from numbers printed in its own
+ *  table. That is deliberate: every figure on the tab has to be recomputable
+ *  by a reader who disagrees with it. Scenario EV is a separate return
+ *  judgement and never enters R.
  *
  *      npm run fetch-risk-rating
  */
@@ -24,6 +24,7 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { CRYPTO_IDS } from './crypto-config'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 const CRYPTO_HTML = resolve(HERE, '../public/dashboards/crypto.html')
@@ -34,6 +35,7 @@ const OUT_JSON = resolve(HERE, '../public/data/risk-rating.json')
  *  correlation between the assets — unmeasurable without refetching all forty.
  *  Stored once, read by scripts/build-portfolio.ts. */
 const OUT_HISTORY = resolve(HERE, '../public/data/crypto-history.json')
+const MARKET_JSON = resolve(HERE, '../public/data/crypto-market.json')
 
 /** Schema version of risk-rating.json. Bump when the shape changes so a stale
  *  file is rejected rather than misread. */
@@ -54,49 +56,6 @@ const SCHEMA_VERSION = 1
 //         stablecoin credit engine this tab ranks.
 //   EIGEN listed as "EigenCloud (prev. EigenLayer)" under the id `eigenlayer`,
 //         so a name match on "EigenCloud" alone finds nothing.
-const CG_IDS: Record<string, string> = {
-  BTC: 'bitcoin',
-  ETH: 'ethereum',
-  SOL: 'solana',
-  NEAR: 'near',
-  ZEC: 'zcash',
-  MON: 'monad',
-  XPL: 'plasma',
-  MEGA: 'megaeth',
-  HYPE: 'hyperliquid',
-  LIT: 'lighter',
-  JUP: 'jupiter-exchange-solana',
-  ASTER: 'aster-2',
-  UNI: 'uniswap',
-  AAVE: 'aave',
-  SYRUP: 'syrup',
-  SKY: 'sky',
-  ENA: 'ethena',
-  ONDO: 'ondo-finance',
-  CAP: 'cap-4',
-  UP: 'superform',
-  LINK: 'chainlink',
-  EIGEN: 'eigenlayer',
-  LDO: 'lido-dao',
-  AKT: 'akash-network',
-  ATH: 'aethir',
-  NOS: 'nosana',
-  TAO: 'bittensor',
-  VIRTUAL: 'virtual-protocol',
-  NOCK: 'nockchain',
-  ZAMA: 'zama',
-  PROVE: 'succinct',
-  LA: 'lagrange',
-  AZTEC: 'aztec',
-  ARX: 'arcium',
-  NIL: 'nillion',
-  IRYS: 'irys',
-  AI: 'gensyn',
-  ALEO: 'aleo',
-  OCT: 'octra',
-  PRL: 'pearl-2',
-}
-
 // ---------------------------------------------------------------------------
 // Risk-rating thresholds — every one a named constant
 // ---------------------------------------------------------------------------
@@ -256,11 +215,22 @@ function readTokens(): Token[] {
   const end = html.indexOf('\n];', start)
   if (start < 0 || end < 0) throw new Error('could not locate the TOKENS array in crypto.html')
   const literal = html.slice(start + 'const TOKENS = '.length, end + 2)
-  return new Function(`return ${literal}`)() as Token[]
+  const tokens = new Function(`return ${literal}`)() as Token[]
+  const market = JSON.parse(readFileSync(MARKET_JSON, 'utf8')) as {
+    rows: { ticker: string; fdvx: number; floatPct: number; vol24hUsd: number }[]
+  }
+  const live = Object.fromEntries(market.rows.map((row) => [row.ticker, row]))
+  return tokens.map((token) => {
+    const row = live[token.tk]
+    return row
+      ? { ...token, fdvx: row.fdvx, flt: row.floatPct, vol: row.vol24hUsd / 1e6 }
+      : token
+  })
 }
 
 async function main() {
   const tokens = readTokens()
+  const market = JSON.parse(readFileSync(MARKET_JSON, 'utf8')) as { fetchedAt: string }
   console.log(`tokens on the tab: ${tokens.length}`)
 
   /** Rebuild the derived artefacts from the committed closes without making
@@ -275,7 +245,7 @@ async function main() {
     : undefined
   const dataFetchedAt = cached?.fetchedAt ?? new Date().toISOString()
 
-  const missingId = tokens.filter((t) => !CG_IDS[t.tk]).map((t) => t.tk)
+  const missingId = tokens.filter((t) => !CRYPTO_IDS[t.tk]).map((t) => t.tk)
   if (missingId.length) {
     // Not fatal, and not silent: an unrated row renders as unrated.
     console.log(`no pinned CoinGecko id: ${missingId.join(', ')}`)
@@ -289,7 +259,7 @@ async function main() {
   const failures: string[] = []
 
   for (const token of tokens) {
-    const id = CG_IDS[token.tk]
+    const id = CRYPTO_IDS[token.tk]
     if (!id) continue
     try {
       const cachedSeries = cached?.series[token.tk]?.closes.map((p) => ({ date: p.d, close: p.c }))
@@ -338,7 +308,7 @@ async function main() {
     return {
       ticker: t.tk,
       name: t.nm,
-      coingeckoId: CG_IDS[t.tk],
+      coingeckoId: CRYPTO_IDS[t.tk],
       measured: { realisedVolPct: m?.vol, drawdownPct: m?.dd, observations: m?.days ?? 0, from: m?.from, partialWindow: m?.partial ?? true },
       inputs: { fdvx: t.fdvx, floatPct: t.flt, vol24hUsd: t.vol * 1e6 },
       components: {
@@ -358,6 +328,7 @@ async function main() {
       {
         schemaVersion: SCHEMA_VERSION,
         fetchedAt: dataFetchedAt,
+        marketFetchedAt: market.fetchedAt,
         method: {
           note: 'R = 0.25*V + 0.25*D + 0.25*F + 0.25*L. V and D are measured from a year of daily CoinGecko closes; F and L are read from the tab. Every threshold below is a named constant in scripts/fetch-risk-rating.ts.',
           windowDays: WINDOW_DAYS,

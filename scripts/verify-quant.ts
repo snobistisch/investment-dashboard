@@ -16,11 +16,14 @@ const HISTORY_JSON = resolve(HERE, '../public/data/crypto-history.json')
 const CRYPTO_HTML = resolve(HERE, '../public/dashboards/crypto.html')
 const PORTFOLIO_JSON = resolve(HERE, '../public/data/portfolio.json')
 const PORTFOLIO_HTML = resolve(HERE, '../public/dashboards/portfolio.html')
+const MARKET_JSON = resolve(HERE, '../public/data/crypto-market.json')
+const SCENARIOS_JSON = resolve(HERE, '../public/data/crypto-scenarios.json')
 
 type Close = { d: string; c: number }
 
 interface RiskFile {
   fetchedAt: string
+  marketFetchedAt: string
   method: {
     daysPerYear: number
     weights: { vol: number; drawdown: number; dilution: number; liquidity: number }
@@ -47,6 +50,11 @@ interface HistoryFile {
 }
 
 interface PortfolioFile {
+  marketFetchedAt: string
+  historyFetchedAt: string
+  riskFetchedAt: string
+  scenarioAsOf: string
+  scenarioHorizonYears: number
   method: { minOverlapDays: number; screenLiquidityUsdM: number }
   stats: {
     assets: number
@@ -63,7 +71,12 @@ interface PortfolioFile {
     observations: number
     vol24hUsdM: number
     fdvx: number
+    scenarioEvAnnualPct: number
+    scenarioEvTerminalPct: number
     scenarioEdgeVsBtcPct: number
+    scenarioEdgeTerminalVsBtcPct: number
+    scenarioLegs: { label: string; probability: number; returnPct: number }[]
+    priceUsd: number
   }[]
   clusters: { members: string[] }[]
   correlation: Record<string, Record<string, number>>
@@ -101,6 +114,27 @@ const history = JSON.parse(readFileSync(HISTORY_JSON, 'utf8')) as HistoryFile
 const cryptoHtml = readFileSync(CRYPTO_HTML, 'utf8')
 const portfolio = JSON.parse(readFileSync(PORTFOLIO_JSON, 'utf8')) as PortfolioFile
 const portfolioHtml = readFileSync(PORTFOLIO_HTML, 'utf8')
+const market = JSON.parse(readFileSync(MARKET_JSON, 'utf8')) as {
+  schemaVersion: number
+  fetchedAt: string
+  scenarioAsOf: string
+  rows: {
+    ticker: string
+    priceUsd: number
+    marketCapUsd: number
+    fdvx: number
+    floatPct: number
+    vol24hUsd: number
+    scenarioReturns: [number, number][]
+    scenarioTargetsUsd: number[]
+  }[]
+}
+const scenarios = JSON.parse(readFileSync(SCENARIOS_JSON, 'utf8')) as {
+  schemaVersion: number
+  asOf: string
+  horizonYears: number
+  rows: { ticker: string; legs: { probability: number; targetPriceUsd: number }[] }[]
+}
 
 assert(risk.method.daysPerYear === 365, 'crypto volatility must annualise over 365 trading days')
 assert(risk.fetchedAt === history.fetchedAt, 'derived risk data must retain the history data vintage')
@@ -112,6 +146,48 @@ assert(!portfolioHtml.toLowerCase().includes('rebalanc'), 'manual rebalancing mu
 assert(portfolioHtml.includes('id="minDays" min="90"'), 'builder must exclude sub-90-day histories')
 assert(!portfolioHtml.includes('ROWS.indexOf'), 'source-array order must never stand in for EV rank')
 assert(!portfolioHtml.includes('data-l="mom"'), 'momentum must not bypass the scenario-EV gate')
+assert(portfolioHtml.includes('id="probBuffer"'), 'pilot must expose probability robustness')
+assert(portfolioHtml.includes('id="costBuffer"'), 'pilot must expose execution-cost uncertainty')
+assert(portfolioHtml.includes('id="scenarioHorizon"'), 'pilot must expose the scenario horizon')
+assert(portfolioHtml.includes('id="venueConfirmed"'), 'pilot orders must require a venue check')
+assert(portfolioHtml.includes('Download frozen decision snapshot'), 'pilot must preserve its decision inputs')
+assert(portfolioHtml.includes('public/data/crypto-scenarios.json'), 'pilot must state frozen-scenario provenance')
+assert(!portfolioHtml.includes('Spread and slippage are not modelled'), 'pilot must not deny its visible cost buffer')
+assert(market.schemaVersion === 1 && scenarios.schemaVersion === 1, 'crypto pilot schemas must be recognised')
+assert(market.rows.length === 40, `expected 40 live crypto market rows, got ${market.rows.length}`)
+assert(scenarios.rows.length === 40, `expected 40 frozen scenario rows, got ${scenarios.rows.length}`)
+assert(market.scenarioAsOf === scenarios.asOf, 'market and scenario anchor dates disagree')
+assert(portfolio.marketFetchedAt === market.fetchedAt, 'portfolio did not consume the current crypto market artefact')
+assert(risk.marketFetchedAt === market.fetchedAt, 'risk rating did not consume the current crypto market artefact')
+assert(portfolio.historyFetchedAt === history.fetchedAt, 'portfolio did not consume the current price history')
+assert(portfolio.riskFetchedAt === risk.fetchedAt, 'portfolio did not consume the current risk rating')
+assert(portfolio.scenarioAsOf === scenarios.asOf, 'portfolio did not consume the frozen scenario set')
+assert(portfolio.scenarioHorizonYears === scenarios.horizonYears, 'portfolio scenario horizon drifted')
+const marketAgeHours = (Date.now() - Date.parse(market.fetchedAt)) / 3_600_000
+assert(marketAgeHours >= -1 && marketAgeHours <= 48, `crypto market data is ${marketAgeHours.toFixed(1)}h old; refresh before deploy`)
+const historyAgeHours = (Date.now() - Date.parse(history.fetchedAt)) / 3_600_000
+const riskAgeHours = (Date.now() - Date.parse(risk.fetchedAt)) / 3_600_000
+assert(historyAgeHours >= -1 && historyAgeHours <= 48, `crypto history is ${historyAgeHours.toFixed(1)}h old; refresh before deploy`)
+assert(riskAgeHours >= -1 && riskAgeHours <= 48, `crypto risk data is ${riskAgeHours.toFixed(1)}h old; refresh before deploy`)
+
+const marketBy = Object.fromEntries(market.rows.map((row) => [row.ticker, row]))
+const scenarioBy = Object.fromEntries(scenarios.rows.map((row) => [row.ticker, row]))
+for (const row of market.rows) {
+  assert(row.priceUsd > 0 && row.marketCapUsd > 0, `${row.ticker}: unusable live price or cap`)
+  assert(row.fdvx >= 1 && row.floatPct > 0 && row.floatPct <= 100, `${row.ticker}: invalid supply evidence`)
+  assert(row.vol24hUsd >= 0, `${row.ticker}: invalid volume`)
+  const frozen = scenarioBy[row.ticker]
+  assert(frozen !== undefined, `${row.ticker}: live row has no frozen scenario`)
+  assert(row.scenarioReturns.length === frozen.legs.length, `${row.ticker}: scenario leg count drifted`)
+  row.scenarioReturns.forEach(([probability, outcome], index) => {
+    assert(probability === frozen.legs[index].probability, `${row.ticker}: probability changed during market refresh`)
+    const expected = frozen.legs[index].targetPriceUsd / row.priceUsd - 1
+    assert(
+      Math.abs(outcome - expected) < 1e-7 * Math.max(1, Math.abs(expected)),
+      `${row.ticker}: scenario return did not reprice from frozen target`,
+    )
+  })
+}
 
 for (const row of risk.rows) {
   const series = history.series[row.ticker]
@@ -152,20 +228,26 @@ for (const row of risk.rows) {
 
 const portfolioRows = Object.fromEntries(portfolio.rows.map((row) => [row.ticker, row]))
 const scenarioCandidates = portfolio.rows.filter((row) => row.scenarioEdgeVsBtcPct > 0)
-assert(scenarioCandidates.length === 8, `expected 8 scenario-EV candidates, got ${scenarioCandidates.length}`)
-const defaultCandidates = scenarioCandidates
-  .filter(
-    (row) =>
-      row.observations >= portfolio.method.minOverlapDays &&
-      row.vol24hUsdM >= portfolio.method.screenLiquidityUsdM &&
-      row.fdvx <= 3,
-  )
-  .map((row) => row.ticker)
-  .sort()
-assert(
-  defaultCandidates.join(',') === 'AAVE,AKT,ETH,JUP,LINK,SOL,SYRUP',
-  `default candidate set drifted: ${defaultCandidates.join(',')}`,
-)
+assert(scenarioCandidates.length > 0, 'the frozen scenario set currently produces no positive BTC edge')
+const btcMarket = marketBy.BTC
+assert(btcMarket !== undefined, 'live market artefact has no BTC benchmark')
+const btcTerminalPct = btcMarket.scenarioReturns.reduce((sum, [probability, outcome]) => sum + probability * outcome, 0) * 100
+const btcAnnualPct = (Math.pow(1 + btcTerminalPct / 100, 1 / scenarios.horizonYears) - 1) * 100
+for (const row of portfolio.rows) {
+  const live = marketBy[row.ticker]
+  assert(live !== undefined, `${row.ticker}: portfolio row has no live market input`)
+  assert(row.priceUsd === live.priceUsd, `${row.ticker}: portfolio reference price drifted`)
+  assert(Math.abs(row.scenarioLegs.reduce((sum, leg) => sum + leg.probability, 0) - 1) < 1e-9, `${row.ticker}: probabilities do not sum to one`)
+  const terminalPct = live.scenarioReturns.reduce((sum, [probability, outcome]) => sum + probability * outcome, 0) * 100
+  const annualPct = (Math.pow(1 + terminalPct / 100, 1 / scenarios.horizonYears) - 1) * 100
+  assert(Math.abs(row.scenarioEvTerminalPct - round(terminalPct, 2)) < 1e-9, `${row.ticker}: terminal scenario EV drifted`)
+  assert(Math.abs(row.scenarioEvAnnualPct - round(annualPct, 1)) < 1e-9, `${row.ticker}: annualised scenario EV drifted`)
+  assert(Math.abs(row.scenarioEdgeTerminalVsBtcPct - round(terminalPct - btcTerminalPct, 2)) < 1e-9, `${row.ticker}: terminal BTC edge drifted`)
+  assert(Math.abs(row.scenarioEdgeVsBtcPct - round(annualPct - btcAnnualPct, 1)) < 1e-9, `${row.ticker}: annualised BTC edge drifted`)
+  const annualSign = Math.sign(row.scenarioEdgeVsBtcPct)
+  const terminalSign = Math.sign(row.scenarioEdgeTerminalVsBtcPct)
+  assert(annualSign === terminalSign, `${row.ticker}: annualisation changed the edge sign`)
+}
 const clusteredMembers = portfolio.clusters.flatMap((cluster) => cluster.members)
 assert(portfolio.stats.assets === portfolio.rows.length, 'portfolio asset count drifted')
 assert(portfolio.stats.clusters === portfolio.clusters.length, 'portfolio cluster count drifted')

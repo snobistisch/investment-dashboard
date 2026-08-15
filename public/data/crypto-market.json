@@ -1,0 +1,1354 @@
+{
+  "schemaVersion": 1,
+  "fetchedAt": "2026-08-15T01:25:57.147Z",
+  "provider": "CoinGecko /coins/markets; pinned ids",
+  "scenarioAsOf": "2026-08-12",
+  "scenarioHorizonYears": 3,
+  "rows": [
+    {
+      "ticker": "BTC",
+      "coingeckoId": "bitcoin",
+      "providerName": "Bitcoin",
+      "priceUsd": 62948,
+      "marketCapUsd": 1263330200000,
+      "fdvUsd": 1263330200000,
+      "fdvx": 1,
+      "floatPct": 95.572795,
+      "vol24hUsd": 19814249000,
+      "return1yPct": -46.8,
+      "athChangePct": -50.0732,
+      "athDate": "2025-10-06",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.3,
+          1.8666007
+        ],
+        [
+          0.45,
+          0.51404969
+        ],
+        [
+          0.25,
+          -0.44484845
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        180446.78,
+        95306.4,
+        34945.68
+      ]
+    },
+    {
+      "ticker": "ETH",
+      "coingeckoId": "ethereum",
+      "providerName": "Ethereum",
+      "priceUsd": 1881.02,
+      "marketCapUsd": 226996610000,
+      "fdvUsd": 226996610000,
+      "fdvx": 1,
+      "floatPct": 100,
+      "vol24hUsd": 4874290000,
+      "return1yPct": -58.8,
+      "athChangePct": -61.96911,
+      "athDate": "2025-08-24",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.3,
+          2.1691068
+        ],
+        [
+          0.45,
+          0.589552
+        ],
+        [
+          0.25,
+          -0.47014933
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        5961.1533,
+        2989.9791,
+        996.6597
+      ]
+    },
+    {
+      "ticker": "SOL",
+      "coingeckoId": "solana",
+      "providerName": "Solana",
+      "priceUsd": 75.34,
+      "marketCapUsd": 43889719000,
+      "fdvUsd": 47620312000,
+      "fdvx": 1.0849992,
+      "floatPct": 92.165966,
+      "vol24hUsd": 1039872500,
+      "return1yPct": -60.9,
+      "athChangePct": -74.31509,
+      "athDate": "2025-01-19",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.3,
+          2.3383788
+        ],
+        [
+          0.42,
+          0.46686342
+        ],
+        [
+          0.28,
+          -0.59534802
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        251.51346,
+        110.51349,
+        30.48648
+      ]
+    },
+    {
+      "ticker": "NEAR",
+      "coingeckoId": "near",
+      "providerName": "NEAR Protocol",
+      "priceUsd": 1.65,
+      "marketCapUsd": 2149402300,
+      "fdvUsd": 2149402300,
+      "fdvx": 1,
+      "floatPct": 99.999999,
+      "vol24hUsd": 109912130,
+      "return1yPct": -40.4,
+      "athChangePct": -91.93286,
+      "athDate": "2022-01-16",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.26,
+          1.9415455
+        ],
+        [
+          0.4,
+          0.078566667
+        ],
+        [
+          0.34,
+          -0.6568197
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        4.85355,
+        1.779635,
+        0.5662475
+      ]
+    },
+    {
+      "ticker": "ZEC",
+      "coingeckoId": "zcash",
+      "providerName": "Zcash",
+      "priceUsd": 491.92,
+      "marketCapUsd": 8301923900,
+      "fdvUsd": 8302253600,
+      "fdvx": 1.0000397,
+      "floatPct": 80.364993,
+      "vol24hUsd": 127993010,
+      "return1yPct": 1242.6,
+      "athChangePct": -84.58871,
+      "athDate": "2016-10-28",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.25,
+          2.0193017
+        ],
+        [
+          0.4,
+          0.0064338714
+        ],
+        [
+          0.35,
+          -0.69709272
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        1485.2549,
+        495.08495,
+        149.00615
+      ]
+    },
+    {
+      "ticker": "MON",
+      "coingeckoId": "monad",
+      "providerName": "Monad",
+      "priceUsd": 0.02097385,
+      "marketCapUsd": 248025090,
+      "fdvUsd": 2111758400,
+      "fdvx": 8.5142935,
+      "floatPct": 11.744956,
+      "vol24hUsd": 12816227,
+      "athChangePct": -57.04634,
+      "athDate": "2025-11-26",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.26,
+          2.5714306
+        ],
+        [
+          0.32,
+          -0.38775475
+        ],
+        [
+          0.42,
+          -0.79591825
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        0.07490665,
+        0.01284114,
+        0.00428038
+      ]
+    },
+    {
+      "ticker": "XPL",
+      "coingeckoId": "plasma",
+      "providerName": "Plasma",
+      "priceUsd": 0.076876,
+      "marketCapUsd": 206693870,
+      "fdvUsd": 768696210,
+      "fdvx": 3.7190083,
+      "floatPct": 26.888889,
+      "vol24hUsd": 49189748,
+      "athChangePct": -95.4312,
+      "athDate": "2025-09-27",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.27,
+          2.8811941
+        ],
+        [
+          0.34,
+          -0.28504319
+        ],
+        [
+          0.39,
+          -0.74465828
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        0.29837068,
+        0.05496302,
+        0.01962965
+      ]
+    },
+    {
+      "ticker": "MEGA",
+      "coingeckoId": "megaeth",
+      "providerName": "MegaETH",
+      "priceUsd": 0.03142788,
+      "marketCapUsd": 35506741,
+      "fdvUsd": 314276580,
+      "fdvx": 8.8511805,
+      "floatPct": 11.297928,
+      "vol24hUsd": 7024641,
+      "athChangePct": -85.56471,
+      "athDate": "2026-04-30",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.24,
+          3.2160273
+        ],
+        [
+          0.3,
+          -0.42029625
+        ],
+        [
+          0.46,
+          -0.84189898
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        0.1325008,
+        0.01821886,
+        0.00496878
+      ]
+    },
+    {
+      "ticker": "HYPE",
+      "coingeckoId": "hyperliquid",
+      "providerName": "Hyperliquid",
+      "priceUsd": 56.32,
+      "marketCapUsd": 12527221000,
+      "fdvUsd": 56306576000,
+      "fdvx": 4.494738,
+      "floatPct": 22.244571,
+      "vol24hUsd": 193755900,
+      "return1yPct": 23.8,
+      "athChangePct": -26.73382,
+      "athDate": "2026-06-16",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.28,
+          1.5713255
+        ],
+        [
+          0.42,
+          0.034330167
+        ],
+        [
+          0.3,
+          -0.69066761
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        144.81705,
+        58.253475,
+        17.4216
+      ]
+    },
+    {
+      "ticker": "LIT",
+      "coingeckoId": "lighter",
+      "providerName": "Lighter",
+      "priceUsd": 2.22,
+      "marketCapUsd": 554654200,
+      "fdvUsd": 2218616800,
+      "fdvx": 4,
+      "floatPct": 25,
+      "vol24hUsd": 29509142,
+      "athChangePct": -71.77407,
+      "athDate": "2025-12-30",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.27,
+          3.7573748
+        ],
+        [
+          0.38,
+          -0.052879595
+        ],
+        [
+          0.35,
+          -0.73872541
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        10.561372,
+        2.1026073,
+        0.5800296
+      ]
+    },
+    {
+      "ticker": "JUP",
+      "coingeckoId": "jupiter-exchange-solana",
+      "providerName": "Jupiter",
+      "priceUsd": 0.168963,
+      "marketCapUsd": 561006070,
+      "fdvUsd": 1159488800,
+      "fdvx": 2.0668025,
+      "floatPct": 48.383916,
+      "vol24hUsd": 19213682,
+      "return1yPct": -66.8,
+      "athChangePct": -91.55189,
+      "athDate": "2024-01-31",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.28,
+          3.2490608
+        ],
+        [
+          0.4,
+          0.2155015
+        ],
+        [
+          0.32,
+          -0.63638844
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        0.71793406,
+        0.20537478,
+        0.0614369
+      ]
+    },
+    {
+      "ticker": "ASTER",
+      "coingeckoId": "aster-2",
+      "providerName": "Aster",
+      "priceUsd": 0.602094,
+      "marketCapUsd": 1619500100,
+      "fdvUsd": 4701608400,
+      "fdvx": 2.9031232,
+      "floatPct": 33.632455,
+      "vol24hUsd": 52544551,
+      "athChangePct": -75.00375,
+      "athDate": "2025-09-24",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.22,
+          1.5115057
+        ],
+        [
+          0.38,
+          -0.2465483
+        ],
+        [
+          0.4,
+          -0.74884943
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        1.5121625,
+        0.45364875,
+        0.15121625
+      ]
+    },
+    {
+      "ticker": "UNI",
+      "coingeckoId": "uniswap",
+      "providerName": "Uniswap",
+      "priceUsd": 3.23,
+      "marketCapUsd": 2013093000,
+      "fdvUsd": 2875159000,
+      "fdvx": 1.4282296,
+      "floatPct": 62.407642,
+      "vol24hUsd": 275913550,
+      "return1yPct": -70.3,
+      "athChangePct": -92.81829,
+      "athDate": "2021-05-02",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.28,
+          2.9794585
+        ],
+        [
+          0.44,
+          0.49664762
+        ],
+        [
+          0.28,
+          -0.57072898
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        12.853651,
+        4.8341718,
+        1.3865454
+      ]
+    },
+    {
+      "ticker": "AAVE",
+      "coingeckoId": "aave",
+      "providerName": "Aave",
+      "priceUsd": 86.33,
+      "marketCapUsd": 1331420700,
+      "fdvUsd": 1381255100,
+      "fdvx": 1.0374294,
+      "floatPct": 96.392098,
+      "vol24hUsd": 124436710,
+      "return1yPct": -72.4,
+      "athChangePct": -86.95365,
+      "athDate": "2021-05-18",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.3,
+          3.0055608
+        ],
+        [
+          0.44,
+          0.48164867
+        ],
+        [
+          0.26,
+          -0.60148758
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        345.80006,
+        127.91073,
+        34.403577
+      ]
+    },
+    {
+      "ticker": "SYRUP",
+      "coingeckoId": "syrup",
+      "providerName": "Maple Finance",
+      "priceUsd": 0.152428,
+      "marketCapUsd": 177879250,
+      "fdvUsd": 189688970,
+      "fdvx": 1.0663918,
+      "floatPct": 93.774162,
+      "vol24hUsd": 4666283,
+      "return1yPct": -64.6,
+      "athChangePct": -76.66548,
+      "athDate": "2025-06-25",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.3,
+          2.4428944
+        ],
+        [
+          0.42,
+          0.32797354
+        ],
+        [
+          0.28,
+          -0.60652636
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        0.5247935,
+        0.20242035,
+        0.0599764
+      ]
+    },
+    {
+      "ticker": "SKY",
+      "coingeckoId": "sky",
+      "providerName": "Sky",
+      "priceUsd": 0.05101,
+      "marketCapUsd": 1194238800,
+      "fdvUsd": 1196981500,
+      "fdvx": 1.0022966,
+      "floatPct": 99.770866,
+      "vol24hUsd": 7388255,
+      "return1yPct": -33.8,
+      "athChangePct": -49.26181,
+      "athDate": "2024-12-04",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.28,
+          1.5522372
+        ],
+        [
+          0.46,
+          0.27611856
+        ],
+        [
+          0.26,
+          -0.44562062
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        0.13018962,
+        0.065094808,
+        0.028278892
+      ]
+    },
+    {
+      "ticker": "ENA",
+      "coingeckoId": "ethena",
+      "providerName": "Ethena",
+      "priceUsd": 0.084705,
+      "marketCapUsd": 832471310,
+      "fdvUsd": 1270544500,
+      "fdvx": 1.5262321,
+      "floatPct": 65.520833,
+      "vol24hUsd": 56566360,
+      "return1yPct": -88.2,
+      "athChangePct": -94.41884,
+      "athDate": "2024-04-11",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.26,
+          2.5830773
+        ],
+        [
+          0.38,
+          0.19081495
+        ],
+        [
+          0.36,
+          -0.63850259
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        0.30350456,
+        0.10086798,
+        0.030620638
+      ]
+    },
+    {
+      "ticker": "ONDO",
+      "coingeckoId": "ondo-finance",
+      "providerName": "Ondo",
+      "priceUsd": 0.327488,
+      "marketCapUsd": 1594223900,
+      "fdvUsd": 3274010400,
+      "fdvx": 2.0536704,
+      "floatPct": 48.693306,
+      "vol24hUsd": 65622082,
+      "return1yPct": -67.3,
+      "athChangePct": -84.69795,
+      "athDate": "2024-12-15",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.24,
+          2.062347
+        ],
+        [
+          0.4,
+          -0.078223324
+        ],
+        [
+          0.36,
+          -0.723467
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        1.0028819,
+        0.3018708,
+        0.09056124
+      ]
+    },
+    {
+      "ticker": "CAP",
+      "coingeckoId": "cap-4",
+      "providerName": "Cap",
+      "priceUsd": 0.068041,
+      "marketCapUsd": 106155080,
+      "fdvUsd": 680481300,
+      "fdvx": 6.4102564,
+      "floatPct": 15.6,
+      "vol24hUsd": 261211090,
+      "athChangePct": -13.05248,
+      "athDate": "2026-08-14",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.27,
+          1.8253443
+        ],
+        [
+          0.31,
+          -0.51565527
+        ],
+        [
+          0.42,
+          -0.83855176
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        0.19223925,
+        0.0329553,
+        0.0109851
+      ]
+    },
+    {
+      "ticker": "UP",
+      "coingeckoId": "superform",
+      "providerName": "Superform",
+      "priceUsd": 0.051773,
+      "marketCapUsd": 11450397,
+      "fdvUsd": 51771124,
+      "fdvx": 4.5213388,
+      "floatPct": 22.117343,
+      "vol24hUsd": 1087360,
+      "athChangePct": -82.00574,
+      "athDate": "2026-05-13",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.24,
+          4.0247668
+        ],
+        [
+          0.3,
+          -0.3300311
+        ],
+        [
+          0.46,
+          -0.83250777
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        0.26014725,
+        0.0346863,
+        0.008671575
+      ]
+    },
+    {
+      "ticker": "LINK",
+      "coingeckoId": "chainlink",
+      "providerName": "Chainlink",
+      "priceUsd": 9.17,
+      "marketCapUsd": 6857662700,
+      "fdvUsd": 9166773200,
+      "fdvx": 1.3367197,
+      "floatPct": 74.809997,
+      "vol24hUsd": 275354860,
+      "return1yPct": -59.6,
+      "athChangePct": -82.60222,
+      "athDate": "2021-05-09",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.28,
+          2.2709037
+        ],
+        [
+          0.44,
+          0.31027426
+        ],
+        [
+          0.28,
+          -0.61743817
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        29.994187,
+        12.015215,
+        3.508092
+      ]
+    },
+    {
+      "ticker": "EIGEN",
+      "coingeckoId": "eigenlayer",
+      "providerName": "EigenCloud (prev. EigenLayer)",
+      "priceUsd": 0.170621,
+      "marketCapUsd": 149114790,
+      "fdvUsd": 312735980,
+      "fdvx": 2.0972835,
+      "floatPct": 47.680726,
+      "vol24hUsd": 11835844,
+      "return1yPct": -87.8,
+      "athChangePct": -96.97789,
+      "athDate": "2024-12-16",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.22,
+          3.6640214
+        ],
+        [
+          0.35,
+          -0.17084064
+        ],
+        [
+          0.43,
+          -0.7408877
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        0.79578,
+        0.141472,
+        0.04421
+      ]
+    },
+    {
+      "ticker": "LDO",
+      "coingeckoId": "lido-dao",
+      "providerName": "Lido DAO",
+      "priceUsd": 0.295094,
+      "marketCapUsd": 246792750,
+      "fdvUsd": 295100930,
+      "fdvx": 1.1957439,
+      "floatPct": 83.629946,
+      "vol24hUsd": 22401719,
+      "return1yPct": -78.7,
+      "athChangePct": -95.95921,
+      "athDate": "2021-08-20",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.24,
+          2.4828614
+        ],
+        [
+          0.38,
+          -0.10440707
+        ],
+        [
+          0.38,
+          -0.68156696
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        1.0277715,
+        0.2642841,
+        0.09396768
+      ]
+    },
+    {
+      "ticker": "AKT",
+      "coingeckoId": "akash-network",
+      "providerName": "Akash Network",
+      "priceUsd": 0.538661,
+      "marketCapUsd": 159866270,
+      "fdvUsd": 159872690,
+      "fdvx": 1.0000401,
+      "floatPct": 76.385248,
+      "vol24hUsd": 3734271,
+      "return1yPct": -58.9,
+      "athChangePct": -93.32925,
+      "athDate": "2021-04-06",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.28,
+          3.600602
+        ],
+        [
+          0.38,
+          0.10950071
+        ],
+        [
+          0.34,
+          -0.72262482
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        2.4781649,
+        0.59764476,
+        0.14941119
+      ]
+    },
+    {
+      "ticker": "ATH",
+      "coingeckoId": "aethir",
+      "providerName": "Aethir",
+      "priceUsd": 0.0037325,
+      "marketCapUsd": 75123263,
+      "fdvUsd": 156749660,
+      "fdvx": 2.0865662,
+      "floatPct": 47.92563,
+      "vol24hUsd": 5660007,
+      "return1yPct": -89,
+      "athChangePct": -96.85117,
+      "athDate": "2024-06-12",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.26,
+          3.1024016
+        ],
+        [
+          0.36,
+          -0.082357535
+        ],
+        [
+          0.38,
+          -0.73010516
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        0.015312214,
+        0.0034251005,
+        0.0010073825
+      ]
+    },
+    {
+      "ticker": "NOS",
+      "coingeckoId": "nosana",
+      "providerName": "Nosana",
+      "priceUsd": 0.256484,
+      "marketCapUsd": 25647669,
+      "fdvUsd": 25647669,
+      "fdvx": 1,
+      "floatPct": 99.99972,
+      "vol24hUsd": 143039,
+      "return1yPct": -53.1,
+      "athChangePct": -96.72544,
+      "athDate": "2024-03-06",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.24,
+          2.8809088
+        ],
+        [
+          0.36,
+          -0.18296658
+        ],
+        [
+          0.4,
+          -0.7140383
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        0.995391,
+        0.209556,
+        0.0733446
+      ]
+    },
+    {
+      "ticker": "TAO",
+      "coingeckoId": "bittensor",
+      "providerName": "Bittensor",
+      "priceUsd": 199,
+      "marketCapUsd": 1909778900,
+      "fdvUsd": 4178733400,
+      "fdvx": 2.1880719,
+      "floatPct": 45.702338,
+      "vol24hUsd": 84480644,
+      "return1yPct": -45.5,
+      "athChangePct": -73.73298,
+      "athDate": "2024-03-07",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.28,
+          2.0369497
+        ],
+        [
+          0.38,
+          0.11354824
+        ],
+        [
+          0.34,
+          -0.6456892
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        604.353,
+        221.5961,
+        70.50785
+      ]
+    },
+    {
+      "ticker": "VIRTUAL",
+      "coingeckoId": "virtual-protocol",
+      "providerName": "Virtuals Protocol",
+      "priceUsd": 0.558668,
+      "marketCapUsd": 367550980,
+      "fdvUsd": 558665490,
+      "fdvx": 1.5199673,
+      "floatPct": 65.790888,
+      "vol24hUsd": 27807550,
+      "return1yPct": -53,
+      "athChangePct": -88.97005,
+      "athDate": "2025-01-01",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.26,
+          2.3645403
+        ],
+        [
+          0.36,
+          -0.18289736
+        ],
+        [
+          0.38,
+          -0.71161083
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        1.879661,
+        0.4564891,
+        0.1611138
+      ]
+    },
+    {
+      "ticker": "NOCK",
+      "coingeckoId": "nockchain",
+      "providerName": "Nockchain",
+      "priceUsd": 0.0094678,
+      "marketCapUsd": 21548837,
+      "fdvUsd": 40663619,
+      "fdvx": 1.8870447,
+      "floatPct": 52.992916,
+      "vol24hUsd": 800482,
+      "athChangePct": -95.49624,
+      "athDate": "2025-10-17",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.15,
+          12.533133
+        ],
+        [
+          0.3,
+          -0.188012
+        ],
+        [
+          0.55,
+          -0.797003
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        0.128129,
+        0.00768774,
+        0.001921935
+      ]
+    },
+    {
+      "ticker": "ZAMA",
+      "coingeckoId": "zama",
+      "providerName": "Zama",
+      "priceUsd": 0.04508395,
+      "marketCapUsd": 99181333,
+      "fdvUsd": 495906670,
+      "fdvx": 5,
+      "floatPct": 20,
+      "vol24hUsd": 9379103,
+      "athChangePct": -31.97983,
+      "athDate": "2026-07-27",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.25,
+          2.5645479
+        ],
+        [
+          0.35,
+          -0.28709042
+        ],
+        [
+          0.4,
+          -0.79631155
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        0.1607039,
+        0.03214078,
+        0.00918308
+      ]
+    },
+    {
+      "ticker": "PROVE",
+      "coingeckoId": "succinct",
+      "providerName": "Succinct",
+      "priceUsd": 0.146685,
+      "marketCapUsd": 28603993,
+      "fdvUsd": 146687140,
+      "fdvx": 5.128205,
+      "floatPct": 19.5,
+      "vol24hUsd": 3735362,
+      "return1yPct": -89,
+      "athChangePct": -91.42531,
+      "athDate": "2025-08-11",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.25,
+          3.1127859
+        ],
+        [
+          0.35,
+          -0.22885264
+        ],
+        [
+          0.4,
+          -0.7943607
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        0.603284,
+        0.11311575,
+        0.0301642
+      ]
+    },
+    {
+      "ticker": "LA",
+      "coingeckoId": "lagrange",
+      "providerName": "Lagrange",
+      "priceUsd": 0.050202,
+      "marketCapUsd": 9689991,
+      "fdvUsd": 50207208,
+      "fdvx": 5.1813472,
+      "floatPct": 19.3,
+      "vol24hUsd": 11516287,
+      "return1yPct": -85.2,
+      "athChangePct": -97.08495,
+      "athDate": "2025-06-05",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.22,
+          3.6585873
+        ],
+        [
+          0.33,
+          -0.27533086
+        ],
+        [
+          0.45,
+          -0.84471376
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        0.2338704,
+        0.03637984,
+        0.00779568
+      ]
+    },
+    {
+      "ticker": "AZTEC",
+      "coingeckoId": "aztec",
+      "providerName": "Aztec",
+      "priceUsd": 0.01161346,
+      "marketCapUsd": 34306366,
+      "fdvUsd": 120196950,
+      "fdvx": 3.5036339,
+      "floatPct": 28.541795,
+      "vol24hUsd": 1618924,
+      "athChangePct": -70.89084,
+      "athDate": "2026-02-20",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.24,
+          3.4383672
+        ],
+        [
+          0.34,
+          -0.22328574
+        ],
+        [
+          0.42,
+          -0.77808164
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        0.0515448,
+        0.00902034,
+        0.00257724
+      ]
+    },
+    {
+      "ticker": "ARX",
+      "coingeckoId": "arcium",
+      "providerName": "Arcium",
+      "priceUsd": 0.111845,
+      "marketCapUsd": 23355110,
+      "fdvUsd": 111837190,
+      "fdvx": 4.7885532,
+      "floatPct": 20.883134,
+      "vol24hUsd": 3410928,
+      "athChangePct": -76.04635,
+      "athDate": "2026-06-22",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.23,
+          3.2448031
+        ],
+        [
+          0.33,
+          -0.3102195
+        ],
+        [
+          0.44,
+          -0.81959587
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        0.47476,
+        0.0771485,
+        0.0201773
+      ]
+    },
+    {
+      "ticker": "NIL",
+      "coingeckoId": "nillion",
+      "providerName": "Nillion",
+      "priceUsd": 0.04503925,
+      "marketCapUsd": 22497054,
+      "fdvUsd": 45491096,
+      "fdvx": 2.0220912,
+      "floatPct": 49.453753,
+      "vol24hUsd": 16636591,
+      "return1yPct": -84.7,
+      "athChangePct": -94.97933,
+      "athDate": "2025-03-24",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.25,
+          2.1141815
+        ],
+        [
+          0.35,
+          -0.3771637
+        ],
+        [
+          0.4,
+          -0.82872002
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        0.1402604,
+        0.02805208,
+        0.007714322
+      ]
+    },
+    {
+      "ticker": "IRYS",
+      "coingeckoId": "irys",
+      "providerName": "Irys",
+      "priceUsd": 0.01703216,
+      "marketCapUsd": 34067408,
+      "fdvUsd": 170337040,
+      "fdvx": 5,
+      "floatPct": 20,
+      "vol24hUsd": 5294975,
+      "athChangePct": -80.19695,
+      "athDate": "2026-05-15",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.23,
+          2.5216156
+        ],
+        [
+          0.34,
+          -0.39761839
+        ],
+        [
+          0.43,
+          -0.83318663
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        0.05998072,
+        0.01025986,
+        0.002841192
+      ]
+    },
+    {
+      "ticker": "AI",
+      "coingeckoId": "gensyn",
+      "providerName": "Gensyn",
+      "priceUsd": 0.0201808,
+      "marketCapUsd": 26325918,
+      "fdvUsd": 201781380,
+      "fdvx": 7.6647423,
+      "floatPct": 13.046753,
+      "vol24hUsd": 4011855,
+      "athChangePct": -81.1935,
+      "athDate": "2026-04-29",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.22,
+          3.1229287
+        ],
+        [
+          0.32,
+          -0.4330973
+        ],
+        [
+          0.46,
+          -0.84539017
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        0.083204,
+        0.01144055,
+        0.00312015
+      ]
+    },
+    {
+      "ticker": "ALEO",
+      "coingeckoId": "aleo",
+      "providerName": "ALEO",
+      "priceUsd": 0.01566458,
+      "marketCapUsd": 20985803,
+      "fdvUsd": 32100140,
+      "fdvx": 1.5296122,
+      "floatPct": 26.79854,
+      "vol24hUsd": 492808,
+      "return1yPct": -93.7,
+      "athChangePct": -99.76683,
+      "athDate": "2024-09-27",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.22,
+          3.0305453
+        ],
+        [
+          0.33,
+          -0.29465456
+        ],
+        [
+          0.45,
+          -0.81862546
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        0.0631368,
+        0.01104894,
+        0.002841156
+      ]
+    },
+    {
+      "ticker": "OCT",
+      "coingeckoId": "octra",
+      "providerName": "Octra",
+      "priceUsd": 0.02067786,
+      "marketCapUsd": 12927450,
+      "fdvUsd": 12927450,
+      "fdvx": 1,
+      "floatPct": 62.520273,
+      "vol24hUsd": 85148,
+      "athChangePct": -85.43088,
+      "athDate": "2026-06-01",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.2,
+          3.0593176
+        ],
+        [
+          0.3,
+          -0.39110237
+        ],
+        [
+          0.5,
+          -0.84777559
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        0.083938,
+        0.0125907,
+        0.003147675
+      ]
+    },
+    {
+      "ticker": "PRL",
+      "coingeckoId": "pearl-2",
+      "providerName": "Pearl",
+      "priceUsd": 0.260201,
+      "marketCapUsd": 66348639,
+      "fdvUsd": 546302480,
+      "fdvx": 8.2338159,
+      "floatPct": 12.145037,
+      "vol24hUsd": 166143,
+      "athChangePct": -64.79734,
+      "athDate": "2026-06-24",
+      "asOf": "2026-08-15T01:23:30.000Z",
+      "scenarioReturns": [
+        [
+          0.18,
+          2.1097382
+        ],
+        [
+          0.3,
+          -0.53353926
+        ],
+        [
+          0.52,
+          -0.87561047
+        ]
+      ],
+      "scenarioTargetsUsd": [
+        0.809157,
+        0.12137355,
+        0.03236628
+      ]
+    }
+  ]
+}

@@ -8,10 +8,10 @@ import { Landing } from './components/Landing'
 // ---------------------------------------------------------------------------
 // Two asset classes, split on purpose
 // ---------------------------------------------------------------------------
-// The book is 82 equity positions and 4 crypto positions. Until August 2026 one
-// Exposure tab computed factor concentration across both, which put a $228bn ETH
-// in the same buckets as a photonics small cap and sized them with one risk
-// model. At 82-to-4 that distortion is invisible; it is still a distortion.
+// The repository transcribes equities and four crypto research rows, but those
+// crypto rows are not holdings. Until August 2026 one allocation model treated
+// them as a fixed mandate. The Crypto Pilot now starts from zero and the
+// equities allocator excludes crypto completely.
 //
 // Matthias's instruction (13 Aug 2026) is the analytical reason to split rather
 // than the cosmetic one: the hypotheses differ. Equities here are a bet on a
@@ -19,9 +19,8 @@ import { Landing } from './components/Landing'
 // benchmark that is bitcoin rather than zero. Averaging two different questions
 // produces an answer to neither.
 //
-// The allocation model already agreed with that — allocation.ts has carried a
-// separate cryptoUniverse on a fixed 10% mandate for months. This change makes
-// the interface say what the model already did.
+// Research, selection and sizing remain separate so a research row cannot turn
+// into a position merely by appearing in positions.ts.
 type AssetClass = 'equities' | 'crypto'
 
 type Tab = {
@@ -64,11 +63,9 @@ const EQUITY_TABS: Tab[] = [
 // through one chain's distribution) have research notes and no ranking yet, so
 // they stay notes rather than tabs.
 const CRYPTO_TABS: Tab[] = [
-  { id: 'exposure', label: 'EXPOSURE', kind: 'exposure' },
-  { id: 'allocator', label: 'ALLOCATOR', kind: 'allocator' },
   { id: 'assets', label: 'ASSETS', kind: 'embed', src: 'dashboards/crypto.html', title: 'Crypto and innovation research dashboard' , vintage: '2026-08-12', status: 'confirmed' },
+  { id: 'pilot', label: 'PILOT', kind: 'embed', src: 'dashboards/portfolio.html', title: 'Crypto pilot — robust screen, orders and bitcoin benchmark' },
   { id: 'vc', label: 'VC RESEARCH', kind: 'embed', src: 'dashboards/crypto-vc.html', title: 'Venture capital research — who funds what in crypto' , vintage: '2026-08-13', status: 'confirmed' },
-  { id: 'builder', label: 'BUILDER', kind: 'embed', src: 'dashboards/portfolio.html', title: 'Portfolio builder — screen, cluster and weight against the bitcoin benchmark', vintage: '2026-08-15', status: 'confirmed' },
 ]
 
 
@@ -132,6 +129,9 @@ const LEGACY: Record<string, string> = {
   agentic: 'equities/agentic',
   exposure: 'equities/exposure',
   allocator: 'equities/allocator',
+  'crypto/allocator': 'crypto/pilot',
+  'crypto/builder': 'crypto/pilot',
+  'crypto/exposure': 'crypto/pilot',
 }
 
 type Route = { cls: AssetClass; tab: string } | null
@@ -216,7 +216,7 @@ function App() {
         )}
         {active.kind === 'allocator' && (
           <div className="h-full overflow-y-auto">
-            <AllocatorPanel assetClass={cls} onLeverageChange={setLeverageActive} />
+            <AllocatorPanel onLeverageChange={setLeverageActive} />
           </div>
         )}
         {active.kind === 'embed' && active.src && (

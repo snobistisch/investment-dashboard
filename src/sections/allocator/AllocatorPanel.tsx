@@ -14,7 +14,6 @@ import {
 import { VINTAGE_WARN_DAYS } from '../exposure/analysis'
 import {
   buildAllocation,
-  CRYPTO_MANDATE_DIVERGENCE,
   riskBand,
   SLEEVE_CAP_AGGRESSIVE,
   type AllocatedPosition,
@@ -155,19 +154,6 @@ function PositionRow({
       </td>
       <td className="py-2 align-top text-[11px] leading-relaxed text-term-dim">
         {row.rationale}
-        {/* Crypto only. The size came from an instruction, so the row says what
-            the research thinks of the name next to what the mandate paid it. */}
-        {row.researchNote && (
-          <span className="mt-1 block">
-            <span
-              className="mr-1.5 border border-term-magenta px-1 text-[9px] uppercase tracking-wider text-term-magenta"
-              title="Sized to instruction, not to the crypto tab's ranking"
-            >
-              mandate
-            </span>
-            <span className="text-term-dim">{row.researchNote}</span>
-          </span>
-        )}
       </td>
     </tr>
   )
@@ -175,16 +161,9 @@ function PositionRow({
 
 export function AllocatorPanel({
   onLeverageChange,
-  assetClass = 'equities',
 }: {
   /** Lets the app footer state the book's leverage instead of asserting it. */
   onLeverageChange?: (active: boolean) => void
-  /** Which half of the book to render. The sizing model is unchanged and still
-   *  solves for the whole book at once — allocation.ts has always held crypto
-   *  to a separate fixed mandate. What this switches is which sleeves are
-   *  shown, so each asset class is read against its own hypothesis instead of
-   *  a blended one. */
-  assetClass?: 'equities' | 'crypto'
 }) {
   const [capital, setCapital] = useState(100_000)
   const [risk, setRisk] = useState(35)
@@ -205,16 +184,8 @@ export function AllocatorPanel({
     onLeverageChange?.(leverageActive)
     return () => onLeverageChange?.(false)
   }, [leverageActive, onLeverageChange])
-  // The solver still sizes the whole book in one pass — splitting the model
-  // would change the answer, not just the view. What changes here is which
-  // sleeves are shown, so each asset class is read against its own hypothesis.
-  const equitiesView = assetClass === 'equities'
-  const thesisRows = equitiesView ? result.positions.filter((p) => p.sleeveName === 'thesis') : []
-  const diversifierRows = equitiesView
-    ? result.positions.filter((p) => p.sleeveName === 'diversifier')
-    : []
-  const cryptoRows = equitiesView ? [] : result.positions.filter((p) => p.sleeveName === 'crypto')
-  const cryptoShare = cryptoRows.reduce((t, p) => t + p.exposureWeight, 0)
+  const thesisRows = result.positions.filter((p) => p.sleeveName === 'thesis')
+  const diversifierRows = result.positions.filter((p) => p.sleeveName === 'diversifier')
 
   // Sizing never reads market cap, so this book is here for the provenance
   // banner and nothing else — the allocation itself is identical either way.
@@ -361,9 +332,7 @@ export function AllocatorPanel({
                           ? 'volume layer'
                           : row.layer === 'system'
                             ? 'beta'
-                            : row.layer === 'crypto mandate'
-                              ? 'sized to instruction, not to conviction'
-                              : 'ballast'}
+                            : 'ballast'}
                     </span>
                     <div className="mt-1 w-40 max-w-full">
                       <Bar
@@ -610,17 +579,13 @@ export function AllocatorPanel({
       {/* ------------------------------------------------------------------ */}
       <div className="mt-4">
         <Panel
-          title={
-            equitiesView
-              ? `Allocation — ${thesisRows.length} thesis, ${diversifierRows.length} diversifiers`
-              : `Crypto mandate — ${cryptoRows.length} positions at ${pct(cryptoShare)} of capital`
-          }
+          title={`Allocation — ${thesisRows.length} thesis, ${diversifierRows.length} diversifiers`}
         >
           {capitalUsd === 0 ? (
             <p className="text-xs text-term-dim">
               Enter a capital amount above to size the allocation.
             </p>
-          ) : thesisRows.length + diversifierRows.length + cryptoRows.length === 0 ? (
+          ) : thesisRows.length + diversifierRows.length === 0 ? (
             <p className="text-xs text-term-dim">No eligible candidates at this setting.</p>
           ) : (
             <table className="w-full text-left text-xs">
@@ -671,32 +636,6 @@ export function AllocatorPanel({
                     quote={snapshot?.quotes[row.position.ticker]}
                     />
                 ))}
-                {cryptoRows.length > 0 && (
-                  <tr className="border-b border-term-line bg-term-bg">
-                    <td
-                      colSpan={5}
-                      className="py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-term-magenta"
-                    >
-                      Crypto mandate — {pct(cryptoShare)} of capital, sized to instruction rather
-                      than to the conviction ranking
-                    </td>
-                  </tr>
-                )}
-                {cryptoRows.length > 0 && (
-                  <tr className="border-b border-term-line">
-                    <td colSpan={5} className="py-2 text-[11px] leading-relaxed text-term-dim">
-                      {CRYPTO_MANDATE_DIVERGENCE}
-                    </td>
-                  </tr>
-                )}
-                {cryptoRows.map((row) => (
-                  <PositionRow
-                    key={row.position.ticker}
-                    row={row}
-                    nameCap={result.perNameCapPct}
-                    quote={snapshot?.quotes[row.position.ticker]}
-                  />
-                ))}
               </tbody>
             </table>
           )}
@@ -708,10 +647,8 @@ export function AllocatorPanel({
             {pct(result.perNameCapPct)} — so ballast stays ballast. No win-probability or
             Kelly-style math; nothing in positions.ts supports that precision. Each rationale is the
             position&rsquo;s own <span className="text-term-text">edge</span> field, verbatim. Crypto
-            rows carry a second line because their size is not derived from anything: the{' '}
-            <span className="text-term-magenta">mandate</span> tag reports where the crypto tab
-            ranks the name, so an instruction that overrules the research is legible next to the
-            cheque it writes.
+            is deliberately absent: it starts from zero holdings and is selected and sized only in
+            the separate Pilot against bitcoin.
           </p>
         </Panel>
       </div>

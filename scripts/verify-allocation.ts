@@ -18,10 +18,7 @@ import {
   sizeableUniverse,
   thesisUniverse,
   diversifierUniverse,
-  cryptoUniverse,
-  CRYPTO_TARGET_SHARE,
-  CRYPTO_RESEARCH_RANKS,
-  CRYPTO_RESEARCH_UNIVERSE,
+  cryptoResearchUniverse,
   THESIS_FACTOR,
   SLEEVE_CAP_AGGRESSIVE,
 } from '../src/sections/allocator/allocation'
@@ -184,28 +181,11 @@ for (const capital of CAPITALS) {
         )
       }
 
-      // --- crypto mandate --------------------------------------------------
-      // The whole point of the sleeve is that it is a fixed share of capital.
-      // If it drifts, it has stopped being a mandate and nobody would notice
-      // from the screen, which shows whatever it computed.
-      const cryptoRows = r.positions.filter((p) => p.sleeveName === 'crypto')
-      const cryptoUsd = cryptoRows.reduce((t, p) => t + p.dollars, 0)
-      const wanted = Math.min(CRYPTO_TARGET_SHARE * capital, capital * (1 - r.reserveShare))
+      // Crypto research rows are not holdings. They start at zero and can only
+      // be sized by the separate Pilot after its evidence and freshness gates.
       check(
-        Math.abs(cryptoUsd - wanted) < Math.max(1e-6, capital * 1e-9),
-        `${tag}: crypto mandate is ${(cryptoUsd / capital * 100).toFixed(3)}% of capital, wanted ${(wanted / capital * 100).toFixed(3)}%`,
-      )
-      for (const p of cryptoRows) {
-        check(
-          p.position.sections.includes('crypto'),
-          `${tag}: ${p.position.ticker} is in the crypto sleeve but not in the crypto section`,
-        )
-      }
-      // Every name in the section is held: a mandate with a selection rule
-      // inside it would silently drop names Matthias asked to hold.
-      check(
-        cryptoRows.length === cryptoUniverse.length,
-        `${tag}: crypto sleeve holds ${cryptoRows.length} of ${cryptoUniverse.length} section names`,
+        r.positions.every((p) => !p.position.sections.includes('crypto')),
+        `${tag}: equities allocator emitted a crypto position`,
       )
 
       // --- totals ---------------------------------------------------------
@@ -426,25 +406,7 @@ for (const [i, m] of headerClaims.entries()) {
   )
 }
 
-// Every mandate name has to carry the research's own verdict on it. Without
-// this, a fifth crypto position could be added and simply not show a rank,
-// which is the failure mode the mandate line exists to prevent.
-for (const p of cryptoUniverse) {
-  const rank = CRYPTO_RESEARCH_RANKS[p.ticker]
-  check(rank !== undefined, `crypto research rank: ${p.ticker} has no entry`)
-  if (rank) {
-    check(
-      rank.ev >= 1 && rank.ev <= CRYPTO_RESEARCH_UNIVERSE,
-      `crypto research rank: ${p.ticker} EV rank ${rank.ev} outside 1..${CRYPTO_RESEARCH_UNIVERSE}`,
-    )
-    check(
-      rank.evSigma >= 1 && rank.evSigma <= CRYPTO_RESEARCH_UNIVERSE,
-      `crypto research rank: ${p.ticker} EV/sigma rank ${rank.evSigma} outside 1..${CRYPTO_RESEARCH_UNIVERSE}`,
-    )
-  }
-}
-
-console.log(`universe: ${sizeableUniverse.length} sizeable = ${thesisUniverse.length} thesis + ${diversifierUniverse.length} diversifiers + ${cryptoUniverse.length} crypto mandate`)
+console.log(`universe: ${sizeableUniverse.length} sizeable equities = ${thesisUniverse.length} thesis + ${diversifierUniverse.length} diversifiers; ${cryptoResearchUniverse.length} crypto research rows excluded`)
 console.log(`thesis factor: ${THESIS_FACTOR} (derived: ${derived})`)
 console.log(`thesis exposure range: ${(minThesis * 100).toFixed(1)}% .. ${(maxThesis * 100).toFixed(1)}%`)
 console.log(`reserve at risk 0: ${(minReserveAtZero * 100).toFixed(1)}%`)

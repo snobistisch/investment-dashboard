@@ -669,8 +669,8 @@ invented the application, ran roughly quarter Kelly at Princeton Newport.
 Expected return is the hardest input to estimate and the one every optimiser is
 most sensitive to. Volatility and correlation are estimable from a year of daily
 closes, and this repository has measured them. **So the weighting uses only
-measured inputs, and the judgement lives entirely in the screen and the
-selection lens** — where it is visible and cannot silently size a position.
+measured inputs, and the judgement lives entirely in the scenario-EV screen** —
+where it is visible and cannot silently size a position.
 
 ### The statistics are active, not absolute
 
@@ -688,32 +688,27 @@ persists — the first version of that script reduced a year of prices to two
 numbers and threw the series away, which made correlation unmeasurable without
 refetching all forty.
 
-### The finding: this file has been wrong about "one bet"
+### The finding, after testing the noise
 
-The dashboard has claimed for months that forty tickers are one bet. **On
-active returns that is false, and the number is not close.**
+Active returns do diversify more than absolute crypto returns. The first build
+overstated how confidently that could be said. Illiquidity and stress both move
+the measured correlation upward:
 
 | | measured |
 | --- | ---: |
-| Median pairwise **active** correlation | **0.13** |
-| Clusters at a 0.6 cut, average linkage | **35 of 39** |
+| Median pairwise active correlation, all measurable pairs | **0.13** |
+| Median where both assets trade at least $1m/day | **0.17** |
+| Median on the worst 20% of BTC days, full-history assets | **0.29** |
+| Clusters at a 0.6 cut, average linkage | **32 of 36 measurable assets** |
 | Multi-name clusters | 3: (ETH, SOL) · (JUP, LINK) · (EIGEN, ALEO, LDO) |
-| Pairs with too little overlap to measure | 111 of 741 |
+| Unclustered for less than 90 days of history | CAP · ARX · PRL |
 
-Both statements are true and they are about different things. In **absolute**
-terms these assets are one liquidity bet — they fall together, and the Exposure
-tab is right to say so. In **active** terms, once bitcoin is subtracted, what is
-left barely correlates at all. For a book whose objective is to beat bitcoin
-that is the relevant number, and it says there is real diversification available
-where this file assumed there was none.
-
-**Two reasons to hold that finding loosely.** Low measured active correlation is
-partly genuine and partly noise: the idiosyncratic return of an illiquid token
-is mostly measurement error, and measurement error is uncorrelated by
-construction, which flatters every diversification figure computed from it. And
-111 of 741 pairs could not be measured at all — the builder substitutes the
-median and says so on screen rather than assuming independence, which would
-flatter it further.
+Both statements are true and about different things. In absolute terms the
+assets remain one liquidity bet. In active terms there is measurable spread,
+but the 0.13 headline is not the number to build on: low-volume pairs pull it
+down and BTC stress pulls it up. The builder now excludes the three unmeasurable
+names rather than assigning each its own cluster. Missing evidence no longer
+counts as diversification.
 
 ### The weighting rule
 
@@ -730,30 +725,36 @@ which is arithmetic mistaken for balance. Equal active-risk contribution means
 every position has the same shot at deciding whether the book beats bitcoin.
 That is the honest reading of "balanced" for a benchmark-relative objective.
 
-The solver is a fixed-point iteration — weight inversely to marginal risk,
-repeat — chosen over a proper optimiser because it is readable. An optimiser
-nobody can check is worse than an iteration everybody can.
+The first solver updated every weight to inverse marginal risk at once. That
+oscillates on a diagonal covariance matrix and was not a general ERC solver,
+although it happened to converge on the default selection. The live tool now
+uses cyclical coordinate descent and checks the risk-budget residual before it
+returns. Infeasible name and cluster ceilings return an error rather than a
+normalised portfolio that violates the displayed cap.
 
 ### Does it earn its complexity
 
 The tool reports this itself, on the same names, and would say so if it did not.
-At eight positions on the research-EV lens, 30% per-name ceiling:
+At the default $1m liquidity, 3× FDV and 90-day gates, seven of the eight assets
+whose scenario EV clears BTC survive. NOCK is the eighth and fails liquidity.
+At a 30% per-name ceiling:
 
 | Weighting | Active vol | Largest weight | Largest risk share |
 | --- | ---: | ---: | ---: |
-| This tool | 40% | 23% | **13%** |
-| Equal weight (1/N) | 45% | 13% | 19% |
-| Market-cap weighted | 32% | 79% | 80% |
+| This tool | 39% | 24% | **14%** |
+| Equal weight (1/N) | 43% | 14% | 20% |
+| Market-cap weighted | 32% | 81% | 82% |
 
 It beats 1/N on both measures, modestly. Market-cap weighting has the lowest
 active volatility and puts 80% of the risk in one name, which is the entire
 argument against it stated in one row.
 
-### The measured universe
+### Initial measured-universe snapshot
 
-Active volatility against bitcoin, active return over each asset's own window
-(not annualised — the windows differ), observations, risk rating and cluster.
-Eleven of thirty-nine beat bitcoin over the measured window.
+This table preserves the initial 15 August build. Active volatility and return
+remain reproducible, but its R values predate the `sqrt(365)` correction and its
+cluster ids predate exclusion of CAP, ARX and PRL. Use the generated JSON and
+live page for current values; this snapshot is history, not an input.
 
 | Asset | Active vol | vs BTC | Obs | R | Cluster |
 | --- | ---: | ---: | ---: | ---: | ---: |
@@ -799,14 +800,12 @@ Eleven of thirty-nine beat bitcoin over the measured window.
 
 ### What it does not do
 
-No expected return anywhere, deliberately. One year of history is one regime,
-and correlations rise in crashes, so the diversification measured in calm
-overstates what is available when it matters. Costs and spread are not modelled
-— the liquidity gate is the blunt version of a cost model, not a cost model.
-And the selection lens remains a judgement: research EV rests on subjective
-probabilities, momentum on the last year saying something about the next, the
-fee lens on revenue reaching holders. Switching between them changes the book,
-and that disagreement is the most useful thing the tool shows.
+No expected return enters the weights. One year of history is one regime, and
+the measured stress diagnostic is not a backtest. Costs and spread are not
+modelled — the liquidity gate is the blunt version of a cost model, not a cost
+model. Selection is one explicit judgement: scenario EV must clear BTC. The
+momentum and fee lenses were removed because they answered different questions
+and allowed the builder to select names the stated EV rule rejected.
 
 ---
 

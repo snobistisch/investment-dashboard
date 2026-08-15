@@ -58,7 +58,7 @@ grep -n "formula 1: the risk rating" public/dashboards/crypto.html
 ```bash
 npm install
 npm run summary            # repo state in ~50 lines — cheap, run it first
-npm run verify             # 146,899 allocation invariants. BLOCKS THE DEPLOY.
+npm run verify             # 146,899 allocation + quantitative invariants. BLOCKS THE DEPLOY.
 npm run lint               # oxlint
 npm run build              # tsc -b && vite build
 npm run dev                # local server
@@ -72,6 +72,7 @@ npm run fetch-market-data  # Yahoo + CoinGecko + ECB, rewrites market-data.json
 npm run fetch-risk-rating  # CoinGecko, ~10 minutes (keyless rate limits).
                            # Rewrites risk-rating.json and crypto-history.json,
                            # and patches a generated block into crypto.html.
+npm run rebuild-risk-rating # Recomputes R from committed closes, no network.
 npm run build-portfolio    # seconds. Reads the history, writes portfolio.json,
                            # patches a generated block into portfolio.html.
 ```
@@ -162,11 +163,10 @@ Things that look like bugs and are not. Do not "fix" these without asking.
 - **The embedded dashboards are static snapshots.** They do not fetch live data.
   Each carries a vintage badge computed against the reader's clock, and four of
   nine currently read as stale. That is the honest state, not a failure.
-- **Two sizing lenses coexist** — `f*` on the Assets tab (§08 of `crypto.html`)
-  and the Portfolio Builder. `f*` is explicitly labelled a suggestion and is
-  **not** Kelly; the research note `research/crypto-tracker-research.md` §4c and
-  §4d explain both and their limits. Whether `f*` should be removed is an open
-  question, not a bug.
+- **Poker EV and `f*` are retired.** They were removed after quantitative review:
+  the first was an uncalibrated downside penalty presented as expected value,
+  and the second was not Kelly. The Assets tab shows scenario-implied EV versus
+  BTC and keeps R as a separate warning. Do not restore either retired formula.
 - **Section header counts in `positions.ts` state two numbers** ("14 tagged
   'biology', 13 transcribed here") because a ticker can carry several section
   tags while being transcribed once. `verify` checks both.

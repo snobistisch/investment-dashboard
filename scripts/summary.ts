@@ -75,7 +75,16 @@ if (risk) {
 interface Portfolio {
   builtAt: string
   benchmark: string
-  stats: { assets: number; clusters: number; medianPairwiseActiveCorrelation?: number; pairsWithTooLittleOverlap: number }
+  stats: {
+    assets: number
+    clusteredAssets: number
+    unclusteredAssets: string[]
+    clusters: number
+    medianPairwiseActiveCorrelation?: number
+    medianPairwiseActiveCorrelationLiquid?: number
+    medianPairwiseActiveCorrelationStress?: number
+    pairsWithTooLittleOverlap: number
+  }
   clusters: { id: number; members: string[]; label: string }[]
 }
 const pf = readJson<Portfolio>('public/data/portfolio.json')
@@ -83,8 +92,11 @@ head('PORTFOLIO — public/data/portfolio.json')
 if (pf) {
   line('built', pf.builtAt.slice(0, 10))
   line('benchmark (never a position)', pf.benchmark)
-  line('assets / clusters', `${pf.stats.assets} / ${pf.stats.clusters}`)
-  line('median pairwise ACTIVE corr', pf.stats.medianPairwiseActiveCorrelation ?? 'n/a')
+  line('assets / clustered / clusters', `${pf.stats.assets} / ${pf.stats.clusteredAssets} / ${pf.stats.clusters}`)
+  line('median ACTIVE corr, all measured', pf.stats.medianPairwiseActiveCorrelation ?? 'n/a')
+  line('median ACTIVE corr, liquid pairs', pf.stats.medianPairwiseActiveCorrelationLiquid ?? 'n/a')
+  line('median ACTIVE corr, BTC stress', pf.stats.medianPairwiseActiveCorrelationStress ?? 'n/a')
+  line('unclustered (<90d)', pf.stats.unclusteredAssets.join(', ') || 'none')
   line('pairs too thin to measure', pf.stats.pairsWithTooLittleOverlap)
   const multi = pf.clusters.filter((c) => c.members.length > 1)
   line('multi-name clusters', multi.length ? multi.map((c) => `(${c.members.join(',')})`).join(' ') : 'none')

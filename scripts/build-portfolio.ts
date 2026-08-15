@@ -61,6 +61,12 @@ const DAYS_PER_YEAR = 365
  *  script prints, which reports the median pairwise active correlation. */
 const CLUSTER_CORR = 0.6
 
+/** The live builder will not weight an asset below these evidence floors. The
+ *  same defaults are printed in portfolio.html. */
+const SCREEN_LIQUIDITY_USD_M = 1
+const FULL_HISTORY_DAYS = 350
+const STRESS_FRACTION = 0.2
+
 type Closes = { d: string; c: number }[]
 
 interface HistoryFile {
@@ -141,17 +147,23 @@ function stdev(values: number[]) {
 }
 
 /** Pearson correlation over the dates the two series share. */
-function correlation(a: Map<string, number>, b: Map<string, number>) {
+function correlation(
+  a: Map<string, number>,
+  b: Map<string, number>,
+  allowedDates?: Set<string>,
+  minDays = MIN_OVERLAP_DAYS,
+) {
   const xs: number[] = []
   const ys: number[] = []
   for (const [date, v] of a) {
+    if (allowedDates && !allowedDates.has(date)) continue
     const w = b.get(date)
     if (w !== undefined) {
       xs.push(v)
       ys.push(w)
     }
   }
-  if (xs.length < MIN_OVERLAP_DAYS) return { rho: undefined, n: xs.length }
+  if (xs.length < minDays) return { rho: undefined, n: xs.length }
   const mx = xs.reduce((t, v) => t + v, 0) / xs.length
   const my = ys.reduce((t, v) => t + v, 0) / ys.length
   let num = 0
@@ -168,6 +180,12 @@ function correlation(a: Map<string, number>, b: Map<string, number>) {
   return { rho: den > 0 ? num / den : undefined, n: xs.length }
 }
 
+function median(values: number[]) {
+  if (!values.length) return undefined
+  const sorted = [...values].sort((a, b) => a - b)
+  return sorted[Math.floor(sorted.length / 2)]
+}
+
 // ---------------------------------------------------------------------------
 // Clustering — average linkage on correlation distance
 // ---------------------------------------------------------------------------
@@ -177,14 +195,15 @@ function correlation(a: Map<string, number>, b: Map<string, number>) {
 // two otherwise separate groups together, which is exactly the mistake a
 // concentration check must not make.
 //
-// Cut at CLUSTER_CORR. A missing correlation (too little overlap) is treated
-// as maximally distant, so a name with three months of history lands in its
-// own cluster rather than being merged on no evidence.
+// Cut at CLUSTER_CORR. Assets with too little history are excluded from
+// clustering altogether. Calling each unknown name a distinct cluster would
+// turn absence of evidence into evidence of diversification.
 
 function cluster(tickers: string[], rho: (a: string, b: string) => number | undefined) {
   const dist = (a: string, b: string) => {
     const r = rho(a, b)
-    return r === undefined ? 1 : Math.sqrt(Math.max(0, 0.5 * (1 - r)))
+    if (r === undefined) throw new Error(`cluster input has no measured correlation: ${a}/${b}`)
+    return Math.sqrt(Math.max(0, 0.5 * (1 - r)))
   }
   const cutoff = Math.sqrt(Math.max(0, 0.5 * (1 - CLUSTER_CORR)))
 
@@ -217,6 +236,14 @@ function cluster(tickers: string[], rho: (a: string, b: string) => number | unde
 
 function main() {
   const tokens = readTokens()
+  const tokenBy = Object.fromEntries(tokens.map((token) => [token.tk, token]))
+  const benchmarkToken = tokenBy[BENCHMARK]
+  if (!benchmarkToken) throw new Error(`benchmark ${BENCHMARK} is absent from the token universe`)
+  const scenarioAnnual = (token: Token) => {
+    const total = token.sc.reduce((sum, [probability, outcome]) => sum + probability * outcome, 0)
+    return total <= -1 ? -1 : (1 + total) ** (1 / 3) - 1
+  }
+  const benchmarkScenarioAnnual = scenarioAnnual(benchmarkToken)
   const history = JSON.parse(readFileSync(HISTORY_JSON, 'utf8')) as HistoryFile
   const risk = JSON.parse(readFileSync(RISK_JSON, 'utf8')) as RiskFile
   const riskBy = Object.fromEntries(risk.rows.map((r) => [r.ticker, r]))
@@ -240,6 +267,7 @@ function main() {
   const corr: Record<string, Record<string, number>> = {}
   const overlap: Record<string, Record<string, number>> = {}
   const pairwise: number[] = []
+  const pairwiseLiquid: number[] = []
   for (const a of tickers) {
     corr[a] = {}
     overlap[a] = {}
@@ -252,14 +280,40 @@ function main() {
       overlap[a][b] = n
       if (rho !== undefined) {
         corr[a][b] = round(rho, 4)
-        if (a < b) pairwise.push(rho)
+        if (a < b) {
+          pairwise.push(rho)
+          if (tokenBy[a].vol >= SCREEN_LIQUIDITY_USD_M && tokenBy[b].vol >= SCREEN_LIQUIDITY_USD_M) {
+            pairwiseLiquid.push(rho)
+          }
+        }
       }
     }
   }
-  pairwise.sort((x, y) => x - y)
-  const medianCorr = pairwise.length ? pairwise[Math.floor(pairwise.length / 2)] : undefined
+  const medianCorr = median(pairwise)
+  const medianLiquidCorr = median(pairwiseLiquid)
 
-  const groups = cluster(tickers, (a, b) => corr[a]?.[b])
+  /** Stress diagnostic: full-history names only, on the worst 20% of BTC
+   *  daily returns. It does not drive weights; it tells the reader how much
+   *  the all-days correlation flatters diversification when BTC is falling. */
+  const fullHistory = tickers.filter((ticker) => active.get(ticker)!.size >= FULL_HISTORY_DAYS)
+  const commonDates = [...benchReturns.keys()].filter((date) =>
+    fullHistory.every((ticker) => active.get(ticker)!.has(date)),
+  )
+  const sortedBench = commonDates.map((date) => benchReturns.get(date)!).sort((a, b) => a - b)
+  const stressCut = sortedBench[Math.floor(sortedBench.length * STRESS_FRACTION)]
+  const stressDates = new Set(commonDates.filter((date) => benchReturns.get(date)! <= stressCut))
+  const stressPairwise: number[] = []
+  for (let i = 0; i < fullHistory.length; i++) {
+    for (let j = i + 1; j < fullHistory.length; j++) {
+      const { rho } = correlation(active.get(fullHistory[i])!, active.get(fullHistory[j])!, stressDates, 30)
+      if (rho !== undefined) stressPairwise.push(rho)
+    }
+  }
+  const medianStressCorr = median(stressPairwise)
+
+  const clusterTickers = tickers.filter((ticker) => active.get(ticker)!.size >= MIN_OVERLAP_DAYS)
+  const unclusteredTickers = tickers.filter((ticker) => !clusterTickers.includes(ticker))
+  const groups = cluster(clusterTickers, (a, b) => corr[a]?.[b])
   const clusterOf: Record<string, number> = {}
   groups.forEach((g, i) => g.forEach((t) => (clusterOf[t] = i)))
 
@@ -272,6 +326,7 @@ function main() {
       const sd = stdev(values)
       const total = values.reduce((s, v) => s + v, 0)
       const r = riskBy[t.tk]
+      const annualScenarioEv = scenarioAnnual(t)
       return {
         ticker: t.tk,
         name: t.nm,
@@ -284,6 +339,10 @@ function main() {
          *  the measured answer to "did it beat bitcoin", with no probability
          *  in it. Not annualised: the windows differ per asset. */
         activeReturnPct: values.length ? round((Math.exp(total) - 1) * 100, 1) : undefined,
+        /** Subjective scenario EV from the Assets tab. Kept explicit here so
+         *  the builder never mistakes source-array order for an EV ranking. */
+        scenarioEvAnnualPct: round(annualScenarioEv * 100, 1),
+        scenarioEdgeVsBtcPct: round((annualScenarioEv - benchmarkScenarioAnnual) * 100, 1),
         observations: values.length,
         marketCapUsdBn: t.mcap,
         fdvx: t.fdvx,
@@ -314,12 +373,21 @@ function main() {
         'All statistics are relative to the benchmark: daily active return = asset log return minus benchmark log return on the same day. Correlation is of active returns, so it answers "are these the same deviation from bitcoin", not "do they both go up when the market goes up".',
       minOverlapDays: MIN_OVERLAP_DAYS,
       daysPerYear: DAYS_PER_YEAR,
+      screenLiquidityUsdM: SCREEN_LIQUIDITY_USD_M,
+      stressDefinition: `worst ${STRESS_FRACTION * 100}% of BTC daily returns; assets with at least ${FULL_HISTORY_DAYS} active-return observations`,
       clusterCorrelation: CLUSTER_CORR,
       linkage: 'average, on distance sqrt(0.5*(1-rho))',
     },
     stats: {
       assets: rows.length,
+      clusteredAssets: clusterTickers.length,
+      unclusteredAssets: unclusteredTickers,
       medianPairwiseActiveCorrelation: medianCorr === undefined ? undefined : round(medianCorr, 4),
+      medianPairwiseActiveCorrelationLiquid:
+        medianLiquidCorr === undefined ? undefined : round(medianLiquidCorr, 4),
+      medianPairwiseActiveCorrelationStress:
+        medianStressCorr === undefined ? undefined : round(medianStressCorr, 4),
+      stressDays: stressDates.size,
       clusters: clusters.length,
       pairsWithTooLittleOverlap: countThinPairs(tickers, corr),
     },
@@ -334,6 +402,11 @@ function main() {
   console.log(
     `median pairwise ACTIVE correlation: ${medianCorr === undefined ? 'n/a' : medianCorr.toFixed(3)}`,
   )
+  console.log(
+    `liquid-pair median: ${medianLiquidCorr === undefined ? 'n/a' : medianLiquidCorr.toFixed(3)} · ` +
+      `BTC-stress median: ${medianStressCorr === undefined ? 'n/a' : medianStressCorr.toFixed(3)}`,
+  )
+  console.log(`unclustered (<${MIN_OVERLAP_DAYS} observations): ${unclusteredTickers.join(' ') || 'none'}`)
   for (const c of clusters) {
     console.log(`  cluster ${c.id} (${c.label}, ${c.members.length}): ${c.members.join(' ')}`)
   }

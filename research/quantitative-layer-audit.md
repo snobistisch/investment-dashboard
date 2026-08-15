@@ -198,3 +198,29 @@ risicosandbox, niet als bewijs dat deze portefeuille BTC zal verslaan.
 
 Niet gewijzigd: `src/sections/allocator/allocation.ts`. Daardoor blijft de
 onjuiste holdings-/10%-mandaat-aanname zichtbaar als open blokkade.
+
+## Pilot-follow-up — gereedheidscriteria voor maandag
+
+De open blokkade hierboven is daarna buiten de oorspronkelijke reviewscope
+opgelost door de 10%-cryptocarve-out uit de equities-solver te verwijderen.
+Crypto routeert niet meer naar de fictieve mandateweergave. De nieuwe Pilot begint expliciet met nul
+holdings en maakt risicokapitaal een gebruikersinput. Zonder een positief bedrag,
+een benoemde venue en EU-rechtspersoon, een handmatige autorisatie-/orderboekcheck
+en markt-, risico- en historiedata van maximaal 48 uur oud blijft de orderpreview
+geblokkeerd.
+
+De scenario's zijn bovendien van schuivende rendementen naar vaste terminale
+USD-doelprijzen gemigreerd op een expliciete ankerclose. Een marktrefresh
+verandert daardoor het geïmpliceerde rendement, niet ongemerkt de thesis. De
+selectie vereist nu tegelijk positieve scenario-EV versus BTC, voldoende
+liquiditeit, FDV/market-cap binnen de grens, genoeg historie, dekking van een
+zichtbare round-tripkostenbuffer en overleving van een bull-naar-bear-
+probabiliteitsstress. De standaardweging is 1/N; actieve-risicopariteit staat
+alleen als vergelijkingsoptie naast 1/N en market-capweging.
+
+Wanneer alle poorten groen zijn kan de gebruiker een JSON-beslissnapshot
+downloaden met aannames, datavintages, venue, gekozen namen, gewichten,
+referentieprijzen, indicatieve units en kosten. Dit maakt maandag geschikt als
+start van een gecontroleerde pilot. Het verandert niet de hoofdconclusie van de
+audit: de subjectieve kansen hebben nog geen out-of-sample trackrecord, en een
+groene poort is geen bewijs dat een investering werkelijk +EV is.

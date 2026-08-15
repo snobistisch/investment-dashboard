@@ -6,19 +6,24 @@ Live at **https://snobistisch.github.io/investment-dashboard/**
 The dashboard opens on a chooser: **Equities** or **Crypto**. They are split
 because the hypotheses differ — equities here bet on a named industrial
 bottleneck, crypto on float and fee capture against a bitcoin benchmark — and
-because averaging a $228bn settlement layer with a photonics small cap in one
-factor bucket answers neither question. Each side carries its own **Exposure**
-and **Allocator**; the sizing model still solves the whole book in one pass, so
-what splits is the view, not the arithmetic. Routing is `#<class>/<tab>`, and the
-old flat links (`#crypto`, `#defense`, …) still resolve.
+because averaging a settlement layer with a photonics small cap in one factor
+bucket answers neither question. Equities carries **Exposure** and its existing
+**Allocator**. Crypto carries **Assets** and a separate **Pilot**
+that starts from zero holdings and treats bitcoin as its benchmark. Routing is
+`#<class>/<tab>`, and old flat links (`#crypto`, `#defense`, …) still resolve.
 
 Sections:
 
-- **Exposure** and **Allocator**, once per asset class — factor concentration
-  over that half of the book, and a risk-scaled allocation built on it. Both show
-  live prices and USD returns per name, and state for every figure whether it
-  came from a live quote or from the transcription in
+- Equities **Exposure** and **Allocator** — factor
+  concentration and the existing equities sizing model. They show live prices
+  and USD returns per name, and state for every figure whether it came from a
+  live quote or from the transcription in
   [src/data/positions.ts](src/data/positions.ts).
+- Crypto **Pilot** — a zero-holdings decision tool that selects only assets whose
+  subjective terminal scenario EV remains above BTC after a user-supplied
+  round-trip cost buffer and a bull-to-bear probability stress. It produces
+  indicative targets only after risk capital, venue/legal entity and freshness
+  checks pass, and can freeze every input and target into a JSON snapshot.
 - Equities: **Digital Biology**, **Robotics**, **Quantum**, **Agentic**,
   **Photonics** and **Defence**. Crypto: **Assets** and **VC Research**.
   Self-contained research dashboards, embedded from
@@ -103,6 +108,22 @@ screen says which of the two it is showing. Run it locally with:
 ```sh
 npm run fetch-market-data
 ```
+
+Crypto Pilot has a separate reproducible pipeline. Scenario assumptions are
+frozen once as terminal USD targets; current market prices then reprice the
+implied returns without silently changing the thesis. Market, risk or price-
+history data older than 48 hours blocks the order preview.
+
+```sh
+npm run fetch-crypto-market  # refresh 40 pinned CoinGecko assets
+npm run fetch-risk-rating    # refresh one year of closes and measured risk
+npm run build-portfolio      # rebuild screen, clusters and embedded pilot data
+npm run verify               # includes freshness and provenance gates
+```
+
+The scheduled workflow in
+[.github/workflows/refresh-crypto-data.yml](.github/workflows/refresh-crypto-data.yml)
+runs that pipeline daily and deploys only after verify, lint and build pass.
 
 ## Stack
 

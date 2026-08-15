@@ -17,7 +17,9 @@ A personal research dashboard for public-market and crypto research, deployed
 to GitHub Pages on every push to `main`. Vite + React + TypeScript + Tailwind
 for the shell, with nine self-contained HTML dashboards embedded in iframes.
 
-Two computed React tabs (Exposure, Allocator) and nine static research pages.
+Two computed React tabs (the equities-only Exposure and Allocator) and nine static
+research pages. Crypto sizing lives in the embedded Pilot and starts from zero
+holdings.
 The owner uses it for real allocation decisions **and** as a learning project,
 so a wrong number is a wrong decision and a hidden assumption is a lesson that
 did not happen.
@@ -37,6 +39,8 @@ numbers no agent can verify by eye.
 | `public/dashboards/defense.html` | 114 KB | `grep -n`. |
 | `public/data/portfolio.json` | 40 KB | `npm run summary`, or `jq` for a specific row. Contains a 39×39 matrix. |
 | `public/data/market-data.json` | 40 KB | `npm run summary`, or `jq '.quotes.ETH'`. |
+| `public/data/crypto-market.json` | generated | `npm run summary`, or `jq '.rows[] | select(.ticker=="ETH")'`. Current prices and market fields for all 40 assets. |
+| `public/data/crypto-scenarios.json` | generated | `jq '.rows[] | select(.ticker=="ETH")'`. Immutable scenario probabilities and terminal USD targets. |
 
 Every dashboard in `public/dashboards/` carries the same ~19 KB stylesheet,
 copied. That duplication is known and deliberate for now — see §7 — so do not
@@ -58,17 +62,21 @@ grep -n "formula 1: the risk rating" public/dashboards/crypto.html
 ```bash
 npm install
 npm run summary            # repo state in ~50 lines — cheap, run it first
-npm run verify             # 146,899 allocation + quantitative invariants. BLOCKS THE DEPLOY.
+npm run verify             # allocation + quantitative invariants. BLOCKS THE DEPLOY.
 npm run lint               # oxlint
 npm run build              # tsc -b && vite build
 npm run dev                # local server
 ```
 
-Two build-time data scripts. Their output is committed, so **you do not need to
+Build-time data scripts. Their output is committed, so **you do not need to
 run them to review or to make most changes**:
 
 ```bash
 npm run fetch-market-data  # Yahoo + CoinGecko + ECB, rewrites market-data.json
+npm run fetch-crypto-market # One CoinGecko market call for all 40 pinned assets.
+npm run freeze-crypto-scenarios -- --as-of YYYY-MM-DD
+                           # One-time migration only: fixes terminal USD targets.
+                           # Refuses to overwrite; --force means thesis revision.
 npm run fetch-risk-rating  # CoinGecko, ~10 minutes (keyless rate limits).
                            # Rewrites risk-rating.json and crypto-history.json,
                            # and patches a generated block into crypto.html.
@@ -95,7 +103,10 @@ src/
 scripts/
   verify-allocation.ts       the invariant suite. Read this to learn the rules.
   fetch-market-data.ts       pinned ticker map, FX, returns, drawdowns
-  fetch-risk-rating.ts       pinned CoinGecko ids, realised vol + drawdown
+  crypto-config.ts           the single pinned CoinGecko-id map
+  fetch-crypto-market.ts     current crypto price, cap, FDV, float and volume
+  freeze-crypto-scenarios.ts one-time conversion to fixed terminal USD targets
+  fetch-risk-rating.ts       realised vol + drawdown from daily closes
   build-portfolio.ts         active statistics, correlation, clustering
   summary.ts                 the cheap status report
 public/dashboards/           nine self-contained pages, each with its own <style>
@@ -139,9 +150,9 @@ for being honest about its limits than it would be for looking finished.
 
 ## 6. Do not touch without being asked
 
-- **`src/sections/allocator/allocation.ts`.** It sizes crypto as a fixed 10%
-  mandate on weights the owner set by instruction, and `verify` asserts ~146k
-  invariants over it. Changing the sizing is his decision, not an agent's.
+- **`src/sections/allocator/allocation.ts`.** It remains the load-bearing
+  equities sizing engine and `verify` exhaustively checks it. Crypto
+  no longer routes to this allocator; do not mix the pilot back into it.
 - **`public/data/*.json`** by hand. They are generated; rerun the script.
 - **`PROGRESS.md` history entries.** It is a log. Add at the top, do not rewrite
   what an older entry said was true at the time.
@@ -160,9 +171,10 @@ Things that look like bugs and are not. Do not "fix" these without asking.
 - **~19 KB of CSS is duplicated across nine dashboards.** Extracting it changes
   every page at once, which is a bad thing to do in the same pass as content
   work. Recorded in `PROGRESS.md` under "Next" as a real debt, not an oversight.
-- **The embedded dashboards are static snapshots.** They do not fetch live data.
-  Each carries a vintage badge computed against the reader's clock, and four of
-  nine currently read as stale. That is the honest state, not a failure.
+- **The embedded dashboards are static snapshots.** They do not fetch data in a
+  reader's browser. Generated inputs are refreshed before deployment. The Crypto
+  Pilot blocks indicative orders when its committed market snapshot exceeds 48
+  hours; its scenario targets remain frozen until an explicit thesis revision.
 - **Poker EV and `f*` are retired.** They were removed after quantitative review:
   the first was an uncalibrated downside penalty presented as expected value,
   and the second was not Kelly. The Assets tab shows scenario-implied EV versus

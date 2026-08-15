@@ -1,9 +1,8 @@
 # Progress
 
-Personal, open-sourceable dashboard for research trackers. Two native React
-sections (Exposure, Allocator) over seven embedded standalone dashboards
-(Digital Biology, Robotics, Quantum, Agentic, Photonics, Defence, Crypto, plus
-VC Research). The entries below are a log in reverse date order: they describe
+Personal, open-sourceable dashboard for research trackers. Two equities-only
+React sections (Exposure, Allocator) plus nine embedded standalone dashboards.
+The entries below are a log in reverse date order: they describe
 what was true when they were written, not what is true now.
 
 Repo: https://github.com/snobistisch/investment-dashboard — live at
@@ -11,6 +10,32 @@ https://snobistisch.github.io/investment-dashboard/ (Pages via Actions,
 deploys on every push to main).
 
 ## Done
+
+- **Crypto Pilot made fail-closed for a zero-holdings start (15 Aug 2026).**
+  The fixed 10% ETH/ZEC/LIT/NOCK mandate has been removed from both navigation
+  and the underlying equities solver. Crypto now starts at zero and cannot
+  produce indicative targets until the user enters a separate risk-capital
+  amount, names the venue and EU legal entity, confirms authorisation and
+  order-book depth, and all decision data is at most 48 hours old.
+
+  Scenario probabilities were frozen with terminal USD targets on an explicit
+  12 Aug close. A market refresh now changes implied returns rather than moving
+  the thesis. Selection must clear BTC after a visible round-trip cost buffer
+  and a bull-to-bear probability stress. Equal weight is the default; active-
+  risk parity is kept as a comparison, alongside market-cap weighting.
+
+  A ready decision can be frozen to JSON with every input, data vintage,
+  reference price, target, unit count and estimated entry cost. One daily
+  workflow refreshes all 40 pinned CoinGecko assets and the one-year histories,
+  rebuilds the risk and portfolio artefacts, runs verify/lint/build, commits and
+  deploys only on a complete pass. Temporary CoinGecko 429s use bounded retry;
+  omissions and stale inputs still block publication or order preview.
+
+  On the 15 Aug snapshot nine assets have raw positive annualised scenario edge
+  versus BTC. With the pilot defaults (5pp bull-to-bear stress, 1% round-trip
+  cost, $1m daily volume, FDV/cap at most 3 and at least 90 days of history),
+  only AAVE and UNI survive. This is an output, not a hard-coded shortlist and
+  not evidence that the subjective probabilities are calibrated.
 
 - **Crypto reorganised around its real themes; VC Research shipped as a tab
   (13 Aug 2026).** Matthias asked for crypto to consist of named categories —

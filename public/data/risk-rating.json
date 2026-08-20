@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "fetchedAt": "2026-08-19T02:32:18.585Z",
-  "marketFetchedAt": "2026-08-19T02:32:18.158Z",
+  "fetchedAt": "2026-08-20T02:31:08.299Z",
+  "marketFetchedAt": "2026-08-20T02:31:07.959Z",
   "method": {
     "note": "R = 0.25*V + 0.25*D + 0.25*F + 0.25*L. V and D are measured from a year of daily CoinGecko closes; F and L are read from the tab. Every threshold below is a named constant in scripts/fetch-risk-rating.ts.",
     "windowDays": 365,
@@ -54,24 +54,24 @@
       "name": "Bitcoin",
       "coingeckoId": "bitcoin",
       "measured": {
-        "realisedVolPct": 42.8,
+        "realisedVolPct": 43.3,
         "drawdownPct": -53,
         "observations": 366,
-        "from": "2025-08-20",
+        "from": "2025-08-21",
         "partialWindow": false
       },
       "inputs": {
         "fdvx": 1,
         "floatPct": 95.578657,
-        "vol24hUsd": 18057956000
+        "vol24hUsd": 46870151000
       },
       "components": {
-        "v": 0.0474,
+        "v": 0.0493,
         "d": 0.44,
         "f": 0,
         "l": 0
       },
-      "r": 0.1219,
+      "r": 0.1223,
       "bucket": "Low"
     },
     {
@@ -79,24 +79,24 @@
       "name": "Ethereum",
       "coingeckoId": "ethereum",
       "measured": {
-        "realisedVolPct": 63.8,
+        "realisedVolPct": 65.2,
         "drawdownPct": -67.5,
         "observations": 366,
-        "from": "2025-08-20",
+        "from": "2025-08-21",
         "partialWindow": false
       },
       "inputs": {
-        "fdvx": 1,
+        "fdvx": 1.0000013,
         "floatPct": 100,
-        "vol24hUsd": 6067059200
+        "vol24hUsd": 29448761000
       },
       "components": {
-        "v": 0.1252,
+        "v": 0.1304,
         "d": 0.6333,
         "f": 0,
         "l": 0
       },
-      "r": 0.1896,
+      "r": 0.1909,
       "bucket": "Low"
     },
     {
@@ -104,24 +104,24 @@
       "name": "Solana",
       "coingeckoId": "solana",
       "measured": {
-        "realisedVolPct": 68.6,
+        "realisedVolPct": 69,
         "drawdownPct": -74.9,
         "observations": 366,
-        "from": "2025-08-20",
+        "from": "2025-08-21",
         "partialWindow": false
       },
       "inputs": {
-        "fdvx": 1.0849132,
-        "floatPct": 92.173276,
-        "vol24hUsd": 1413406500
+        "fdvx": 1.0849177,
+        "floatPct": 92.172892,
+        "vol24hUsd": 4624288300
       },
       "components": {
-        "v": 0.143,
+        "v": 0.1444,
         "d": 0.732,
         "f": 0.0121,
         "l": 0
       },
-      "r": 0.2218,
+      "r": 0.2221,
       "bucket": "Low"
     },
     {
@@ -129,24 +129,24 @@
       "name": "NEAR Protocol",
       "coingeckoId": "near",
       "measured": {
-        "realisedVolPct": 96.6,
+        "realisedVolPct": 96.9,
         "drawdownPct": -69.8,
         "observations": 366,
-        "from": "2025-08-20",
+        "from": "2025-08-21",
         "partialWindow": false
       },
       "inputs": {
         "fdvx": 1,
-        "floatPct": 99.999999,
-        "vol24hUsd": 115056570
+        "floatPct": 99.997909,
+        "vol24hUsd": 216635840
       },
       "components": {
-        "v": 0.2467,
+        "v": 0.2478,
         "d": 0.664,
         "f": 0,
         "l": 0
       },
-      "r": 0.2277,
+      "r": 0.2279,
       "bucket": "Low"
     },
     {
@@ -154,19 +154,19 @@
       "name": "Zcash",
       "coingeckoId": "zcash",
       "measured": {
-        "realisedVolPct": 151.4,
+        "realisedVolPct": 151.3,
         "drawdownPct": -71.7,
         "observations": 366,
-        "from": "2025-08-20",
+        "from": "2025-08-21",
         "partialWindow": false
       },
       "inputs": {
-        "fdvx": 1.000061,
+        "fdvx": 1.0001662,
         "floatPct": 80.397784,
-        "vol24hUsd": 160507150
+        "vol24hUsd": 529466699.99999994
       },
       "components": {
-        "v": 0.4496,
+        "v": 0.4493,
         "d": 0.6893,
         "f": 0,
         "l": 0
@@ -181,22 +181,22 @@
       "measured": {
         "realisedVolPct": 117.2,
         "drawdownPct": -64,
-        "observations": 270,
+        "observations": 271,
         "from": "2025-11-24",
         "partialWindow": true
       },
       "inputs": {
         "fdvx": 8.5142935,
         "floatPct": 11.744956,
-        "vol24hUsd": 19920657
+        "vol24hUsd": 32812956
       },
       "components": {
         "v": 0.323,
         "d": 0.5867,
         "f": 1,
-        "l": 0.1998
+        "l": 0.0915
       },
-      "r": 0.5274,
+      "r": 0.5003,
       "bucket": "High"
     },
     {
@@ -206,14 +206,14 @@
       "measured": {
         "realisedVolPct": 145.8,
         "drawdownPct": -96.2,
-        "observations": 330,
+        "observations": 331,
         "from": "2025-09-25",
         "partialWindow": true
       },
       "inputs": {
         "fdvx": 3.7190083,
         "floatPct": 26.888889,
-        "vol24hUsd": 291418630
+        "vol24hUsd": 76528988
       },
       "components": {
         "v": 0.4289,
@@ -229,24 +229,24 @@
       "name": "MegaETH",
       "coingeckoId": "megaeth",
       "measured": {
-        "realisedVolPct": 110.1,
+        "realisedVolPct": 111.2,
         "drawdownPct": -85.6,
-        "observations": 113,
+        "observations": 114,
         "from": "2026-04-30",
         "partialWindow": true
       },
       "inputs": {
-        "fdvx": 8.8511807,
+        "fdvx": 8.8511806,
         "floatPct": 11.297928,
-        "vol24hUsd": 6263824
+        "vol24hUsd": 11188913
       },
       "components": {
-        "v": 0.2967,
+        "v": 0.3007,
         "d": 0.8747,
         "f": 1,
-        "l": 0.4511
+        "l": 0.3251
       },
-      "r": 0.6556,
+      "r": 0.6251,
       "bucket": "High"
     },
     {
@@ -254,24 +254,24 @@
       "name": "Hyperliquid",
       "coingeckoId": "hyperliquid",
       "measured": {
-        "realisedVolPct": 93.2,
+        "realisedVolPct": 94.7,
         "drawdownPct": -64,
         "observations": 366,
-        "from": "2025-08-20",
+        "from": "2025-08-21",
         "partialWindow": false
       },
       "inputs": {
         "fdvx": 4.494738,
         "floatPct": 22.244571,
-        "vol24hUsd": 273358880
+        "vol24hUsd": 1331255800
       },
       "components": {
-        "v": 0.2341,
+        "v": 0.2396,
         "d": 0.5867,
         "f": 0.4992,
         "l": 0
       },
-      "r": 0.33,
+      "r": 0.3314,
       "bucket": "Medium"
     },
     {
@@ -279,24 +279,24 @@
       "name": "Lighter",
       "coingeckoId": "lighter",
       "measured": {
-        "realisedVolPct": 127.2,
+        "realisedVolPct": 127.6,
         "drawdownPct": -74.1,
-        "observations": 234,
+        "observations": 235,
         "from": "2025-12-30",
         "partialWindow": true
       },
       "inputs": {
         "fdvx": 4,
         "floatPct": 25,
-        "vol24hUsd": 28327006
+        "vol24hUsd": 76193236
       },
       "components": {
-        "v": 0.36,
+        "v": 0.3615,
         "d": 0.7213,
         "f": 0.4286,
-        "l": 0.1234
+        "l": 0
       },
-      "r": 0.4083,
+      "r": 0.3778,
       "bucket": "Medium"
     },
     {
@@ -304,24 +304,24 @@
       "name": "Jupiter",
       "coingeckoId": "jupiter-exchange-solana",
       "measured": {
-        "realisedVolPct": 95.8,
+        "realisedVolPct": 96,
         "drawdownPct": -74.6,
         "observations": 366,
-        "from": "2025-08-20",
+        "from": "2025-08-21",
         "partialWindow": false
       },
       "inputs": {
         "fdvx": 2.0668025,
         "floatPct": 48.383916,
-        "vol24hUsd": 14507777
+        "vol24hUsd": 26395611
       },
       "components": {
-        "v": 0.2437,
+        "v": 0.2444,
         "d": 0.728,
         "f": 0.1524,
-        "l": 0.2687
+        "l": 0.1387
       },
-      "r": 0.3482,
+      "r": 0.3159,
       "bucket": "Medium"
     },
     {
@@ -329,24 +329,24 @@
       "name": "Aster",
       "coingeckoId": "aster-2",
       "measured": {
-        "realisedVolPct": 131.4,
+        "realisedVolPct": 131.3,
         "drawdownPct": -79.7,
-        "observations": 336,
+        "observations": 337,
         "from": "2025-09-19",
         "partialWindow": true
       },
       "inputs": {
         "fdvx": 2.9006975,
         "floatPct": 33.66058,
-        "vol24hUsd": 64074966
+        "vol24hUsd": 95853001
       },
       "components": {
-        "v": 0.3756,
+        "v": 0.3752,
         "d": 0.796,
         "f": 0.2715,
         "l": 0
       },
-      "r": 0.3608,
+      "r": 0.3607,
       "bucket": "Medium"
     },
     {
@@ -354,24 +354,24 @@
       "name": "Uniswap",
       "coingeckoId": "uniswap",
       "measured": {
-        "realisedVolPct": 94.8,
+        "realisedVolPct": 95.1,
         "drawdownPct": -79.1,
         "observations": 366,
-        "from": "2025-08-20",
+        "from": "2025-08-21",
         "partialWindow": false
       },
       "inputs": {
-        "fdvx": 1.4283751,
-        "floatPct": 62.386442,
-        "vol24hUsd": 121957830
+        "fdvx": 1.4284246,
+        "floatPct": 62.379242,
+        "vol24hUsd": 310776540
       },
       "components": {
-        "v": 0.24,
+        "v": 0.2411,
         "d": 0.788,
         "f": 0.0612,
         "l": 0
       },
-      "r": 0.2723,
+      "r": 0.2726,
       "bucket": "Medium"
     },
     {
@@ -379,24 +379,24 @@
       "name": "Aave",
       "coingeckoId": "aave",
       "measured": {
-        "realisedVolPct": 85.2,
+        "realisedVolPct": 85.3,
         "drawdownPct": -83,
         "observations": 366,
-        "from": "2025-08-20",
+        "from": "2025-08-21",
         "partialWindow": false
       },
       "inputs": {
-        "fdvx": 1.0374138,
-        "floatPct": 96.393549,
-        "vol24hUsd": 166868690
+        "fdvx": 1.037411,
+        "floatPct": 96.393812,
+        "vol24hUsd": 254585960
       },
       "components": {
-        "v": 0.2044,
+        "v": 0.2048,
         "d": 0.84,
         "f": 0.0053,
         "l": 0
       },
-      "r": 0.2624,
+      "r": 0.2625,
       "bucket": "Medium"
     },
     {
@@ -404,24 +404,24 @@
       "name": "Maple Finance",
       "coingeckoId": "syrup",
       "measured": {
-        "realisedVolPct": 85.7,
+        "realisedVolPct": 85.8,
         "drawdownPct": -75.9,
         "observations": 366,
-        "from": "2025-08-20",
+        "from": "2025-08-21",
         "partialWindow": false
       },
       "inputs": {
         "fdvx": 1.0663918,
         "floatPct": 93.774162,
-        "vol24hUsd": 5998608
+        "vol24hUsd": 9937123
       },
       "components": {
-        "v": 0.2063,
+        "v": 0.2067,
         "d": 0.7453,
         "f": 0.0095,
-        "l": 0.4605
+        "l": 0.3509
       },
-      "r": 0.3554,
+      "r": 0.3281,
       "bucket": "Medium"
     },
     {
@@ -429,24 +429,24 @@
       "name": "Sky",
       "coingeckoId": "sky",
       "measured": {
-        "realisedVolPct": 69.7,
+        "realisedVolPct": 70,
         "drawdownPct": -46.2,
         "observations": 366,
-        "from": "2025-08-20",
+        "from": "2025-08-21",
         "partialWindow": false
       },
       "inputs": {
-        "fdvx": 1.0014892,
-        "floatPct": 99.851297,
-        "vol24hUsd": 9347112
+        "fdvx": 1.0015402,
+        "floatPct": 99.846218,
+        "vol24hUsd": 15950432
       },
       "components": {
-        "v": 0.147,
+        "v": 0.1481,
         "d": 0.3493,
         "f": 0.0002,
-        "l": 0.3641
+        "l": 0.2481
       },
-      "r": 0.2152,
+      "r": 0.1865,
       "bucket": "Low"
     },
     {
@@ -454,24 +454,24 @@
       "name": "Ethena",
       "coingeckoId": "ethena",
       "measured": {
-        "realisedVolPct": 102.3,
+        "realisedVolPct": 103,
         "drawdownPct": -91.2,
         "observations": 366,
-        "from": "2025-08-20",
+        "from": "2025-08-21",
         "partialWindow": false
       },
       "inputs": {
         "fdvx": 1.5262321,
         "floatPct": 65.520833,
-        "vol24hUsd": 63201514
+        "vol24hUsd": 145494160
       },
       "components": {
-        "v": 0.2678,
+        "v": 0.2704,
         "d": 0.9493,
         "f": 0.0752,
         "l": 0
       },
-      "r": 0.3231,
+      "r": 0.3237,
       "bucket": "Medium"
     },
     {
@@ -479,24 +479,24 @@
       "name": "Ondo",
       "coingeckoId": "ondo-finance",
       "measured": {
-        "realisedVolPct": 210.8,
+        "realisedVolPct": 210.9,
         "drawdownPct": -77.9,
         "observations": 366,
-        "from": "2025-08-20",
+        "from": "2025-08-21",
         "partialWindow": false
       },
       "inputs": {
         "fdvx": 2.0536704,
         "floatPct": 48.693306,
-        "vol24hUsd": 56750684
+        "vol24hUsd": 101440430
       },
       "components": {
-        "v": 0.6696,
+        "v": 0.67,
         "d": 0.772,
         "f": 0.1505,
         "l": 0
       },
-      "r": 0.398,
+      "r": 0.3981,
       "bucket": "Medium"
     },
     {
@@ -504,49 +504,49 @@
       "name": "Cap",
       "coingeckoId": "cap-4",
       "measured": {
-        "realisedVolPct": 221.5,
+        "realisedVolPct": 219.7,
         "drawdownPct": -45.9,
-        "observations": 56,
+        "observations": 57,
         "from": "2026-06-26",
         "partialWindow": true
       },
       "inputs": {
         "fdvx": 6.4102564,
         "floatPct": 15.6,
-        "vol24hUsd": 25748017
+        "vol24hUsd": 16717585
       },
       "components": {
-        "v": 0.7093,
+        "v": 0.7026,
         "d": 0.3453,
         "f": 0.7729,
-        "l": 0.1441
+        "l": 0.2379
       },
-      "r": 0.4929,
-      "bucket": "Medium"
+      "r": 0.5147,
+      "bucket": "High"
     },
     {
       "ticker": "UP",
       "name": "Superform",
       "coingeckoId": "superform",
       "measured": {
-        "realisedVolPct": 195.6,
-        "drawdownPct": -74.4,
-        "observations": 192,
+        "realisedVolPct": 195,
+        "drawdownPct": -73.3,
+        "observations": 193,
         "from": "2026-02-10",
         "partialWindow": true
       },
       "inputs": {
         "fdvx": 4.5213388,
         "floatPct": 22.117343,
-        "vol24hUsd": 718747
+        "vol24hUsd": 1383503
       },
       "components": {
-        "v": 0.6133,
-        "d": 0.7253,
+        "v": 0.6111,
+        "d": 0.7107,
         "f": 0.503,
-        "l": 0.9212
+        "l": 0.779
       },
-      "r": 0.6907,
+      "r": 0.651,
       "bucket": "High"
     },
     {
@@ -554,24 +554,24 @@
       "name": "Chainlink",
       "coingeckoId": "chainlink",
       "measured": {
-        "realisedVolPct": 75.6,
+        "realisedVolPct": 75,
         "drawdownPct": -73.1,
         "observations": 366,
-        "from": "2025-08-20",
+        "from": "2025-08-21",
         "partialWindow": false
       },
       "inputs": {
         "fdvx": 1.3367197,
         "floatPct": 74.809997,
-        "vol24hUsd": 213144690
+        "vol24hUsd": 720670180
       },
       "components": {
-        "v": 0.1689,
+        "v": 0.1667,
         "d": 0.708,
         "f": 0.0481,
         "l": 0
       },
-      "r": 0.2312,
+      "r": 0.2307,
       "bucket": "Low"
     },
     {
@@ -579,24 +579,24 @@
       "name": "EigenCloud",
       "coingeckoId": "eigenlayer",
       "measured": {
-        "realisedVolPct": 293.6,
+        "realisedVolPct": 293.7,
         "drawdownPct": -92.3,
         "observations": 366,
-        "from": "2025-08-20",
+        "from": "2025-08-21",
         "partialWindow": false
       },
       "inputs": {
-        "fdvx": 2.0972835,
-        "floatPct": 47.680726,
-        "vol24hUsd": 13762242
+        "fdvx": 2.0916442,
+        "floatPct": 47.80928,
+        "vol24hUsd": 18736382
       },
       "components": {
-        "v": 0.9763,
+        "v": 0.9767,
         "d": 0.964,
-        "f": 0.1568,
-        "l": 0.2801
+        "f": 0.1559,
+        "l": 0.2131
       },
-      "r": 0.5943,
+      "r": 0.5774,
       "bucket": "High"
     },
     {
@@ -604,24 +604,24 @@
       "name": "Lido DAO",
       "coingeckoId": "lido-dao",
       "measured": {
-        "realisedVolPct": 216.7,
+        "realisedVolPct": 216.8,
         "drawdownPct": -84.4,
         "observations": 366,
-        "from": "2025-08-20",
+        "from": "2025-08-21",
         "partialWindow": false
       },
       "inputs": {
         "fdvx": 1.1957439,
         "floatPct": 83.629946,
-        "vol24hUsd": 30021964
+        "vol24hUsd": 38654937
       },
       "components": {
-        "v": 0.6915,
+        "v": 0.6919,
         "d": 0.8587,
         "f": 0.028,
-        "l": 0.1108
+        "l": 0.0559
       },
-      "r": 0.4222,
+      "r": 0.4086,
       "bucket": "Medium"
     },
     {
@@ -629,24 +629,24 @@
       "name": "Akash Network",
       "coingeckoId": "akash-network",
       "measured": {
-        "realisedVolPct": 108.9,
+        "realisedVolPct": 109,
         "drawdownPct": -77.6,
         "observations": 366,
-        "from": "2025-08-20",
+        "from": "2025-08-21",
         "partialWindow": false
       },
       "inputs": {
-        "fdvx": 1.000064,
+        "fdvx": 1.0001745,
         "floatPct": 76.417908,
-        "vol24hUsd": 3453299
+        "vol24hUsd": 4779489
       },
       "components": {
-        "v": 0.2922,
+        "v": 0.2926,
         "d": 0.768,
         "f": 0,
-        "l": 0.5804
+        "l": 0.5098
       },
-      "r": 0.4101,
+      "r": 0.3926,
       "bucket": "Medium"
     },
     {
@@ -654,24 +654,24 @@
       "name": "Aethir",
       "coingeckoId": "aethir",
       "measured": {
-        "realisedVolPct": 116.8,
+        "realisedVolPct": 116.7,
         "drawdownPct": -94.3,
         "observations": 366,
-        "from": "2025-08-20",
+        "from": "2025-08-21",
         "partialWindow": false
       },
       "inputs": {
         "fdvx": 2.0865662,
         "floatPct": 47.92563,
-        "vol24hUsd": 5885935
+        "vol24hUsd": 6713330
       },
       "components": {
-        "v": 0.3215,
+        "v": 0.3211,
         "d": 0.9907,
         "f": 0.1552,
-        "l": 0.4646
+        "l": 0.436
       },
-      "r": 0.483,
+      "r": 0.4758,
       "bucket": "Medium"
     },
     {
@@ -679,24 +679,24 @@
       "name": "Nosana",
       "coingeckoId": "nosana",
       "measured": {
-        "realisedVolPct": 166.6,
+        "realisedVolPct": 166.5,
         "drawdownPct": -82.5,
         "observations": 366,
-        "from": "2025-08-20",
+        "from": "2025-08-21",
         "partialWindow": false
       },
       "inputs": {
         "fdvx": 1,
         "floatPct": 99.99972,
-        "vol24hUsd": 360214
+        "vol24hUsd": 442310
       },
       "components": {
-        "v": 0.5059,
+        "v": 0.5056,
         "d": 0.8333,
         "f": 0,
         "l": 1
       },
-      "r": 0.5848,
+      "r": 0.5847,
       "bucket": "High"
     },
     {
@@ -704,24 +704,24 @@
       "name": "Bittensor",
       "coingeckoId": "bittensor",
       "measured": {
-        "realisedVolPct": 101.8,
+        "realisedVolPct": 102,
         "drawdownPct": -69.4,
         "observations": 366,
-        "from": "2025-08-20",
+        "from": "2025-08-21",
         "partialWindow": false
       },
       "inputs": {
         "fdvx": 2.1880719,
         "floatPct": 45.702338,
-        "vol24hUsd": 70271910
+        "vol24hUsd": 167381020
       },
       "components": {
-        "v": 0.2659,
+        "v": 0.2667,
         "d": 0.6587,
         "f": 0.1697,
         "l": 0
       },
-      "r": 0.2736,
+      "r": 0.2738,
       "bucket": "Medium"
     },
     {
@@ -729,24 +729,24 @@
       "name": "Virtuals Protocol",
       "coingeckoId": "virtual-protocol",
       "measured": {
-        "realisedVolPct": 121.7,
+        "realisedVolPct": 121.6,
         "drawdownPct": -71.5,
         "observations": 366,
-        "from": "2025-08-20",
+        "from": "2025-08-21",
         "partialWindow": false
       },
       "inputs": {
-        "fdvx": 1.519929,
-        "floatPct": 65.792548,
-        "vol24hUsd": 40827600
+        "fdvx": 1.519928,
+        "floatPct": 65.792589,
+        "vol24hUsd": 55206287
       },
       "components": {
-        "v": 0.3396,
+        "v": 0.3393,
         "d": 0.6867,
         "f": 0.0743,
-        "l": 0.044
+        "l": 0
       },
-      "r": 0.2861,
+      "r": 0.2751,
       "bucket": "Medium"
     },
     {
@@ -754,24 +754,24 @@
       "name": "Nockchain",
       "coingeckoId": "nockchain",
       "measured": {
-        "realisedVolPct": 280.1,
+        "realisedVolPct": 279.7,
         "drawdownPct": -96.8,
-        "observations": 364,
+        "observations": 365,
         "from": "2025-08-22",
         "partialWindow": false
       },
       "inputs": {
-        "fdvx": 1.8870446,
+        "fdvx": 1.8870447,
         "floatPct": 52.992916,
-        "vol24hUsd": 1097285
+        "vol24hUsd": 703043
       },
       "components": {
-        "v": 0.9263,
+        "v": 0.9248,
         "d": 1,
         "f": 0.1267,
-        "l": 0.8293
+        "l": 0.926
       },
-      "r": 0.7206,
+      "r": 0.7444,
       "bucket": "High"
     },
     {
@@ -779,24 +779,24 @@
       "name": "Zama",
       "coingeckoId": "zama",
       "measured": {
-        "realisedVolPct": 112.4,
+        "realisedVolPct": 113.3,
         "drawdownPct": -48.9,
-        "observations": 200,
+        "observations": 201,
         "from": "2026-02-02",
         "partialWindow": true
       },
       "inputs": {
         "fdvx": 5,
         "floatPct": 20,
-        "vol24hUsd": 7911028
+        "vol24hUsd": 13998138
       },
       "components": {
-        "v": 0.3052,
+        "v": 0.3085,
         "d": 0.3853,
         "f": 0.5714,
-        "l": 0.4004
+        "l": 0.2764
       },
-      "r": 0.4156,
+      "r": 0.3854,
       "bucket": "Medium"
     },
     {
@@ -804,24 +804,24 @@
       "name": "Succinct",
       "coingeckoId": "succinct",
       "measured": {
-        "realisedVolPct": 107.6,
+        "realisedVolPct": 107.7,
         "drawdownPct": -87.6,
         "observations": 366,
-        "from": "2025-08-20",
+        "from": "2025-08-21",
         "partialWindow": false
       },
       "inputs": {
         "fdvx": 5.1282051,
         "floatPct": 19.5,
-        "vol24hUsd": 6116160
+        "vol24hUsd": 4591515
       },
       "components": {
-        "v": 0.2874,
+        "v": 0.2878,
         "d": 0.9013,
         "f": 0.5897,
-        "l": 0.4562
+        "l": 0.5185
       },
-      "r": 0.5587,
+      "r": 0.5743,
       "bucket": "High"
     },
     {
@@ -829,74 +829,74 @@
       "name": "Lagrange",
       "coingeckoId": "lagrange",
       "measured": {
-        "realisedVolPct": 112.7,
+        "realisedVolPct": 112.6,
         "drawdownPct": -91.3,
         "observations": 366,
-        "from": "2025-08-20",
+        "from": "2025-08-21",
         "partialWindow": false
       },
       "inputs": {
-        "fdvx": 5.181347,
+        "fdvx": 5.1813473,
         "floatPct": 19.3,
-        "vol24hUsd": 31769789
+        "vol24hUsd": 8380644.999999999
       },
       "components": {
-        "v": 0.3063,
+        "v": 0.3059,
         "d": 0.9507,
         "f": 0.5973,
-        "l": 0.0985
+        "l": 0.3878
       },
-      "r": 0.4882,
-      "bucket": "Medium"
+      "r": 0.5604,
+      "bucket": "High"
     },
     {
       "ticker": "AZTEC",
       "name": "Aztec",
       "coingeckoId": "aztec",
       "measured": {
-        "realisedVolPct": 135.4,
+        "realisedVolPct": 135.9,
         "drawdownPct": -67,
-        "observations": 190,
+        "observations": 191,
         "from": "2026-02-12",
         "partialWindow": true
       },
       "inputs": {
-        "fdvx": 3.4592731,
-        "floatPct": 28.907807,
-        "vol24hUsd": 2095316
+        "fdvx": 3.4586321,
+        "floatPct": 28.913165,
+        "vol24hUsd": 3016500
       },
       "components": {
-        "v": 0.3904,
+        "v": 0.3922,
         "d": 0.6267,
-        "f": 0.3513,
-        "l": 0.6889
+        "f": 0.3512,
+        "l": 0.6097
       },
-      "r": 0.5143,
-      "bucket": "High"
+      "r": 0.495,
+      "bucket": "Medium"
     },
     {
       "ticker": "ARX",
       "name": "Arcium",
       "coingeckoId": "arcium",
       "measured": {
-        "realisedVolPct": 153.4,
+        "realisedVolPct": 152.2,
         "drawdownPct": -67.4,
-        "observations": 60,
+        "observations": 61,
         "from": "2026-06-22",
         "partialWindow": true
       },
       "inputs": {
         "fdvx": 4.7885533,
         "floatPct": 20.883134,
-        "vol24hUsd": 4561961
+        "vol24hUsd": 2231997
       },
       "components": {
-        "v": 0.457,
+        "v": 0.4526,
         "d": 0.632,
         "f": 0.5412,
-        "l": 0.5199
+        "l": 0.6751
       },
-      "r": 0.5375,
+      "r": 0.5752,
       "bucket": "High"
     },
     {
@@ -907,21 +907,21 @@
         "realisedVolPct": 305.8,
         "drawdownPct": -92.3,
         "observations": 366,
-        "from": "2025-08-20",
+        "from": "2025-08-21",
         "partialWindow": false
       },
       "inputs": {
-        "fdvx": 2.0218835,
-        "floatPct": 49.458835,
-        "vol24hUsd": 12948255
+        "fdvx": 2.0218329,
+        "floatPct": 49.460071,
+        "vol24hUsd": 11013350
       },
       "components": {
         "v": 1,
         "d": 0.964,
         "f": 0.146,
-        "l": 0.2934
+        "l": 0.3285
       },
-      "r": 0.6008,
+      "r": 0.6096,
       "bucket": "High"
     },
     {
@@ -929,24 +929,24 @@
       "name": "Irys",
       "coingeckoId": "irys",
       "measured": {
-        "realisedVolPct": 157.6,
+        "realisedVolPct": 157.3,
         "drawdownPct": -79.4,
-        "observations": 269,
+        "observations": 270,
         "from": "2025-11-25",
         "partialWindow": true
       },
       "inputs": {
         "fdvx": 5,
         "floatPct": 20,
-        "vol24hUsd": 3368886
+        "vol24hUsd": 1773847
       },
       "components": {
-        "v": 0.4726,
+        "v": 0.4715,
         "d": 0.792,
         "f": 0.5714,
-        "l": 0.5857
+        "l": 0.725
       },
-      "r": 0.6054,
+      "r": 0.64,
       "bucket": "High"
     },
     {
@@ -954,25 +954,25 @@
       "name": "Gensyn",
       "coingeckoId": "gensyn",
       "measured": {
-        "realisedVolPct": 197.8,
-        "drawdownPct": -81.7,
-        "observations": 114,
+        "realisedVolPct": 197.4,
+        "drawdownPct": -81.6,
+        "observations": 115,
         "from": "2026-04-29",
         "partialWindow": true
       },
       "inputs": {
         "fdvx": 7.6647423,
         "floatPct": 13.046753,
-        "vol24hUsd": 2640707
+        "vol24hUsd": 3186734
       },
       "components": {
-        "v": 0.6215,
-        "d": 0.8227,
+        "v": 0.62,
+        "d": 0.8213,
         "f": 0.9521,
-        "l": 0.6386
+        "l": 0.5978
       },
-      "r": 0.7587,
-      "bucket": "Extreme"
+      "r": 0.7478,
+      "bucket": "High"
     },
     {
       "ticker": "ALEO",
@@ -982,21 +982,21 @@
         "realisedVolPct": 331.3,
         "drawdownPct": -95.8,
         "observations": 366,
-        "from": "2025-08-20",
+        "from": "2025-08-21",
         "partialWindow": false
       },
       "inputs": {
-        "fdvx": 1.5202028,
-        "floatPct": 27.000544,
-        "vol24hUsd": 787596
+        "fdvx": 1.5178823,
+        "floatPct": 27.050524,
+        "vol24hUsd": 996904
       },
       "components": {
         "v": 1,
         "d": 1,
-        "f": 0.0743,
-        "l": 0.9013
+        "f": 0.074,
+        "l": 0.8502
       },
-      "r": 0.7439,
+      "r": 0.731,
       "bucket": "High"
     },
     {
@@ -1004,24 +1004,24 @@
       "name": "Octra",
       "coingeckoId": "octra",
       "measured": {
-        "realisedVolPct": 246.4,
+        "realisedVolPct": 246.3,
         "drawdownPct": -88.5,
-        "observations": 123,
+        "observations": 124,
         "from": "2026-04-20",
         "partialWindow": true
       },
       "inputs": {
         "fdvx": 1,
         "floatPct": 62.520273,
-        "vol24hUsd": 17758.04
+        "vol24hUsd": 58552
       },
       "components": {
-        "v": 0.8015,
+        "v": 0.8011,
         "d": 0.9133,
         "f": 0,
         "l": 1
       },
-      "r": 0.6787,
+      "r": 0.6786,
       "bucket": "High"
     },
     {
@@ -1029,24 +1029,24 @@
       "name": "Pearl",
       "coingeckoId": "pearl-2",
       "measured": {
-        "realisedVolPct": 147.6,
+        "realisedVolPct": 146.3,
         "drawdownPct": -66.6,
-        "observations": 60,
+        "observations": 61,
         "from": "2026-06-22",
         "partialWindow": true
       },
       "inputs": {
-        "fdvx": 8.2338158,
+        "fdvx": 8.2338157,
         "floatPct": 12.145037,
-        "vol24hUsd": 371544
+        "vol24hUsd": 294636
       },
       "components": {
-        "v": 0.4356,
+        "v": 0.4307,
         "d": 0.6213,
         "f": 1,
         "l": 1
       },
-      "r": 0.7642,
+      "r": 0.763,
       "bucket": "Extreme"
     }
   ]

@@ -55,6 +55,7 @@ export type GateCode =
   | 'loss-mismatch'
   | 'contribution'
   | 'monthly-amount'
+  | 'existing-investments'
   | 'product'
   | 'active-sleeve'
 
@@ -94,6 +95,7 @@ export function assessPlanningInput(input: PlanningInput): PlanningAssessment {
   if ((input.contributionMode === 'monthly' || input.contributionMode === 'mixed') && !positive(input.monthlyContributionEur)) {
     blockers.push({ code: 'monthly-amount', message: 'Enter the planned monthly contribution.' })
   }
+  if (input.existingInvestmentsEur === null || !Number.isFinite(input.existingInvestmentsEur) || input.existingInvestmentsEur < 0) blockers.push({ code: 'existing-investments', message: 'Enter existing investments as zero or a positive EUR amount.' })
   if (!input.allowEtfs && !input.allowStocks) blockers.push({ code: 'product', message: 'Allow at least one product type.' })
   if (!Number.isFinite(input.activeSleevePct) || input.activeSleevePct < 0 || input.activeSleevePct > 100) {
     blockers.push({ code: 'active-sleeve', message: 'The active sleeve must stay between 0% and 100%.' })
@@ -122,4 +124,3 @@ export function assessPlanningInput(input: PlanningInput): PlanningAssessment {
     baselineSleevePct: 100 - Math.max(0, Math.min(100, input.activeSleevePct)),
   }
 }
-

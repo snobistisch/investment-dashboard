@@ -118,6 +118,7 @@ export function buildConceptOrders(
   if (!benchmarkAssessment.ready) blockers.push('The broad baseline instrument is incomplete or stale.')
   if (planning.broker.trim().length < 2) blockers.push('Name the broker and legal account route.')
   if (planning.fractionalShares === null) blockers.push('Confirm whether this broker supports fractional shares for these instruments.')
+  if ((planning.existingInvestmentsEur ?? 0) > 0) blockers.push('Existing holdings are not aggregated into this planner. Do not create new orders until total-portfolio exposure is modelled.')
 
   if (!finiteAtLeast(execution.fixedCostPerOrderEur, 0)) blockers.push('Enter the broker fee per order in EUR.')
   if (!finiteAtLeast(execution.fxCostPct, 0) || (execution.fxCostPct ?? 0) > 10) blockers.push('Enter an FX cost between 0% and 10%.')

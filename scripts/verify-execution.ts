@@ -57,4 +57,7 @@ assert((ready.snapshot?.orders.length ?? 0) === 2 && ready.snapshot?.status === 
 const tooSmall = buildConceptOrders({ ...planning, riskCapitalEur: 100 }, benchmark, [], market, { ...execution, minimumOrderEur: 100 }, '2026-08-21')
 assert(!tooSmall.ready && tooSmall.orders.length === 0, 'unusable order size must fail closed')
 
+const existingBook = buildConceptOrders({ ...planning, existingInvestmentsEur: 1_000 }, benchmark, [], market, execution, '2026-08-21')
+assert(!existingBook.ready && existingBook.blockers.some((blocker) => blocker.includes('Existing holdings')), 'unmodelled existing holdings must block new orders')
+
 console.log('concept orders include costs, limits, tranches and fail closed')

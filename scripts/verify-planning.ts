@@ -40,5 +40,7 @@ assert(mismatch.blockers.some((b) => b.code === 'loss-mismatch'), 'loss limits t
 const stocksOff = assessPlanningInput({ ...complete, allowStocks: false, activeSleevePct: 10 })
 assert(stocksOff.blockers.some((b) => b.code === 'active-sleeve'), 'active sleeve must require stocks')
 
-console.log('personal planning gates fail closed')
+const negativeExisting = assessPlanningInput({ ...complete, existingInvestmentsEur: -1 })
+assert(negativeExisting.blockers.some((b) => b.code === 'existing-investments'), 'existing investments cannot be negative')
 
+console.log('personal planning gates fail closed')

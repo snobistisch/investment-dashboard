@@ -38,7 +38,7 @@ numbers no agent can verify by eye.
 | `public/dashboards/crypto.html` | 173 KB | `grep -n` for the block you need. Formula 1 is near line 1290, formula 2 near 1340. |
 | `public/dashboards/defense.html` | 114 KB | `grep -n`. |
 | `public/data/portfolio.json` | 40 KB | `npm run summary`, or `jq` for a specific row. Contains a 39×39 matrix. |
-| `public/data/market-data.json` | 40 KB | `npm run summary`, or `jq '.quotes.ETH'`. |
+| `public/data/market-data.json` | ~275 KB | `npm run summary`, or `jq '.quotes.ETH'`. Includes a compact pair-correlation matrix; do not read whole. |
 | `public/data/crypto-market.json` | generated | `npm run summary`, or `jq '.rows[] | select(.ticker=="ETH")'`. Current prices and market fields for all 40 assets. |
 | `public/data/crypto-scenarios.json` | generated | `jq '.rows[] | select(.ticker=="ETH")'`. Immutable scenario probabilities and terminal USD targets. |
 

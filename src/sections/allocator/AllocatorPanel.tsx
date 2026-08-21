@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Panel } from '../../components/Panel'
 import { Section } from '../../components/Section'
 import { useMarketSnapshot } from '../../data/market-data'
@@ -64,7 +64,7 @@ function Check({ checked, onChange, children }: {
   )
 }
 
-export function AllocatorPanel({ onLeverageChange }: { onLeverageChange?: (active: boolean) => void }) {
+export function AllocatorPanel() {
   const [input, setInput] = useState<PlanningInput>(EMPTY_PLANNING_INPUT)
   const [benchmark, setBenchmark] = useState<BenchmarkInput>(EMPTY_BENCHMARK_INPUT)
   const [candidates, setCandidates] = useState<ActiveCandidateInput[]>([])
@@ -75,8 +75,6 @@ export function AllocatorPanel({ onLeverageChange }: { onLeverageChange?: (activ
     () => assessBenchmark(benchmark, input.riskCapitalEur ?? 0, input.activeSleevePct),
     [benchmark, input.riskCapitalEur, input.activeSleevePct],
   )
-
-  useEffect(() => onLeverageChange?.(false), [onLeverageChange])
 
   const set = <K extends keyof PlanningInput>(key: K, value: PlanningInput[K]) => {
     setInput((current) => ({ ...current, [key]: value }))

@@ -146,10 +146,6 @@ function routeFromHash(): Route {
 
 function App() {
   const [route, setRoute] = useState<Route>(routeFromHash)
-  // Leverage state is the single most important risk fact about any book — the
-  // difference between the July 2026 drawdown being survivable and terminal.
-  const [leverageActive, setLeverageActive] = useState(false)
-
   useEffect(() => {
     const onHashChange = () => setRoute(routeFromHash())
     window.addEventListener('hashchange', onHashChange)
@@ -213,7 +209,7 @@ function App() {
         )}
         {active.kind === 'allocator' && (
           <div className="h-full overflow-y-auto">
-            <AllocatorPanel onLeverageChange={setLeverageActive} />
+            <AllocatorPanel />
           </div>
         )}
         {active.kind === 'embed' && active.src && (
@@ -227,15 +223,9 @@ function App() {
       </main>
 
       <footer className="border-t border-term-line bg-term-bg">
-        <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-1 text-[10px] uppercase tracking-wider text-term-dim">
+        <div className="mx-auto flex w-full max-w-7xl flex-col items-start gap-1 px-4 py-1 text-[10px] uppercase tracking-wider text-term-dim sm:flex-row sm:items-center sm:justify-between">
           <span>
-            Research only · no positions held ·{' '}
-            {leverageActive ? (
-              <span className="text-term-red">leverage sleeve active in Allocator</span>
-            ) : (
-              'unlevered by construction'
-            )}{' '}
-            · public sources · not investment advice
+            Research only · no positions held · unlevered by construction · public sources · not investment advice
           </span>
           <span>snobistisch/investment-dashboard</span>
         </div>

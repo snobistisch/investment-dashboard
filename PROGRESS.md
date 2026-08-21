@@ -11,6 +11,15 @@ deploys on every push to main).
 
 ## Done
 
+- **The equity readiness audit is closed with a conditional verdict (21 Aug
+  2026).** Copy now distinguishes the five transcribed equity themes from the
+  separate Defence page, removes references to the retired allocator and fixed
+  crypto mandate, and explains the new Plan in the README. Desktop and 390px
+  browser passes confirmed the empty gate flow and research-status strips. The
+  remaining limits and a step-by-step Monday route are recorded in
+  `research/equity-decision-readiness.md`. Existing holdings above zero now
+  block orders because this planner does not aggregate an earlier portfolio.
+
 - **Equity outputs are now cost-inclusive EUR concept orders (21 Aug 2026).**
   The user must name the broker route, state whole-share or fractional support,
   copy the fee and FX schedule, set a slippage allowance, minimum order,

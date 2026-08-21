@@ -573,8 +573,8 @@ export function ExposurePanel({ assetClass = 'equities' }: { assetClass?: 'equit
                 <span className="text-term-yellow">
                   This shape is the universe&rsquo;s, not a portfolio&rsquo;s.
                 </span>{' '}
-                There are no position sizes on this tab. The Allocator has them, and runs the same
-                arithmetic on the weights it actually produces.
+                There are no position sizes on this tab. Plan starts from zero and only sizes a
+                newly sourced candidate after the personal, benchmark and evidence gates pass.
               </p>
               <p className="mt-3 text-xs leading-relaxed text-term-dim">
                 The book is research-only and unlevered, so the ~4x that turned a correct thesis

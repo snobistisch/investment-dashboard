@@ -42,6 +42,7 @@ for (const [, name, tagged, , here] of sections) {
 interface Snapshot {
   fetchedAt: string
   quotes: Record<string, { marketCapUsd?: number }>
+  correlations?: Record<string, { value: number; observations: number }>
   unmapped: unknown[]
 }
 const snap = readJson<Snapshot>('public/data/market-data.json')
@@ -51,6 +52,7 @@ if (snap) {
   line('fetched', snap.fetchedAt.slice(0, 10))
   line('age (days)', ((Date.now() - Date.parse(snap.fetchedAt)) / 86_400_000).toFixed(1))
   line('priced / with cap / unmapped', `${quotes.length} / ${quotes.filter((q) => q.marketCapUsd !== undefined).length} / ${snap.unmapped.length}`)
+  line('measured correlation pairs', Object.keys(snap.correlations ?? {}).length)
 } else line('status', 'absent — the site falls back to transcribed values')
 
 // --- crypto market and frozen forecast ----------------------------------

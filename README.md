@@ -4,29 +4,38 @@ Personal dashboard of research trackers built exclusively from public sources.
 Live at **https://snobistisch.github.io/investment-dashboard/**
 
 The dashboard opens on a chooser: **Equities** or **Crypto**. They are split
-because the hypotheses differ — equities here bet on a named industrial
-bottleneck, crypto on float and fee capture against a bitcoin benchmark — and
-because averaging a settlement layer with a photonics small cap in one factor
-bucket answers neither question. Equities carries **Exposure** and its existing
-**Allocator**. Crypto carries **Assets** and a separate **Pilot**
+because the hypotheses differ — equities here study named industrial
+bottlenecks, crypto studies float and fee capture against a bitcoin benchmark —
+and because averaging a settlement layer with a photonics small cap in one
+factor bucket answers neither question. Equities carries **Exposure** and a
+fail-closed **Plan**. Crypto carries **Assets** and a separate **Pilot**
 that starts from zero holdings and treats bitcoin as its benchmark. Routing is
 `#<class>/<tab>`, and old flat links (`#crypto`, `#defense`, …) still resolve.
 
 Sections:
 
-- Equities **Exposure** and **Allocator** — factor
-  concentration and the existing equities sizing model. They show live prices
-  and USD returns per name, and state for every figure whether it came from a
-  live quote or from the transcription in
-  [src/data/positions.ts](src/data/positions.ts).
+- Equities **Exposure** — factor concentration across the five transcribed
+  equity themes. It shows current prices and USD returns per name, and states
+  whether each market-cap figure came from the dated snapshot or the
+  transcription in [src/data/positions.ts](src/data/positions.ts). Defence is a
+  separate research-only page and is not included.
+- Equities **Plan** — starts with no product and no positions. Personal horizon,
+  liquidity and loss gates precede an exact broad fund/ETF record. Individual
+  stocks start at 0% and require a new dated thesis, falsifier, valuation,
+  primary-source links and three scenarios that beat the declared broad
+  benchmark after costs. Qualified active risk is capped at 5% of total capital
+  per name and 10% per primary factor; unused room returns to the baseline.
+  Cost-inclusive EUR concept orders require user-entered limits and can be
+  exported to a local JSON decision snapshot. The app never submits an order.
 - Crypto **Pilot** — a zero-holdings decision tool that selects only assets whose
   subjective terminal scenario EV remains above BTC after a user-supplied
   round-trip cost buffer and a bull-to-bear probability stress. It produces
   indicative targets only after risk capital, venue/legal entity and freshness
   checks pass, and can freeze every input and target into a JSON snapshot.
 - Equities: **Digital Biology**, **Robotics**, **Quantum**, **Agentic**,
-  **Photonics** and **Defence**. Crypto: **Assets**.
-  Self-contained research dashboards, embedded from
+  **Photonics** and **Defence**. Crypto: **Assets**. These are self-contained
+  research-only dashboards; appearing here does not make a security eligible
+  for Plan. They are embedded from
   [public/dashboards/](public/dashboards/). Sourced notes live in
   [research/photonics-tracker-research.md](research/photonics-tracker-research.md),
   [research/defense-tracker-research.md](research/defense-tracker-research.md)
@@ -51,7 +60,7 @@ tokens across programmable AMMs and MEV infrastructure, deepening Exchanges).
 crypto research file onto its theme and states which are ranked versus
 notes-only.
 
-**Defence** and **Crypto** rank their universes by an explicit three-scenario
+**Defence** and **Crypto Assets** rank their research universes by an explicit three-scenario
 expected value rather than by a composite score: the probabilities and returns
 are published in the table and the ranking is computed from them in the page, so
 a reader who disagrees with a number can recompute it. Both research notes carry
@@ -64,10 +73,14 @@ which protocol facts have been verified against a source rather than carried.
 
 The idea-flow tracker that ran alongside the thematic sections was removed on
 11 August 2026. Its 70 tickers came out of positions.ts with it, so the book is
-now the six thematic sections only. The section and its sourcing notes remain in
-git history; PROGRESS.md keeps the log of what it was and why it went.
+now five transcribed equity themes plus the separate Defence research page. The
+section and its sourcing notes remain in git history; PROGRESS.md keeps the log
+of what it was and why it went.
 
 Nothing here is investment advice.
+
+The dated readiness verdict, Monday route and remaining limits are recorded in
+[research/equity-decision-readiness.md](research/equity-decision-readiness.md).
 
 ## Working on this with an AI agent
 
@@ -87,7 +100,9 @@ them.
 ## Live market data
 
 [scripts/fetch-market-data.ts](scripts/fetch-market-data.ts) fetches quotes,
-market caps, FX and a year of price history, and writes
+market caps, FX and a year of price history. It writes current measures, the ECB
+EUR/USD cross and a compact matrix of correlations with 90+ aligned daily USD
+returns to
 `public/data/market-data.json`, which
 [.github/workflows/refresh-market-data.yml](.github/workflows/refresh-market-data.yml)
 commits on a weekday schedule. No API key is involved: Yahoo Finance for

@@ -57,8 +57,8 @@ export function Landing() {
         <p className="mb-10 max-w-2xl text-sm leading-relaxed text-term-dim">
           Equities and crypto used to share one exposure model here. They should not: a
           $228bn settlement layer and a photonics small cap do not belong in the same
-          factor bucket, and the hypotheses behind them are not comparable. Each side now
-          carries its own Exposure and Allocator.
+          factor bucket, and the hypotheses behind them are not comparable. Equities starts
+          with a personal plan and exposure map; crypto keeps its separate benchmark-relative pilot.
         </p>
 
         <div className="grid gap-4 sm:grid-cols-2">

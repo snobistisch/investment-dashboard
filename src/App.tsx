@@ -42,7 +42,7 @@ type Tab = {
 
 const EQUITY_TABS: Tab[] = [
   { id: 'exposure', label: 'EXPOSURE', kind: 'exposure' },
-  { id: 'allocator', label: 'ALLOCATOR', kind: 'allocator' },
+  { id: 'allocator', label: 'PLAN', kind: 'allocator' },
   { id: 'biology', label: 'DIGITAL BIOLOGY', kind: 'embed', src: 'dashboards/digital-biology.html', title: 'Digital Biology dashboard' , vintage: '2026-07-07', status: 'hypothesis' },
   { id: 'robotics', label: 'ROBOTICS', kind: 'embed', src: 'dashboards/robotics.html', title: 'Robotics landscape dashboard' , vintage: '2026-07-09', status: 'hypothesis' },
   { id: 'quantum', label: 'QUANTUM', kind: 'embed', src: 'dashboards/quantum.html', title: 'Quantum computing dashboard' , vintage: '2026-07-15', status: 'watchlist' },

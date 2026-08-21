@@ -11,6 +11,14 @@ deploys on every push to main).
 
 ## Done
 
+- **Equity planning now fails closed before security selection (21 Aug 2026).**
+  The former allocator no longer opens with $100,000 and an ungrounded risk
+  slider. It asks for a goal, horizon, EUR risk capital, separate emergency
+  buffer, liquidity need, loss boundary and contribution pattern. Individual
+  stocks and the active sleeve start at zero; incomplete or contradictory
+  inputs produce named blockers instead of weights. A dedicated invariant suite
+  checks the empty, complete, short-horizon and inconsistent-loss cases.
+
 - **Venture-capital research moved out of this project (15 Aug 2026).** The VC
   tab, embedded page, fund profiles, database plan, survival dataset and their
   build and verification scripts were removed together. Venture-capital work

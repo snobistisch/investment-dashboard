@@ -35,6 +35,7 @@ const complete: ActiveCandidateInput = {
   valuationSourceUrl: 'https://example.com/valuation-calculation',
   officialSourcesConfirmed: true,
   noMaterialEventAfterReviewConfirmed: true,
+  brokerAvailableConfirmed: true,
   roundTripCostPct: 1,
   bull: { probabilityPct: 40, totalReturnPct: 120 },
   base: { probabilityPct: 40, totalReturnPct: 50 },

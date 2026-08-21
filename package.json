@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "verify": "jiti scripts/verify-planning.ts && jiti scripts/verify-benchmark.ts && jiti scripts/verify-active-selection.ts && jiti scripts/verify-allocation.ts && jiti scripts/verify-quant.ts",
+    "verify": "jiti scripts/verify-planning.ts && jiti scripts/verify-benchmark.ts && jiti scripts/verify-active-selection.ts && jiti scripts/verify-execution.ts && jiti scripts/verify-allocation.ts && jiti scripts/verify-quant.ts",
     "fetch-market-data": "jiti scripts/fetch-market-data.ts",
     "lint": "oxlint",
     "preview": "vite preview",

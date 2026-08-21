@@ -29,6 +29,7 @@ export interface ActiveCandidateInput {
   valuationSourceUrl: string
   officialSourcesConfirmed: boolean
   noMaterialEventAfterReviewConfirmed: boolean
+  brokerAvailableConfirmed: boolean
   roundTripCostPct: number | null
   bull: ScenarioInput
   base: ScenarioInput
@@ -53,6 +54,7 @@ export function emptyCandidate(id = crypto.randomUUID()): ActiveCandidateInput {
     valuationSourceUrl: '',
     officialSourcesConfirmed: false,
     noMaterialEventAfterReviewConfirmed: false,
+    brokerAvailableConfirmed: false,
     roundTripCostPct: null,
     bull: { probabilityPct: null, totalReturnPct: null },
     base: { probabilityPct: null, totalReturnPct: null },
@@ -143,6 +145,7 @@ export function assessCandidate(
   if (candidate.thesisSourceUrl && candidate.thesisSourceUrl === candidate.valuationSourceUrl) blockers.push('Use separate thesis and valuation evidence, or document the calculation separately.')
   if (!candidate.officialSourcesConfirmed) blockers.push('Confirm the inputs were checked against primary or official sources.')
   if (!candidate.noMaterialEventAfterReviewConfirmed) blockers.push('Confirm there was no material event after the review date.')
+  if (!candidate.brokerAvailableConfirmed) blockers.push('Confirm the exact listing is available at the named broker.')
   if (candidate.roundTripCostPct === null || !Number.isFinite(candidate.roundTripCostPct) || candidate.roundTripCostPct < 0 || candidate.roundTripCostPct > 10) blockers.push('Enter a plausible all-in round-trip cost between 0% and 10%.')
 
   const scenarios = [candidate.bull, candidate.base, candidate.bear]

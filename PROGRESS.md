@@ -11,6 +11,19 @@ deploys on every push to main).
 
 ## Done
 
+- **Equity outputs are now cost-inclusive EUR concept orders (21 Aug 2026).**
+  The user must name the broker route, state whole-share or fractional support,
+  copy the fee and FX schedule, set a slippage allowance, minimum order,
+  one-to-four tranches and an execution window, then type a EUR limit for every
+  instrument. Quantity is floored inside the available cash after fixed and
+  variable costs. An unusably small tranche blocks rather than rounding up.
+
+  A ready plan can be downloaded as local JSON with personal gates, source
+  links, assumptions, data vintages, limits, quantities and estimated costs.
+  Every row remains labelled concept-only. The user confirms that news, spread,
+  FX, venue and instrument identity will be checked again in the broker; the
+  dashboard never submits an order.
+
 - **Research status and freshness now block silently stale decisions (21 Aug
   2026).** Every embedded equity theme is labelled research-only and requires a
   new evidence record in Plan. Defence is explicitly outside the transcribed

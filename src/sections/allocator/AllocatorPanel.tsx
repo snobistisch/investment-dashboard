@@ -6,6 +6,8 @@ import { ActiveSelectionPanel } from './ActiveSelectionPanel'
 import { type ActiveCandidateInput } from './active-selection'
 import { BenchmarkPanel } from './BenchmarkPanel'
 import { assessBenchmark, EMPTY_BENCHMARK_INPUT, type BenchmarkInput } from './benchmark'
+import { ExecutionPanel } from './ExecutionPanel'
+import { EMPTY_EXECUTION_INPUT, type ExecutionInput } from './execution'
 import {
   assessPlanningInput,
   EMPTY_PLANNING_INPUT,
@@ -66,6 +68,7 @@ export function AllocatorPanel({ onLeverageChange }: { onLeverageChange?: (activ
   const [input, setInput] = useState<PlanningInput>(EMPTY_PLANNING_INPUT)
   const [benchmark, setBenchmark] = useState<BenchmarkInput>(EMPTY_BENCHMARK_INPUT)
   const [candidates, setCandidates] = useState<ActiveCandidateInput[]>([])
+  const [execution, setExecution] = useState<ExecutionInput>(EMPTY_EXECUTION_INPUT)
   const market = useMarketSnapshot()
   const assessment = useMemo(() => assessPlanningInput(input), [input])
   const benchmarkAssessment = useMemo(
@@ -103,6 +106,16 @@ export function AllocatorPanel({ onLeverageChange }: { onLeverageChange?: (activ
             <NumberField label="Maximum tolerable loss" value={input.maxLossEur} onChange={(v) => set('maxLossEur', v)} step={100} suffix="EUR" />
             <NumberField label="Maximum tolerable loss" value={input.maxLossPct} onChange={(v) => set('maxLossPct', v)} suffix="%" />
             <NumberField label="Existing investments" value={input.existingInvestmentsEur} onChange={(v) => set('existingInvestmentsEur', v)} step={100} suffix="EUR" />
+            <label className="block">
+              <span className="text-[10px] uppercase tracking-[0.16em] text-term-dim">Broker / legal account route</span>
+              <input type="text" value={input.broker} onChange={(event) => set('broker', event.target.value)} placeholder="Name only; no account number" className="mt-1 w-full border border-term-line bg-term-bg px-3 py-2 text-sm outline-none placeholder:text-term-dim/50 focus:border-term-amber" />
+            </label>
+            <label className="block">
+              <span className="text-[10px] uppercase tracking-[0.16em] text-term-dim">Fractional shares</span>
+              <select value={input.fractionalShares === null ? '' : input.fractionalShares ? 'yes' : 'no'} onChange={(event) => set('fractionalShares', event.target.value === '' ? null : event.target.value === 'yes')} className="mt-1 w-full border border-term-line bg-term-bg px-3 py-2 text-sm outline-none focus:border-term-amber">
+                <option value="">Unknown</option><option value="yes">Available</option><option value="no">Whole shares only</option>
+              </select>
+            </label>
 
             <label className="block">
               <span className="text-[10px] uppercase tracking-[0.16em] text-term-dim">Contribution pattern</span>
@@ -138,7 +151,10 @@ export function AllocatorPanel({ onLeverageChange }: { onLeverageChange?: (activ
               <Check checked={input.allowEtfs} onChange={(v) => set('allowEtfs', v)}>Broad funds / ETFs</Check>
               <Check checked={input.allowStocks} onChange={(v) => {
                 set('allowStocks', v)
-                if (!v) set('activeSleevePct', 0)
+                if (!v) {
+                  set('activeSleevePct', 0)
+                  setCandidates([])
+                }
               }}>Individual stocks</Check>
             </div>
             <p className="mt-3 text-[11px] leading-relaxed text-term-dim">
@@ -196,6 +212,16 @@ export function AllocatorPanel({ onLeverageChange }: { onLeverageChange?: (activ
               benchmarkExpectedAnnualReturnPct={benchmark.expectedAnnualReturnPct}
               totalCapitalEur={input.riskCapitalEur}
               activeSleevePct={input.activeSleevePct}
+            />
+          )}
+          {benchmarkAssessment.ready && (
+            <ExecutionPanel
+              planning={input}
+              benchmark={benchmark}
+              candidates={input.allowStocks ? candidates : []}
+              market={market.snapshot}
+              input={execution}
+              setInput={setExecution}
             />
           )}
         </>

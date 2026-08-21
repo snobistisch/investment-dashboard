@@ -200,8 +200,11 @@ Verify before committing:
 npm run verify && npm run lint && npm run build
 ```
 
-Pushing to `main` deploys to GitHub Pages. If you are unsure whether a change
-should be live, push a branch instead.
+Pushing to `main` deploys to GitHub Pages. **Owner instruction, 21 Aug 2026:**
+work directly on `main`. After each logical change, run the full verification,
+commit it and push `main` immediately. Do not create or leave feature branches
+unless the owner explicitly changes this instruction. If publication is
+uncertain, stop and ask rather than creating a branch.
 
 ---
 

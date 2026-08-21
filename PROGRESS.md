@@ -11,6 +11,12 @@ deploys on every push to main).
 
 ## Done
 
+- **Repository workflow reduced to one branch (21 Aug 2026).** Every local and
+  remote feature branch was checked against `main`; all carried zero unique
+  commits and their tips were already contained in `main`. Seven remote and
+  three local feature branches were removed. By owner instruction, future work
+  happens directly on `main`: verify, commit and push each logical change.
+
 - **The equity readiness audit is closed with a conditional verdict (21 Aug
   2026).** Copy now distinguishes the five transcribed equity themes from the
   separate Defence page, removes references to the retired allocator and fixed

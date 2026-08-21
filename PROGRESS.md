@@ -11,6 +11,13 @@ deploys on every push to main).
 
 ## Done
 
+- **Broad equities now precede every active stock sleeve (21 Aug 2026).** No
+  product is preselected. The user must identify the index, exact fund, ISIN,
+  venue, currency, domicile, replication, price, cost and official product and
+  KID links, then confirm diversification and broker availability. The baseline
+  starts at 100%; individual stocks are off and the beginner route declares a
+  20% active ceiling. Missing documentation blocks the next calculation.
+
 - **Equity planning now fails closed before security selection (21 Aug 2026).**
   The former allocator no longer opens with $100,000 and an ungrounded risk
   slider. It asks for a goal, horizon, EUR risk capital, separate emergency

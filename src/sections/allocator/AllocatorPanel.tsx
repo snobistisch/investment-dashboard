@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Panel } from '../../components/Panel'
 import { Section } from '../../components/Section'
+import { BenchmarkPanel } from './BenchmarkPanel'
+import { EMPTY_BENCHMARK_INPUT, type BenchmarkInput } from './benchmark'
 import {
   assessPlanningInput,
   EMPTY_PLANNING_INPUT,
@@ -59,6 +61,7 @@ function Check({ checked, onChange, children }: {
 
 export function AllocatorPanel({ onLeverageChange }: { onLeverageChange?: (active: boolean) => void }) {
   const [input, setInput] = useState<PlanningInput>(EMPTY_PLANNING_INPUT)
+  const [benchmark, setBenchmark] = useState<BenchmarkInput>(EMPTY_BENCHMARK_INPUT)
   const assessment = useMemo(() => assessPlanningInput(input), [input])
 
   useEffect(() => onLeverageChange?.(false), [onLeverageChange])
@@ -124,7 +127,10 @@ export function AllocatorPanel({ onLeverageChange }: { onLeverageChange?: (activ
             <p className="text-[10px] uppercase tracking-[0.16em] text-term-dim">Allowed products</p>
             <div className="mt-2 flex flex-wrap gap-5">
               <Check checked={input.allowEtfs} onChange={(v) => set('allowEtfs', v)}>Broad funds / ETFs</Check>
-              <Check checked={input.allowStocks} onChange={(v) => set('allowStocks', v)}>Individual stocks</Check>
+              <Check checked={input.allowStocks} onChange={(v) => {
+                set('allowStocks', v)
+                if (!v) set('activeSleevePct', 0)
+              }}>Individual stocks</Check>
             </div>
             <p className="mt-3 text-[11px] leading-relaxed text-term-dim">
               Individual stocks are off by default. The active thematic sleeve starts at 0% and remains blocked until benchmark, source and freshness checks pass.
@@ -162,6 +168,17 @@ export function AllocatorPanel({ onLeverageChange }: { onLeverageChange?: (activ
           </Panel>
         </div>
       </div>
+
+      {assessment.ready && input.riskCapitalEur !== null && (
+        <BenchmarkPanel
+          input={benchmark}
+          setInput={setBenchmark}
+          riskCapitalEur={input.riskCapitalEur}
+          activeSleevePct={input.activeSleevePct}
+          setActiveSleevePct={(value) => set('activeSleevePct', value)}
+          stocksAllowed={input.allowStocks}
+        />
+      )}
     </Section>
   )
 }

@@ -4,7 +4,8 @@ export type ScenarioKey = (typeof SCENARIO_KEYS)[number]
 export interface OpportunitySource {
   label: string
   url: string
-  publishedAt: string
+  /** Date on which this evidence link was checked for the authored model. */
+  evidenceAsOf: string
   kind: 'primary' | 'methodology'
 }
 
@@ -32,7 +33,16 @@ export interface RevenueMultipleValuation extends ValuationBase {
   terminalNetDebtM: number
 }
 
-export type OpportunityValuation = EpsMultipleValuation | RevenueMultipleValuation
+/** A deliberately simple underwriting envelope for rows where the repository
+ * does not contain enough forecast detail for an EPS or revenue bridge. The
+ * reference price is frozen and is never replaced by the live quote. */
+export interface TerminalPriceValuation extends ValuationBase {
+  kind: 'terminal-price'
+  referencePrice: number
+  referenceAsOf: string
+}
+
+export type OpportunityValuation = EpsMultipleValuation | RevenueMultipleValuation | TerminalPriceValuation
 
 export interface EquityOpportunityModel {
   schemaVersion: 1
@@ -44,7 +54,9 @@ export interface EquityOpportunityModel {
   falsifier: string
   horizonYears: number
   reviewedAt: string
-  fundamentalsPublishedAt: string
+  /** Date through which the operating evidence was reviewed, not a claim that
+   * every linked document was published on that date. */
+  fundamentalsAsOf: string
   nextReviewAt: string
   catalyst: string
   valuation: OpportunityValuation

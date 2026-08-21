@@ -28,7 +28,7 @@ export function CoverageMatrix({ rows }: { rows: CoverageRow[] }) {
   const passed = rows.filter((row) => row.screen.passes).length
   return (
     <Panel title={`Full audit trail · ${passed}/${rows.length} pass screen · ${modelled} modelled`}>
-      <p className="text-[11px] leading-relaxed text-term-dim">Every researched equity long is scanned again whenever the local screen changes. Passing stage one is not a recommendation: an absent scenario model remains a research gap and cannot enter Qualified now. Context rows and crypto are outside this matrix; Defence remains separate.</p>
+      <p className="text-[11px] leading-relaxed text-term-dim">Every researched equity long is scanned again whenever the local screen changes and every row has one versioned model. Passing stage one is not a recommendation: evidence, price hurdle and tradability still gate Qualified now. Context rows and crypto are outside this matrix; Defence remains separate.</p>
       <details className="mt-3">
         <summary className="cursor-pointer border border-term-line px-3 py-2 text-xs uppercase tracking-wider text-term-cyan focus:outline-none focus-visible:ring-1 focus-visible:ring-term-cyan">Open full coverage matrix</summary>
 

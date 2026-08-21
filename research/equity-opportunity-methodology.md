@@ -10,8 +10,8 @@ model?
 
 It does not turn research coverage into a recommendation. A company appears in
 the ranked opportunity set only when it has a complete canonical model, current
-market data and a directly tradable listing. Every other equity remains visible
-as missing coverage and fails closed.
+market data and a directly tradable listing. Every equity long has a model;
+context, short, stale, missing-market and restricted-route rows fail closed.
 
 The canonical assumptions live in
 [`src/data/equity-opportunities.ts`](../src/data/equity-opportunities.ts). The
@@ -30,8 +30,8 @@ The interface separates mechanical universe eligibility from valuation:
    return and maximum quote age. Direct tradability through the declared Dutch
    retail route remains mandatory. Missing market fields fail closed.
 2. Stage two applies the return hurdle only to screen survivors with a complete,
-   versioned opportunity model. A stage-one survivor without a model is labelled
-   `PASSED SCREEN · MODEL REQUIRED`; it cannot enter `Qualified now`.
+   versioned opportunity model. Verification requires exactly one model for
+   every equity long, so a newly added long cannot ship without one.
 
 The default stage-one numeric bounds are deliberately non-selective: $0 minimum
 market cap, 200% maximum volatility, 100% maximum drawdown and -100% minimum
@@ -80,6 +80,15 @@ TerminalEnterpriseValue_i = Revenue_i × TerminalEVSales_i
 TerminalEquityValue_i     = TerminalEnterpriseValue_i − TerminalNetDebt
 TerminalValuePerShare_i   = TerminalEquityValue_i / DilutedShares
 ```
+
+For a terminal-price envelope:
+
+```text
+TerminalValue_i = FrozenReferencePrice × (1 + AuthoredScenarioCAGR_i)^H
+```
+
+The frozen reference price is part of the versioned research input. The live
+quote is never substituted into this formula.
 
 The probability-weighted terminal value is:
 
@@ -138,9 +147,9 @@ The engine shows separate stresses. It does not blend them into a score.
 These are local sensitivity tests. They do not assign confidence to the
 probabilities or establish that the scenarios cover every possible outcome.
 
-## Initial model traces
+## Bottom-up model traces
 
-All five models use a three-year horizon, are denominated in USD and were
+The first five models use a three-year horizon, are denominated in USD and were
 reviewed on 21 August 2026. Probabilities, 2029 operating values, terminal
 multiples, diluted shares and terminal net debt are authored assumptions. They
 are not company guidance or consensus targets.
@@ -157,6 +166,33 @@ The version identifiers are `ALAB-2026-08-21-v1`, `SYM-2026-08-21-v1`,
 `TEM-2026-08-21-v1`, `NU-2026-08-21-v1` and `IONQ-2026-08-21-v1`. A change to
 a terminal assumption, probability, horizon or valuation structure requires a
 new visible version. A market-price refresh does not.
+
+## Full-universe return envelopes
+
+All 61 transcribed equity longs now have one versioned model. The five models
+above retain their bottom-up EPS or revenue bridges. The other 56 use an
+explicit `terminal-price` method because the repository does not contain enough
+forecast detail to construct a comparable bottom-up bridge without inventing
+fundamentals.
+
+Each envelope stores the 21 August 2026 listing-currency price as a frozen
+reference. A stated bear, base and bull annual return path turns that reference
+into a fixed 2029 terminal price. Later market snapshots never change those
+targets. They only change entry return, hurdle edge and maximum entry price.
+The return paths differ by the documented thesis, risk, conviction and
+speculative-factor exposure. They are authored judgements, not management
+guidance, consensus targets or a calibrated forecasting model.
+
+The source link for each envelope points to the issuer's official SEC filing
+index or the applicable official exchange or regulator disclosure portal. The
+model records when that evidence route was checked. It does not pretend that a
+portal page and every underlying filing share one publication date. This is why
+the schema uses `fundamentalsAsOf` and `evidenceAsOf`.
+
+Completeness is enforced in `scripts/verify-opportunity.ts`: the set of model
+tickers must exactly equal the set of equity-long tickers, with no duplicates.
+Restricted Shanghai, Shenzhen and Taipei listings are still modelled, but the
+tradability gate prevents them from entering `Qualified now`.
 
 ## Repricing history
 
@@ -190,15 +226,14 @@ models state those as authored assumptions. One source per company is enough to
 anchor the first implementation, but it is not a complete evidence record for
 every balance-sheet, dilution or competitive claim.
 
-## Why unmodelled names fail closed
+## Coverage boundary
 
 `src/data/positions.ts` contains 86 transcribed research rows. An `edge`, risk
 tier, market cap or appearance in a thematic page is not an opportunity model.
 The engine never converts those fields into a terminal value and never fills a
 missing scenario with a consensus target.
 
-Only the five canonical records above can enter the economic ranking. Every
-other equity is `INSUFFICIENT EVIDENCE` until it has:
+Every equity long can enter the economic ranking only when it has:
 
 - a dated thesis, falsifier, catalyst and mandatory review date;
 - a current primary source;
@@ -207,6 +242,10 @@ other equity is `INSUFFICIENT EVIDENCE` until it has:
 - fixed terminal values in the listing currency;
 - a current mapped quote in the same currency; and
 - a directly tradable listing under the repository's declared route.
+
+Context and short rows are not buy candidates and therefore do not receive a
+long opportunity model. This is why coverage is 61 models for 82 transcribed
+equities, not 82 buy models.
 
 Defence remains a separate research-only universe. Its old scenario returns are
 not imported because they were attached to an old entry price rather than fixed

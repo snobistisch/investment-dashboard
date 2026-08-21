@@ -82,6 +82,7 @@ export function businessSessionAge(asOf: string, today: string) {
 export function terminalValue(model: EquityOpportunityModel, key: ScenarioKey) {
   const scenario = model.valuation.scenarios[key]
   if (model.valuation.kind === 'eps-multiple') return scenario.metricValue * scenario.terminalMultiple
+  if (model.valuation.kind === 'terminal-price') return scenario.metricValue
   return (scenario.metricValue * scenario.terminalMultiple - model.valuation.terminalNetDebtM) / model.valuation.dilutedSharesM
 }
 
@@ -97,7 +98,7 @@ export function validateOpportunityModel(model: EquityOpportunityModel) {
   if (!model.catalyst.trim()) errors.push('Catalyst is missing.')
   if (!model.limitation.trim()) errors.push('Model limitation is missing.')
   if (!model.risks.length || model.risks.some((risk) => !risk.trim())) errors.push('At least one stated risk is required.')
-  for (const [label, value] of [['reviewed', model.reviewedAt], ['fundamentals', model.fundamentalsPublishedAt], ['next review', model.nextReviewAt]] as const) {
+  for (const [label, value] of [['reviewed', model.reviewedAt], ['fundamentals', model.fundamentalsAsOf], ['next review', model.nextReviewAt]] as const) {
     if (!validIso(value)) errors.push(`${label} date is invalid.`)
   }
   if (model.sources.length === 0) errors.push('At least one source is required.')
@@ -110,7 +111,7 @@ export function validateOpportunityModel(model: EquityOpportunityModel) {
     } catch {
       errors.push(`${source.label} URL is invalid.`)
     }
-    if (!validIso(source.publishedAt)) errors.push(`${source.label} date is invalid.`)
+    if (!validIso(source.evidenceAsOf)) errors.push(`${source.label} evidence date is invalid.`)
   }
   const scenarios = SCENARIO_KEYS.map((key) => model.valuation.scenarios[key])
   if (!Number.isInteger(model.valuation.fiscalYear) || model.valuation.fiscalYear <= 0) errors.push('Terminal fiscal year must be a positive integer.')
@@ -126,6 +127,10 @@ export function validateOpportunityModel(model: EquityOpportunityModel) {
   if (model.valuation.kind === 'revenue-multiple') {
     if (!Number.isFinite(model.valuation.dilutedSharesM) || model.valuation.dilutedSharesM <= 0) errors.push('Terminal diluted shares must be positive.')
     if (!Number.isFinite(model.valuation.terminalNetDebtM)) errors.push('Terminal net debt must be finite.')
+  }
+  if (model.valuation.kind === 'terminal-price') {
+    if (!Number.isFinite(model.valuation.referencePrice) || model.valuation.referencePrice <= 0) errors.push('Frozen reference price must be positive.')
+    if (!validIso(model.valuation.referenceAsOf)) errors.push('Frozen reference-price date is invalid.')
   }
   const values = SCENARIO_KEYS.map((key) => terminalValue(model, key))
   if (values.some((value) => !Number.isFinite(value) || value < 0)) errors.push('Terminal values must be finite and non-negative.')
@@ -190,14 +195,14 @@ export function assessOpportunity(
   const blockers: OpportunityBlocker[] = modelErrors.map((message) => ({ code: 'model', message }))
   blockers.push(...policyErrors.map((message): OpportunityBlocker => ({ code: 'policy', message })))
   if (validIso(model.reviewedAt) && model.reviewedAt > today) blockers.push({ code: 'model', message: 'Research review date is in the future.' })
-  if (validIso(model.fundamentalsPublishedAt) && model.fundamentalsPublishedAt > today) blockers.push({ code: 'model', message: 'Fundamentals publication date is in the future.' })
+  if (validIso(model.fundamentalsAsOf) && model.fundamentalsAsOf > today) blockers.push({ code: 'model', message: 'Fundamentals evidence date is in the future.' })
   if (validIso(model.nextReviewAt) && model.nextReviewAt < today) blockers.push({ code: 'research-stale', message: `Mandatory review expired ${model.nextReviewAt}.` })
-  if (validIso(model.fundamentalsPublishedAt) && daysBetween(model.fundamentalsPublishedAt, today) > policy.maxFundamentalAgeDays) blockers.push({ code: 'research-stale', message: `Fundamentals exceed the ${policy.maxFundamentalAgeDays}-day policy.` })
-  if (validIso(model.fundamentalsPublishedAt) && validIso(model.reviewedAt) && model.reviewedAt < model.fundamentalsPublishedAt) blockers.push({ code: 'model', message: 'Review predates the latest fundamentals.' })
+  if (validIso(model.fundamentalsAsOf) && daysBetween(model.fundamentalsAsOf, today) > policy.maxFundamentalAgeDays) blockers.push({ code: 'research-stale', message: `Fundamentals exceed the ${policy.maxFundamentalAgeDays}-day policy.` })
+  if (validIso(model.fundamentalsAsOf) && validIso(model.reviewedAt) && model.reviewedAt < model.fundamentalsAsOf) blockers.push({ code: 'model', message: 'Review predates the latest fundamentals.' })
   if (validIso(model.nextReviewAt) && validIso(model.reviewedAt) && model.nextReviewAt < model.reviewedAt) blockers.push({ code: 'model', message: 'Next mandatory review predates the research review.' })
   for (const source of model.sources) {
-    if (validIso(source.publishedAt) && source.publishedAt > today) blockers.push({ code: 'model', message: `${source.label || 'Source'} publication date is in the future.` })
-    if (validIso(source.publishedAt) && validIso(model.reviewedAt) && source.publishedAt > model.reviewedAt) blockers.push({ code: 'model', message: `Research review predates ${source.label || 'a source'}.` })
+    if (validIso(source.evidenceAsOf) && source.evidenceAsOf > today) blockers.push({ code: 'model', message: `${source.label || 'Source'} evidence date is in the future.` })
+    if (validIso(source.evidenceAsOf) && validIso(model.reviewedAt) && source.evidenceAsOf > model.reviewedAt) blockers.push({ code: 'model', message: `Research review predates ${source.label || 'a source'}.` })
   }
   if (!directlyTradable) blockers.push({ code: 'tradability', message: 'Listing is not directly tradable through the assumed retail route.' })
   if (!quote || !Number.isFinite(quote.priceLocal) || quote.priceLocal <= 0) blockers.push({ code: 'market-missing', message: 'Current local-currency quote is missing.' })

@@ -238,7 +238,6 @@ export function OpportunitiesPanel() {
   const alteredPolicy = policyChanged(policy) || screenPolicyChanged(screenPolicy)
   const screenSurvivors = screenResults.filter((result) => result.passes)
   const screenEligibleModels = assessments.filter((assessment) => screenByTicker.get(assessment.model.ticker)?.passes)
-  const unmodelledSurvivors = screenSurvivors.filter((result) => !assessmentByTicker.has(result.ticker))
   const readyForMonday = !market.loading && assessments.length > 0 && researchCurrent === assessments.length && screenResults.length === equityLongs.length && universeQuotesCurrent === equityLongs.length
 
   const coverageRows: CoverageRow[] = equityLongs.map((position) => ({
@@ -339,7 +338,7 @@ export function OpportunitiesPanel() {
           </div>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <div className="border border-term-line bg-term-bg p-3"><p className="text-[10px] uppercase tracking-wider text-term-cyan">Passed screen · valuation present</p><p className="mt-2 text-xs leading-relaxed">{screenEligibleModels.length ? screenEligibleModels.map((assessment) => assessment.model.ticker).join(' · ') : 'None'}</p></div>
-            <div className="border border-term-line bg-term-bg p-3"><p className="text-[10px] uppercase tracking-wider text-term-yellow">Passed screen · valuation still required</p><p className="mt-2 text-xs">{unmodelledSurvivors.length} names</p><details className="mt-2"><summary className="cursor-pointer text-[10px] uppercase tracking-wider text-term-cyan">Show survivors</summary><p className="mt-2 text-[11px] leading-relaxed text-term-dim">{unmodelledSurvivors.length ? unmodelledSurvivors.map((result) => result.ticker).join(' · ') : 'None'}</p></details></div>
+            <div className="border border-term-green/60 bg-term-bg p-3"><p className="text-[10px] uppercase tracking-wider text-term-green">Coverage invariant</p><p className="mt-2 text-xs">{assessments.length}/{equityLongs.length} equity longs have exactly one versioned model.</p><p className="mt-2 text-[10px] leading-relaxed text-term-dim">Restricted routes remain modelled but cannot qualify. Adding a long without a model now fails verification.</p></div>
           </div>
         </Panel>
       </div>
@@ -361,7 +360,7 @@ export function OpportunitiesPanel() {
 
       <div className="mt-4">
         <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2"><h3 className="text-xs font-bold uppercase tracking-[0.16em] text-term-green">Qualified now · {qualified.length} from {screenEligibleModels.length} screen-eligible models</h3><span className="text-[10px] text-term-dim">{equityLongs.length} scanned · {assessments.length} modelled · sorted by hurdle edge · {compare.size}/{MAX_COMPARE} compared</span></div>
-        {renderList(qualified, 'No screen-eligible, decision-ready model clears the declared hurdle. This can be a valid outcome; stage-one survivors without a model still require valuation research.')}
+        {renderList(qualified, 'No screen-eligible, decision-ready model clears the declared hurdle. This can be a valid outcome under the selected screen and return policy.')}
       </div>
 
       <div className="mt-6">

@@ -22,11 +22,11 @@ Sections:
   separate research-only page and is not included.
 - Equities **Opportunities** — first rescans all 61 researched equity longs with
   user-controlled theme, market-cap, volatility, drawdown, three-month-return
-  and quote-freshness filters. It then reprices the five versioned bear/base/bull
-  models that have enough evidence to calculate scenario-implied annualised
-  edge above the default 10% hurdle. Changing the universe screen can remove a
-  model from `Qualified now`; passing without a model creates a visible research
-  candidate, never an invented valuation. Maximum entry price and separate
+  and quote-freshness filters. It then reprices all 61 versioned bear/base/bull
+  models and calculates scenario-implied annualised edge above the default 10%
+  hurdle. Seven restricted foreign listings remain modelled but cannot qualify
+  through the declared broker route. Changing either screen or hurdle changes
+  `Qualified now`. Maximum entry price and separate
   probability, terminal-value, cost, horizon and price stresses remain visible.
   The formulas, source links and authored 2029 assumptions are recorded in
   [research/equity-opportunity-methodology.md](research/equity-opportunity-methodology.md).

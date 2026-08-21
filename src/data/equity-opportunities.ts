@@ -1,10 +1,11 @@
 import type { EquityOpportunityModel } from '../sections/opportunities/model'
+import { equityOpportunityEnvelopeModels } from './equity-opportunity-envelopes'
 
 // Authored research assumptions, not market data and not consensus targets.
 // Terminal values stay fixed until an explicit versioned research revision.
 // Current prices live only in public/data/market-data.json and reprice these
 // models at read time.
-export const equityOpportunityModels: EquityOpportunityModel[] = [
+const bottomUpOpportunityModels: EquityOpportunityModel[] = [
   {
     schemaVersion: 1,
     version: 'ALAB-2026-08-21-v1',
@@ -15,7 +16,7 @@ export const equityOpportunityModels: EquityOpportunityModel[] = [
     falsifier: 'Scorpio fails to become a material product family, customer concentration stays extreme, or two consecutive reports show growth and gross margin breaking together.',
     horizonYears: 3,
     reviewedAt: '2026-08-21',
-    fundamentalsPublishedAt: '2026-08-04',
+    fundamentalsAsOf: '2026-08-04',
     nextReviewAt: '2026-11-02',
     catalyst: 'Scorpio X-Series production ramp and evidence that revenue broadens beyond the largest customer.',
     valuation: {
@@ -29,7 +30,7 @@ export const equityOpportunityModels: EquityOpportunityModel[] = [
       },
     },
     sources: [
-      { kind: 'primary', label: 'Astera Labs · Q2 2026 results', url: 'https://ir.asteralabs.com/news-releases/news-release-details/astera-labs-reports-second-quarter-2026-financial-results', publishedAt: '2026-08-04' },
+      { kind: 'primary', label: 'Astera Labs · Q2 2026 results', url: 'https://ir.asteralabs.com/news-releases/news-release-details/astera-labs-reports-second-quarter-2026-financial-results', evidenceAsOf: '2026-08-04' },
     ],
     risks: ['One customer exceeded 70% of 2025 revenue.', 'A high terminal multiple assumes the connectivity moat survives architecture shifts.', 'Copper products can be displaced as scale-up fabrics move optical.'],
     limitation: 'The 2029 EPS and multiples are authored assumptions. They are not company guidance and have no calibration track record.',
@@ -44,7 +45,7 @@ export const equityOpportunityModels: EquityOpportunityModel[] = [
     falsifier: 'Deployment growth stalls, adjusted EBITDA fails to convert into durable GAAP earnings, or customer concentration prevents expansion beyond anchor accounts.',
     horizonYears: 3,
     reviewedAt: '2026-08-21',
-    fundamentalsPublishedAt: '2026-08-05',
+    fundamentalsAsOf: '2026-08-05',
     nextReviewAt: '2026-11-03',
     catalyst: 'Fiscal Q4 delivery against the $760–780m revenue and $100–105m adjusted EBITDA outlook.',
     valuation: {
@@ -58,7 +59,7 @@ export const equityOpportunityModels: EquityOpportunityModel[] = [
       },
     },
     sources: [
-      { kind: 'primary', label: 'Symbotic · fiscal Q3 2026 results', url: 'https://ir.symbotic.com/news-releases/news-release-details/symbotic-reports-third-quarter-fiscal-year-2026-results', publishedAt: '2026-08-05' },
+      { kind: 'primary', label: 'Symbotic · fiscal Q3 2026 results', url: 'https://ir.symbotic.com/news-releases/news-release-details/symbotic-reports-third-quarter-fiscal-year-2026-results', evidenceAsOf: '2026-08-05' },
     ],
     risks: ['Customer concentration and project timing can make revenue lumpy.', 'Adjusted EBITDA may overstate cash earnings.', 'The corporate structure and dilution can make per-share forecasting unstable.'],
     limitation: 'The 2029 EPS path is an authored simplification of a complex corporate structure, not management guidance.',
@@ -73,7 +74,7 @@ export const equityOpportunityModels: EquityOpportunityModel[] = [
     falsifier: 'Diagnostics volume or data-licensing growth falls below the market while acquisitions consume cash without sustained margin expansion.',
     horizonYears: 3,
     reviewedAt: '2026-08-21',
-    fundamentalsPublishedAt: '2026-07-30',
+    fundamentalsAsOf: '2026-07-30',
     nextReviewAt: '2026-10-28',
     catalyst: 'Evidence that the raised 2026 revenue outlook and positive adjusted EBITDA translate into durable free-cash-flow progress.',
     valuation: {
@@ -90,7 +91,7 @@ export const equityOpportunityModels: EquityOpportunityModel[] = [
       },
     },
     sources: [
-      { kind: 'primary', label: 'Tempus AI · Q2 2026 results', url: 'https://investors.tempus.com/news-releases/news-release-details/tempus-reports-second-quarter-2026-results', publishedAt: '2026-07-30' },
+      { kind: 'primary', label: 'Tempus AI · Q2 2026 results', url: 'https://investors.tempus.com/news-releases/news-release-details/tempus-reports-second-quarter-2026-results', evidenceAsOf: '2026-07-30' },
     ],
     risks: ['Acquisition integration and convertible financing can dilute shareholders.', 'Adjusted EBITDA is not free cash flow.', 'Clinical and data regulation can alter economics.'],
     limitation: 'Terminal revenue, sales multiples, share count and zero net debt are authored assumptions; the model does not value acquisition synergies separately.',
@@ -105,7 +106,7 @@ export const equityOpportunityModels: EquityOpportunityModel[] = [
     falsifier: 'Credit losses structurally outrun pricing, customer engagement stalls, or expansion outside Brazil destroys the cost advantage.',
     horizonYears: 3,
     reviewedAt: '2026-08-21',
-    fundamentalsPublishedAt: '2026-08-13',
+    fundamentalsAsOf: '2026-08-13',
     nextReviewAt: '2026-11-11',
     catalyst: 'Sustained Mexico monetisation and evidence that higher-risk credit growth preserves risk-adjusted margins.',
     valuation: {
@@ -119,7 +120,7 @@ export const equityOpportunityModels: EquityOpportunityModel[] = [
       },
     },
     sources: [
-      { kind: 'primary', label: 'Nu Holdings · Q2 2026 results', url: 'https://international.nubank.com.br/company/nu-holdings-ltd-reports-second-quarter-2026-financial-results/', publishedAt: '2026-08-13' },
+      { kind: 'primary', label: 'Nu Holdings · Q2 2026 results', url: 'https://international.nubank.com.br/company/nu-holdings-ltd-reports-second-quarter-2026-financial-results/', evidenceAsOf: '2026-08-13' },
     ],
     risks: ['Brazilian real and regional macro exposure are not modelled separately.', 'Expansion into higher-risk credit can reverse current risk-adjusted margin gains.', 'A banking multiple is sensitive to regulation and funding costs.'],
     limitation: 'The model uses authored USD EPS and terminal P/E assumptions; it does not forecast each country or currency separately.',
@@ -134,7 +135,7 @@ export const equityOpportunityModels: EquityOpportunityModel[] = [
     falsifier: 'Revenue growth is acquisition-led rather than organic, hardware milestones slip, or operating losses remain structurally larger than the commercial base.',
     horizonYears: 3,
     reviewedAt: '2026-08-21',
-    fundamentalsPublishedAt: '2026-08-05',
+    fundamentalsAsOf: '2026-08-05',
     nextReviewAt: '2026-11-03',
     catalyst: 'Organic delivery against raised 2026 revenue guidance after closing SkyWater, with transparent acquisition contribution.',
     valuation: {
@@ -151,9 +152,14 @@ export const equityOpportunityModels: EquityOpportunityModel[] = [
       },
     },
     sources: [
-      { kind: 'primary', label: 'IonQ · Q2 2026 results', url: 'https://investors.ionq.com/news/news-details/2026/IonQ-Announces-Record-Second-Quarter-2026-Revenues-Growing-287-YoY/default.aspx', publishedAt: '2026-08-05' },
+      { kind: 'primary', label: 'IonQ · Q2 2026 results', url: 'https://investors.ionq.com/news/news-details/2026/IonQ-Announces-Record-Second-Quarter-2026-Revenues-Growing-287-YoY/default.aspx', evidenceAsOf: '2026-08-05' },
     ],
     risks: ['The SkyWater acquisition changes the financial perimeter and share count.', 'Large operating losses and dilution can overwhelm revenue growth.', 'Commercial quantum advantage remains unproven at broad scale.'],
     limitation: 'Revenue, sales multiples, terminal shares and zero net debt are authored assumptions. The model does not claim a probability calibration edge.',
   },
+]
+
+export const equityOpportunityModels: EquityOpportunityModel[] = [
+  ...bottomUpOpportunityModels,
+  ...equityOpportunityEnvelopeModels,
 ]

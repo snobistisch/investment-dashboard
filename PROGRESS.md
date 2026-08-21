@@ -11,6 +11,21 @@ deploys on every push to main).
 
 ## Done
 
+- **Every equity-long row now has a frozen opportunity model (22 Aug 2026).**
+  Coverage moved from five to 61 models. The original five retain bottom-up EPS
+  or revenue bridges. The other 56 use explicit three-year return envelopes
+  because the repository does not contain enough forecast detail to invent a
+  comparable bottom-up model. Their 21 Aug reference price and bear/base/bull
+  terminal prices are frozen; later quotes only reprice the opportunity.
+
+  Verification now requires the model tickers to equal the equity-long tickers
+  exactly. Seven restricted listings remain modelled but cannot qualify through
+  the declared broker route. The default screen now has 22 qualified names; in
+  browser QA, Biology produced 0 from 12 and a 15-point active premium reduced
+  the full-universe result to 3 from 51. History contains all 61 model snapshots
+  on the first market date. Context and short rows remain outside a buy-candidate
+  model by design.
+
 - **Opportunity policy now rescans the complete equity-long universe (21 Aug
   2026).** The previous what-if controls repriced only the five authored models,
   although the interface looked like a full stock scan. Opportunities now runs

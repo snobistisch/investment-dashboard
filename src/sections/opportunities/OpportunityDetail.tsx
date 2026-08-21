@@ -83,7 +83,7 @@ export function OpportunityDetail({
                     <td className="py-2 pr-3 uppercase text-term-amber">{scenario.key}<span className="mt-1 block max-w-xs normal-case text-[10px] leading-relaxed text-term-dim">{scenario.rationale}</span></td>
                     <td className="py-2 pr-3 text-right tabular-nums">{pct(scenario.probability * 100, 0)}</td>
                     <td className="py-2 pr-3 text-right tabular-nums">{input.metricValue.toLocaleString('en-US')}</td>
-                    <td className="py-2 pr-3 text-right tabular-nums">{input.terminalMultiple.toFixed(1)}×</td>
+                    <td className="py-2 pr-3 text-right tabular-nums">{model.valuation.kind === 'terminal-price' ? 'direct' : `${input.terminalMultiple.toFixed(1)}×`}</td>
                     <td className="py-2 pr-3 text-right tabular-nums">{money(scenario.terminalValue, model.currency)}</td>
                     <td className={`py-2 text-right tabular-nums ${scenario.netTotalReturnPct < 0 ? 'text-term-red' : 'text-term-green'}`}>{signedPct(scenario.netTotalReturnPct)}</td>
                   </tr>
@@ -137,9 +137,9 @@ export function OpportunityDetail({
               <p><span className="text-term-yellow">Model limitation:</span> {model.limitation}</p>
               <p className="mt-3"><span className="text-term-yellow">Risks:</span></p>
               <ul className="mt-1 space-y-1">{model.risks.map((risk) => <li key={risk}>— {risk}</li>)}</ul>
-              <p className="mt-3">Research reviewed {model.reviewedAt} · fundamentals published {model.fundamentalsPublishedAt} · mandatory review {model.nextReviewAt} · model {model.version}.</p>
+              <p className="mt-3">Research reviewed {model.reviewedAt} · fundamentals checked through {model.fundamentalsAsOf} · mandatory review {model.nextReviewAt} · model {model.version}.</p>
               <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2">
-                {model.sources.map((source) => <a key={source.url} href={source.url} target="_blank" rel="noopener noreferrer" className="text-term-cyan underline underline-offset-2">{source.label} · {source.publishedAt}</a>)}
+                {model.sources.map((source) => <a key={source.url} href={source.url} target="_blank" rel="noopener noreferrer" className="text-term-cyan underline underline-offset-2">{source.label} · checked {source.evidenceAsOf}</a>)}
               </div>
             </div>
           </div>

@@ -1,9 +1,11 @@
 import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import type { MarketQuote } from '../src/data/market-data'
+import type { MarketQuote, MarketSnapshot } from '../src/data/market-data'
 import { equityOpportunityModels } from '../src/data/equity-opportunities'
 import type { Position } from '../src/data/positions'
+import { positions } from '../src/data/positions'
+import { isDirectlyTradable } from '../src/sections/allocator/allocation'
 import {
   DEFAULT_OPPORTUNITY_POLICY,
   SCENARIO_KEYS,
@@ -45,7 +47,7 @@ const model: EquityOpportunityModel = {
   falsifier: 'The stated operating evidence fails.',
   horizonYears: 3,
   reviewedAt: '2026-08-21',
-  fundamentalsPublishedAt: '2026-08-15',
+  fundamentalsAsOf: '2026-08-15',
   nextReviewAt: '2026-11-01',
   catalyst: 'The next reported result tests the operating thesis.',
   valuation: {
@@ -58,7 +60,7 @@ const model: EquityOpportunityModel = {
       bull: { probability: 0.3, metricValue: 180, terminalMultiple: 1, rationale: 'Bull terminal value.' },
     },
   },
-  sources: [{ label: 'Primary test evidence', url: 'https://example.com/evidence', publishedAt: '2026-08-15', kind: 'primary' }],
+  sources: [{ label: 'Primary test evidence', url: 'https://example.com/evidence', evidenceAsOf: '2026-08-15', kind: 'primary' }],
   risks: ['The scenario probabilities are subjective.'],
   limitation: 'This fixture tests arithmetic, not forecasting skill.',
 }
@@ -97,6 +99,39 @@ for (const authored of equityOpportunityModels) {
   const errors = validateOpportunityModel(authored)
   assert(errors.length === 0, `${authored.ticker}: authored opportunity model invalid: ${errors.join('; ')}`)
 }
+const equityLongTickers = positions
+  .filter((row) => !row.sections.includes('crypto') && row.stance === 'long')
+  .map((row) => row.ticker)
+  .sort()
+const modelTickers = equityOpportunityModels.map((row) => row.ticker).sort()
+assert(new Set(modelTickers).size === modelTickers.length, 'canonical opportunity models cannot duplicate a ticker')
+assert(
+  JSON.stringify(modelTickers) === JSON.stringify(equityLongTickers),
+  `every equity long must have exactly one model: models=${modelTickers.length}, longs=${equityLongTickers.length}`,
+)
+assert(equityOpportunityModels.some((row) => row.valuation.kind === 'terminal-price'), 'full coverage must retain explicit frozen terminal-price envelopes')
+
+const currentMarket = JSON.parse(readFileSync(resolve(here, '../public/data/market-data.json'), 'utf8')) as MarketSnapshot
+const marketDate = currentMarket.fetchedAt.slice(0, 10)
+function canonicalQualified(opportunityPolicy: OpportunityPolicy, theme: 'all' | 'biology' = 'all') {
+  const screenPolicy = { ...DEFAULT_UNIVERSE_SCREEN_POLICY, theme }
+  return equityOpportunityModels
+    .filter((authored) => {
+      const row = positions.find((candidate) => candidate.ticker === authored.ticker)
+      if (!row) return false
+      const quote = currentMarket.quotes[authored.ticker]
+      const screen = screenUniversePosition(row, quote, isDirectlyTradable(row), screenPolicy, opportunityPolicy.maxQuoteBusinessSessions, marketDate)
+      return screen.passes && assessOpportunity(authored, quote, opportunityPolicy, isDirectlyTradable(row), marketDate).positiveEdge
+    })
+    .map((row) => row.ticker)
+    .sort()
+}
+const defaultQualified = canonicalQualified(DEFAULT_OPPORTUNITY_POLICY)
+const highHurdleQualified = canonicalQualified({ ...DEFAULT_OPPORTUNITY_POLICY, requiredActivePremiumPct: 15 })
+const biologyQualified = canonicalQualified(DEFAULT_OPPORTUNITY_POLICY, 'biology')
+assert(defaultQualified.length > 5, 'full-universe modelling must break the former five-name output ceiling')
+assert(JSON.stringify(defaultQualified) !== JSON.stringify(highHurdleQualified), 'changing valuation policy must change Qualified now')
+assert(JSON.stringify(defaultQualified) !== JSON.stringify(biologyQualified), 'changing the universe theme must rescan and change Qualified now')
 
 const assessed = assessOpportunity(model, quote, policy, true, '2026-08-21')
 assert(assessed.decisionReady, `complete opportunity blocked: ${assessed.blockers.map((blocker) => blocker.message).join('; ')}`)
@@ -178,7 +213,7 @@ staleModel.nextReviewAt = '2026-08-20'
 const staleCrash = assessOpportunity(staleModel, { ...quote, priceLocal: 1, priceUsd: 1 }, policy, true, '2026-08-21')
 assert(!staleCrash.decisionReady && !staleCrash.positiveEdge && staleCrash.state === 'STALE THESIS', 'a price crash cannot make stale research actionable')
 const futureSource = structuredClone(model)
-futureSource.sources[0].publishedAt = '2026-08-22'
+futureSource.sources[0].evidenceAsOf = '2026-08-22'
 assert(!assessOpportunity(futureSource, quote, policy, true, '2026-08-21').decisionReady, 'future-dated source must block')
 
 const mismatch = assessOpportunity(model, { ...quote, currency: 'EUR' }, policy, true, '2026-08-21')

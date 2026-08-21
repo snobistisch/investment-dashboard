@@ -58,10 +58,23 @@ function httpsUrl(value: string) {
   }
 }
 
+function businessSessionAge(asOf: string, today: string) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(asOf) || asOf > today) return Infinity
+  let age = 0
+  const cursor = new Date(`${asOf}T00:00:00Z`)
+  const end = new Date(`${today}T00:00:00Z`)
+  while (cursor < end) {
+    cursor.setUTCDate(cursor.getUTCDate() + 1)
+    if (![0, 6].includes(cursor.getUTCDay())) age++
+  }
+  return age
+}
+
 export function assessBenchmark(
   input: BenchmarkInput,
   riskCapitalEur: number,
   activeSleevePct: number,
+  today = new Date().toISOString().slice(0, 10),
 ): BenchmarkAssessment {
   const blockers: string[] = []
   const activePct = Math.max(0, Math.min(MAX_BEGINNER_ACTIVE_SLEEVE_PCT, activeSleevePct))
@@ -81,8 +94,10 @@ export function assessBenchmark(
   if (!httpsUrl(input.returnAssumptionUrl)) blockers.push('Link the source or calculation behind the benchmark-return assumption.')
   if (input.priceEur === null || !Number.isFinite(input.priceEur) || input.priceEur <= 0) blockers.push('Enter a verified EUR price for order planning.')
   if (!/^\d{4}-\d{2}-\d{2}$/.test(input.priceAsOf)) blockers.push('Enter the verified price date as YYYY-MM-DD.')
+  else if (businessSessionAge(input.priceAsOf, today) > 1) blockers.push('Refresh the benchmark price; it is older than one completed business session.')
   if (!httpsUrl(input.productUrl)) blockers.push('Link the official product page over HTTPS.')
   if (!httpsUrl(input.kidUrl)) blockers.push('Link the current official KID/EID over HTTPS.')
+  if (input.productUrl && input.productUrl === input.kidUrl) blockers.push('Link the product page and current KID/EID separately.')
   if (!input.broadDiversificationConfirmed) blockers.push('Confirm that holdings span regions and sectors rather than one theme.')
   if (!input.officialDocumentsConfirmed) blockers.push('Confirm that the fields were checked against official documents.')
   if (!input.brokerAvailableConfirmed) blockers.push('Confirm that this exact ISIN and venue are available at the named broker.')

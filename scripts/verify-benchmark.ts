@@ -4,7 +4,7 @@ function assert(ok: unknown, message: string): asserts ok {
   if (!ok) throw new Error(message)
 }
 
-const empty = assessBenchmark(EMPTY_BENCHMARK_INPUT, 10_000, 0)
+const empty = assessBenchmark(EMPTY_BENCHMARK_INPUT, 10_000, 0, '2026-08-21')
 assert(!empty.ready, 'empty benchmark must fail closed')
 assert(empty.baselineBudgetEur === 10_000 && empty.activeBudgetEur === 0, 'baseline must start at 100%')
 
@@ -29,12 +29,15 @@ const complete: BenchmarkInput = {
   brokerAvailableConfirmed: true,
 }
 
-const ready = assessBenchmark(complete, 10_000, 10)
+const ready = assessBenchmark(complete, 10_000, 10, '2026-08-21')
 assert(ready.ready, `complete benchmark blocked: ${ready.blockers.join('; ')}`)
 assert(ready.baselineBudgetEur === 9_000 && ready.activeBudgetEur === 1_000, 'sleeve budgets must sum')
 assert(ready.annualFundCostEur === 18, 'fund cost must apply to the baseline sleeve only')
 
-const capped = assessBenchmark(complete, 10_000, 100)
+const capped = assessBenchmark(complete, 10_000, 100, '2026-08-21')
 assert(capped.activeBudgetEur === 10_000 * (MAX_BEGINNER_ACTIVE_SLEEVE_PCT / 100), 'active sleeve must be capped')
+
+const stale = assessBenchmark({ ...complete, priceAsOf: '2026-08-17' }, 10_000, 0, '2026-08-21')
+assert(!stale.ready && stale.blockers.some((blocker) => blocker.includes('Refresh')), 'stale benchmark price must block')
 
 console.log('broad benchmark starts at 100% and fails closed')

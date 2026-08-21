@@ -11,6 +11,15 @@ deploys on every push to main).
 
 ## Done
 
+- **Research status and freshness now block silently stale decisions (21 Aug
+  2026).** Every embedded equity theme is labelled research-only and requires a
+  new evidence record in Plan. Defence is explicitly outside the transcribed
+  Exposure and selection universe. Photonics has a seven-day limit and a
+  mandatory review trigger on the first earnings date that followed its
+  snapshot; that trigger has passed, so the shell marks it stale regardless of
+  how persuasive the old page still reads. Benchmark and candidate prices may
+  be at most one completed business session old.
+
 - **Active equities now require a new evidence record (21 Aug 2026).** The
   thematic pages are discovery material and do not seed positions. A candidate
   must carry a specific thesis and falsifier, dated fundamentals and valuation,

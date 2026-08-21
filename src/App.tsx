@@ -38,17 +38,21 @@ type Tab = {
    *  `stale` is never written here — it is derived from `vintage`, because a
    *  hand-maintained staleness flag is wrong the day after it is set. */
   status?: Exclude<EntryStatus, 'stale'>
+  researchOnly?: boolean
+  staleAfterDays?: number
+  /** A known result or event after which the snapshot requires a fresh review. */
+  reviewRequiredAfter?: string
 }
 
 const EQUITY_TABS: Tab[] = [
   { id: 'exposure', label: 'EXPOSURE', kind: 'exposure' },
   { id: 'allocator', label: 'PLAN', kind: 'allocator' },
-  { id: 'biology', label: 'DIGITAL BIOLOGY', kind: 'embed', src: 'dashboards/digital-biology.html', title: 'Digital Biology dashboard' , vintage: '2026-07-07', status: 'hypothesis' },
-  { id: 'robotics', label: 'ROBOTICS', kind: 'embed', src: 'dashboards/robotics.html', title: 'Robotics landscape dashboard' , vintage: '2026-07-09', status: 'hypothesis' },
-  { id: 'quantum', label: 'QUANTUM', kind: 'embed', src: 'dashboards/quantum.html', title: 'Quantum computing dashboard' , vintage: '2026-07-15', status: 'watchlist' },
-  { id: 'agentic', label: 'AGENTIC', kind: 'embed', src: 'dashboards/agentic.html', title: 'Agent economy dashboard' , vintage: '2026-07-09', status: 'hypothesis' },
-  { id: 'photonics', label: 'PHOTONICS', kind: 'embed', src: 'dashboards/photonics.html', title: 'Photonics and optical interconnect dashboard' , vintage: '2026-08-07', status: 'confirmed' },
-  { id: 'defense', label: 'DEFENCE', kind: 'embed', src: 'dashboards/defense.html', title: 'Defence and autonomy research dashboard' , vintage: '2026-08-11', status: 'confirmed' },
+  { id: 'biology', label: 'DIGITAL BIOLOGY', kind: 'embed', src: 'dashboards/digital-biology.html', title: 'Digital Biology dashboard', vintage: '2026-07-07', status: 'hypothesis', researchOnly: true },
+  { id: 'robotics', label: 'ROBOTICS', kind: 'embed', src: 'dashboards/robotics.html', title: 'Robotics landscape dashboard', vintage: '2026-07-09', status: 'hypothesis', researchOnly: true },
+  { id: 'quantum', label: 'QUANTUM', kind: 'embed', src: 'dashboards/quantum.html', title: 'Quantum computing dashboard', vintage: '2026-07-15', status: 'watchlist', researchOnly: true },
+  { id: 'agentic', label: 'AGENTIC', kind: 'embed', src: 'dashboards/agentic.html', title: 'Agent economy dashboard', vintage: '2026-07-09', status: 'hypothesis', researchOnly: true },
+  { id: 'photonics', label: 'PHOTONICS', kind: 'embed', src: 'dashboards/photonics.html', title: 'Photonics and optical interconnect dashboard', vintage: '2026-08-07', status: 'hypothesis', researchOnly: true, staleAfterDays: 7, reviewRequiredAfter: '2026-08-11' },
+  { id: 'defense', label: 'DEFENCE R/O', kind: 'embed', src: 'dashboards/defense.html', title: 'Defence and autonomy research dashboard', vintage: '2026-08-11', status: 'hypothesis', researchOnly: true },
 ]
 
 // Crypto has two decision views: the 40-asset ranking and the zero-holdings
@@ -78,7 +82,7 @@ const STATUS_COLOR: Record<EntryStatus, string> = {
 function TabStatus({ tab }: { tab: Tab }) {
   if (!tab.vintage || !tab.status) return null
   const days = Math.floor((Date.now() - Date.parse(`${tab.vintage}T00:00:00Z`)) / 86_400_000)
-  const stale = days > STALE_AFTER_DAYS
+  const stale = days > (tab.staleAfterDays ?? STALE_AFTER_DAYS) || Boolean(tab.reviewRequiredAfter && Date.now() >= Date.parse(`${tab.reviewRequiredAfter}T00:00:00Z`))
   return (
     <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-term-line bg-term-bg px-4 py-1.5 text-[10px] uppercase tracking-wider text-term-dim">
       <span
@@ -95,12 +99,14 @@ function TabStatus({ tab }: { tab: Tab }) {
           stale
         </span>
       )}
+      {tab.researchOnly && <span className="border border-term-yellow px-1 text-term-yellow">research only · not order eligible</span>}
       <span>
         data as of {tab.vintage} · {days} {days === 1 ? 'day' : 'days'} old
       </span>
       <span className="text-term-dim/70">
-        page is a static snapshot — Exposure and Allocator are the live tabs
+        page is a static snapshot — a new evidence record in Plan is required
       </span>
+      {tab.reviewRequiredAfter && stale && <span className="text-term-red">mandatory review triggered {tab.reviewRequiredAfter}</span>}
     </div>
   )
 }

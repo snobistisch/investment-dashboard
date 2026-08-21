@@ -21,17 +21,17 @@ const CARDS: Card[] = [
     href: '#equities',
     title: 'EQUITIES',
     count: equityCount,
-    unit: 'researched positions',
-    themes: 'Digital Biology · Robotics · Quantum · Agentic · Photonics · Defence',
+    unit: 'transcribed equity rows · Defence separate',
+    themes: 'Digital Biology · Robotics · Quantum · Agentic · Photonics · Defence (research-only)',
     question:
-      'Which listed companies own the bottleneck in a capital cycle that is already funded? Ranked on evidence and, on the newer tabs, on an explicit three-scenario expected value.',
+      'Explore the research, then build a personal plan. No thematic row becomes buyable until a new source, valuation, scenario and benchmark-relative check passes.',
     accent: 'text-term-amber',
   },
   {
     href: '#crypto',
     title: 'CRYPTO',
     count: cryptoCount,
-    unit: 'held positions · 40 assets ranked',
+    unit: 'research rows · 40 assets ranked · zero holdings',
     themes: 'Assets — settlement · trading venues · DeFi · verifiable compute · new layer ones',
     question:
       'Does this asset beat simply holding bitcoin? One factor with forty tickers, where float and fee capture decide more than the narrative does.',
@@ -84,9 +84,10 @@ export function Landing() {
         </div>
 
         <p className="mt-10 max-w-2xl text-[11px] leading-relaxed text-term-dim">
-          Research only · no positions held · public sources · not investment advice. Every
-          figure traces to <span className="text-term-text">src/data/positions.ts</span> or to
-          a dated snapshot, and each tab states which of the two it is showing.
+          Research only · no positions held · public sources · not investment advice. Computed
+          equity figures trace to <span className="text-term-text">src/data/positions.ts</span> and
+          the dated market snapshot. Defence is a separate research page and is not included in
+          Exposure or Plan.
         </p>
       </main>
     </div>

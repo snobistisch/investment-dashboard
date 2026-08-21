@@ -147,7 +147,7 @@ export function ExposurePanel({ assetClass = 'equities' }: { assetClass?: 'equit
   return (
     <Section
       title="Exposure"
-      description="What the seven tabs actually add up to. Every figure on this tab is computed from src/data/positions.ts, which is a transcription of the other sections — no number here was re-derived or refreshed. Read the coverage panel at the bottom before trusting any weighted figure."
+      description="What the five transcribed equity themes add up to. Defence is a separate research-only page and is not included here or in Plan. Every figure on this tab is computed from src/data/positions.ts; live prices and caps are merged from the dated snapshot. Read the coverage panel before trusting any weighted figure."
     >
       <DataProvenance snapshot={snapshot} source={source} loading={loading} book={activeBook} />
 
@@ -527,7 +527,7 @@ export function ExposurePanel({ assetClass = 'equities' }: { assetClass?: 'equit
             </tbody>
           </table>
           <p className="mt-3 text-[11px] leading-relaxed text-term-dim">
-            Seven tabs presented as seven research areas resolve into a much smaller number of
+            The transcribed equity themes resolve into a much smaller number of
             drivers. The photonics note says so about itself: the thesis is &ldquo;a derivative of
             ~$700bn of hyperscaler spending&rdquo;.
           </p>

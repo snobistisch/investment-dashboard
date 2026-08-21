@@ -1,223 +1,187 @@
 # AGENTS.md
 
-Instructions for any AI agent working in this repository. Read this before
-opening anything else.
+Operating contract for every AI agent working in this repository.
 
-**Run `npm run summary` first.** It prints the state of the whole repository —
-counts, data vintages, cluster statistics, which files are dangerous to open —
-in about fifty lines, generated from the files themselves so it cannot drift.
-Most questions asked at the start of a session are answered there without
-opening a single data file.
+**Run `npm run summary` before opening anything else.** It reports the current
+repository state, data vintages, coverage, clusters and large-file warnings from
+the files themselves. Do not copy those volatile facts into this document.
 
 ---
 
-## 1. What this is
+## 1. Session contract
 
-A personal research dashboard for public-market and crypto research, deployed
-to GitHub Pages on every push to `main`. Vite + React + TypeScript + Tailwind
-for the shell, with eight self-contained HTML dashboards embedded in iframes.
+1. Run `git status -sb`. Preserve user changes and keep unrelated work out of
+   the diff.
+2. Match the action to the request:
+   - review, explain or diagnose: inspect and report; do not change files;
+   - change, fix or build: implement the requested scope and finish it.
+3. Read narrowly. Use `rg`, `jq` or a small Node expression before opening a
+   generated data file or an embedded dashboard.
+4. Before publishing a repository change, run:
 
-Two computed React tabs (the equities-only Exposure and Allocator) and eight static
-research pages. Crypto sizing lives in the embedded Pilot and starts from zero
-holdings.
-The owner uses it for real allocation decisions **and** as a learning project,
-so a wrong number is a wrong decision and a hidden assumption is a lesson that
-did not happen.
+   ```bash
+   npm run verify && npm run lint && npm run build
+   git diff --check
+   ```
+
+5. Work directly on `main`. Make one logical commit whose message explains the
+   reason, then push `main` immediately. A push deploys GitHub Pages. Do not
+   create a branch unless the owner explicitly changes this instruction.
+
+If the work cannot safely be published, stop before the commit and state the
+specific blocker.
 
 ---
 
-## 2. Do not read these files whole
+## 2. What this repository is
 
-The repository is about 2 MB of tracked text across 63 files. Five files are
-half of it, and reading one of them costs a large part of a context window for
-numbers no agent can verify by eye.
+A personal decision-support dashboard for public-market and crypto research.
+The shell is Vite + React + TypeScript + Tailwind. It contains two computed
+React views, **Exposure** and **Plan**, plus eight self-contained research pages
+embedded as iframes.
 
-| File | Size | Instead |
-| --- | ---: | --- |
-| `public/data/crypto-history.json` | 375 KB | `node -e` or `jq`. It is one year of daily closes for 40 assets. |
-| `public/dashboards/crypto.html` | 173 KB | `grep -n` for the block you need. Formula 1 is near line 1290, formula 2 near 1340. |
-| `public/dashboards/defense.html` | 114 KB | `grep -n`. |
-| `public/data/portfolio.json` | 40 KB | `npm run summary`, or `jq` for a specific row. Contains a 39×39 matrix. |
-| `public/data/market-data.json` | ~275 KB | `npm run summary`, or `jq '.quotes.ETH'`. Includes a compact pair-correlation matrix; do not read whole. |
-| `public/data/crypto-market.json` | generated | `npm run summary`, or `jq '.rows[] | select(.ticker=="ETH")'`. Current prices and market fields for all 40 assets. |
-| `public/data/crypto-scenarios.json` | generated | `jq '.rows[] | select(.ticker=="ETH")'`. Immutable scenario probabilities and terminal USD targets. |
+The owner uses it for real allocation decisions and as a learning project. A
+wrong number can become a wrong decision. Hidden assumptions prevent learning.
 
-Every dashboard in `public/dashboards/` carries the same ~19 KB stylesheet,
-copied. That duplication is known and deliberate for now — see §7 — so do not
-read a second dashboard to learn the design system. Read one.
+The product boundary matters:
 
-Useful one-liners:
+- Research pages help discover and compare ideas. They are not evidence that an
+  asset is ready to buy.
+- Plan starts from the owner's actual holdings and a broad-market baseline. An
+  active candidate must pass the evidence and execution gates shown in the UI.
+- Crypto sizing stays in the separate Crypto Pilot and starts from zero
+  holdings. Never route crypto through the equities Plan.
+- Defense is a separate research-only universe. It does not silently enter the
+  equities plan or risk budget.
+
+---
+
+## 3. Data and decision invariants
+
+These are not style preferences.
+
+- `src/data/positions.ts` is transcription. Copy only stated figures. Never
+  derive, estimate, refresh or fill gaps there; live values merge elsewhere.
+- Never invent market data. Missing is valid and must render as `Unknown`.
+- Keep conclusions recomputable: publish inputs and formulas, not unexplained
+  stored scores.
+- Never tune a threshold to force an outcome. A changed conclusion is a finding.
+- Put missing sources, stale data, unverified claims and model limits beside the
+  decision they affect.
+- Do not bypass freshness, minimum-ticket, existing-holdings or evidence gates.
+- Crypto terminal USD targets stay frozen until an explicit thesis revision.
+  Current prices may refresh without rewriting the thesis.
+- Do not restore Poker EV or `f*`. They overstated the rigor of their inputs.
+  Crypto shows scenario-implied EV versus BTC and keeps R separate.
+
+---
+
+## 4. Source map
+
+| Path | Role and constraint |
+| --- | --- |
+| `src/data/positions.ts` | Source transcription. Never infer missing fields. |
+| `src/data/market-data.ts` | Merges the committed market snapshot at read time. |
+| `src/sections/exposure/` | Factor concentration and cross-theme exposure. |
+| `src/sections/allocator/planning.ts` | Current Plan policy and baseline sizing. |
+| `src/sections/allocator/benchmark.ts` | Broad-market benchmark inputs and validation. |
+| `src/sections/allocator/active-selection.ts` | Evidence gates for active candidates. |
+| `src/sections/allocator/execution.ts` | Concept-order construction and execution gates. |
+| `src/sections/allocator/allocation.ts` | Legacy sizing model. It is still verified, but is not the current Plan route. Do not revive it without an explicit request. |
+| `src/types.ts` | Shared taxonomy, including source status. |
+| `scripts/verify-*.ts` | Executable policy and quantitative invariants. Read the relevant suite before changing a rule. |
+| `scripts/fetch-*.ts` | Network-backed snapshot builders. Run only when current data is part of the task. |
+| `scripts/build-portfolio.ts` | Builds portfolio statistics and patches its owned dashboard block. |
+| `public/dashboards/` | Eight static research pages, each with its own stylesheet. |
+| `public/data/` | Generated and committed artefacts. Never hand-edit. |
+| `research/` | Claims, sources, caveats and audit record. Prose, not runtime data. |
+| `PROGRESS.md` | Reverse-chronological history. Add at the top; never rewrite old entries. |
+
+`isDirectlyTradable` is currently shared from the legacy allocation module. That
+small dependency does not make the legacy sizing model the active UI path.
+
+---
+
+## 5. Efficient inspection
+
+Do not read large generated files whole. `npm run summary` reports which files
+are currently expensive to open.
+
+| Need | Use |
+| --- | --- |
+| One crypto history series | `jq` or a Node expression against `public/data/crypto-history.json` |
+| One equity quote | `jq '.quotes["SYMBOL"]' public/data/market-data.json` |
+| One crypto market row | `jq '.rows[] | select(.ticker=="ETH")' public/data/crypto-market.json` |
+| One frozen crypto scenario | `jq '.rows[] | select(.ticker=="ETH")' public/data/crypto-scenarios.json` |
+| One risk row | `jq '.rows[] | select(.ticker=="NOCK")' public/data/risk-rating.json` |
+| Portfolio clusters | `jq -r '.clusters[] | "\(.id) \(.label) \(.members|join(","))"' public/data/portfolio.json` |
+| Dashboard logic or copy | `rg -n "exact phrase|functionName" public/dashboards/<name>.html` |
+| Generated dashboard blocks | `rg -n "(CRYPTO-MARKET|RISK-MEASURED|PORTFOLIO-DATA)-(START|END)" public/dashboards` |
+
+Read `src/` files whole when relevant; they are small. Read research notes when
+the task concerns what the repository claims. Do not read them merely to learn
+how a function works.
+
+---
+
+## 6. Commands
+
+Core checks:
 
 ```bash
-npm run summary                                    # start here, always
-jq '.rows[] | select(.ticker=="NOCK")' public/data/risk-rating.json
-jq -r '.clusters[] | "\(.id) \(.label) \(.members|join(","))"' public/data/portfolio.json
-grep -n "formula 1: the risk rating" public/dashboards/crypto.html
+npm install                 # only when dependencies are absent or changed
+npm run summary             # current repository and data state
+npm run verify              # planning, benchmark, selection, execution, legacy allocation and quant invariants
+npm run lint                # oxlint
+npm run build               # tsc -b && vite build
+npm run dev                 # local server
 ```
 
----
-
-## 3. Commands
+Generated-data commands:
 
 ```bash
-npm install
-npm run summary            # repo state in ~50 lines — cheap, run it first
-npm run verify             # allocation + quantitative invariants. BLOCKS THE DEPLOY.
-npm run lint               # oxlint
-npm run build              # tsc -b && vite build
-npm run dev                # local server
-```
-
-Build-time data scripts. Their output is committed, so **you do not need to
-run them to review or to make most changes**:
-
-```bash
-npm run fetch-market-data  # Yahoo + CoinGecko + ECB, rewrites market-data.json
-npm run fetch-crypto-market # One CoinGecko market call for all 40 pinned assets.
+npm run fetch-market-data   # Yahoo + CoinGecko + ECB equity/FX snapshot
+npm run fetch-crypto-market # one CoinGecko call for the pinned crypto universe
+npm run fetch-risk-rating   # slow network refresh of risk data and history
+npm run rebuild-risk-rating # recompute R from committed closes; no network
+npm run build-portfolio     # recompute portfolio statistics; no market fetch
 npm run freeze-crypto-scenarios -- --as-of YYYY-MM-DD
-                           # One-time migration only: fixes terminal USD targets.
-                           # Refuses to overwrite; --force means thesis revision.
-npm run fetch-risk-rating  # CoinGecko, ~10 minutes (keyless rate limits).
-                           # Rewrites risk-rating.json and crypto-history.json,
-                           # and patches a generated block into crypto.html.
-npm run rebuild-risk-rating # Recomputes R from committed closes, no network.
-npm run build-portfolio    # seconds. Reads the history, writes portfolio.json,
-                           # patches a generated block into portfolio.html.
+                            # thesis migration; refuses overwrite unless --force
 ```
 
-`npm run verify && npm run lint && npm run build` must be green before every
-commit. If a change breaks an invariant, change the invariant too and say why
-in the commit message.
+Generated output is committed. Do not run network refreshes as routine cleanup:
+they can create large, unrelated market-data diffs.
 
 ---
 
-## 4. Where things are
+## 7. Generated and protected content
 
-```
-src/
-  data/positions.ts          the book. TRANSCRIPTION, NOT RESEARCH — see §5.
-  data/market-data.ts        merges the live snapshot at read time
-  sections/exposure/         factor concentration, cross-theme map
-  sections/allocator/        position sizing. allocation.ts is load-bearing.
-  types.ts                   the status taxonomy (confirmed/hypothesis/watchlist/stale)
-scripts/
-  verify-allocation.ts       the invariant suite. Read this to learn the rules.
-  fetch-market-data.ts       pinned ticker map, FX, returns, drawdowns
-  crypto-config.ts           the single pinned CoinGecko-id map
-  fetch-crypto-market.ts     current crypto price, cap, FDV, float and volume
-  freeze-crypto-scenarios.ts one-time conversion to fixed terminal USD targets
-  fetch-risk-rating.ts       realised vol + drawdown from daily closes
-  build-portfolio.ts         active statistics, correlation, clustering
-  summary.ts                 the cheap status report
-public/dashboards/           eight self-contained pages, each with its own <style>
-public/data/                 generated artefacts — do not hand-edit
-research/                    the written record. Prose, not data.
-PROGRESS.md                  a log in reverse date order. History, not instructions.
-```
+Never hand-edit `public/data/*.json` or content between generated markers.
+Ownership is:
 
-Generated blocks inside HTML are marked, for example
-`/* RISK-MEASURED-START ... */`. **Never hand-edit between those markers** —
-rerun the script that owns them.
+- `CRYPTO-MARKET-START/END` → `scripts/fetch-crypto-market.ts`
+- `RISK-MEASURED-START/END` → `scripts/fetch-risk-rating.ts`
+- `PORTFOLIO-DATA-START/END` → `scripts/build-portfolio.ts`
+
+Rerun the owning script when a generated block must change.
+
+Do not casually change the decision engines, thresholds or verification suites.
+When a requested product change requires one, update the relevant invariant in
+the same commit and explain the policy change in the commit message.
+
+Keep the prose direct. State what is known, what is assumed and what is absent.
+Avoid filler, puffery and conclusions stronger than the sources.
 
 ---
 
-## 5. House rules, and they are not style preferences
+## 8. Known and deliberate
 
-**`positions.ts` is transcription, not research.** Every figure in it was copied
-out of a source and nothing was re-derived, re-estimated or refreshed. Where a
-source does not state a number, the field is absent — never guessed. Live values
-are merged at read time and never written back. If you find yourself wanting to
-fill a gap in that file, you are about to break the rule the whole dataset rests
-on.
-
-**Never invent market data.** No plausible-looking figure, ever. Missing is a
-valid state and every table in this repo already renders it. "Unknown" beats a
-number that looks right.
-
-**Every figure must be recomputable by a reader.** The dashboards compute their
-own rankings in the page from published inputs rather than shipping a
-precomputed score, on purpose: a reader who disagrees with a probability can
-recompute the ranking. Do not replace a shown calculation with a stored result.
-
-**Do not tune a threshold to reach a desired outcome.** If a correction changes
-a conclusion, that is the finding. Report it.
-
-**Say what is not known.** Sourcing caveats, unverified claims and absent data
-are stated on the page, not filed in a footnote. This repository is more useful
-for being honest about its limits than it would be for looking finished.
-
----
-
-## 6. Do not touch without being asked
-
-- **`src/sections/allocator/allocation.ts`.** It remains the load-bearing
-  equities sizing engine and `verify` exhaustively checks it. Crypto
-  no longer routes to this allocator; do not mix the pilot back into it.
-- **`public/data/*.json`** by hand. They are generated; rerun the script.
-- **`PROGRESS.md` history entries.** It is a log. Add at the top, do not rewrite
-  what an older entry said was true at the time.
-- **The prose voice.** Direct, short sentences, no filler, states what it does
-  not know. Do not smooth it into consultant English. The owner's full style
-  agreement lives outside this repo, but the rule that matters here is: no
-  puffery, no rule-of-three, no "it's not just X, it's Y", no summary paragraph
-  that restates what was just said.
-
----
-
-## 7. Known and deliberate
-
-Things that look like bugs and are not. Do not "fix" these without asking.
-
-- **~19 KB of CSS is duplicated across eight dashboards.** Extracting it changes
-  every page at once, which is a bad thing to do in the same pass as content
-  work. Recorded in `PROGRESS.md` under "Next" as a real debt, not an oversight.
-- **The embedded dashboards are static snapshots.** They do not fetch data in a
-  reader's browser. Generated inputs are refreshed before deployment. The Crypto
-  Pilot blocks indicative orders when its committed market snapshot exceeds 48
-  hours; its scenario targets remain frozen until an explicit thesis revision.
-- **Poker EV and `f*` are retired.** They were removed after quantitative review:
-  the first was an uncalibrated downside penalty presented as expected value,
-  and the second was not Kelly. The Assets tab shows scenario-implied EV versus
-  BTC and keeps R as a separate warning. Do not restore either retired formula.
-- **Section header counts in `positions.ts` state two numbers** ("14 tagged
-  'biology', 13 transcribed here") because a ticker can carry several section
-  tags while being transcribed once. `verify` checks both.
-- **`grep -i citrini` returns hits in `PROGRESS.md`.** Historical log entries
-  for a section removed on 11 Aug 2026. Deliberate.
-
----
-
-## 8. Commits
-
-One logical change per commit. The message explains *why*, not what — the diff
-already says what. Existing messages are prose, several paragraphs, and name
-what was caught before shipping and what was deliberately left undone. Match
-that.
-
-Verify before committing:
-
-```bash
-npm run verify && npm run lint && npm run build
-```
-
-Pushing to `main` deploys to GitHub Pages. **Owner instruction, 21 Aug 2026:**
-work directly on `main`. After each logical change, run the full verification,
-commit it and push `main` immediately. Do not create or leave feature branches
-unless the owner explicitly changes this instruction. If publication is
-uncertain, stop and ask rather than creating a branch.
-
----
-
-## 9. Efficient session shape
-
-1. `npm run summary` — the state, cheap.
-2. `grep -n` to find the block you need. Do not open a 173 KB page to read one
-   function.
-3. Read the specific file or line range. `src/` files are small and worth
-   reading whole; `public/dashboards/` files are not.
-4. Change, then `npm run verify && npm run lint && npm run build`.
-5. Commit with the reasoning in the message.
-
-The research notes in `research/` are prose and are worth reading when the task
-is about *what the repository claims*. They are not worth reading when the task
-is about *how the code works*.
+- The stylesheet is duplicated across the eight embedded dashboards. Extracting
+  it is separate design-system work, not incidental cleanup.
+- Embedded dashboards are static snapshots. They do not fetch in the reader's
+  browser. The Crypto Pilot blocks indicative orders when its committed market
+  snapshot is older than 48 hours.
+- Section counts in `positions.ts` can differ from transcribed-row counts because
+  one ticker may carry several section tags. Verification checks both.
+- Historical `Citrini` references remain in `PROGRESS.md` after that section's
+  removal. They are history, not live product content.

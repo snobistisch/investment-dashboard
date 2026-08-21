@@ -1,16 +1,15 @@
 # Crypto research index — the themes, and what is wired versus written
 
-**Date:** 13 August 2026, updated 14 August 2026. This document exists because
-the crypto research grew into ten separate files before it had an organising
+**Date:** 13 August 2026, updated 15 August 2026. This document exists because
+the crypto research grew into seven separate files before it had an organising
 structure. It does not add new findings — it maps what already exists onto the
 themes the research actually settled on, states which theme has a live ranking
 on the Assets tab and which is a research note without one yet, and says where
 each file sits.
 
 Counting rule, so the number is checkable: every `research/crypto*` file except
-this index. That was ten on 13 August. The 14 August update adds an eleventh,
-[crypto-genius-stablecoins.md](crypto-genius-stablecoins.md), under §3 — the
-first note in the set that reads a statute rather than a market.
+this index. There are seven after the dedicated venture-capital project was
+removed from this repository on 15 August.
 
 **How the themes were derived.** Not chosen in advance. The Assets tab
 (`public/dashboards/crypto.html`) already tags each of its 40 ranked assets
@@ -34,11 +33,6 @@ Two of those seven are now renamed from their original labels — `perp` was
 research actually uses elsewhere and what was asked for directly: **privacy
 (ZK)** and **decentralised exchanges**. The renaming is cosmetic; the
 underlying 40-asset ranking and its expected-value model are unchanged.
-
-An eighth axis — **venture capital research** — is not an asset theme at all.
-It answers a different question (who funds these themes, not which asset
-within a theme to hold) and now has its own tab rather than a filter inside
-Assets.
 
 ---
 
@@ -74,12 +68,6 @@ as a category concentrates almost entirely; Zcash, the other obvious privacy
 name, sits in Settlement instead because it is privacy-as-money rather than
 privacy-as-compute-infrastructure — a distinction worth keeping rather than
 flattening into one "privacy" bucket.
-
-**Where it connects to VC research.** cyber•Fund's entire thesis — the
-"cybernetic economy" of ZK, FHE and verifiable compute — runs through this
-theme, and its portfolio includes **=nil; Foundation**, one of the four names
-this research flags as genuinely private rather than merely under-covered.
-See [crypto-vc-research.md](crypto-vc-research.md) §5.
 
 **Status:** live, ranked, on the Assets tab. **Primary source:**
 [crypto-tracker-research.md](crypto-tracker-research.md). **Deeper
@@ -183,42 +171,13 @@ line is larger than every DeFi name except Aave.
 above: 40 tokens identified as Base-native or Base-heavy in
 [crypto-universe-map.md](crypto-universe-map.md) §1, spanning DeFi (Morpho,
 Aerodrome), exchanges (Aerodrome again, in its AMM role), compute-adjacent AI
-agents (Virtuals, Clanker) and social (Zora, Farcaster). The reason it
-matters as its own line of research rather than folding into the other six:
-Coinbase Ventures is the single most frequent co-investor for **both** Haun
-Ventures and Paradigm — 46% and 35% of their respective rounds (§4 of the VC
-research) — which means a meaningful share of what those funds hold sits
-inside this same distribution channel.
+agents (Virtuals, Clanker) and social (Zora, Farcaster). It remains separate
+because it cuts across the asset categories rather than representing one
+protocol function.
 
 **Status:** research note only, no ranking. This is the explicitly
 outstanding second half of the Hooks & MEV research and the next logical
 ranking pass. **Primary source:** [crypto-universe-map.md](crypto-universe-map.md) §1.
-
----
-
-## 8. Venture Capital Research — a different axis
-
-**What it is.** Not which asset to hold — who funds the people building it,
-and whether that fund's own behaviour (lead rate, cycle timing, realised
-exits) is a better signal than its reputation. Built because market-data
-sources for this (DefiLlama's raises endpoint, Crunchbase, RootData) are
-paywalled or key-gated; the working route was scraping
-crypto-fundraising.info directly — 5,868 of 6,407 rounds recovered, 7,655
-distinct investors indexed.
-
-**Two funds profiled in full: Haun Ventures and Paradigm.** The finding that
-matters most: they invested in the same round seven times (Conduit, Euler
-Finance, Exponential, Farcaster, Fireblocks, Liquid, TaxBit), despite sitting
-at opposite ends of a third-party tier list — one unranked, one top-tier.
-Whatever separates them is not deal access.
-
-**Status:** now a live tab (`crypto-vc.html`), not a filter inside Assets —
-correctly, since VC firms are not investable assets to rank by expected
-value. **Primary sources:** [crypto-vc-research.md](crypto-vc-research.md)
-(qualitative fund landscape), [crypto-vc-haun-ventures.md](crypto-vc-haun-ventures.md)
-and [crypto-vc-paradigm.md](crypto-vc-paradigm.md) (the two full fund
-profiles), [crypto-vc-database-plan.md](crypto-vc-database-plan.md) (source
-audit and method).
 
 ---
 

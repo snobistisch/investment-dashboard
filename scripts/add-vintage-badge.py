@@ -1,6 +1,6 @@
 """Add a vintage badge to every embedded dashboard.
 
-One badge, one implementation, eight files. The pages are static snapshots and
+One badge, one implementation, seven files. The pages are static snapshots and
 none of them said so; the badge is the cheap fix the audit asked for before the
 expensive one (generating the embedded data at build time).
 """
@@ -13,7 +13,6 @@ BASE = '/Users/matthiasalma/Downloads/nock_agent_export/investment-dashboard/pub
 # state itself. Every label echoes what the page already claims in its kicker.
 VINTAGES = {
     'agentic.html': ('2026-07-09', 'source note dated 9 July 2026', False),
-    'crypto-vc.html': ('2026-08-13', 'database built 13 August 2026', False),
     'crypto.html': ('2026-08-12', 'market data 12 August 2026', False),
     'defense.html': ('2026-08-11', 'market data 11 August 2026', False),
     'digital-biology.html': ('2026-07-07', 'Q1 2026 reporting cycle, transcribed early July 2026', True),

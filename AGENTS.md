@@ -15,9 +15,9 @@ opening a single data file.
 
 A personal research dashboard for public-market and crypto research, deployed
 to GitHub Pages on every push to `main`. Vite + React + TypeScript + Tailwind
-for the shell, with nine self-contained HTML dashboards embedded in iframes.
+for the shell, with eight self-contained HTML dashboards embedded in iframes.
 
-Two computed React tabs (the equities-only Exposure and Allocator) and nine static
+Two computed React tabs (the equities-only Exposure and Allocator) and eight static
 research pages. Crypto sizing lives in the embedded Pilot and starts from zero
 holdings.
 The owner uses it for real allocation decisions **and** as a learning project,
@@ -109,7 +109,7 @@ scripts/
   fetch-risk-rating.ts       realised vol + drawdown from daily closes
   build-portfolio.ts         active statistics, correlation, clustering
   summary.ts                 the cheap status report
-public/dashboards/           nine self-contained pages, each with its own <style>
+public/dashboards/           eight self-contained pages, each with its own <style>
 public/data/                 generated artefacts — do not hand-edit
 research/                    the written record. Prose, not data.
 PROGRESS.md                  a log in reverse date order. History, not instructions.
@@ -168,7 +168,7 @@ for being honest about its limits than it would be for looking finished.
 
 Things that look like bugs and are not. Do not "fix" these without asking.
 
-- **~19 KB of CSS is duplicated across nine dashboards.** Extracting it changes
+- **~19 KB of CSS is duplicated across eight dashboards.** Extracting it changes
   every page at once, which is a bad thing to do in the same pass as content
   work. Recorded in `PROGRESS.md` under "Next" as a real debt, not an oversight.
 - **The embedded dashboards are static snapshots.** They do not fetch data in a

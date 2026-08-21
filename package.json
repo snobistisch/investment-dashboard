@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "verify": "jiti scripts/verify-allocation.ts && jiti scripts/verify-quant.ts && jiti scripts/verify-vc-survival.ts",
+    "verify": "jiti scripts/verify-allocation.ts && jiti scripts/verify-quant.ts",
     "fetch-market-data": "jiti scripts/fetch-market-data.ts",
     "lint": "oxlint",
     "preview": "vite preview",
@@ -15,7 +15,6 @@
     "fetch-risk-rating": "jiti scripts/fetch-risk-rating.ts",
     "rebuild-risk-rating": "jiti scripts/fetch-risk-rating.ts --from-cache",
     "build-portfolio": "jiti scripts/build-portfolio.ts",
-    "build-vc-survival": "jiti scripts/build-vc-survival.ts",
     "summary": "jiti scripts/summary.ts"
   },
   "dependencies": {

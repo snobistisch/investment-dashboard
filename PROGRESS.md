@@ -1,7 +1,7 @@
 # Progress
 
 Personal, open-sourceable dashboard for research trackers. Two equities-only
-React sections (Exposure, Allocator) plus nine embedded standalone dashboards.
+React sections (Exposure, Allocator) plus eight embedded standalone dashboards.
 The entries below are a log in reverse date order: they describe
 what was true when they were written, not what is true now.
 
@@ -10,6 +10,11 @@ https://snobistisch.github.io/investment-dashboard/ (Pages via Actions,
 deploys on every push to main).
 
 ## Done
+
+- **Venture-capital research moved out of this project (15 Aug 2026).** The VC
+  tab, embedded page, fund profiles, database plan, survival dataset and their
+  build and verification scripts were removed together. Venture-capital work
+  now belongs in its own repository; the older entries below remain as history.
 
 - **Crypto Pilot made fail-closed for a zero-holdings start (15 Aug 2026).**
   The fixed 10% ETH/ZEC/LIT/NOCK mandate has been removed from both navigation

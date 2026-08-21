@@ -20,6 +20,30 @@ calculation lives in
 Current prices never live in the research models. They come from the committed
 market snapshot and reprice the same terminal assumptions at read time.
 
+## Two-stage selection
+
+The interface separates mechanical universe eligibility from valuation:
+
+1. Stage one rescans every researched equity long. The local screen can select
+   a theme and set minimum current USD market cap, maximum one-year realised
+   volatility, maximum one-year drawdown magnitude, minimum three-month USD
+   return and maximum quote age. Direct tradability through the declared Dutch
+   retail route remains mandatory. Missing market fields fail closed.
+2. Stage two applies the return hurdle only to screen survivors with a complete,
+   versioned opportunity model. A stage-one survivor without a model is labelled
+   `PASSED SCREEN · MODEL REQUIRED`; it cannot enter `Qualified now`.
+
+The default stage-one numeric bounds are deliberately non-selective: $0 minimum
+market cap, 200% maximum volatility, 100% maximum drawdown and -100% minimum
+three-month return. At the 21 August snapshot, direct tradability and complete
+market fields do the default exclusion. Tightening a local bound changes the
+survivor list and can remove a model from `Qualified now`. These settings are
+browser-local what-if policy and do not rewrite research or history.
+
+Stage one does not estimate expected value. Market cap, realised volatility,
+drawdown and recent return are kept as separate observed fields; they are never
+blended into a composite score.
+
 ## Default policy
 
 | Input | Default | Meaning |

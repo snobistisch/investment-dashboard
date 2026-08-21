@@ -11,6 +11,21 @@ deploys on every push to main).
 
 ## Done
 
+- **Opportunity policy now rescans the complete equity-long universe (21 Aug
+  2026).** The previous what-if controls repriced only the five authored models,
+  although the interface looked like a full stock scan. Opportunities now runs
+  two explicit stages. Theme, market cap, volatility, drawdown, three-month
+  return and quote freshness rerun over all 61 longs. Only survivors with a
+  complete scenario model can then clear the valuation hurdle.
+
+  Every control states whether it affects the universe, qualification, evidence
+  gate or only the watch label. Unmodelled survivors are listed as research
+  required rather than promoted with a guessed value. The 61-row audit trail
+  shows the observed fields and first blocker. In browser QA, lowering maximum
+  volatility to 50% changed the default NU/SYM result to NU alone; raising only
+  the benchmark to 25% left the universe intact and reduced qualified models to
+  zero. Desktop, 390px mobile and the expanded invariants passed.
+
 - **A price-aware equity opportunity engine now precedes portfolio planning (21
   Aug 2026).** Five public equities have versioned bear, base and bull terminal
   assumptions, direct primary sources, thesis dates, falsifiers and review

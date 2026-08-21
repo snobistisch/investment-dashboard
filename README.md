@@ -20,13 +20,15 @@ Sections:
   whether each market-cap figure came from the dated snapshot or the
   transcription in [src/data/positions.ts](src/data/positions.ts). Defence is a
   separate research-only page and is not included.
-- Equities **Opportunities** — reprices five versioned bear/base/bull valuation
-  models against the current market snapshot. It ranks only complete, fresh and
-  directly tradable models by scenario-implied annualised edge above a declared
-  default 10% hurdle. It also shows maximum entry price and separate probability,
-  terminal-value, cost, horizon and price stresses. Unmodelled research names
-  fail closed instead of receiving a low score. The formulas, source links and
-  authored 2029 assumptions are recorded in
+- Equities **Opportunities** — first rescans all 61 researched equity longs with
+  user-controlled theme, market-cap, volatility, drawdown, three-month-return
+  and quote-freshness filters. It then reprices the five versioned bear/base/bull
+  models that have enough evidence to calculate scenario-implied annualised
+  edge above the default 10% hurdle. Changing the universe screen can remove a
+  model from `Qualified now`; passing without a model creates a visible research
+  candidate, never an invented valuation. Maximum entry price and separate
+  probability, terminal-value, cost, horizon and price stresses remain visible.
+  The formulas, source links and authored 2029 assumptions are recorded in
   [research/equity-opportunity-methodology.md](research/equity-opportunity-methodology.md).
 - Equities **Plan** — starts with no product and no positions. Personal horizon,
   liquidity and loss gates precede an exact broad fund/ETF record. Individual

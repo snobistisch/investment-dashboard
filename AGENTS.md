@@ -93,6 +93,7 @@ These are not style preferences.
 | `src/sections/exposure/` | Factor concentration and cross-theme exposure. |
 | `src/sections/opportunities/model.ts` | Canonical opportunity schema and declared default hurdle/cost/freshness policy. |
 | `src/sections/opportunities/opportunity.ts` | Price-aware valuation, max-entry and separate robustness calculations. |
+| `src/sections/opportunities/universe-screen.ts` | Whole-universe mechanical eligibility filters. Passing is not valuation. |
 | `src/sections/allocator/planning.ts` | Current Plan policy and baseline sizing. |
 | `src/sections/allocator/benchmark.ts` | Broad-market benchmark inputs and validation. |
 | `src/sections/allocator/active-selection.ts` | Evidence gates for active candidates. |

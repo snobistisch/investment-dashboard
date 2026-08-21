@@ -22,6 +22,7 @@ import type { MarketSnapshot } from '../src/data/market-data'
 import { isDirectlyTradable } from '../src/sections/allocator/allocation'
 import { DEFAULT_OPPORTUNITY_POLICY } from '../src/sections/opportunities/model'
 import { assessOpportunity } from '../src/sections/opportunities/opportunity'
+import { DEFAULT_UNIVERSE_SCREEN_POLICY, screenUniversePosition } from '../src/sections/opportunities/universe-screen'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 const at = (p: string) => resolve(HERE, '..', p)
@@ -83,8 +84,20 @@ if (snap) {
   const states = new Map<string, number>()
   for (const assessment of assessments) states.set(assessment.state, (states.get(assessment.state) ?? 0) + 1)
   const equityRows = positionRows.filter((row) => !row.sections.includes('crypto'))
+  const equityLongs = equityRows.filter((row) => row.stance === 'long')
+  const screenResults = equityLongs.map((position) => screenUniversePosition(
+    position,
+    (snap as unknown as MarketSnapshot).quotes[position.ticker],
+    isDirectlyTradable(position),
+    DEFAULT_UNIVERSE_SCREEN_POLICY,
+    DEFAULT_OPPORTUNITY_POLICY.maxQuoteBusinessSessions,
+    today,
+  ))
+  const screenByTicker = new Map(screenResults.map((row) => [row.ticker, row]))
+  const defaultQualified = assessments.filter((row) => row.positiveEdge && screenByTicker.get(row.model.ticker)?.passes)
   line('modelled / transcribed equities', `${assessments.length} / ${equityRows.length}`)
-  line('ready / positive hurdle edge', `${assessments.filter((row) => row.decisionReady).length} / ${assessments.filter((row) => row.positiveEdge).length}`)
+  line('universe scanned / pass stage 1', `${screenResults.length} / ${screenResults.filter((row) => row.passes).length}`)
+  line('ready models / qualified', `${assessments.filter((row) => row.decisionReady).length} / ${defaultQualified.length}`)
   line('states', [...states].map(([state, count]) => `${state} ${count}`).join(' · '))
   line('default annual hurdle', `${DEFAULT_OPPORTUNITY_POLICY.benchmarkAnnualReturnPct}% benchmark + ${DEFAULT_OPPORTUNITY_POLICY.requiredActivePremiumPct}pp premium`)
   line('model review vintage', [...new Set(equityOpportunityModels.map((model) => model.reviewedAt))].join(', '))

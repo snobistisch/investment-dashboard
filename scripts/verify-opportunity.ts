@@ -3,6 +3,7 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { MarketQuote } from '../src/data/market-data'
 import { equityOpportunityModels } from '../src/data/equity-opportunities'
+import type { Position } from '../src/data/positions'
 import {
   DEFAULT_OPPORTUNITY_POLICY,
   SCENARIO_KEYS,
@@ -16,6 +17,11 @@ import {
   validateOpportunityModel,
   validateOpportunityPolicy,
 } from '../src/sections/opportunities/opportunity'
+import {
+  DEFAULT_UNIVERSE_SCREEN_POLICY,
+  screenUniversePosition,
+  validateUniverseScreenPolicy,
+} from '../src/sections/opportunities/universe-screen'
 
 const TOL = 1e-9
 const here = dirname(fileURLToPath(import.meta.url))
@@ -65,12 +71,28 @@ const quote: MarketQuote = {
   priceLocal: 80,
   priceUsd: 80,
   asOf: '2026-08-21',
+  marketCapUsd: 12,
+  returns: { m3: 8 },
+  stats: { windowDays: 252, realisedVolPct: 45, maxDrawdownPct: -35 },
+}
+
+const position: Position = {
+  ticker: 'TEST',
+  exchange: 'NASDAQ',
+  name: 'Test Company',
+  sections: ['robotics'],
+  factors: ['industrial-cycle'],
+  marketCapUsd: 12,
+  asOf: '2026-08-21',
+  conviction: 2,
+  stance: 'long',
 }
 
 const policy: OpportunityPolicy = { ...DEFAULT_OPPORTUNITY_POLICY, benchmarkAnnualReturnPct: 7, requiredActivePremiumPct: 3, buyCostPct: 0.5, sellCostPct: 0.5 }
 
 assert(validateOpportunityModel(model).length === 0, 'complete opportunity model must validate')
 assert(validateOpportunityPolicy(policy).length === 0, 'complete opportunity policy must validate')
+assert(validateUniverseScreenPolicy(DEFAULT_UNIVERSE_SCREEN_POLICY).length === 0, 'default universe screen policy must validate')
 for (const authored of equityOpportunityModels) {
   const errors = validateOpportunityModel(authored)
   assert(errors.length === 0, `${authored.ticker}: authored opportunity model invalid: ${errors.join('; ')}`)
@@ -174,6 +196,18 @@ for (const key of ['bear', 'base', 'bull'] as const) {
   assert(terminalValue(model, key) === terminalValue(JSON.parse(before) as EquityOpportunityModel, key), `${key} terminal value changed during repricing`)
 }
 
+const defaultScreen = screenUniversePosition(position, quote, true, DEFAULT_UNIVERSE_SCREEN_POLICY, 1, '2026-08-21')
+assert(defaultScreen.passes, `complete current universe row must pass default screen: ${defaultScreen.blockers.map((blocker) => blocker.message).join('; ')}`)
+assert(!screenUniversePosition(position, quote, true, { ...DEFAULT_UNIVERSE_SCREEN_POLICY, theme: 'biology' }, 1, '2026-08-21').passes, 'theme filter must scan out a non-member')
+assert(!screenUniversePosition(position, quote, false, DEFAULT_UNIVERSE_SCREEN_POLICY, 1, '2026-08-21').passes, 'restricted listing must fail the universe screen')
+assert(!screenUniversePosition(position, undefined, true, DEFAULT_UNIVERSE_SCREEN_POLICY, 1, '2026-08-21').passes, 'missing market row must fail closed')
+assert(!screenUniversePosition(position, { ...quote, asOf: '2026-08-18' }, true, DEFAULT_UNIVERSE_SCREEN_POLICY, 1, '2026-08-21').passes, 'stale quote must fail the universe screen')
+assert(!screenUniversePosition(position, quote, true, { ...DEFAULT_UNIVERSE_SCREEN_POLICY, minMarketCapUsdBn: 13 }, 1, '2026-08-21').passes, 'market-cap policy must change screen membership')
+assert(!screenUniversePosition(position, quote, true, { ...DEFAULT_UNIVERSE_SCREEN_POLICY, maxRealisedVolPct: 40 }, 1, '2026-08-21').passes, 'volatility policy must change screen membership')
+assert(!screenUniversePosition(position, quote, true, { ...DEFAULT_UNIVERSE_SCREEN_POLICY, maxDrawdownMagnitudePct: 30 }, 1, '2026-08-21').passes, 'drawdown policy must change screen membership')
+assert(!screenUniversePosition(position, quote, true, { ...DEFAULT_UNIVERSE_SCREEN_POLICY, minThreeMonthReturnPct: 9 }, 1, '2026-08-21').passes, 'three-month return policy must change screen membership')
+assert(validateUniverseScreenPolicy({ ...DEFAULT_UNIVERSE_SCREEN_POLICY, maxDrawdownMagnitudePct: 101 }).length > 0, 'invalid universe threshold must fail validation')
+
 const history = JSON.parse(readFileSync(resolve(here, '../public/data/equity-opportunity-history.json'), 'utf8')) as {
   schemaVersion: number
   policy: OpportunityPolicy
@@ -193,4 +227,4 @@ for (const authored of equityOpportunityModels) {
   for (const row of rows) close(row.expectedTerminalValue, expected, `${authored.ticker}: history terminal value drifted from frozen model`)
 }
 
-console.log('opportunity math, max entry, evidence gates, stress and frozen-target invariants hold')
+console.log('opportunity universe screen, math, max entry, evidence gates, stress and frozen-target invariants hold')

@@ -1,7 +1,7 @@
 # Progress
 
-Personal, open-sourceable dashboard for research trackers. Two equities-only
-React sections (Exposure, Allocator) plus eight embedded standalone dashboards.
+Personal, open-sourceable dashboard for research trackers. Three equities-only
+React sections (Opportunities, Exposure, Allocator) plus eight embedded standalone dashboards.
 The entries below are a log in reverse date order: they describe
 what was true when they were written, not what is true now.
 
@@ -10,6 +10,26 @@ https://snobistisch.github.io/investment-dashboard/ (Pages via Actions,
 deploys on every push to main).
 
 ## Done
+
+- **A price-aware equity opportunity engine now precedes portfolio planning (21
+  Aug 2026).** Five public equities have versioned bear, base and bull terminal
+  assumptions, direct primary sources, thesis dates, falsifiers and review
+  triggers. Current price now changes the implied annual return and the maximum
+  entry price; it does not move the authored terminal values. The default case
+  includes separate entry and exit costs and a declared 10% annual hurdle.
+
+  Two of the five models clear that hurdle under the stored assumptions. This
+  is a research queue, not a recommendation: the probabilities and terminal
+  assumptions are subjective and 56 of 61 researched equity longs remain
+  explicitly unmodelled. The page exposes bear outcomes, robustness stresses,
+  a calculation trace, source links, a four-name comparison and every coverage
+  gap. A shortlist reaches Plan as review context only; stocks, weights and
+  orders remain off. History begins on 21 Aug without invented backfill.
+
+  The new invariant suite checks price monotonicity, cost direction, the
+  closed-form entry boundary, stale and missing data, currency mismatches,
+  source chronology and frozen targets. Desktop and 390px browser passes also
+  covered what-if repricing, comparison, coverage and the Plan handoff.
 
 - **Repository workflow reduced to one branch (21 Aug 2026).** Every local and
   remote feature branch was checked against `main`; all carried zero unique

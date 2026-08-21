@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "builtAt": "2026-08-21T19:58:13.473Z",
+  "policy": {
+    "benchmarkAnnualReturnPct": 7,
+    "requiredActivePremiumPct": 3,
+    "buyCostPct": 0.25,
+    "sellCostPct": 0.25,
+    "nearHurdlePullbackPct": 10,
+    "maxQuoteBusinessSessions": 1,
+    "maxFundamentalAgeDays": 120
+  },
+  "snapshots": [
+    {
+      "asOf": "2026-08-21",
+      "ticker": "ALAB",
+      "modelVersion": "ALAB-2026-08-21-v1",
+      "currency": "USD",
+      "price": 284.57,
+      "expectedTerminalValue": 356.25,
+      "annualisedReturnPct": 7.5964875253098585,
+      "hurdleEdgePct": -2.4035124746901415,
+      "maxEntryPrice": 266.3209556874155,
+      "state": "WATCH — CLOSE TO HURDLE"
+    },
+    {
+      "asOf": "2026-08-21",
+      "ticker": "IONQ",
+      "modelVersion": "IONQ-2026-08-21-v1",
+      "currency": "USD",
+      "price": 44.895,
+      "expectedTerminalValue": 27.200000000000003,
+      "annualisedReturnPct": -15.524037174490124,
+      "hurdleEdgePct": -25.524037174490125,
+      "maxEntryPrice": 20.333838581607587,
+      "state": "WATCH BELOW"
+    },
+    {
+      "asOf": "2026-08-21",
+      "ticker": "NU",
+      "modelVersion": "NU-2026-08-21-v1",
+      "currency": "USD",
+      "price": 14.555,
+      "expectedTerminalValue": 27.475,
+      "annualisedReturnPct": 23.381867135807877,
+      "hurdleEdgePct": 13.381867135807877,
+      "maxEntryPrice": 20.539419670208396,
+      "state": "ATTRACTIVE NOW"
+    },
+    {
+      "asOf": "2026-08-21",
+      "ticker": "SYM",
+      "modelVersion": "SYM-2026-08-21-v1",
+      "currency": "USD",
+      "price": 41.9,
+      "expectedTerminalValue": 73.32,
+      "annualisedReturnPct": 20.303700270334723,
+      "hurdleEdgePct": 10.303700270334723,
+      "maxEntryPrice": 54.81165605895102,
+      "state": "ATTRACTIVE NOW"
+    },
+    {
+      "asOf": "2026-08-21",
+      "ticker": "TEM",
+      "modelVersion": "TEM-2026-08-21-v1",
+      "currency": "USD",
+      "price": 72.665,
+      "expectedTerminalValue": 75.02631578947368,
+      "annualisedReturnPct": 0.9033585654363074,
+      "hurdleEdgePct": -9.096641434563693,
+      "maxEntryPrice": 56.08724244984832,
+      "state": "WATCH BELOW"
+    }
+  ]
+}

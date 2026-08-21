@@ -7,8 +7,9 @@ The dashboard opens on a chooser: **Equities** or **Crypto**. They are split
 because the hypotheses differ — equities here study named industrial
 bottlenecks, crypto studies float and fee capture against a bitcoin benchmark —
 and because averaging a settlement layer with a photonics small cap in one
-factor bucket answers neither question. Equities carries **Exposure** and a
-fail-closed **Plan**. Crypto carries **Assets** and a separate **Pilot**
+factor bucket answers neither question. Equities carries **Exposure**,
+**Opportunities** and a fail-closed **Plan**. Crypto carries **Assets** and a
+separate **Pilot**
 that starts from zero holdings and treats bitcoin as its benchmark. Routing is
 `#<class>/<tab>`, and old flat links (`#crypto`, `#defense`, …) still resolve.
 
@@ -19,6 +20,14 @@ Sections:
   whether each market-cap figure came from the dated snapshot or the
   transcription in [src/data/positions.ts](src/data/positions.ts). Defence is a
   separate research-only page and is not included.
+- Equities **Opportunities** — reprices five versioned bear/base/bull valuation
+  models against the current market snapshot. It ranks only complete, fresh and
+  directly tradable models by scenario-implied annualised edge above a declared
+  default 10% hurdle. It also shows maximum entry price and separate probability,
+  terminal-value, cost, horizon and price stresses. Unmodelled research names
+  fail closed instead of receiving a low score. The formulas, source links and
+  authored 2029 assumptions are recorded in
+  [research/equity-opportunity-methodology.md](research/equity-opportunity-methodology.md).
 - Equities **Plan** — starts with no product and no positions. Personal horizon,
   liquidity and loss gates precede an exact broad fund/ETF record. Individual
   stocks start at 0% and require a new dated thesis, falsifier, valuation,
@@ -82,6 +91,11 @@ Nothing here is investment advice.
 The dated readiness verdict, Monday route and remaining limits are recorded in
 [research/equity-decision-readiness.md](research/equity-decision-readiness.md).
 
+The Opportunities ranking and Plan answer different questions. Opportunities
+reprices stored research assumptions and produces a due-diligence queue. Plan
+starts from the investor, broad baseline, broker inputs and execution gates. An
+`ATTRACTIVE NOW` state does not bypass Plan or submit an order.
+
 ## Working on this with an AI agent
 
 [AGENTS.md](AGENTS.md) is the brief: what not to open, which rules are
@@ -107,6 +121,12 @@ returns to
 [.github/workflows/refresh-market-data.yml](.github/workflows/refresh-market-data.yml)
 commits on a weekday schedule. No API key is involved: Yahoo Finance for
 equities, CoinGecko's keyless tier for the tokens, the ECB for FX.
+
+The same refresh records one Opportunities repricing row per date, ticker and
+model version in
+[`public/data/equity-opportunity-history.json`](public/data/equity-opportunity-history.json).
+That history can show a rank change caused by price while preserving the model
+version that produced it. It does not revise terminal assumptions.
 
 `positions.ts` is never written to by any of this. It stays a transcription
 with per-section sourcing; live values are merged at read time and every row on

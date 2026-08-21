@@ -36,9 +36,9 @@ specific blocker.
 ## 2. What this repository is
 
 A personal decision-support dashboard for public-market and crypto research.
-The shell is Vite + React + TypeScript + Tailwind. It contains two computed
-React views, **Exposure** and **Plan**, plus eight self-contained research pages
-embedded as iframes.
+The shell is Vite + React + TypeScript + Tailwind. It contains three computed
+React views, **Exposure**, **Opportunities** and **Plan**, plus eight
+self-contained research pages embedded as iframes.
 
 The owner uses it for real allocation decisions and as a learning project. A
 wrong number can become a wrong decision. Hidden assumptions prevent learning.
@@ -47,6 +47,10 @@ The product boundary matters:
 
 - Research pages help discover and compare ideas. They are not evidence that an
   asset is ready to buy.
+- Opportunities reprices versioned, authored equity scenarios against the
+  current quote. It is a research-prioritisation layer, not an order signal.
+  Missing canonical models fail closed and never inherit conviction or analyst
+  targets as terminal values.
 - Plan starts from the owner's actual holdings and a broad-market baseline. An
   active candidate must pass the evidence and execution gates shown in the UI.
 - Crypto sizing stays in the separate Crypto Pilot and starts from zero
@@ -66,6 +70,9 @@ These are not style preferences.
 - Keep conclusions recomputable: publish inputs and formulas, not unexplained
   stored scores.
 - Never tune a threshold to force an outcome. A changed conclusion is a finding.
+- Equity opportunity probabilities and terminal assumptions change only in a
+  visible, versioned research revision. A market refresh changes the ranking,
+  not the authored thesis.
 - Put missing sources, stale data, unverified claims and model limits beside the
   decision they affect.
 - Do not bypass freshness, minimum-ticket, existing-holdings or evidence gates.
@@ -82,7 +89,10 @@ These are not style preferences.
 | --- | --- |
 | `src/data/positions.ts` | Source transcription. Never infer missing fields. |
 | `src/data/market-data.ts` | Merges the committed market snapshot at read time. |
+| `src/data/equity-opportunities.ts` | Versioned authored equity scenarios. Never refresh terminal assumptions with market prices. |
 | `src/sections/exposure/` | Factor concentration and cross-theme exposure. |
+| `src/sections/opportunities/model.ts` | Canonical opportunity schema and declared default hurdle/cost/freshness policy. |
+| `src/sections/opportunities/opportunity.ts` | Price-aware valuation, max-entry and separate robustness calculations. |
 | `src/sections/allocator/planning.ts` | Current Plan policy and baseline sizing. |
 | `src/sections/allocator/benchmark.ts` | Broad-market benchmark inputs and validation. |
 | `src/sections/allocator/active-selection.ts` | Evidence gates for active candidates. |
@@ -91,6 +101,7 @@ These are not style preferences.
 | `src/types.ts` | Shared taxonomy, including source status. |
 | `scripts/verify-*.ts` | Executable policy and quantitative invariants. Read the relevant suite before changing a rule. |
 | `scripts/fetch-*.ts` | Network-backed snapshot builders. Run only when current data is part of the task. |
+| `scripts/build-opportunity-history.ts` | Records price-driven opportunity changes by date, ticker and model version. It does not revise research. |
 | `scripts/build-portfolio.ts` | Builds portfolio statistics and patches its owned dashboard block. |
 | `public/dashboards/` | Eight static research pages, each with its own stylesheet. |
 | `public/data/` | Generated and committed artefacts. Never hand-edit. |
@@ -99,6 +110,10 @@ These are not style preferences.
 
 `isDirectlyTradable` is currently shared from the legacy allocation module. That
 small dependency does not make the legacy sizing model the active UI path.
+
+Read `research/equity-opportunity-methodology.md` before changing an opportunity
+formula, policy, model or status. An `edge` in `positions.ts` is thesis prose;
+it is never a substitute for a canonical opportunity model.
 
 ---
 
@@ -111,6 +126,7 @@ are currently expensive to open.
 | --- | --- |
 | One crypto history series | `jq` or a Node expression against `public/data/crypto-history.json` |
 | One equity quote | `jq '.quotes["SYMBOL"]' public/data/market-data.json` |
+| One authored equity model | `rg -n "ticker: 'SYMBOL'" src/data/equity-opportunities.ts` |
 | One crypto market row | `jq '.rows[] | select(.ticker=="ETH")' public/data/crypto-market.json` |
 | One frozen crypto scenario | `jq '.rows[] | select(.ticker=="ETH")' public/data/crypto-scenarios.json` |
 | One risk row | `jq '.rows[] | select(.ticker=="NOCK")' public/data/risk-rating.json` |
@@ -131,7 +147,7 @@ Core checks:
 ```bash
 npm install                 # only when dependencies are absent or changed
 npm run summary             # current repository and data state
-npm run verify              # planning, benchmark, selection, execution, legacy allocation and quant invariants
+npm run verify              # planning, opportunity, selection, execution, legacy allocation and quant invariants
 npm run lint                # oxlint
 npm run build               # tsc -b && vite build
 npm run dev                 # local server

@@ -14,6 +14,11 @@ import {
   MIN_EQUITY_HORIZON_YEARS,
   type PlanningInput,
 } from './planning'
+import {
+  clearOpportunityShortlist,
+  readOpportunityShortlist,
+  type OpportunityShortlistItem,
+} from '../opportunities/handoff'
 
 function numberOrNull(value: string) {
   if (value.trim() === '') return null
@@ -69,6 +74,7 @@ export function AllocatorPanel() {
   const [benchmark, setBenchmark] = useState<BenchmarkInput>(EMPTY_BENCHMARK_INPUT)
   const [candidates, setCandidates] = useState<ActiveCandidateInput[]>([])
   const [execution, setExecution] = useState<ExecutionInput>(EMPTY_EXECUTION_INPUT)
+  const [opportunityShortlist, setOpportunityShortlist] = useState<OpportunityShortlistItem[]>(readOpportunityShortlist)
   const market = useMarketSnapshot()
   const assessment = useMemo(() => assessPlanningInput(input), [input])
   const benchmarkAssessment = useMemo(
@@ -85,6 +91,21 @@ export function AllocatorPanel() {
       title="Investment plan"
       description="Start with the decision that comes before security selection: whether this money can be invested, for what goal and with what loss boundary. Inputs stay in this browser session and are not persisted. No allocation or order appears until every material gate passes."
     >
+      {opportunityShortlist.length > 0 && (
+        <div className="mb-4 border border-term-cyan bg-term-panel p-3">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.16em] text-term-cyan">Research shortlist received from Opportunities</p>
+              <p className="mt-2 text-xs leading-relaxed text-term-text">{opportunityShortlist.map((item) => item.ticker).join(' · ')}</p>
+              <p className="mt-2 max-w-3xl text-[11px] leading-relaxed text-term-dim">This is a review handoff only. Individual stocks remain off, the active sleeve remains at 0%, and no candidate, weight or order was created. Complete the personal and benchmark gates before deciding whether any name deserves a new evidence record.</p>
+            </div>
+            <div className="flex gap-2">
+              <a href="#equities/opportunities" className="border border-term-cyan px-3 py-2 text-[10px] uppercase tracking-wider text-term-cyan hover:bg-term-cyan hover:text-black">Review</a>
+              <button type="button" onClick={() => { clearOpportunityShortlist(); setOpportunityShortlist([]) }} className="border border-term-line px-3 py-2 text-[10px] uppercase tracking-wider text-term-dim hover:border-term-red hover:text-term-red">Clear</button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)]">
         <Panel title="1 · Personal decision frame">
           <div className="grid gap-4 sm:grid-cols-2">

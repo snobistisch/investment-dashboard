@@ -44,11 +44,13 @@ jobs:
       # ECB for FX. There is therefore no key that could reach the committed
       # JSON, the built bundle, or this log.
       - run: npm run fetch-market-data
+      - run: npm run build-opportunity-history
 
       - id: commit
         run: |
           set -euo pipefail
           FILE=public/data/market-data.json
+          HISTORY=public/data/equity-opportunity-history.json
 
           if git diff --quiet -- "$FILE"; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
@@ -69,7 +71,7 @@ jobs:
 
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "$FILE"
+          git add "$FILE" "$HISTORY"
           git commit -m "Refresh market data snapshot" \
                      -m "Automated run of scripts/fetch-market-data.ts. positions.ts is not touched."
           git push

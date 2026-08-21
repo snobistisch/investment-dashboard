@@ -16,6 +16,12 @@
 import { existsSync, readFileSync, statSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { equityOpportunityModels } from '../src/data/equity-opportunities'
+import { positions as positionRows } from '../src/data/positions'
+import type { MarketSnapshot } from '../src/data/market-data'
+import { isDirectlyTradable } from '../src/sections/allocator/allocation'
+import { DEFAULT_OPPORTUNITY_POLICY } from '../src/sections/opportunities/model'
+import { assessOpportunity } from '../src/sections/opportunities/opportunity'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 const at = (p: string) => resolve(HERE, '..', p)
@@ -46,6 +52,11 @@ interface Snapshot {
   unmapped: unknown[]
 }
 const snap = readJson<Snapshot>('public/data/market-data.json')
+interface OpportunityHistory {
+  builtAt: string
+  snapshots: { asOf: string; ticker: string; modelVersion: string }[]
+}
+const opportunityHistory = readJson<OpportunityHistory>('public/data/equity-opportunity-history.json')
 head('MARKET SNAPSHOT — public/data/market-data.json')
 if (snap) {
   const quotes = Object.values(snap.quotes)
@@ -54,6 +65,36 @@ if (snap) {
   line('priced / with cap / unmapped', `${quotes.length} / ${quotes.filter((q) => q.marketCapUsd !== undefined).length} / ${snap.unmapped.length}`)
   line('measured correlation pairs', Object.keys(snap.correlations ?? {}).length)
 } else line('status', 'absent — the site falls back to transcribed values')
+
+// --- equity opportunities -------------------------------------------------
+head('EQUITY OPPORTUNITIES — src/data/equity-opportunities.ts')
+if (snap) {
+  const today = new Date().toISOString().slice(0, 10)
+  const assessments = equityOpportunityModels.map((model) => {
+    const position = positionRows.find((row) => row.ticker === model.ticker)
+    return assessOpportunity(
+      model,
+      (snap as unknown as MarketSnapshot).quotes[model.ticker],
+      DEFAULT_OPPORTUNITY_POLICY,
+      position ? isDirectlyTradable(position) : false,
+      today,
+    )
+  })
+  const states = new Map<string, number>()
+  for (const assessment of assessments) states.set(assessment.state, (states.get(assessment.state) ?? 0) + 1)
+  const equityRows = positionRows.filter((row) => !row.sections.includes('crypto'))
+  line('modelled / transcribed equities', `${assessments.length} / ${equityRows.length}`)
+  line('ready / positive hurdle edge', `${assessments.filter((row) => row.decisionReady).length} / ${assessments.filter((row) => row.positiveEdge).length}`)
+  line('states', [...states].map(([state, count]) => `${state} ${count}`).join(' · '))
+  line('default annual hurdle', `${DEFAULT_OPPORTUNITY_POLICY.benchmarkAnnualReturnPct}% benchmark + ${DEFAULT_OPPORTUNITY_POLICY.requiredActivePremiumPct}pp premium`)
+  line('model review vintage', [...new Set(equityOpportunityModels.map((model) => model.reviewedAt))].join(', '))
+  line('next mandatory review', equityOpportunityModels.map((model) => model.nextReviewAt).sort()[0])
+  if (opportunityHistory) {
+    const dates = [...new Set(opportunityHistory.snapshots.map((row) => row.asOf))]
+    line('history snapshots / market dates', `${opportunityHistory.snapshots.length} / ${dates.length}`)
+    line('history built', opportunityHistory.builtAt.slice(0, 10))
+  } else line('history', 'absent — run npm run build-opportunity-history')
+} else line('status', 'market snapshot absent — models cannot become decision-ready')
 
 // --- crypto market and frozen forecast ----------------------------------
 interface CryptoMarket {
@@ -147,7 +188,7 @@ for (const p of [
 ]) line(p, kb(p))
 
 head('COMMANDS')
-line('npm run verify', 'allocation invariants — blocks the deploy')
+line('npm run verify', 'decision, opportunity and quantitative invariants — blocks the deploy')
 line('npm run lint && npm run build', 'oxlint, then typecheck + vite build')
 line('npm run fetch-risk-rating', 'CoinGecko, ~10 min, rewrites two data files')
 line('npm run fetch-crypto-market', 'refreshes all live crypto decision inputs')

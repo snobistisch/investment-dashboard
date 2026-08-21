@@ -4,6 +4,7 @@ import { ExposurePanel } from './sections/exposure/ExposurePanel'
 import { AllocatorPanel } from './sections/allocator/AllocatorPanel'
 import { EmbeddedDashboard } from './components/EmbeddedDashboard'
 import { Landing } from './components/Landing'
+import { OpportunitiesPanel } from './sections/opportunities/OpportunitiesPanel'
 
 // ---------------------------------------------------------------------------
 // Two asset classes, split on purpose
@@ -26,7 +27,7 @@ type AssetClass = 'equities' | 'crypto'
 type Tab = {
   id: string
   label: string
-  kind: 'exposure' | 'allocator' | 'embed'
+  kind: 'opportunities' | 'exposure' | 'allocator' | 'embed'
   src?: string
   title?: string
   /** ISO date the embedded page's data was true. The page states its own
@@ -45,6 +46,7 @@ type Tab = {
 }
 
 const EQUITY_TABS: Tab[] = [
+  { id: 'opportunities', label: 'OPPORTUNITIES', kind: 'opportunities' },
   { id: 'exposure', label: 'EXPOSURE', kind: 'exposure' },
   { id: 'allocator', label: 'PLAN', kind: 'allocator' },
   { id: 'biology', label: 'DIGITAL BIOLOGY', kind: 'embed', src: 'dashboards/digital-biology.html', title: 'Digital Biology dashboard', vintage: '2026-07-07', status: 'hypothesis', researchOnly: true },
@@ -125,6 +127,7 @@ const LEGACY: Record<string, string> = {
   quantum: 'equities/quantum',
   agentic: 'equities/agentic',
   exposure: 'equities/exposure',
+  opportunities: 'equities/opportunities',
   allocator: 'equities/allocator',
   'crypto/allocator': 'crypto/pilot',
   'crypto/builder': 'crypto/pilot',
@@ -160,8 +163,8 @@ function App() {
   const other: AssetClass = cls === 'equities' ? 'crypto' : 'equities'
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-term-bg font-mono text-term-text">
-      <header className="border-b border-term-line bg-term-bg">
+    <div className="flex h-dvh flex-col overflow-hidden bg-term-bg font-mono text-term-text">
+      <header className="shrink-0 border-b border-term-line bg-term-bg">
         <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2">
           <a
             href="#"
@@ -182,13 +185,13 @@ function App() {
           </a>
         </div>
         <div className="mx-auto w-full max-w-7xl px-4 pb-2">
-          <nav className="flex flex-wrap gap-px text-xs">
+          <nav className="flex flex-nowrap gap-px overflow-x-auto text-xs" aria-label={`${CLASS_LABEL[cls]} sections`}>
             {tabs.map((t, i) => (
               <a
                 key={t.id}
                 href={`#${cls}/${t.id}`}
                 aria-current={active.id === t.id ? 'page' : undefined}
-                className={`px-3 py-1.5 uppercase tracking-wider transition-colors ${
+                className={`shrink-0 px-3 py-1.5 uppercase tracking-wider transition-colors ${
                   active.id === t.id
                     ? 'bg-term-amber font-bold text-black'
                     : 'text-term-dim hover:bg-term-panel hover:text-term-amber'
@@ -202,6 +205,11 @@ function App() {
       </header>
 
       <main className="min-h-0 flex-1">
+        {active.kind === 'opportunities' && (
+          <div className="h-full overflow-y-auto">
+            <OpportunitiesPanel />
+          </div>
+        )}
         {active.kind === 'exposure' && (
           <div className="h-full overflow-y-auto">
             <ExposurePanel assetClass={cls} />
@@ -222,7 +230,7 @@ function App() {
         )}
       </main>
 
-      <footer className="border-t border-term-line bg-term-bg">
+      <footer className="shrink-0 border-t border-term-line bg-term-bg">
         <div className="mx-auto flex w-full max-w-7xl flex-col items-start gap-1 px-4 py-1 text-[10px] uppercase tracking-wider text-term-dim sm:flex-row sm:items-center sm:justify-between">
           <span>
             Research only · no positions held · unlevered by construction · public sources · not investment advice

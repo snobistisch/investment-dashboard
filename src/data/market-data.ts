@@ -82,8 +82,10 @@ export interface MarketSnapshot {
   schemaVersion: number
   fetchedAt: string
   providers: { equity: string; crypto: string; fx: string }
-  fx: { asOf: string; source: string; usdPer: Record<string, number> }
+  fx: { asOf: string; source: string; usdPer: Record<string, number>; usdPerEur?: number }
   quotes: Record<string, MarketQuote>
+  /** Pearson correlations of aligned daily USD log returns, keyed by sorted tickers. */
+  correlations?: Record<string, { value: number; observations: number }>
   unmapped: { ticker: string; exchange: string; reason: string }[]
 }
 

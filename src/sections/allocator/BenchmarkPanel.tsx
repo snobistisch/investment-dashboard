@@ -70,6 +70,13 @@ export function BenchmarkPanel({ input, setInput, riskCapitalEur, activeSleevePc
             </div>
           </label>
           <label className="block">
+            <span className="text-[10px] uppercase tracking-[0.16em] text-term-dim">Expected annual return</span>
+            <div className="mt-1 flex border border-term-line bg-term-bg focus-within:border-term-amber">
+              <input type="number" min={-99} max={30} step={0.1} value={input.expectedAnnualReturnPct ?? ''} onChange={(event) => set('expectedAnnualReturnPct', numberOrNull(event.target.value))} className="min-w-0 flex-1 bg-transparent px-3 py-2 text-sm outline-none" />
+              <span className="pr-3 py-2 text-xs text-term-dim">% p.a.</span>
+            </div>
+          </label>
+          <label className="block">
             <span className="text-[10px] uppercase tracking-[0.16em] text-term-dim">Verified price</span>
             <div className="mt-1 flex border border-term-line bg-term-bg focus-within:border-term-amber">
               <input type="number" min={0} step={0.01} value={input.priceEur ?? ''} onChange={(event) => set('priceEur', numberOrNull(event.target.value))} className="min-w-0 flex-1 bg-transparent px-3 py-2 text-sm outline-none" />
@@ -80,6 +87,7 @@ export function BenchmarkPanel({ input, setInput, riskCapitalEur, activeSleevePc
           <div />
           <div className="sm:col-span-2"><TextField label="Official product URL" type="url" value={input.productUrl} onChange={(v) => set('productUrl', v)} /></div>
           <div className="sm:col-span-2"><TextField label="Current KID / EID URL" type="url" value={input.kidUrl} onChange={(v) => set('kidUrl', v)} /></div>
+          <div className="sm:col-span-2"><TextField label="Return-assumption source / calculation URL" type="url" value={input.returnAssumptionUrl} onChange={(v) => set('returnAssumptionUrl', v)} /></div>
         </div>
         <div className="mt-4 space-y-2 border-t border-term-line pt-4">
           {[
@@ -135,4 +143,3 @@ export function BenchmarkPanel({ input, setInput, riskCapitalEur, activeSleevePc
     </div>
   )
 }
-

@@ -11,6 +11,21 @@ deploys on every push to main).
 
 ## Done
 
+- **Active equities now require a new evidence record (21 Aug 2026).** The
+  thematic pages are discovery material and do not seed positions. A candidate
+  must carry a specific thesis and falsifier, dated fundamentals and valuation,
+  two direct source links, three probabilities totalling 100%, a horizon and
+  round-trip cost. It qualifies only when its annualised expected return after
+  cost beats the declared broad-baseline assumption. Missing or stale inputs
+  fail closed.
+
+  Sizing divides positive edge by measured one-year volatility, with declared
+  ceilings of 5% of total capital per name and 10% per primary factor. Pairwise
+  correlations use 90+ aligned daily USD returns computed during the market
+  refresh. Unused active room returns to the baseline; 20% is a ceiling, not a
+  quota. The snapshot now retains the ECB EUR/USD cross and a compact,
+  reproducible correlation matrix rather than publishing the raw histories.
+
 - **Broad equities now precede every active stock sleeve (21 Aug 2026).** No
   product is preselected. The user must identify the index, exact fund, ISIN,
   venue, currency, domicile, replication, price, cost and official product and

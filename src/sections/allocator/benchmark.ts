@@ -10,6 +10,8 @@ export interface BenchmarkInput {
   domicile: string
   replication: string
   terPct: number | null
+  expectedAnnualReturnPct: number | null
+  returnAssumptionUrl: string
   priceEur: number | null
   priceAsOf: string
   productUrl: string
@@ -29,6 +31,8 @@ export const EMPTY_BENCHMARK_INPUT: BenchmarkInput = {
   domicile: '',
   replication: '',
   terPct: null,
+  expectedAnnualReturnPct: null,
+  returnAssumptionUrl: '',
   priceEur: null,
   priceAsOf: '',
   productUrl: '',
@@ -73,6 +77,8 @@ export function assessBenchmark(
   if (!input.domicile.trim()) blockers.push('Enter the fund domicile.')
   if (!input.replication.trim()) blockers.push('State the replication method from the official document.')
   if (input.terPct === null || !Number.isFinite(input.terPct) || input.terPct < 0 || input.terPct > 5) blockers.push('Enter a plausible annual fund cost between 0% and 5%.')
+  if (input.expectedAnnualReturnPct === null || !Number.isFinite(input.expectedAnnualReturnPct) || input.expectedAnnualReturnPct <= -100 || input.expectedAnnualReturnPct > 30) blockers.push('Enter a declared annual benchmark-return assumption between -100% and 30%.')
+  if (!httpsUrl(input.returnAssumptionUrl)) blockers.push('Link the source or calculation behind the benchmark-return assumption.')
   if (input.priceEur === null || !Number.isFinite(input.priceEur) || input.priceEur <= 0) blockers.push('Enter a verified EUR price for order planning.')
   if (!/^\d{4}-\d{2}-\d{2}$/.test(input.priceAsOf)) blockers.push('Enter the verified price date as YYYY-MM-DD.')
   if (!httpsUrl(input.productUrl)) blockers.push('Link the official product page over HTTPS.')
@@ -92,4 +98,3 @@ export function assessBenchmark(
     activeBudgetEur,
   }
 }
-

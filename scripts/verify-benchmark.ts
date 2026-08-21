@@ -18,6 +18,8 @@ const complete: BenchmarkInput = {
   domicile: 'Ireland',
   replication: 'Physical',
   terPct: 0.2,
+  expectedAnnualReturnPct: 6,
+  returnAssumptionUrl: 'https://example.com/assumption',
   priceEur: 100,
   priceAsOf: '2026-08-21',
   productUrl: 'https://example.com/product',
@@ -36,4 +38,3 @@ const capped = assessBenchmark(complete, 10_000, 100)
 assert(capped.activeBudgetEur === 10_000 * (MAX_BEGINNER_ACTIVE_SLEEVE_PCT / 100), 'active sleeve must be capped')
 
 console.log('broad benchmark starts at 100% and fails closed')
-

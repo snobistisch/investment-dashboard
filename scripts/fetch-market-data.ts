@@ -412,6 +412,38 @@ function computeReturns(series: Series): Returns | undefined {
   return returns
 }
 
+function measuredCorrelation(left: Series, right: Series) {
+  const returns = (series: Series) => {
+    const out = new Map<string, number>()
+    for (let index = 1; index < series.length; index++) {
+      const previous = series[index - 1]
+      const current = series[index]
+      if (previous.close > 0 && current.close > 0) out.set(current.date, Math.log(current.close / previous.close))
+    }
+    return out
+  }
+  const a = returns(left)
+  const b = returns(right)
+  const dates = [...a.keys()].filter((date) => b.has(date)).slice(-252)
+  if (dates.length < 90) return undefined
+  const x = dates.map((date) => a.get(date) as number)
+  const y = dates.map((date) => b.get(date) as number)
+  const mx = x.reduce((sum, value) => sum + value, 0) / x.length
+  const my = y.reduce((sum, value) => sum + value, 0) / y.length
+  let covariance = 0
+  let varianceX = 0
+  let varianceY = 0
+  for (let index = 0; index < x.length; index++) {
+    const dx = x[index] - mx
+    const dy = y[index] - my
+    covariance += dx * dy
+    varianceX += dx * dx
+    varianceY += dy * dy
+  }
+  if (varianceX === 0 || varianceY === 0) return undefined
+  return { value: round(covariance / Math.sqrt(varianceX * varianceY), 6), observations: dates.length }
+}
+
 // ---------------------------------------------------------------------------
 // FX
 // ---------------------------------------------------------------------------
@@ -444,7 +476,14 @@ async function fetchFx(needed: Set<string>) {
     if (px) usdPer[ccy] = round(px, 6)
   }
 
-  return { asOf, source: missing.length ? 'ecb+yahoo' : 'ecb', usdPer }
+  return {
+    asOf,
+    source: missing.length ? 'ecb+yahoo' : 'ecb',
+    usdPer,
+    /** ECB publishes USD per EUR directly. Keep it so order planning can
+     *  convert the USD-normalised quotes back to the investor's currency. */
+    usdPerEur: round(usd, 6),
+  }
 }
 
 /** A year of daily rates per currency, so returns can be stated in USD.
@@ -592,6 +631,7 @@ if (crypto.historyErrors) console.log(`  ${crypto.historyErrors} history call(s)
 
 // --- assemble, validating at the boundary ---------------------------------
 const quotes: Record<string, Quote> = {}
+const usdHistories = new Map<string, Series>()
 const dropped: { ticker: string; reason: string }[] = []
 const nameFlags: { ticker: string; expected: string; got: string }[] = []
 
@@ -639,6 +679,7 @@ for (const { p, r } of yahooRows) {
   // properties of the asset. Returns are restated in USD, because that is
   // what the holder actually earned.
   const usdSeries = series ? toUsdSeries(series, currency, fxHistory) : undefined
+  if (usdSeries?.length) usdHistories.set(p.ticker, usdSeries)
 
   quotes[p.ticker] = {
     symbol: r.symbol,
@@ -664,6 +705,7 @@ for (const { p, r } of cryptoRows) {
     continue
   }
   const series = crypto.history.get(r.id)
+  if (series?.length) usdHistories.set(p.ticker, series)
   const cap = c.usd_market_cap
   quotes[p.ticker] = {
     symbol: r.id,
@@ -681,6 +723,17 @@ for (const { p, r } of cryptoRows) {
   }
 }
 
+const correlations: Record<string, { value: number; observations: number }> = {}
+const historyTickers = [...usdHistories.keys()].sort()
+for (let left = 0; left < historyTickers.length; left++) {
+  for (let right = left + 1; right < historyTickers.length; right++) {
+    const a = historyTickers[left]
+    const b = historyTickers[right]
+    const result = measuredCorrelation(usdHistories.get(a) as Series, usdHistories.get(b) as Series)
+    if (result) correlations[`${a}|${b}`] = result
+  }
+}
+
 const payload = {
   schemaVersion: SCHEMA_VERSION,
   fetchedAt: new Date().toISOString(),
@@ -691,6 +744,7 @@ const payload = {
   },
   fx,
   quotes,
+  correlations,
   unmapped: [
     ...unmappedRows.map(({ p, r }) => ({ ticker: p.ticker, exchange: p.exchange, reason: r.reason })),
     ...dropped.map((d) => ({ ticker: d.ticker, exchange: positions.find((p) => p.ticker === d.ticker)?.exchange ?? '', reason: d.reason })),
@@ -712,6 +766,7 @@ console.log(`  with cap:      ${withCap}/${positions.length}  (transcribed today
 console.log(`  with stats:    ${withStats}/${positions.length}`)
 const withReturns = Object.values(quotes).filter((q) => q.returns?.y1 !== undefined).length
 console.log(`  with 1y return: ${withReturns}/${positions.length} (USD, FX-adjusted)`)
+console.log(`  correlations:  ${Object.keys(correlations).length} pairs (90+ overlapping days)`)
 console.log(`  fx pairs:      ${Object.keys(fx.usdPer).length} as of ${fx.asOf}`)
 
 console.log(`\nUNMAPPED (${payload.unmapped.length}) — these keep their transcribed values:`)

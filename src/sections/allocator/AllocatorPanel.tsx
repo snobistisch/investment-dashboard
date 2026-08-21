@@ -1,8 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Panel } from '../../components/Panel'
 import { Section } from '../../components/Section'
+import { useMarketSnapshot } from '../../data/market-data'
+import { ActiveSelectionPanel } from './ActiveSelectionPanel'
+import { type ActiveCandidateInput } from './active-selection'
 import { BenchmarkPanel } from './BenchmarkPanel'
-import { EMPTY_BENCHMARK_INPUT, type BenchmarkInput } from './benchmark'
+import { assessBenchmark, EMPTY_BENCHMARK_INPUT, type BenchmarkInput } from './benchmark'
 import {
   assessPlanningInput,
   EMPTY_PLANNING_INPUT,
@@ -62,7 +65,13 @@ function Check({ checked, onChange, children }: {
 export function AllocatorPanel({ onLeverageChange }: { onLeverageChange?: (active: boolean) => void }) {
   const [input, setInput] = useState<PlanningInput>(EMPTY_PLANNING_INPUT)
   const [benchmark, setBenchmark] = useState<BenchmarkInput>(EMPTY_BENCHMARK_INPUT)
+  const [candidates, setCandidates] = useState<ActiveCandidateInput[]>([])
+  const market = useMarketSnapshot()
   const assessment = useMemo(() => assessPlanningInput(input), [input])
+  const benchmarkAssessment = useMemo(
+    () => assessBenchmark(benchmark, input.riskCapitalEur ?? 0, input.activeSleevePct),
+    [benchmark, input.riskCapitalEur, input.activeSleevePct],
+  )
 
   useEffect(() => onLeverageChange?.(false), [onLeverageChange])
 
@@ -170,14 +179,26 @@ export function AllocatorPanel({ onLeverageChange }: { onLeverageChange?: (activ
       </div>
 
       {assessment.ready && input.riskCapitalEur !== null && (
-        <BenchmarkPanel
-          input={benchmark}
-          setInput={setBenchmark}
-          riskCapitalEur={input.riskCapitalEur}
-          activeSleevePct={input.activeSleevePct}
-          setActiveSleevePct={(value) => set('activeSleevePct', value)}
-          stocksAllowed={input.allowStocks}
-        />
+        <>
+          <BenchmarkPanel
+            input={benchmark}
+            setInput={setBenchmark}
+            riskCapitalEur={input.riskCapitalEur}
+            activeSleevePct={input.activeSleevePct}
+            setActiveSleevePct={(value) => set('activeSleevePct', value)}
+            stocksAllowed={input.allowStocks}
+          />
+          {benchmarkAssessment.ready && input.allowStocks && input.activeSleevePct > 0 && (
+            <ActiveSelectionPanel
+              candidates={candidates}
+              setCandidates={setCandidates}
+              snapshot={market.snapshot}
+              benchmarkExpectedAnnualReturnPct={benchmark.expectedAnnualReturnPct}
+              totalCapitalEur={input.riskCapitalEur}
+              activeSleevePct={input.activeSleevePct}
+            />
+          )}
+        </>
       )}
     </Section>
   )

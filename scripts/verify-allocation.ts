@@ -235,6 +235,10 @@ if (snapshot) {
     )
   }
   check(snapshot.fx.usdPer.USD === 1, `snapshot fx USD rate is ${snapshot.fx.usdPer.USD}, must be 1`)
+  check(
+    snapshot.fx.usdPerEur === undefined || (Number.isFinite(snapshot.fx.usdPerEur) && snapshot.fx.usdPerEur > 0),
+    `snapshot EUR/USD rate is ${snapshot.fx.usdPerEur}, must be finite and positive when present`,
+  )
 
   for (const [ticker, q] of Object.entries(snapshot.quotes)) {
     // Provenance: a quote for a ticker the book does not contain means the map
@@ -311,6 +315,14 @@ if (snapshot) {
         `snapshot ${ticker} maxDrawdownPct is ${q.stats.maxDrawdownPct}, a drawdown cannot be positive`,
       )
     }
+  }
+
+  for (const [pair, correlation] of Object.entries(snapshot.correlations ?? {})) {
+    const [left, right] = pair.split('|')
+    check(Boolean(left && right && left < right), `snapshot correlation key '${pair}' must contain sorted tickers`)
+    check(known.has(left) && known.has(right), `snapshot correlation '${pair}' contains an unknown ticker`)
+    check(Number.isFinite(correlation.value) && correlation.value >= -1 && correlation.value <= 1, `snapshot correlation '${pair}' is ${correlation.value}`)
+    check(Number.isInteger(correlation.observations) && correlation.observations >= 90, `snapshot correlation '${pair}' has ${correlation.observations} observations`)
   }
 
   // Unmapped rows keep their transcribed values, so they must be real tickers.

@@ -11,6 +11,17 @@ deploys on every push to main).
 
 ## Done
 
+- **Proximity above 200MA now prioritises equity opportunities (22 Aug 2026).**
+  The trend rule previously stopped at a binary above/below gate. Qualified
+  equities from 0% through 5% above 200MA now form a separate entry-setup list,
+  nearest to the line first, while qualified names farther above remain visible
+  as extended. The ceiling is an explicit local what-if control.
+
+  The timing state is shown on every opportunity card, detail, comparison and
+  coverage row. It never changes authored terminal values, scenario
+  probabilities or hurdle edge, and it cannot promote a model that fails the
+  valuation, evidence, tradability or freshness gates.
+
 - **The 200MA is now the primary equity trend gate and every equity has a chart
   route (22 Aug 2026).** The market refresh keeps the latest 252 local-currency
   closes for all 81 mapped equities and computes each simple 200-session average

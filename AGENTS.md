@@ -118,6 +118,8 @@ small dependency does not make the legacy sizing model the active UI path.
 Read `research/equity-opportunity-methodology.md` before changing an opportunity
 formula, policy, model or status. An `edge` in `positions.ts` is thesis prose;
 it is never a substitute for a canonical opportunity model.
+The 200MA entry zone is a timing label and ordering rule only. Do not add its
+distance to hurdle edge, terminal value or any composite score.
 
 ---
 

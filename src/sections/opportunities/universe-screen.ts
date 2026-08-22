@@ -8,6 +8,7 @@ export type EquityScreenTheme = (typeof EQUITY_SCREEN_THEMES)[number]
 export interface UniverseScreenPolicy {
   theme: EquityScreenTheme
   requireAbove200DayMa: boolean
+  maxMa200OpportunityDistancePct: number
   minMarketCapUsdBn: number
   maxRealisedVolPct: number
   maxDrawdownMagnitudePct: number
@@ -17,10 +18,23 @@ export interface UniverseScreenPolicy {
 export const DEFAULT_UNIVERSE_SCREEN_POLICY: UniverseScreenPolicy = {
   theme: 'all',
   requireAbove200DayMa: true,
+  maxMa200OpportunityDistancePct: 5,
   minMarketCapUsdBn: 0,
   maxRealisedVolPct: 200,
   maxDrawdownMagnitudePct: 100,
   minThreeMonthReturnPct: -100,
+}
+
+export type Ma200OpportunityState = 'entry-zone' | 'extended' | 'below' | 'unavailable'
+
+export function classifyMa200Opportunity(
+  distanceFromMa200Pct: number | undefined,
+  maxDistancePct: number,
+): Ma200OpportunityState {
+  if (distanceFromMa200Pct === undefined || !Number.isFinite(distanceFromMa200Pct)) return 'unavailable'
+  if (distanceFromMa200Pct < 0) return 'below'
+  if (distanceFromMa200Pct <= maxDistancePct) return 'entry-zone'
+  return 'extended'
 }
 
 export type UniverseScreenBlockerCode =
@@ -53,12 +67,14 @@ export interface UniverseScreenResult {
   ma200?: number
   distanceFromMa200Pct?: number
   aboveMa200?: boolean
+  ma200OpportunityState: Ma200OpportunityState
 }
 
 export function validateUniverseScreenPolicy(policy: UniverseScreenPolicy) {
   const errors: string[] = []
   if (!EQUITY_SCREEN_THEMES.includes(policy.theme)) errors.push('Theme is not supported.')
   if (typeof policy.requireAbove200DayMa !== 'boolean') errors.push('200MA requirement must be boolean.')
+  if (!Number.isFinite(policy.maxMa200OpportunityDistancePct) || policy.maxMa200OpportunityDistancePct < 0 || policy.maxMa200OpportunityDistancePct > 100) errors.push('Maximum 200MA opportunity distance must be between 0% and 100%.')
   if (!Number.isFinite(policy.minMarketCapUsdBn) || policy.minMarketCapUsdBn < 0) errors.push('Minimum market cap must be non-negative.')
   if (!Number.isFinite(policy.maxRealisedVolPct) || policy.maxRealisedVolPct < 0) errors.push('Maximum realised volatility must be non-negative.')
   if (!Number.isFinite(policy.maxDrawdownMagnitudePct) || policy.maxDrawdownMagnitudePct < 0 || policy.maxDrawdownMagnitudePct > 100) errors.push('Maximum drawdown magnitude must be between 0% and 100%.')
@@ -128,5 +144,6 @@ export function screenUniversePosition(
     ma200,
     distanceFromMa200Pct,
     aboveMa200: quote?.trend200?.above,
+    ma200OpportunityState: classifyMa200Opportunity(distanceFromMa200Pct, policy.maxMa200OpportunityDistancePct),
   }
 }

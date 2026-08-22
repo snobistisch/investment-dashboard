@@ -21,6 +21,7 @@ import {
 } from '../src/sections/opportunities/opportunity'
 import {
   DEFAULT_UNIVERSE_SCREEN_POLICY,
+  classifyMa200Opportunity,
   screenUniversePosition,
   validateUniverseScreenPolicy,
 } from '../src/sections/opportunities/universe-screen'
@@ -96,6 +97,13 @@ const policy: OpportunityPolicy = { ...DEFAULT_OPPORTUNITY_POLICY, benchmarkAnnu
 assert(validateOpportunityModel(model).length === 0, 'complete opportunity model must validate')
 assert(validateOpportunityPolicy(policy).length === 0, 'complete opportunity policy must validate')
 assert(validateUniverseScreenPolicy(DEFAULT_UNIVERSE_SCREEN_POLICY).length === 0, 'default universe screen policy must validate')
+assert(validateUniverseScreenPolicy({ ...DEFAULT_UNIVERSE_SCREEN_POLICY, maxMa200OpportunityDistancePct: -1 }).length > 0, 'negative 200MA opportunity distance must fail validation')
+assert(validateUniverseScreenPolicy({ ...DEFAULT_UNIVERSE_SCREEN_POLICY, maxMa200OpportunityDistancePct: 101 }).length > 0, '200MA opportunity distance above 100% must fail validation')
+assert(classifyMa200Opportunity(undefined, 5) === 'unavailable', 'missing 200MA distance must remain unavailable')
+assert(classifyMa200Opportunity(-0.01, 5) === 'below', 'a close below 200MA cannot enter the opportunity zone')
+assert(classifyMa200Opportunity(0, 5) === 'entry-zone', 'the 200MA boundary belongs to the opportunity zone')
+assert(classifyMa200Opportunity(5, 5) === 'entry-zone', 'the opportunity-zone ceiling is inclusive')
+assert(classifyMa200Opportunity(5.01, 5) === 'extended', 'a close beyond the opportunity-zone ceiling must be extended')
 for (const authored of equityOpportunityModels) {
   const errors = validateOpportunityModel(authored)
   assert(errors.length === 0, `${authored.ticker}: authored opportunity model invalid: ${errors.join('; ')}`)
@@ -135,10 +143,16 @@ const defaultQualified = canonicalQualified(DEFAULT_OPPORTUNITY_POLICY)
 const highHurdleQualified = canonicalQualified({ ...DEFAULT_OPPORTUNITY_POLICY, requiredActivePremiumPct: 15 })
 const biologyQualified = canonicalQualified(DEFAULT_OPPORTUNITY_POLICY, 'biology')
 const withoutTrendGateQualified = canonicalQualified(DEFAULT_OPPORTUNITY_POLICY, 'all', false)
+const defaultMa200EntrySetups = defaultQualified.filter((ticker) => {
+  const distance = currentMarket.quotes[ticker]?.trend200?.distancePct
+  return classifyMa200Opportunity(distance, DEFAULT_UNIVERSE_SCREEN_POLICY.maxMa200OpportunityDistancePct) === 'entry-zone'
+})
 assert(defaultQualified.length > 5, 'full-universe modelling must break the former five-name output ceiling')
 assert(JSON.stringify(defaultQualified) !== JSON.stringify(highHurdleQualified), 'changing valuation policy must change Qualified now')
 assert(JSON.stringify(defaultQualified) !== JSON.stringify(biologyQualified), 'changing the universe theme must rescan and change Qualified now')
 assert(defaultQualified.length < withoutTrendGateQualified.length, 'the default 200MA gate must materially reduce Qualified now')
+assert(defaultMa200EntrySetups.length > 0, 'the canonical qualified set must expose at least one near-above-200MA entry setup')
+assert(defaultMa200EntrySetups.length < defaultQualified.length, 'the 200MA entry zone must not relabel every qualified equity as a preferred setup')
 
 const equityRows = positions.filter((row) => !row.sections.includes('crypto'))
 const equityTickers = new Set(equityRows.map((row) => row.ticker))

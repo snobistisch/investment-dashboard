@@ -3,16 +3,19 @@ import type { OpportunityPolicy } from './model'
 import type { EquityChartSeries } from '../../data/market-data'
 import { money, pct, signedPp, signedPct } from './format'
 import { EquityPriceChart } from './EquityPriceChart'
+import type { UniverseScreenResult } from './universe-screen'
 
 export function OpportunityDetail({
   assessment,
   policy,
+  screen,
   shortlisted,
   onToggleShortlist,
   chart,
 }: {
   assessment: OpportunityAssessment
   policy: OpportunityPolicy
+  screen: UniverseScreenResult
   shortlisted: boolean
   onToggleShortlist: () => void
   chart?: EquityChartSeries
@@ -46,6 +49,7 @@ export function OpportunityDetail({
           <p className="text-[10px] uppercase tracking-[0.16em] text-term-dim">Decision boundary</p>
           <dl className="mt-3 space-y-2 text-xs">
             <div className="flex justify-between gap-3"><dt className="text-term-dim">Current</dt><dd className="tabular-nums">{money(quote?.priceLocal, model.currency)}</dd></div>
+            <div className="flex justify-between gap-3"><dt className="text-term-dim">200MA setup</dt><dd className={`text-right tabular-nums ${screen.ma200OpportunityState === 'entry-zone' && assessment.decisionReady && assessment.positiveEdge ? 'text-term-green' : screen.ma200OpportunityState === 'extended' ? 'text-term-amber' : 'text-term-yellow'}`}>{signedPct(screen.distanceFromMa200Pct)}<span className="block text-[9px] uppercase">{screen.ma200OpportunityState === 'entry-zone' ? assessment.decisionReady && assessment.positiveEdge ? 'preferred entry setup' : 'near line · valuation fails' : screen.ma200OpportunityState}</span></dd></div>
             <div className="flex justify-between gap-3"><dt className="text-term-dim">Max entry</dt><dd className="tabular-nums text-term-amber">{money(assessment.maxEntryPrice, model.currency)}</dd></div>
             <div className="flex justify-between gap-3"><dt className="text-term-dim">Hurdle edge</dt><dd className="tabular-nums">{signedPp(assessment.hurdleEdgePct)}</dd></div>
             <div className="flex justify-between gap-3"><dt className="text-term-dim">Bear outcome</dt><dd className="tabular-nums text-term-red">{signedPct(bear?.netTotalReturnPct)}</dd></div>
@@ -58,12 +62,12 @@ export function OpportunityDetail({
           >
             {shortlisted ? 'Remove from Plan shortlist' : 'Shortlist for Plan'}
           </button>
-          <p className="mt-2 text-[10px] leading-relaxed text-term-dim">Shortlisting does not enable stocks, assign a weight or create an order.</p>
+          <p className="mt-2 text-[10px] leading-relaxed text-term-dim">Shortlisting does not enable stocks, assign a weight or create an order. The 200MA setup prioritises timing only; it cannot repair a failed valuation or evidence gate.</p>
         </div>
       </div>
 
       <div className="mt-4">
-        <p className="mb-2 text-[10px] uppercase tracking-[0.16em] text-term-cyan">Price trend · 200MA is the technical gate</p>
+        <p className="mb-2 text-[10px] uppercase tracking-[0.16em] text-term-cyan">Price trend · above 200MA gates · near 200MA prioritises</p>
         <EquityPriceChart ticker={model.ticker} series={chart} quote={quote} />
       </div>
 

@@ -33,6 +33,11 @@ The interface separates mechanical universe eligibility from valuation:
 2. Stage two applies the return hurdle only to screen survivors with a complete,
    versioned opportunity model. Verification requires exactly one model for
    every equity long, so a newly added long cannot ship without one.
+3. Inside the set that passes both stages, the interface treats a close from 0%
+   through 5% above 200MA as the default preferred entry zone. Those rows appear
+   first, ordered by distance to the line; hurdle edge breaks a tie. Qualified
+   names farther above the line remain visible as extended rather than being
+   silently discarded.
 
 The default stage-one numeric bounds besides the 200MA are deliberately non-selective: $0 minimum
 market cap, 200% maximum volatility, 100% maximum drawdown and -100% minimum
@@ -58,6 +63,7 @@ blended into a composite score.
 | Quote age | One completed business session | Older or missing market data blocks a decision. |
 | Fundamental age | 120 days | Older fundamentals block a decision. |
 | 200MA gate | Price at or above 200MA | Primary technical trend gate. Fewer than 200 valid closes fails closed. |
+| 200MA entry-zone ceiling | 5.00% above 200MA | Local timing label and opportunity priority. It does not change qualification or valuation. |
 
 The benchmark, premium and costs are configurable policy assumptions. They are
 not measured facts and they are not broker quotes. Taxes, spreads, custody,
@@ -79,13 +85,28 @@ screen requires `Distance >= 0`. Missing history or fewer than 200 closes does
 not get approximated and blocks qualification. The what-if checkbox can disable
 the gate without changing the canonical market snapshot.
 
+For a configurable ceiling `Z`, the timing state is mechanical:
+
+```text
+Distance < 0             → BELOW
+0 ≤ Distance ≤ Z         → 200MA ENTRY ZONE
+Distance > Z             → EXTENDED
+```
+
+The default is `Z = 5%`. Only a row that also passes the universe, evidence,
+tradability and valuation gates can appear under `200MA entry setups`. Distance
+to 200MA is the primary ordering within that list. It never adds percentage
+points to hurdle edge and never changes a scenario probability or terminal
+value.
+
 All 82 transcribed equity rows appear in the chart atlas, including context
 rows that are not buy candidates. Unitree has no chart because it is approved
 but not trading. Recent listings can have a price chart without a 200MA.
 
-The 200MA is a trend rule, not evidence of intrinsic value and not a return
-forecast. It can lag abrupt reversals and whipsaw in sideways markets. It does
-not raise scenario value, improve the valuation score or override the bear case.
+The 200MA entry zone is an explicit user-selected timing heuristic, not evidence
+that buying near the line has been validated on this universe. The 200MA can lag
+abrupt reversals and whipsaw in sideways markets. It does not raise scenario
+value, improve the valuation score or override the bear case.
 
 ## Valuation methods
 

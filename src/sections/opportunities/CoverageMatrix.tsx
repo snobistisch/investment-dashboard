@@ -37,7 +37,7 @@ export function CoverageMatrix({ rows }: { rows: CoverageRow[] }) {
             <div key={row.ticker} className="border border-term-line bg-term-bg p-3 text-[11px]">
               <div className="flex items-start justify-between gap-3"><span><b className="text-term-amber">{row.ticker}</b> · {row.company}</span><State row={row} /></div>
               <p className="mt-2 text-term-dim">{row.themes}</p>
-              <p className="mt-1 text-term-dim">Quote {row.quoteAsOf ?? 'missing'} · 200MA {row.screen.ma200 === undefined ? '—' : signedPct(row.screen.distanceFromMa200Pct)} · cap {row.screen.marketCapUsdBn === undefined ? '—' : `$${row.screen.marketCapUsdBn.toFixed(2)}bn`} · vol {pct(row.screen.realisedVolPct)} · drawdown {pct(row.screen.drawdownMagnitudePct)} · 3M {signedPct(row.screen.threeMonthReturnPct)}</p>
+              <p className="mt-1 text-term-dim">Quote {row.quoteAsOf ?? 'missing'} · 200MA {row.screen.ma200 === undefined ? '—' : `${signedPct(row.screen.distanceFromMa200Pct)} · ${row.screen.ma200OpportunityState}`} · cap {row.screen.marketCapUsdBn === undefined ? '—' : `$${row.screen.marketCapUsdBn.toFixed(2)}bn`} · vol {pct(row.screen.realisedVolPct)} · drawdown {pct(row.screen.drawdownMagnitudePct)} · 3M {signedPct(row.screen.threeMonthReturnPct)}</p>
               <p className="mt-1 text-term-dim">{row.tradable ? 'directly tradable' : 'restricted route'} · {row.assessment ? `${row.assessment.model.sources.length} source(s), valuation and scenarios present` : 'valuation model not authored'}</p>
               {row.screen.blockers[0] && <p className="mt-1 text-term-red">Screen: {row.screen.blockers[0].message}</p>}
               {!row.screen.blockers[0] && row.assessment?.blockers[0] && <p className="mt-1 text-term-yellow">Valuation: {row.assessment.blockers[0].message}</p>}
@@ -55,7 +55,7 @@ export function CoverageMatrix({ rows }: { rows: CoverageRow[] }) {
                 <tr key={row.ticker} className="border-b border-term-line/60 align-top last:border-b-0">
                   <td className="py-2 pr-3"><b className="text-term-amber">{row.ticker}</b><span className="block text-[10px] text-term-dim">{row.company}</span></td>
                   <td className="py-2 pr-3 text-term-dim">{row.themes}</td>
-                  <td className={`py-2 pr-3 tabular-nums ${row.screen.aboveMa200 ? 'text-term-green' : 'text-term-red'}`}>{signedPct(row.screen.distanceFromMa200Pct)}</td>
+                  <td className={`py-2 pr-3 tabular-nums ${row.screen.ma200OpportunityState === 'entry-zone' ? 'text-term-green' : row.screen.aboveMa200 ? 'text-term-amber' : 'text-term-red'}`}>{signedPct(row.screen.distanceFromMa200Pct)}<span className="block text-[9px] uppercase">{row.screen.ma200OpportunityState}</span></td>
                   <td className="py-2 pr-3 tabular-nums">{row.screen.marketCapUsdBn === undefined ? '—' : `$${row.screen.marketCapUsdBn.toFixed(2)}bn`}</td>
                   <td className="py-2 pr-3 tabular-nums">{pct(row.screen.realisedVolPct)}</td>
                   <td className="py-2 pr-3 tabular-nums">{pct(row.screen.drawdownMagnitudePct)}</td>

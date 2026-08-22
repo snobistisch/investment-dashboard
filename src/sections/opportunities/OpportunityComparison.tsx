@@ -2,14 +2,17 @@ import type { ReactNode } from 'react'
 import { Panel } from '../../components/Panel'
 import type { OpportunityAssessment } from './opportunity'
 import { money, pct, signedPp, signedPct } from './format'
+import { classifyMa200Opportunity } from './universe-screen'
 
 export function OpportunityComparison({
   assessments,
   themeByTicker,
+  ma200OpportunityDistancePct,
   onRemove,
 }: {
   assessments: OpportunityAssessment[]
   themeByTicker: Record<string, string>
+  ma200OpportunityDistancePct: number
   onRemove: (ticker: string) => void
 }) {
   if (assessments.length === 0) return null
@@ -30,6 +33,7 @@ export function OpportunityComparison({
     { label: 'Next review', value: (assessment) => assessment.model.nextReviewAt },
     { label: 'Volatility', value: (assessment) => pct(assessment.quote?.stats?.realisedVolPct) },
     { label: '200MA distance', value: (assessment) => signedPct(assessment.quote?.trend200?.distancePct) },
+    { label: '200MA setup', value: (assessment) => classifyMa200Opportunity(assessment.quote?.trend200?.distancePct, ma200OpportunityDistancePct).replace('-', ' ') },
   ]
 
   return (

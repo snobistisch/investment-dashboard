@@ -23,7 +23,9 @@ Sections:
 - Equities **Opportunities** — first rescans all 61 researched equity longs with
   user-controlled theme, market-cap, volatility, drawdown, three-month-return
   and quote-freshness filters. Price at or above the simple 200-session moving
-  average is the default primary technical gate. It then reprices all 61 versioned bear/base/bull
+  average is the default primary technical gate. Qualified names from 0% through
+  5% above that line form the default 200MA entry zone and rank ahead of extended
+  names; the ceiling is a local what-if control. It then reprices all 61 versioned bear/base/bull
   models and calculates scenario-implied annualised edge above the default 10%
   hurdle. Seven restricted foreign listings remain modelled but cannot qualify
   through the declared broker route. Changing either screen or hurdle changes

@@ -1,17 +1,21 @@
 import type { OpportunityAssessment } from './opportunity'
 import type { OpportunityPolicy } from './model'
+import type { EquityChartSeries } from '../../data/market-data'
 import { money, pct, signedPp, signedPct } from './format'
+import { EquityPriceChart } from './EquityPriceChart'
 
 export function OpportunityDetail({
   assessment,
   policy,
   shortlisted,
   onToggleShortlist,
+  chart,
 }: {
   assessment: OpportunityAssessment
   policy: OpportunityPolicy
   shortlisted: boolean
   onToggleShortlist: () => void
+  chart?: EquityChartSeries
 }) {
   const { model, quote } = assessment
   const bear = assessment.scenarios.find((scenario) => scenario.key === 'bear')
@@ -56,6 +60,11 @@ export function OpportunityDetail({
           </button>
           <p className="mt-2 text-[10px] leading-relaxed text-term-dim">Shortlisting does not enable stocks, assign a weight or create an order.</p>
         </div>
+      </div>
+
+      <div className="mt-4">
+        <p className="mb-2 text-[10px] uppercase tracking-[0.16em] text-term-cyan">Price trend · 200MA is the technical gate</p>
+        <EquityPriceChart ticker={model.ticker} series={chart} quote={quote} />
       </div>
 
       {assessment.blockers.length > 0 && (

@@ -11,6 +11,20 @@ deploys on every push to main).
 
 ## Done
 
+- **The 200MA is now the primary equity trend gate and every equity has a chart
+  route (22 Aug 2026).** The market refresh keeps the latest 252 local-currency
+  closes for all 81 mapped equities and computes each simple 200-session average
+  from the full two-year input. Unitree remains visibly uncharted because it is
+  approved but not trading. Six recent listings have charts but correctly lack
+  a 200MA until 200 closes exist.
+
+  `Qualified now` requires price at or above 200MA by default. This cuts the
+  current stage-one survivors from 51 to 31 and the valuation-qualified set
+  from 22 to 13. The rule can be disabled only as an explicit local what-if.
+  Every opportunity detail shows price and 200MA, comparison and coverage show
+  the distance, and the 82-row chart atlas includes non-long context without
+  turning it into a buy candidate.
+
 - **Every equity-long row now has a frozen opportunity model (22 Aug 2026).**
   Coverage moved from five to 61 models. The original five retain bottom-up EPS
   or revenue bridges. The other 56 use explicit three-year return envelopes

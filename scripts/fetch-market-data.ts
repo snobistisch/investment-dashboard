@@ -129,6 +129,22 @@ interface Stats {
   julyDrawdownPct?: number
 }
 
+interface Trend200 {
+  /** Simple average of the latest 200 valid trading-session closes. */
+  ma200: number
+  distancePct: number
+  above: boolean
+  observations: number
+}
+
+type ChartPoint = [date: string, close: number, ma200: number | null]
+
+interface EquityChart {
+  currency: string
+  /** Latest 252 sessions. MA uses the full two-year input, not this slice. */
+  points: ChartPoint[]
+}
+
 /** Price return over each window, in percent, measured in USD.
  *
  *  Windows are anchored on CALENDAR days, not trading days. Crypto trades
@@ -176,6 +192,7 @@ interface Quote {
   /** Date the price was true, ISO. */
   asOf: string
   stats?: Stats
+  trend200?: Trend200
 }
 
 // ---------------------------------------------------------------------------
@@ -272,9 +289,9 @@ async function yahooQuotes(symbols: string[], s: { cookie: string; crumb: string
  *  `range=1y` returns slightly under a calendar year, so a 365-day lookback
  *  falls off the start of the series and the one-year return comes back absent
  *  for most names — 121 of 161 on the first run. Fetching two years puts every
- *  window comfortably inside the data. Nothing extra is stored: the statistics
- *  are still computed on the trailing year, and only derived numbers are
- *  written out. */
+ *  window comfortably inside the data. The latest 252 sessions are stored for
+ *  charts; earlier sessions exist only to make the first visible 200MA point
+ *  exact. Risk statistics remain trailing-one-year measures. */
 async function yahooHistory(symbol: string) {
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=2y&interval=1d`
   const body = await getJson<{
@@ -330,6 +347,37 @@ function computeStats(full: Series): Stats | undefined {
     realisedVolPct: round(realisedVolPct, 2),
     maxDrawdownPct: round(maxDrawdownPct(closes), 2),
     julyDrawdownPct: july.length >= 5 ? round(maxDrawdownPct(july.map((p) => p.close)), 2) : undefined,
+  }
+}
+
+function computeTrend200(full: Series) {
+  const window = 200
+  let rolling = 0
+  const points: ChartPoint[] = []
+  for (let index = 0; index < full.length; index++) {
+    rolling += full[index].close
+    if (index >= window) rolling -= full[index - window].close
+    const ma = index >= window - 1 ? rolling / window : null
+    points.push([
+      full[index].date,
+      round(full[index].close, 4),
+      ma === null ? null : round(ma, 4),
+    ])
+  }
+  const latest = points[points.length - 1]
+  const ma200 = latest?.[2]
+  if (ma200 === null || ma200 === undefined || !latest) {
+    return { chart: points.slice(-252), trend: undefined }
+  }
+  const close = latest[1]
+  return {
+    chart: points.slice(-252),
+    trend: {
+      ma200,
+      distancePct: round((close / ma200 - 1) * 100, 2),
+      above: close >= ma200,
+      observations: full.length,
+    } satisfies Trend200,
   }
 }
 
@@ -631,6 +679,7 @@ if (crypto.historyErrors) console.log(`  ${crypto.historyErrors} history call(s)
 
 // --- assemble, validating at the boundary ---------------------------------
 const quotes: Record<string, Quote> = {}
+const equityCharts: Record<string, EquityChart> = {}
 const usdHistories = new Map<string, Series>()
 const dropped: { ticker: string; reason: string }[] = []
 const nameFlags: { ticker: string; expected: string; got: string }[] = []
@@ -680,6 +729,8 @@ for (const { p, r } of yahooRows) {
   // what the holder actually earned.
   const usdSeries = series ? toUsdSeries(series, currency, fxHistory) : undefined
   if (usdSeries?.length) usdHistories.set(p.ticker, usdSeries)
+  const technical = series ? computeTrend200(series) : undefined
+  if (technical?.chart.length) equityCharts[p.ticker] = { currency, points: technical.chart }
 
   quotes[p.ticker] = {
     symbol: r.symbol,
@@ -695,6 +746,7 @@ for (const { p, r } of yahooRows) {
     // trading date without needing per-exchange timezone handling.
     asOf: new Date((q.regularMarketTime ?? Date.now() / 1000) * 1000).toISOString().slice(0, 10),
     stats: series ? computeStats(series) : undefined,
+    trend200: technical?.trend,
   }
 }
 
@@ -744,6 +796,7 @@ const payload = {
   },
   fx,
   quotes,
+  equityCharts,
   correlations,
   unmapped: [
     ...unmappedRows.map(({ p, r }) => ({ ticker: p.ticker, exchange: p.exchange, reason: r.reason })),
@@ -757,6 +810,7 @@ writeFileSync(OUT, JSON.stringify(payload, null, 1) + '\n')
 // --- run summary -----------------------------------------------------------
 const withCap = Object.values(quotes).filter((q) => q.marketCapUsd !== undefined).length
 const withStats = Object.values(quotes).filter((q) => q.stats).length
+const withMa200 = Object.values(quotes).filter((q) => q.trend200).length
 const transcribed = positions.filter((p) => p.marketCapUsd !== undefined).length
 
 console.log(`\n${'='.repeat(64)}`)
@@ -764,6 +818,7 @@ console.log(`wrote ${OUT.split('/').slice(-3).join('/')}`)
 console.log(`  quotes:        ${Object.keys(quotes).length}/${positions.length}`)
 console.log(`  with cap:      ${withCap}/${positions.length}  (transcribed today: ${transcribed})`)
 console.log(`  with stats:    ${withStats}/${positions.length}`)
+console.log(`  with 200MA:    ${withMa200}/${positions.length}`)
 const withReturns = Object.values(quotes).filter((q) => q.returns?.y1 !== undefined).length
 console.log(`  with 1y return: ${withReturns}/${positions.length} (USD, FX-adjusted)`)
 console.log(`  correlations:  ${Object.keys(correlations).length} pairs (90+ overlapping days)`)
@@ -789,6 +844,7 @@ if (summaryPath) {
     `| Quotes | ${Object.keys(quotes).length} / ${positions.length} |`,
     `| With market cap | ${withCap} / ${positions.length} (transcribed in positions.ts: ${transcribed}) |`,
     `| With price stats | ${withStats} / ${positions.length} |`,
+    `| With 200MA | ${withMa200} / ${positions.length} |`,
     `| FX pairs | ${Object.keys(fx.usdPer).length} as of ${fx.asOf} (${fx.source}) |`,
     '',
     `### Unmapped (${payload.unmapped.length}) — keeping transcribed values`,

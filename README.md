@@ -22,12 +22,15 @@ Sections:
   separate research-only page and is not included.
 - Equities **Opportunities** — first rescans all 61 researched equity longs with
   user-controlled theme, market-cap, volatility, drawdown, three-month-return
-  and quote-freshness filters. It then reprices all 61 versioned bear/base/bull
+  and quote-freshness filters. Price at or above the simple 200-session moving
+  average is the default primary technical gate. It then reprices all 61 versioned bear/base/bull
   models and calculates scenario-implied annualised edge above the default 10%
   hurdle. Seven restricted foreign listings remain modelled but cannot qualify
   through the declared broker route. Changing either screen or hurdle changes
   `Qualified now`. Maximum entry price and separate
   probability, terminal-value, cost, horizon and price stresses remain visible.
+  A chart atlas covers all 82 transcribed equities; recent listings remain
+  visibly without a 200MA until 200 valid closes exist.
   The formulas, source links and authored 2029 assumptions are recorded in
   [research/equity-opportunity-methodology.md](research/equity-opportunity-methodology.md).
 - Equities **Plan** — starts with no product and no positions. Personal horizon,

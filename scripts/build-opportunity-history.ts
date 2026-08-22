@@ -33,7 +33,10 @@ interface OpportunityHistory {
 }
 
 const market = JSON.parse(readFileSync(at('public/data/market-data.json'), 'utf8')) as MarketSnapshot
-const asOf = market.fetchedAt.slice(0, 10)
+const modelQuoteDates = equityOpportunityModels
+  .map((model) => market.quotes[model.ticker]?.asOf)
+  .filter((date): date is string => Boolean(date))
+const asOf = modelQuoteDates.sort().at(-1) ?? market.fetchedAt.slice(0, 10)
 const existing: OpportunityHistory = existsSync(output)
   ? JSON.parse(readFileSync(output, 'utf8')) as OpportunityHistory
   : { schemaVersion: 1, builtAt: market.fetchedAt, policy: DEFAULT_OPPORTUNITY_POLICY, snapshots: [] }

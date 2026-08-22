@@ -6,6 +6,7 @@ import { useMarketSnapshot } from '../../data/market-data'
 import { positions } from '../../data/positions'
 import { isDirectlyTradable } from '../allocator/allocation'
 import { CoverageMatrix, type CoverageRow } from './CoverageMatrix'
+import { EquityChartAtlas } from './EquityChartAtlas'
 import { OpportunityComparison } from './OpportunityComparison'
 import { OpportunityDetail } from './OpportunityDetail'
 import { money, pct, signedPp, signedPct } from './format'
@@ -108,6 +109,18 @@ function ThemeField({ value, onChange }: { value: EquityScreenTheme; onChange: (
   )
 }
 
+function TrendGateField({ value, onChange }: { value: boolean; onChange: (value: boolean) => void }) {
+  return (
+    <label className="block border border-term-line bg-term-bg px-3 py-2">
+      <span className="flex min-h-8 items-center gap-3 text-xs">
+        <input type="checkbox" checked={value} onChange={(event) => onChange(event.target.checked)} className="size-4 accent-term-cyan" />
+        Require price above 200MA
+      </span>
+      <span className="mt-1 block text-[9px] uppercase tracking-wider text-term-cyan">PRIMARY TECHNICAL GATE</span>
+    </label>
+  )
+}
+
 function OpportunityRow({
   assessment,
   theme,
@@ -119,6 +132,7 @@ function OpportunityRow({
   shortlisted,
   onToggleShortlist,
   policy,
+  chart,
 }: {
   assessment: OpportunityAssessment
   theme: string
@@ -130,6 +144,7 @@ function OpportunityRow({
   shortlisted: boolean
   onToggleShortlist: () => void
   policy: OpportunityPolicy
+  chart?: import('../../data/market-data').EquityChartSeries
 }) {
   const bear = assessment.scenarios.find((scenario) => scenario.key === 'bear')
   return (
@@ -149,8 +164,9 @@ function OpportunityRow({
           </label>
         </div>
 
-        <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 text-[11px] sm:grid-cols-3 lg:grid-cols-6">
+        <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 text-[11px] sm:grid-cols-4 lg:grid-cols-7">
           <div><dt className="text-[9px] uppercase tracking-wider text-term-dim">Current</dt><dd className="mt-1 tabular-nums">{money(assessment.quote?.priceLocal, assessment.model.currency)}</dd></div>
+          <div><dt className="text-[9px] uppercase tracking-wider text-term-dim">200MA</dt><dd className={`mt-1 tabular-nums ${assessment.quote?.trend200?.above ? 'text-term-green' : 'text-term-red'}`}>{money(assessment.quote?.trend200?.ma200, assessment.model.currency)}<span className="block text-[9px]">{signedPct(assessment.quote?.trend200?.distancePct)}</span></dd></div>
           <div><dt className="text-[9px] uppercase tracking-wider text-term-dim">Expected value</dt><dd className="mt-1 tabular-nums">{money(assessment.expectedTerminalValue, assessment.model.currency)}</dd></div>
           <div><dt className="text-[9px] uppercase tracking-wider text-term-dim">Annual return</dt><dd className="mt-1 tabular-nums">{pct(assessment.annualisedExpectedTerminalWealthReturnPct)}</dd></div>
           <div><dt className="text-[9px] uppercase tracking-wider text-term-dim">Hurdle edge</dt><dd className={`mt-1 tabular-nums ${assessment.positiveEdge ? 'text-term-green' : 'text-term-red'}`}>{signedPp(assessment.hurdleEdgePct)}</dd></div>
@@ -163,7 +179,7 @@ function OpportunityRow({
           <button type="button" onClick={onToggleExpanded} aria-expanded={expanded} className="min-h-8 border border-term-cyan px-3 text-[10px] uppercase tracking-wider text-term-cyan hover:bg-term-cyan hover:text-black">{expanded ? 'Hide analysis' : 'Inspect analysis'}</button>
         </div>
       </div>
-      {expanded && <OpportunityDetail assessment={assessment} policy={policy} shortlisted={shortlisted} onToggleShortlist={onToggleShortlist} />}
+      {expanded && <OpportunityDetail assessment={assessment} policy={policy} shortlisted={shortlisted} onToggleShortlist={onToggleShortlist} chart={chart} />}
     </article>
   )
 }
@@ -238,6 +254,8 @@ export function OpportunitiesPanel() {
   const alteredPolicy = policyChanged(policy) || screenPolicyChanged(screenPolicy)
   const screenSurvivors = screenResults.filter((result) => result.passes)
   const screenEligibleModels = assessments.filter((assessment) => screenByTicker.get(assessment.model.ticker)?.passes)
+  const withMa200 = screenResults.filter((result) => result.ma200 !== undefined).length
+  const aboveMa200 = screenResults.filter((result) => result.aboveMa200).length
   const readyForMonday = !market.loading && assessments.length > 0 && researchCurrent === assessments.length && screenResults.length === equityLongs.length && universeQuotesCurrent === equityLongs.length
 
   const coverageRows: CoverageRow[] = equityLongs.map((position) => ({
@@ -296,13 +314,14 @@ export function OpportunitiesPanel() {
           shortlisted={shortlist.has(ticker)}
           onToggleShortlist={() => toggleShortlist(ticker)}
           policy={policy}
+          chart={market.snapshot?.equityCharts?.[ticker]}
         />
       })}</div>
 
   return (
     <Section
       title="Equity opportunities"
-      description="Price-aware decision support over authored equity scenarios. Security valuation is ranked only after research, market freshness and tradability pass. Portfolio sizing remains in Plan; this page never submits or authorises a trade."
+      description="The 200-session moving average is the primary technical gate; authored valuation then determines whether a surviving equity clears the return hurdle. Portfolio sizing remains in Plan; this page never submits or authorises a trade."
     >
       <div className={`border p-4 ${readyForMonday ? 'border-term-green' : 'border-term-yellow'}`}>
         <div className="flex flex-wrap items-start justify-between gap-3">
@@ -312,9 +331,11 @@ export function OpportunitiesPanel() {
           </div>
           {alteredPolicy && <div className="flex flex-wrap items-center gap-2"><span className="border border-term-magenta px-2 py-1 text-[10px] uppercase tracking-wider text-term-magenta">My what-if · canonical research unchanged</span><button type="button" onClick={() => { setPolicy({ ...DEFAULT_OPPORTUNITY_POLICY }); setScreenPolicy({ ...DEFAULT_UNIVERSE_SCREEN_POLICY }) }} className="border border-term-magenta px-2 py-1 text-[10px] uppercase tracking-wider text-term-magenta hover:bg-term-magenta hover:text-black">Reset all</button></div>}
         </div>
-        <div className="mt-4 grid grid-cols-2 gap-px border border-term-line bg-term-line sm:grid-cols-3 lg:grid-cols-6">
+        <div className="mt-4 grid grid-cols-2 gap-px border border-term-line bg-term-line sm:grid-cols-4 lg:grid-cols-8">
           {[
             ['Universe scanned', `${screenResults.length}/${equityLongs.length}`],
+            ['With 200MA', `${withMa200}/${equityLongs.length}`],
+            ['Above 200MA', `${aboveMa200}`],
             ['Pass stage 1', `${screenSurvivors.length}`],
             ['Quotes current', `${universeQuotesCurrent}/${equityLongs.length}`],
             ['Models', `${assessments.length}/${equityLongs.length}`],
@@ -322,7 +343,7 @@ export function OpportunitiesPanel() {
             ['Qualified', `${qualified.length}`],
           ].map(([label, value]) => <div key={label} className="bg-term-panel p-3"><dt className="text-[9px] uppercase tracking-wider text-term-dim">{label}</dt><dd className="mt-1 text-xs tabular-nums">{value}</dd></div>)}
         </div>
-        <p className="mt-3 text-[10px] leading-relaxed text-term-dim">Market snapshot {market.snapshot?.fetchedAt ?? 'not loaded'} · {market.source} · FX {market.snapshot ? `${market.snapshot.fx.asOf} (${fxCurrent ? 'current' : 'stale'})` : 'missing'}. Stage one scans every equity long with current mechanical market fields. Stage two can calculate +EV only for the {assessments.length} names with authored terminal scenarios. Passing stage one is not a buy signal.</p>
+        <p className="mt-3 text-[10px] leading-relaxed text-term-dim">Market snapshot {market.snapshot?.fetchedAt ?? 'not loaded'} · {market.source} · FX {market.snapshot ? `${market.snapshot.fx.asOf} (${fxCurrent ? 'current' : 'stale'})` : 'missing'}. Stage one starts with the 200MA trend gate and then applies the other mechanical fields. Stage two applies authored valuation to the survivors. Passing stage one is not a buy signal.</p>
       </div>
 
       <div className="mt-4">
@@ -330,6 +351,7 @@ export function OpportunitiesPanel() {
           <p className="mb-3 text-[11px] leading-relaxed text-term-dim">These filters rerun over all {equityLongs.length} researched equity longs. They are eligibility rules, not a valuation score. Missing market fields fail closed.</p>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <ThemeField value={screenPolicy.theme} onChange={(theme) => setScreenPolicy((current) => ({ ...current, theme }))} />
+            <TrendGateField value={screenPolicy.requireAbove200DayMa} onChange={(requireAbove200DayMa) => setScreenPolicy((current) => ({ ...current, requireAbove200DayMa }))} />
             <PolicyField label="Minimum market cap" value={screenPolicy.minMarketCapUsdBn} onChange={(value) => setScreenPolicy((current) => ({ ...current, minMarketCapUsdBn: Math.max(0, value) }))} suffix="USD bn" min={0} max={1000} impact="UNIVERSE FILTER" />
             <PolicyField label="Maximum 1Y volatility" value={screenPolicy.maxRealisedVolPct} onChange={(value) => setScreenPolicy((current) => ({ ...current, maxRealisedVolPct: Math.min(300, Math.max(0, value)) }))} suffix="%" min={0} max={300} impact="UNIVERSE FILTER" />
             <PolicyField label="Maximum 1Y drawdown" value={screenPolicy.maxDrawdownMagnitudePct} onChange={(value) => setScreenPolicy((current) => ({ ...current, maxDrawdownMagnitudePct: Math.min(100, Math.max(0, value)) }))} suffix="%" min={0} max={100} impact="UNIVERSE FILTER" />
@@ -382,6 +404,7 @@ export function OpportunitiesPanel() {
       </div>
 
       <div className="mt-4"><CoverageMatrix rows={coverageRows} /></div>
+      <div className="mt-4"><EquityChartAtlas positions={positions.filter((position) => !position.sections.includes('crypto'))} snapshot={market.snapshot} /></div>
     </Section>
   )
 }

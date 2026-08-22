@@ -27,16 +27,17 @@ The interface separates mechanical universe eligibility from valuation:
 1. Stage one rescans every researched equity long. The local screen can select
    a theme and set minimum current USD market cap, maximum one-year realised
    volatility, maximum one-year drawdown magnitude, minimum three-month USD
-   return and maximum quote age. Direct tradability through the declared Dutch
+   return and maximum quote age. By default, the last close must also be at or
+   above the simple 200-trading-session moving average. Direct tradability through the declared Dutch
    retail route remains mandatory. Missing market fields fail closed.
 2. Stage two applies the return hurdle only to screen survivors with a complete,
    versioned opportunity model. Verification requires exactly one model for
    every equity long, so a newly added long cannot ship without one.
 
-The default stage-one numeric bounds are deliberately non-selective: $0 minimum
+The default stage-one numeric bounds besides the 200MA are deliberately non-selective: $0 minimum
 market cap, 200% maximum volatility, 100% maximum drawdown and -100% minimum
-three-month return. At the 21 August snapshot, direct tradability and complete
-market fields do the default exclusion. Tightening a local bound changes the
+three-month return. At the 21 August close, the 200MA, direct tradability and
+complete market fields do the default exclusion. Tightening a local bound changes the
 survivor list and can remove a model from `Qualified now`. These settings are
 browser-local what-if policy and do not rewrite research or history.
 
@@ -56,10 +57,35 @@ blended into a composite score.
 | Near-hurdle band | 10% pullback | Maximum price decline for `WATCH — CLOSE TO HURDLE`. |
 | Quote age | One completed business session | Older or missing market data blocks a decision. |
 | Fundamental age | 120 days | Older fundamentals block a decision. |
+| 200MA gate | Price at or above 200MA | Primary technical trend gate. Fewer than 200 valid closes fails closed. |
 
 The benchmark, premium and costs are configurable policy assumptions. They are
 not measured facts and they are not broker quotes. Taxes, spreads, custody,
 currency conversion and user-specific fees are absent.
+
+## 200MA and charts
+
+The market refresh downloads two years of daily local-currency closes. For
+session `t`, the technical line is:
+
+```text
+MA200_t = (Close_t + Close_t-1 + … + Close_t-199) / 200
+Distance_t = Close_t / MA200_t − 1
+```
+
+The chart stores the latest 252 sessions, but each displayed moving-average
+point is computed before that slice from the full two-year input. The default
+screen requires `Distance >= 0`. Missing history or fewer than 200 closes does
+not get approximated and blocks qualification. The what-if checkbox can disable
+the gate without changing the canonical market snapshot.
+
+All 82 transcribed equity rows appear in the chart atlas, including context
+rows that are not buy candidates. Unitree has no chart because it is approved
+but not trading. Recent listings can have a price chart without a 200MA.
+
+The 200MA is a trend rule, not evidence of intrinsic value and not a return
+forecast. It can lag abrupt reversals and whipsaw in sideways markets. It does
+not raise scenario value, improve the valuation score or override the bear case.
 
 ## Valuation methods
 

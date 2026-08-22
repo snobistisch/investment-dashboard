@@ -76,6 +76,7 @@ const quote: MarketQuote = {
   marketCapUsd: 12,
   returns: { m3: 8 },
   stats: { windowDays: 252, realisedVolPct: 45, maxDrawdownPct: -35 },
+  trend200: { ma200: 70, distancePct: 14.2857142857, above: true, observations: 260 },
 }
 
 const position: Position = {
@@ -113,8 +114,12 @@ assert(equityOpportunityModels.some((row) => row.valuation.kind === 'terminal-pr
 
 const currentMarket = JSON.parse(readFileSync(resolve(here, '../public/data/market-data.json'), 'utf8')) as MarketSnapshot
 const marketDate = currentMarket.fetchedAt.slice(0, 10)
-function canonicalQualified(opportunityPolicy: OpportunityPolicy, theme: 'all' | 'biology' = 'all') {
-  const screenPolicy = { ...DEFAULT_UNIVERSE_SCREEN_POLICY, theme }
+function canonicalQualified(
+  opportunityPolicy: OpportunityPolicy,
+  theme: 'all' | 'biology' = 'all',
+  requireAbove200DayMa = DEFAULT_UNIVERSE_SCREEN_POLICY.requireAbove200DayMa,
+) {
+  const screenPolicy = { ...DEFAULT_UNIVERSE_SCREEN_POLICY, theme, requireAbove200DayMa }
   return equityOpportunityModels
     .filter((authored) => {
       const row = positions.find((candidate) => candidate.ticker === authored.ticker)
@@ -129,9 +134,42 @@ function canonicalQualified(opportunityPolicy: OpportunityPolicy, theme: 'all' |
 const defaultQualified = canonicalQualified(DEFAULT_OPPORTUNITY_POLICY)
 const highHurdleQualified = canonicalQualified({ ...DEFAULT_OPPORTUNITY_POLICY, requiredActivePremiumPct: 15 })
 const biologyQualified = canonicalQualified(DEFAULT_OPPORTUNITY_POLICY, 'biology')
+const withoutTrendGateQualified = canonicalQualified(DEFAULT_OPPORTUNITY_POLICY, 'all', false)
 assert(defaultQualified.length > 5, 'full-universe modelling must break the former five-name output ceiling')
 assert(JSON.stringify(defaultQualified) !== JSON.stringify(highHurdleQualified), 'changing valuation policy must change Qualified now')
 assert(JSON.stringify(defaultQualified) !== JSON.stringify(biologyQualified), 'changing the universe theme must rescan and change Qualified now')
+assert(defaultQualified.length < withoutTrendGateQualified.length, 'the default 200MA gate must materially reduce Qualified now')
+
+const equityRows = positions.filter((row) => !row.sections.includes('crypto'))
+const equityTickers = new Set(equityRows.map((row) => row.ticker))
+for (const ticker of Object.keys(currentMarket.equityCharts ?? {})) assert(equityTickers.has(ticker), `${ticker}: non-equity leaked into equity charts`)
+for (const row of equityRows) {
+  const currentQuote = currentMarket.quotes[row.ticker]
+  const chart = currentMarket.equityCharts?.[row.ticker]
+  if (!currentQuote) {
+    assert(!chart, `${row.ticker}: unpriced equity cannot carry an unexplained chart`)
+    continue
+  }
+  assert(chart && chart.points.length >= 2 && chart.points.length <= 252, `${row.ticker}: mapped equity must carry at most 252 chart sessions`)
+  assert(chart.currency === currentQuote.currency, `${row.ticker}: chart currency must match quote currency`)
+  for (let index = 0; index < chart.points.length; index++) {
+    const [date, close, ma200] = chart.points[index]
+    assert(/^\d{4}-\d{2}-\d{2}$/.test(date), `${row.ticker}: invalid chart date`)
+    assert(Number.isFinite(close) && close > 0, `${row.ticker}: invalid chart close`)
+    assert(ma200 === null || Number.isFinite(ma200) && ma200 > 0, `${row.ticker}: invalid 200MA point`)
+    if (index > 0) assert(chart.points[index - 1][0] < date, `${row.ticker}: chart dates must be unique and increasing`)
+  }
+  if (currentQuote.trend200) {
+    assert(chart.points.length >= 200, `${row.ticker}: 200MA requires at least 200 stored closes`)
+    const last = chart.points.at(-1) as [string, number, number | null]
+    const recomputed = chart.points.slice(-200).reduce((sum, point) => sum + point[1], 0) / 200
+    close(currentQuote.trend200.ma200, recomputed, `${row.ticker}: latest 200MA must equal the simple average`, 1e-4)
+    close(last[2] ?? undefined, recomputed, `${row.ticker}: chart endpoint must match quote 200MA`, 1e-4)
+    const recomputedDistance = (last[1] / recomputed - 1) * 100
+    assert(Math.abs(currentQuote.trend200.distancePct - recomputedDistance) <= 0.011, `${row.ticker}: rounded 200MA distance drifted`)
+    assert(currentQuote.trend200.above === (last[1] >= recomputed), `${row.ticker}: 200MA direction flag drifted`)
+  }
+}
 
 const assessed = assessOpportunity(model, quote, policy, true, '2026-08-21')
 assert(assessed.decisionReady, `complete opportunity blocked: ${assessed.blockers.map((blocker) => blocker.message).join('; ')}`)
@@ -241,6 +279,8 @@ assert(!screenUniversePosition(position, quote, true, { ...DEFAULT_UNIVERSE_SCRE
 assert(!screenUniversePosition(position, quote, true, { ...DEFAULT_UNIVERSE_SCREEN_POLICY, maxRealisedVolPct: 40 }, 1, '2026-08-21').passes, 'volatility policy must change screen membership')
 assert(!screenUniversePosition(position, quote, true, { ...DEFAULT_UNIVERSE_SCREEN_POLICY, maxDrawdownMagnitudePct: 30 }, 1, '2026-08-21').passes, 'drawdown policy must change screen membership')
 assert(!screenUniversePosition(position, quote, true, { ...DEFAULT_UNIVERSE_SCREEN_POLICY, minThreeMonthReturnPct: 9 }, 1, '2026-08-21').passes, 'three-month return policy must change screen membership')
+assert(!screenUniversePosition(position, { ...quote, trend200: { ma200: 90, distancePct: -11.11, above: false, observations: 260 } }, true, DEFAULT_UNIVERSE_SCREEN_POLICY, 1, '2026-08-21').passes, 'price below 200MA must fail the default screen')
+assert(screenUniversePosition(position, { ...quote, trend200: { ma200: 90, distancePct: -11.11, above: false, observations: 260 } }, true, { ...DEFAULT_UNIVERSE_SCREEN_POLICY, requireAbove200DayMa: false }, 1, '2026-08-21').passes, 'disabling the 200MA what-if gate must admit an otherwise complete row')
 assert(validateUniverseScreenPolicy({ ...DEFAULT_UNIVERSE_SCREEN_POLICY, maxDrawdownMagnitudePct: 101 }).length > 0, 'invalid universe threshold must fail validation')
 
 const history = JSON.parse(readFileSync(resolve(here, '../public/data/equity-opportunity-history.json'), 'utf8')) as {

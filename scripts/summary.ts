@@ -64,6 +64,7 @@ if (snap) {
   line('fetched', snap.fetchedAt.slice(0, 10))
   line('age (days)', ((Date.now() - Date.parse(snap.fetchedAt)) / 86_400_000).toFixed(1))
   line('priced / with cap / unmapped', `${quotes.length} / ${quotes.filter((q) => q.marketCapUsd !== undefined).length} / ${snap.unmapped.length}`)
+  line('equity charts / with 200MA', `${Object.keys(snap.equityCharts ?? {}).length} / ${quotes.filter((q) => q.trend200).length}`)
   line('measured correlation pairs', Object.keys(snap.correlations ?? {}).length)
 } else line('status', 'absent — the site falls back to transcribed values')
 

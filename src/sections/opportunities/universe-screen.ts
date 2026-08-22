@@ -7,6 +7,7 @@ export type EquityScreenTheme = (typeof EQUITY_SCREEN_THEMES)[number]
 
 export interface UniverseScreenPolicy {
   theme: EquityScreenTheme
+  requireAbove200DayMa: boolean
   minMarketCapUsdBn: number
   maxRealisedVolPct: number
   maxDrawdownMagnitudePct: number
@@ -15,6 +16,7 @@ export interface UniverseScreenPolicy {
 
 export const DEFAULT_UNIVERSE_SCREEN_POLICY: UniverseScreenPolicy = {
   theme: 'all',
+  requireAbove200DayMa: true,
   minMarketCapUsdBn: 0,
   maxRealisedVolPct: 200,
   maxDrawdownMagnitudePct: 100,
@@ -27,6 +29,7 @@ export type UniverseScreenBlockerCode =
   | 'tradability'
   | 'market-missing'
   | 'market-stale'
+  | 'ma200'
   | 'market-cap'
   | 'volatility'
   | 'drawdown'
@@ -47,11 +50,15 @@ export interface UniverseScreenResult {
   realisedVolPct?: number
   drawdownMagnitudePct?: number
   threeMonthReturnPct?: number
+  ma200?: number
+  distanceFromMa200Pct?: number
+  aboveMa200?: boolean
 }
 
 export function validateUniverseScreenPolicy(policy: UniverseScreenPolicy) {
   const errors: string[] = []
   if (!EQUITY_SCREEN_THEMES.includes(policy.theme)) errors.push('Theme is not supported.')
+  if (typeof policy.requireAbove200DayMa !== 'boolean') errors.push('200MA requirement must be boolean.')
   if (!Number.isFinite(policy.minMarketCapUsdBn) || policy.minMarketCapUsdBn < 0) errors.push('Minimum market cap must be non-negative.')
   if (!Number.isFinite(policy.maxRealisedVolPct) || policy.maxRealisedVolPct < 0) errors.push('Maximum realised volatility must be non-negative.')
   if (!Number.isFinite(policy.maxDrawdownMagnitudePct) || policy.maxDrawdownMagnitudePct < 0 || policy.maxDrawdownMagnitudePct > 100) errors.push('Maximum drawdown magnitude must be between 0% and 100%.')
@@ -74,6 +81,8 @@ export function screenUniversePosition(
     ? undefined
     : Math.abs(quote.stats.maxDrawdownPct)
   const threeMonthReturnPct = quote?.returns?.m3
+  const ma200 = quote?.trend200?.ma200
+  const distanceFromMa200Pct = quote?.trend200?.distancePct
 
   blockers.push(...validateUniverseScreenPolicy(policy).map((message) => ({ code: 'policy' as const, message })))
 
@@ -84,6 +93,14 @@ export function screenUniversePosition(
   if (!quote) blockers.push({ code: 'market-missing', message: 'Current quote and market statistics are missing.' })
   else if (businessSessionAge(quote.asOf, today) > maxQuoteBusinessSessions) {
     blockers.push({ code: 'market-stale', message: `Quote ${quote.asOf} is older than ${maxQuoteBusinessSessions} completed business session.` })
+  }
+
+  if (policy.requireAbove200DayMa) {
+    if (ma200 === undefined || distanceFromMa200Pct === undefined || !Number.isFinite(ma200) || !Number.isFinite(distanceFromMa200Pct)) {
+      blockers.push({ code: 'ma200', message: 'A complete 200-session moving average is missing.' })
+    } else if (!quote?.trend200?.above) {
+      blockers.push({ code: 'ma200', message: `Price is ${Math.abs(distanceFromMa200Pct).toFixed(1)}% below the 200MA.` })
+    }
   }
 
   if (marketCapUsdBn === undefined || !Number.isFinite(marketCapUsdBn)) blockers.push({ code: 'market-cap', message: 'Current USD market cap is missing.' })
@@ -108,5 +125,8 @@ export function screenUniversePosition(
     realisedVolPct,
     drawdownMagnitudePct,
     threeMonthReturnPct,
+    ma200,
+    distanceFromMa200Pct,
+    aboveMa200: quote?.trend200?.above,
   }
 }

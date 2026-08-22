@@ -73,6 +73,9 @@ These are not style preferences.
 - Equity opportunity probabilities and terminal assumptions change only in a
   visible, versioned research revision. A market refresh changes the ranking,
   not the authored thesis.
+- Equity charts and the simple 200-session average are generated only from
+  fetched daily closes. Fewer than 200 closes remains missing and fails the
+  default technical gate; never backfill or approximate it.
 - Put missing sources, stale data, unverified claims and model limits beside the
   decision they affect.
 - Do not bypass freshness, minimum-ticket, existing-holdings or evidence gates.
@@ -127,6 +130,7 @@ are currently expensive to open.
 | --- | --- |
 | One crypto history series | `jq` or a Node expression against `public/data/crypto-history.json` |
 | One equity quote | `jq '.quotes["SYMBOL"]' public/data/market-data.json` |
+| One equity chart + 200MA | `jq '.equityCharts["SYMBOL"]' public/data/market-data.json` |
 | One authored equity model | `rg -n "ticker: 'SYMBOL'" src/data/equity-opportunities.ts` |
 | One crypto market row | `jq '.rows[] | select(.ticker=="ETH")' public/data/crypto-market.json` |
 | One frozen crypto scenario | `jq '.rows[] | select(.ticker=="ETH")' public/data/crypto-scenarios.json` |

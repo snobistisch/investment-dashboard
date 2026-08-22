@@ -29,6 +29,7 @@ export function OpportunityComparison({
     { label: 'Research vintage', value: (assessment) => assessment.model.reviewedAt },
     { label: 'Next review', value: (assessment) => assessment.model.nextReviewAt },
     { label: 'Volatility', value: (assessment) => pct(assessment.quote?.stats?.realisedVolPct) },
+    { label: '200MA distance', value: (assessment) => signedPct(assessment.quote?.trend200?.distancePct) },
   ]
 
   return (

@@ -42,6 +42,20 @@ export interface MarketStats {
   julyDrawdownPct?: number
 }
 
+export interface MarketTrend200 {
+  ma200: number
+  distancePct: number
+  above: boolean
+  observations: number
+}
+
+export type EquityChartPoint = [date: string, close: number, ma200: number | null]
+
+export interface EquityChartSeries {
+  currency: string
+  points: EquityChartPoint[]
+}
+
 /** Price return per window, in percent, measured in USD so venues compare.
  *  A window the price history does not cover is absent, never approximated. */
 export interface MarketReturns {
@@ -76,6 +90,7 @@ export interface MarketQuote {
   marketCapUsd?: number
   asOf: string
   stats?: MarketStats
+  trend200?: MarketTrend200
 }
 
 export interface MarketSnapshot {
@@ -84,6 +99,8 @@ export interface MarketSnapshot {
   providers: { equity: string; crypto: string; fx: string }
   fx: { asOf: string; source: string; usdPer: Record<string, number>; usdPerEur?: number }
   quotes: Record<string, MarketQuote>
+  /** Local-currency closes and 200-session SMA for every mapped equity. */
+  equityCharts?: Record<string, EquityChartSeries>
   /** Pearson correlations of aligned daily USD log returns, keyed by sorted tickers. */
   correlations?: Record<string, { value: number; observations: number }>
   unmapped: { ticker: string; exchange: string; reason: string }[]

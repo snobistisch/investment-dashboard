@@ -11,6 +11,12 @@ deploys on every push to main).
 
 ## Done
 
+- **De volledige niet-crypto-investment thesis is als zelfstandig document
+  vastgelegd (22 Aug 2026).** De nieuwe thesis distilleert de overkoepelende
+  wereldvisie, zes thematische hypotheses, rent capture, falsificatie,
+  waardering, de 200MA-regel en portefeuilleconstructie zonder individuele
+  bedrijven of tickers. De README verwijst naar het document.
+
 - **Proximity above 200MA now prioritises equity opportunities (22 Aug 2026).**
   The trend rule previously stopped at a binary above/below gate. Qualified
   equities from 0% through 5% above 200MA now form a separate entry-setup list,

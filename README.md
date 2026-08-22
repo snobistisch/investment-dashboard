@@ -95,6 +95,10 @@ of what it was and why it went.
 
 Nothing here is investment advice.
 
+De volledige niet-crypto-beleggingsfilosofie achter de thematische research,
+waardering, 200MA-timing en portefeuilleconstructie staat zonder individuele
+bedrijven of tickers in [research/investment-thesis.md](research/investment-thesis.md).
+
 The dated readiness verdict, Monday route and remaining limits are recorded in
 [research/equity-decision-readiness.md](research/equity-decision-readiness.md).
 

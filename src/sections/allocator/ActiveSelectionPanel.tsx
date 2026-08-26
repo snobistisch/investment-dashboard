@@ -47,9 +47,9 @@ export function ActiveSelectionPanel({ candidates, setCandidates, snapshot, benc
   return <div className="mt-4 space-y-4">
     <Panel title="3 · Active stock evidence">
       <div className="border border-term-yellow/50 bg-term-bg p-3 text-xs leading-relaxed text-term-dim">
-        The thematic tabs are discovery material, not an approved universe. Defence remains a separate research-only page. A ticker enters this sleeve only through a new, dated evidence record below; nothing is imported as a recommendation.
+        The research tabs surface ideas; they do not approve them. Defence remains separate. A ticker can enter the active sleeve only through a new, dated evidence record below.
       </div>
-      {candidates.length === 0 && <p className="mt-4 text-xs text-term-dim">No active candidates. The valid default is 100% broad baseline.</p>}
+      {candidates.length === 0 && <p className="mt-4 text-xs text-term-dim">No active candidates. Until evidence says otherwise, the plan remains 100% broad baseline.</p>}
       <div className="mt-4 space-y-5">
         {candidates.map((candidate, index) => {
           const assessment = portfolio.assessments[index]
@@ -83,7 +83,7 @@ export function ActiveSelectionPanel({ candidates, setCandidates, snapshot, benc
               <label className="flex gap-2 text-xs"><input type="checkbox" checked={candidate.brokerAvailableConfirmed} onChange={(event) => set('brokerAvailableConfirmed', event.target.checked)} className="accent-term-amber" />The exact listing is available at the broker named in the plan.</label>
             </div>
             <div className="mt-4 border-t border-term-line pt-3 text-[11px] leading-relaxed">
-              {assessment?.blockers.length ? <ul className="space-y-1 text-term-yellow">{assessment.blockers.map((blocker) => <li key={blocker}>— {blocker}</li>)}</ul> : assessment?.qualifies ? <p className="text-term-green">Evidence complete · expected {assessment.expectedAnnualReturnPct?.toFixed(1)}% p.a. after costs · edge {assessment.edgeAfterCostPct?.toFixed(1)} pp versus baseline · EUR reference {assessment.priceEur?.toFixed(2)} ({assessment.priceAsOf}).</p> : <p className="text-term-red">Evidence complete, but expected return after costs does not beat the declared broad baseline. No active allocation.</p>}
+              {assessment?.blockers.length ? <ul className="space-y-1 text-term-yellow">{assessment.blockers.map((blocker) => <li key={blocker}>— {blocker}</li>)}</ul> : assessment?.qualifies ? <p className="text-term-green">Evidence complete · expected return after costs {assessment.expectedAnnualReturnPct?.toFixed(1)}% p.a. · {assessment.edgeAfterCostPct?.toFixed(1)} pp above baseline · EUR reference {assessment.priceEur?.toFixed(2)} ({assessment.priceAsOf}).</p> : <p className="text-term-red">The evidence is complete, but expected return after costs does not beat the broad baseline. Active allocation remains zero.</p>}
             </div>
           </section>
         })}
@@ -93,7 +93,7 @@ export function ActiveSelectionPanel({ candidates, setCandidates, snapshot, benc
 
     <div className="grid gap-4 lg:grid-cols-2">
       <Panel title="Active risk budget">
-        <p className="text-[11px] leading-relaxed text-term-dim">Positive benchmark-relative edge is divided by realised volatility. Hard ceilings are {ACTIVE_NAME_CAP_PCT}% of total capital per name and {ACTIVE_FACTOR_CAP_PCT}% per primary factor. Unused room returns to the broad baseline; the active percentage is a ceiling, not a quota.</p>
+        <p className="text-[11px] leading-relaxed text-term-dim">Sizing divides positive return above the benchmark by realised volatility. No name may exceed {ACTIVE_NAME_CAP_PCT}% of total capital and no primary factor may exceed {ACTIVE_FACTOR_CAP_PCT}%. Any unused active budget returns to the broad baseline; the active share is a ceiling, not a target.</p>
         <dl className="mt-4 space-y-2 border-t border-term-line pt-3 text-xs">
           <div className="flex justify-between"><dt className="text-term-dim">Active ceiling</dt><dd>€{portfolio.activeBudgetEur.toFixed(0)}</dd></div>
           <div className="flex justify-between"><dt className="text-term-dim">Qualified allocation</dt><dd>€{portfolio.allocatedEur.toFixed(0)}</dd></div>
@@ -105,7 +105,7 @@ export function ActiveSelectionPanel({ candidates, setCandidates, snapshot, benc
         {portfolio.blockers.length > 0 && <ul className="space-y-2 text-[11px] text-term-red">{portfolio.blockers.map((blocker) => <li key={blocker}>— {blocker}</li>)}</ul>}
         {portfolio.correlations.map((row) => <p key={`${row.left}-${row.right}`} className="text-xs">{row.left}/{row.right}: <span className="text-term-cyan">{row.value.toFixed(2)}</span> · {row.observations} overlapping USD-return days</p>)}
         {portfolio.warnings.map((warning) => <p key={warning} className="mt-2 text-[11px] text-term-yellow">— {warning}</p>)}
-        {!portfolio.blockers.length && !portfolio.correlations.length && <p className="text-xs text-term-dim">Correlation becomes relevant from two qualifying stocks. It is measured from the committed daily USD-close history, never typed by hand.</p>}
+        {!portfolio.blockers.length && !portfolio.correlations.length && <p className="text-xs text-term-dim">Correlation matters once two stocks qualify. It is calculated from committed daily USD closes, never entered by hand.</p>}
       </Panel>
     </div>
   </div>

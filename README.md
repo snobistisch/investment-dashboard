@@ -1,26 +1,28 @@
-# Investment Intelligence Dashboard
+# Investment Research Dashboard
 
-Personal public-equity research and decision-support dashboard built from public sources.
+A personal public-equity dashboard for research, comparison and allocation decisions.
 
 Live at **https://snobistisch.github.io/investment-dashboard/**.
 
 ## Product
 
-The application opens directly on the equity research workflow:
+The application follows the order in which the decisions should be made:
 
-- **Opportunities** rescans every researched long against declared market, volatility,
-  drawdown, momentum, quote-freshness and 200-session-average gates. It then reprices
-  versioned bear/base/bull models against the current quote. Passing the screen is a
-  diligence priority, not an order signal.
-- **Exposure** shows factor concentration, value-chain overlap, market data provenance,
-  cross-name correlation and the dated stress anchor across the transcribed research book.
-- **Plan** starts from the investor, a broad-market baseline and explicit evidence and
-  execution gates. Individual stocks begin at 0%; unused active room returns to the baseline.
+- **Opportunities** first tests each researched long for market size, volatility, drawdown,
+  momentum, quote freshness and position versus its 200-session average. It then reprices
+  the versioned bear, base and bull scenarios at the current quote. A passing result earns
+  further diligence; it is not an order signal.
+- **Exposure** shows which theme labels depend on the same economic drivers. It also keeps
+  market-data coverage, value-chain overlap, correlation and the dated stress reference
+  beside the concentration figures they qualify.
+- **Plan** begins with the investor's goal, horizon and loss limit, then specifies a
+  broad-market baseline. Individual stocks start at 0%; any unused active budget returns
+  to that baseline.
 - **Digital Biology**, **Robotics**, **Quantum**, **Agentic**, **Photonics** and
   **Defence** are static research-only dashboards. Appearing in one does not make a
   security eligible for Plan.
 
-Nothing here is investment advice. The application never submits an order.
+Nothing here is investment advice, and the application cannot submit an order.
 
 ## Research and methodology
 
@@ -36,10 +38,10 @@ committed snapshot at read time and never written back into that source file.
 
 ## Market data
 
-`scripts/fetch-market-data.ts` fetches equity quotes, market caps, FX and daily price
-history from Yahoo Finance and the ECB. It writes `public/data/market-data.json`.
-The weekday workflow refreshes that snapshot and records one Opportunities repricing
-row per date, ticker and model version in `public/data/equity-opportunity-history.json`.
+`scripts/fetch-market-data.ts` retrieves equity quotes, market caps, FX and daily closes
+from Yahoo Finance and the ECB, then writes `public/data/market-data.json`. The weekday
+workflow refreshes the snapshot and records one Opportunities valuation per date, ticker
+and model version in `public/data/equity-opportunity-history.json`.
 
 ```sh
 npm run fetch-market-data
@@ -57,8 +59,8 @@ npm run build
 npm run dev
 ```
 
-The stack is Vite, React, TypeScript and Tailwind CSS v4. Pushes to `main` deploy
-GitHub Pages after verification, lint and build succeed.
+The stack is Vite, React, TypeScript and Tailwind CSS v4. A push to `main` deploys
+GitHub Pages only after verification, lint and build pass.
 
 ## Adding a section
 

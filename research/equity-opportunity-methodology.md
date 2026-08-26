@@ -24,12 +24,12 @@ market snapshot and reprice the same terminal assumptions at read time.
 
 The interface separates mechanical universe eligibility from valuation:
 
-1. Stage one rescans every researched equity long. The local screen can select
-   a theme and set minimum current USD market cap, maximum one-year realised
-   volatility, maximum one-year drawdown magnitude, minimum three-month USD
-   return and maximum quote age. By default, the last close must also be at or
-   above the simple 200-trading-session moving average. Direct tradability through the declared Dutch
-   retail route remains mandatory. Missing market fields fail closed.
+1. Stage one retests every researched equity long. The local screen can select
+   a theme and set limits for current USD market cap, one-year realised
+   volatility, one-year drawdown, three-month USD return and quote age. By
+   default, the last close must also be at or above the simple 200-session
+   moving average. Direct tradability through the declared Dutch retail route
+   remains mandatory. A missing market field produces a failure, never an estimate.
 2. Stage two applies the return hurdle only to screen survivors with a complete,
    versioned opportunity model. Verification requires exactly one model for
    every equity long, so a newly added long cannot ship without one.
@@ -39,12 +39,12 @@ The interface separates mechanical universe eligibility from valuation:
    names farther above the line remain visible as extended rather than being
    silently discarded.
 
-The default stage-one numeric bounds besides the 200MA are deliberately non-selective: $0 minimum
-market cap, 200% maximum volatility, 100% maximum drawdown and -100% minimum
-three-month return. At the 21 August close, the 200MA, direct tradability and
-complete market fields do the default exclusion. Tightening a local bound changes the
-survivor list and can remove a model from `Qualified now`. These settings are
-browser-local what-if policy and do not rewrite research or history.
+The default stage-one numeric bounds besides the 200MA are deliberately broad:
+$0 minimum market cap, 200% maximum volatility, 100% maximum drawdown and -100%
+minimum three-month return. At the 21 August close, the 200MA, direct
+tradability and complete market fields determine the exclusions. Tightening a
+local bound changes the survivor list and can remove a model from `Qualified
+now`. These browser-local what-if settings do not rewrite research or history.
 
 Stage one does not estimate expected value. Market cap, realised volatility,
 drawdown and recent return are kept as separate observed fields; they are never
@@ -99,7 +99,7 @@ to 200MA is the primary ordering within that list. It never adds percentage
 points to hurdle edge and never changes a scenario probability or terminal
 value.
 
-All 82 transcribed equity rows appear in the chart atlas, including context
+All 79 transcribed equity rows appear in the chart atlas, including context
 rows that are not buy candidates. Unitree has no chart because it is approved
 but not trading. Recent listings can have a price chart without a 200MA.
 

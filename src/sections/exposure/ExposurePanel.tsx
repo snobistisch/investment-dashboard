@@ -134,7 +134,7 @@ export function ExposurePanel() {
   return (
     <Section
       title="Exposure"
-      description="What the five transcribed equity themes add up to. Defence is a separate research-only page and is not included here or in Plan. Every figure on this tab is computed from src/data/positions.ts; live prices and caps are merged from the dated snapshot. Read the coverage panel before trusting any weighted figure."
+      description="This view shows what the five equity themes share beneath their labels. Defence remains separate and does not enter Exposure or Plan. Counts come from src/data/positions.ts; dated market prices and caps are merged when the page loads. Check coverage before reading any weighted figure."
     >
       <DataProvenance snapshot={snapshot} source={source} loading={loading} book={activeBook} />
 
@@ -153,10 +153,9 @@ export function ExposurePanel() {
           <span className="text-term-amber">{FACTOR_LABELS[top.factor]}</span>.
         </p>
         <p className="mt-3 max-w-4xl text-xs leading-relaxed text-term-dim">
-          <span className="text-term-yellow">The count is the robust number; read it first.</span>{' '}
-          The cap-weighted version of the same fact — {pct(top.capShare)} of{' '}
-          {cap(bookCoverage.capUsd)} — is more fragile than it looks, and the headline used to lead
-          with it.{' '}
+          <span className="text-term-yellow">Start with the count; it survives missing market caps.</span>{' '}
+          The cap-weighted version — {pct(top.capShare)} of {cap(bookCoverage.capUsd)} — depends
+          more heavily on coverage.{' '}
           {coverage.live > 0 ? (
             <>
               It now covers {bookCoverage.withCap} of {bookCoverage.total} names, against{' '}
@@ -165,9 +164,9 @@ export function ExposurePanel() {
               buckets that would have pulled the concentration down. They did — this figure was{' '}
               <span className="text-term-text">{pct(beforeTop?.capShare ?? 0)}</span> on transcribed
               caps alone and is <span className="text-term-text">{pct(top.capShare)}</span> with the
-              missing {coverage.after - coverage.before} names priced — an objection worth about{' '}
-              {(Math.abs((beforeTop?.capShare ?? 0) - top.capShare) * 100).toFixed(0)} points, now
-              measured rather than argued.
+              missing {coverage.after - coverage.before} names priced. Missing coverage changed
+              the result by about{' '}
+              {(Math.abs((beforeTop?.capShare ?? 0) - top.capShare) * 100).toFixed(0)} percentage points.
             </>
           ) : (
             <>
@@ -179,15 +178,15 @@ export function ExposurePanel() {
           )}{' '}
           Within the bucket itself {heaviest[0]?.position.ticker} alone is{' '}
           {pct(heaviest[0]?.share ?? 0)}, so one ticker drives roughly half the entire figure.
-          Market cap is still not position size.
+          Market cap still says nothing about position size.
         </p>
         <p className="mt-4 max-w-4xl text-xs leading-relaxed text-term-dim">
           That is {pct(top.countShare)} of the book by count and {pct(top.capShare)} by market cap.
           Include the {thematicPositions.length - activeBook.length} names each section explicitly
           flags as <em>context, not exposure</em> and it becomes {topAll.count} of{' '}
           {thematicPositions.length} at {pct(topAll.capShare)} of {cap(allCoverage.capUsd)}. Neither
-          number is the book&rsquo;s risk: there are no position sizes here, so market cap is a
-          proxy for the universe&rsquo;s shape, not for what is owned.
+          number measures portfolio risk: there are no position sizes here. Market cap describes
+          the research universe, not the owner&rsquo;s holdings.
         </p>
         <p className="mt-3 max-w-4xl text-xs leading-relaxed text-term-dim">
           The cap-weighted figure is not spread evenly. Three names carry most of it:{' '}
@@ -483,9 +482,9 @@ export function ExposurePanel() {
             </table>
           )}
           <p className="mt-3 text-[11px] leading-relaxed text-term-dim">
-            <span className="text-term-amber">Ticker overlap is the wrong test on this book.</span>{' '}
-            The sections barely share tickers — they share a driver. The panel below is the
-            concentration argument in its real form.
+            <span className="text-term-amber">Ticker overlap misses the main concentration.</span>{' '}
+            The sections share few names but often depend on the same driver. The next panel shows
+            that common exposure directly.
           </p>
         </Panel>
 
@@ -512,9 +511,9 @@ export function ExposurePanel() {
             </tbody>
           </table>
           <p className="mt-3 text-[11px] leading-relaxed text-term-dim">
-            The transcribed equity themes resolve into a much smaller number of
-            drivers. The photonics note says so about itself: the thesis is &ldquo;a derivative of
-            ~$700bn of hyperscaler spending&rdquo;.
+            Five theme labels collapse into a much smaller set of economic drivers. The photonics
+            note makes the dependency explicit: its thesis is &ldquo;a derivative of ~$700bn of
+            hyperscaler spending&rdquo;.
           </p>
         </Panel>
       </div>
@@ -553,19 +552,19 @@ export function ExposurePanel() {
                 {pct(top.capShare)} of the market cap on file sits behind one driver. Applying the
                 Momentum TMT move of {worst}% uniformly to that share is{' '}
                 <span className="font-bold text-term-red">{illustration.toFixed(1)}%</span>. That
-                index rather than the SOX, because a concentrated high-momentum book sits in that
-                regime — the semiconductor index fell roughly half as far in the same window.{' '}
+                The Momentum TMT index is the relevant reference because this is a concentrated,
+                high-momentum universe; the SOX fell roughly half as far in the same window.{' '}
                 <span className="text-term-yellow">
-                  This shape is the universe&rsquo;s, not a portfolio&rsquo;s.
+                  This is the universe&rsquo;s shape, not a portfolio loss estimate.
                 </span>{' '}
                 There are no position sizes on this tab. Plan starts from zero and only sizes a
                 newly sourced candidate after the personal, benchmark and evidence gates pass.
               </p>
               <p className="mt-3 text-xs leading-relaxed text-term-dim">
-                The book is research-only and unlevered, so the ~4x that turned a correct thesis
-                into a forced liquidation does not apply here. The correlation that made 4x fatal
-                does. What killed that fund was not being wrong — it was being right, concentrated
-                and levered through an ordinary correction.
+                This research book has no recorded leverage, so the ~4x exposure that turned a
+                correct thesis into forced liquidation does not apply. The shared driver does. The
+                fund failed because a concentrated, correlated thesis met leverage during an
+                ordinary correction.
               </p>
               <p className="mt-3 text-[11px] leading-relaxed text-term-dim">
                 <span className="text-term-yellow">Against that reading:</span>{' '}
@@ -583,7 +582,7 @@ export function ExposurePanel() {
       {/* ------------------------------------------------------------------ */}
       {revisions.length > 0 && (
         <div className="mt-4">
-          <Panel title={`Revisions — ${revisions.length} transcribed caps the live snapshot disagrees with by 25% or more`}>
+          <Panel title={`Large data gaps — ${revisions.length} transcribed caps differ from the snapshot by at least 25%`}>
             <table className="w-full text-left text-xs">
               <thead>
                 <tr className="border-b border-term-line text-[10px] uppercase tracking-[0.15em] text-term-dim">
@@ -621,13 +620,13 @@ export function ExposurePanel() {
               </tbody>
             </table>
             <p className="mt-3 max-w-4xl text-[11px] leading-relaxed text-term-dim">
-              Neither column is corrected here. positions.ts still says what it always said, and the
-              figures above use the live number — this table exists so the gap between them is
-              visible instead of silently resolved. The photonics rows, transcribed from the 7 Aug
+              Neither column overwrites the other. positions.ts preserves the source transcription;
+              the figures above use the current snapshot. This table keeps the difference visible.
+              The photonics rows, transcribed from the 7 Aug
               close, agree with live data to within about a percent and do not appear.{' '}
               <span className="text-term-yellow">
-                The gaps cluster in the sections whose own headers say the figures were supplied
-                rather than verified
+                The largest gaps sit in sections whose headers already say the figures were supplied
+                rather than independently verified
               </span>{' '}
               — which is what those headers were warning about.
             </p>
@@ -682,16 +681,16 @@ export function ExposurePanel() {
               )}
             </li>
             <li>
-              <span className="text-term-yellow">Conviction is derived, not stated.</span> Matthias
-              has not set convictions. The values in positions.ts are mapped mechanically from each
+              <span className="text-term-yellow">Conviction is derived, not entered by the owner.</span>{' '}
+              The values in positions.ts are mapped mechanically from each
               dashboard&rsquo;s own risk-profile tier (A→4, B→3, C→2, untiered→1), capped at 2 where
               no specific mispricing is documented and where the source itself says the name is not
               real exposure. Treat that column as a placeholder with a rule attached.
             </li>
             <li>
-              <span className="text-term-yellow">The July 2026 figures are supplied, not
-              sourced.</span> They came from Matthias in August 2026, are not in research/, and
-              were not re-verified in this session.
+              <span className="text-term-yellow">The July 2026 figures were supplied without a
+              source record.</span> They were provided in August 2026, do not appear in research/,
+              and were not independently re-verified.
             </li>
           </ul>
         </Panel>
@@ -705,14 +704,9 @@ export function ExposurePanel() {
           one would move the allocation to fix a display problem. */}
       <Panel title="Cross-theme exposure map — eight axes, several invisible to the factor model">
         <p className="mb-3 text-[11px] leading-relaxed text-term-dim">
-          Six tabs, and fewer bets than tabs.{' '}
-          <span className="text-term-text">
-            This panel is the one figure on the tab that is not split by asset class
-          </span>{' '}
-          — the split exists because averaging a settlement layer with a photonics small cap
-          answers neither question, and this map exists precisely to show what the two halves have
-          in common. Each row names its constituents so it can be checked against the book rather
-          than taken on trust.{' '}
+          Five themes, and fewer independent bets than theme labels. Each row names its
+          constituents, so the claimed overlap can be checked against the book rather than taken
+          on trust.{' '}
           <span className="text-term-cyan">Derived</span> rows are computed from positions.ts.{' '}
           <span className="text-term-amber">Stated</span> rows are judgements: the data model has no
           field for them, and adding one — a <span className="text-term-text">china</span> factor,

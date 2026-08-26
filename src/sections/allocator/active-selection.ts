@@ -100,7 +100,7 @@ function daysBetween(from: string, to: string) {
 }
 
 /** Completed weekdays after the quote date. A Friday close is one session old
- *  on Monday; weekends do not turn a valid last close into a fake stale price. */
+ *  on the next review day; weekends do not make a valid last close appear stale. */
 export function businessSessionAge(asOf: string, today: string) {
   if (!validIso(asOf) || !validIso(today) || asOf > today) return Infinity
   let age = 0

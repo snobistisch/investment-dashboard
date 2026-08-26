@@ -27,10 +27,10 @@ export function CoverageMatrix({ rows }: { rows: CoverageRow[] }) {
   const modelled = rows.filter((row) => row.assessment).length
   const passed = rows.filter((row) => row.screen.passes).length
   return (
-    <Panel title={`Full audit trail · ${passed}/${rows.length} pass screen · ${modelled} modelled`}>
-      <p className="text-[11px] leading-relaxed text-term-dim">Every researched equity long is scanned again whenever the local screen changes and every row has one versioned model. Passing stage one is not a recommendation: evidence, price hurdle and tradability still gate Qualified now. Context rows are outside this matrix; Defence remains separate.</p>
+    <Panel title={`Coverage and blockers · ${passed}/${rows.length} pass screen · ${modelled} modelled`}>
+      <p className="text-[11px] leading-relaxed text-term-dim">Every researched equity long is retested when a local screen setting changes, and each row has one versioned model. Passing stage one only earns a valuation review; evidence, required return and tradability still decide qualification. Context rows and Defence sit outside this matrix.</p>
       <details className="mt-3">
-        <summary className="cursor-pointer border border-term-line px-3 py-2 text-xs uppercase tracking-wider text-term-cyan focus:outline-none focus-visible:ring-1 focus-visible:ring-term-cyan">Open full coverage matrix</summary>
+        <summary className="cursor-pointer border border-term-line px-3 py-2 text-xs uppercase tracking-wider text-term-cyan focus:outline-none focus-visible:ring-1 focus-visible:ring-term-cyan">Show every name and first blocker</summary>
 
         <div className="mt-3 space-y-2 md:hidden">
           {rows.map((row) => (

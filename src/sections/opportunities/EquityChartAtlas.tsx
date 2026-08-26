@@ -25,7 +25,7 @@ export function EquityChartAtlas({ positions, snapshot }: { positions: Position[
 
   return (
     <Panel title={`All equity charts · ${withChart}/${positions.length} charted · ${withMa} with 200MA`}>
-      <p className="text-[11px] leading-relaxed text-term-dim">Every transcribed equity, including context rows, is included. Charts use local-currency daily closes. The cyan line is a simple 200-trading-session average; recent listings remain visibly unclassified until 200 closes exist.</p>
+      <p className="text-[11px] leading-relaxed text-term-dim">The atlas includes every transcribed equity, including context rows. Charts use daily closes in the listing currency. The cyan line is the simple 200-session average; a recent listing remains unclassified until 200 closes exist.</p>
       <button type="button" onClick={() => setOpen((current) => !current)} className="mt-3 border border-term-cyan px-3 py-2 text-[10px] uppercase tracking-wider text-term-cyan hover:bg-term-cyan hover:text-black">{open ? 'Close chart atlas' : 'Open all charts'}</button>
       {open && (
         <div className="mt-4">
@@ -47,4 +47,3 @@ export function EquityChartAtlas({ positions, snapshot }: { positions: Position[
     </Panel>
   )
 }
-

@@ -89,15 +89,15 @@ export function AllocatorPanel() {
   return (
     <Section
       title="Investment plan"
-      description="Start with the decision that comes before security selection: whether this money can be invested, for what goal and with what loss boundary. Inputs stay in this browser session and are not persisted. No allocation or order appears until every material gate passes."
+      description="Decide whether the money can be invested before choosing a security. State its purpose, time horizon and loss limit first. Inputs remain in this browser session; no allocation or order appears until every material check passes."
     >
       {opportunityShortlist.length > 0 && (
         <div className="mb-4 border border-term-cyan bg-term-panel p-3">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <p className="text-[10px] uppercase tracking-[0.16em] text-term-cyan">Research shortlist received from Opportunities</p>
+              <p className="text-[10px] uppercase tracking-[0.16em] text-term-cyan">Names carried over from Opportunities</p>
               <p className="mt-2 text-xs leading-relaxed text-term-text">{opportunityShortlist.map((item) => item.ticker).join(' · ')}</p>
-              <p className="mt-2 max-w-3xl text-[11px] leading-relaxed text-term-dim">This is a review handoff only. Individual stocks remain off, the active sleeve remains at 0%, and no candidate, weight or order was created. Complete the personal and benchmark gates before deciding whether any name deserves a new evidence record.</p>
+              <p className="mt-2 max-w-3xl text-[11px] leading-relaxed text-term-dim">These names are reminders, not candidates. Individual stocks remain off, the active sleeve remains at 0%, and no weight or order has been created. Complete the personal and benchmark checks before opening a new evidence record for any name.</p>
             </div>
             <div className="flex gap-2">
               <a href="#equities/opportunities" className="border border-term-cyan px-3 py-2 text-[10px] uppercase tracking-wider text-term-cyan hover:bg-term-cyan hover:text-black">Review</a>
@@ -107,7 +107,7 @@ export function AllocatorPanel() {
         </div>
       )}
       <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)]">
-        <Panel title="1 · Personal decision frame">
+        <Panel title="1 · Personal constraints">
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="block sm:col-span-2">
               <span className="text-[10px] uppercase tracking-[0.16em] text-term-dim">Financial goal</span>
@@ -177,20 +177,20 @@ export function AllocatorPanel() {
               }}>Individual stocks</Check>
             </div>
             <p className="mt-3 text-[11px] leading-relaxed text-term-dim">
-              Individual stocks are off by default. The active thematic sleeve starts at 0% and remains blocked until benchmark, source and freshness checks pass.
+              Individual stocks are off by default. The active sleeve starts at 0% and stays there until the benchmark, source and freshness checks pass.
             </p>
           </div>
         </Panel>
 
         <div className="space-y-4">
-          <Panel title={assessment.ready ? 'Gate status · ready for benchmark setup' : `Gate status · ${assessment.blockers.length} blocking`}>
+          <Panel title={assessment.ready ? 'Personal checks · ready for benchmark' : `Personal checks · ${assessment.blockers.length} blocking`}>
             {assessment.blockers.length > 0 ? (
               <ul className="space-y-2 text-xs leading-relaxed text-term-yellow">
                 {assessment.blockers.map((blocker) => <li key={blocker.code}>— {blocker.message}</li>)}
               </ul>
             ) : (
               <p className="text-xs leading-relaxed text-term-green">
-                The personal gates pass. This does not yet authorize a security: benchmark, source, freshness, cost and execution gates come next.
+                The personal checks pass. No security is approved yet; benchmark, source, freshness, cost and execution checks come next.
               </p>
             )}
             {assessment.warnings.length > 0 && (
@@ -200,9 +200,9 @@ export function AllocatorPanel() {
             )}
           </Panel>
 
-          <Panel title="Policy, not a prediction">
+          <Panel title="Why the five-year minimum exists">
             <p className="text-[11px] leading-relaxed text-term-dim">
-              Equities are blocked below {MIN_EQUITY_HORIZON_YEARS} years. That is a declared safety policy grounded in the AFM&rsquo;s long-horizon guidance, not a forecast that five years guarantees a gain.
+              The plan excludes equities below a {MIN_EQUITY_HORIZON_YEARS}-year horizon. This is a safety rule based on the AFM&rsquo;s long-horizon guidance, not a claim that five years guarantees a gain.
             </p>
             <p className="mt-3 text-[11px] leading-relaxed text-term-dim">
               <a className="text-term-cyan underline underline-offset-2" href="https://www.afm.nl/nl-nl/consumenten/themas/zelf-beleggen" target="_blank" rel="noopener noreferrer">AFM · (Zelf) beleggen</a>

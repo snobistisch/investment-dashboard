@@ -42,8 +42,8 @@ export function ExecutionPanel({ planning, benchmark, candidates, market, input,
   }
 
   return <div className="mt-4 space-y-4">
-    <Panel title="4 · Concept order policy">
-      <div className="border border-term-red/50 bg-term-bg p-3 text-xs leading-relaxed text-term-dim">This creates a calculation, not an order. It cannot see the broker order book, tax treatment, account permissions or Monday&rsquo;s news. Every limit remains your input and must be checked again before submission.</div>
+    <Panel title="4 · Order calculation">
+      <div className="border border-term-red/50 bg-term-bg p-3 text-xs leading-relaxed text-term-dim">This page calculates a possible order; it does not place one. It cannot see the broker&rsquo;s order book, tax treatment, account permissions or new information. Recheck every limit before submission.</div>
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Numeric label="Fixed broker fee" value={input.fixedCostPerOrderEur} onChange={(v) => set('fixedCostPerOrderEur', v)} suffix="EUR/order" />
         <Numeric label="FX cost" value={input.fxCostPct} onChange={(v) => set('fxCostPct', v)} suffix="%" />
@@ -59,8 +59,8 @@ export function ExecutionPanel({ planning, benchmark, candidates, market, input,
       </div>
       <div className="mt-5 space-y-2 border-t border-term-line pt-4">
         <label className="flex gap-2 text-xs"><input type="checkbox" checked={input.costScheduleConfirmed} onChange={(event) => set('costScheduleConfirmed', event.target.checked)} className="accent-term-amber" />I checked the named broker&rsquo;s current fee and FX schedule.</label>
-        <label className="flex gap-2 text-xs"><input type="checkbox" checked={input.limitDisciplineConfirmed} onChange={(event) => set('limitDisciplineConfirmed', event.target.checked)} className="accent-term-amber" />Every concept row will remain a limit order; no market-order substitution.</label>
-        <label className="flex gap-2 text-xs"><input type="checkbox" checked={input.recheckBeforeSubmitConfirmed} onChange={(event) => set('recheckBeforeSubmitConfirmed', event.target.checked)} className="accent-term-amber" />Before submission I will recheck news, price, spread, FX, venue and instrument identity in the broker.</label>
+        <label className="flex gap-2 text-xs"><input type="checkbox" checked={input.limitDisciplineConfirmed} onChange={(event) => set('limitDisciplineConfirmed', event.target.checked)} className="accent-term-amber" />I will keep every row as a limit order and will not replace it with a market order.</label>
+        <label className="flex gap-2 text-xs"><input type="checkbox" checked={input.recheckBeforeSubmitConfirmed} onChange={(event) => set('recheckBeforeSubmitConfirmed', event.target.checked)} className="accent-term-amber" />Before submission, I will recheck news, price, spread, FX, venue and instrument identity in the broker.</label>
       </div>
     </Panel>
 
@@ -72,7 +72,7 @@ export function ExecutionPanel({ planning, benchmark, candidates, market, input,
       <Panel title="Decision snapshot">
         <dl className="space-y-2 text-xs"><div className="flex justify-between"><dt className="text-term-dim">Cash reserved</dt><dd>{eur(assessment.totalCashUseEur)}</dd></div><div className="flex justify-between"><dt className="text-term-dim">Estimated costs</dt><dd>{eur(assessment.totalEstimatedCostsEur)}</dd></div><div className="flex justify-between"><dt className="text-term-dim">Market fetched</dt><dd>{market?.fetchedAt.slice(0, 10) ?? '—'}</dd></div></dl>
         <button type="button" disabled={!assessment.ready} onClick={download} className="mt-4 w-full border border-term-cyan px-3 py-2 text-xs uppercase tracking-wider text-term-cyan enabled:hover:bg-term-cyan enabled:hover:text-black disabled:cursor-not-allowed disabled:opacity-30">Download decision JSON</button>
-        <p className="mt-3 text-[10px] leading-relaxed text-term-dim">The file contains the personal inputs, direct URLs, assumptions, market vintage, limits, quantities and estimated costs. It stays local unless you choose to share it.</p>
+        <p className="mt-3 text-[10px] leading-relaxed text-term-dim">The file records the personal inputs, source URLs, assumptions, market date, limits, quantities and estimated costs. It remains local unless you share it.</p>
       </Panel>
     </div>
   </div>

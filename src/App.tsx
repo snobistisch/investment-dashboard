@@ -23,7 +23,7 @@ const TABS: Tab[] = [
   { id: 'exposure', label: 'EXPOSURE', kind: 'exposure' },
   { id: 'allocator', label: 'PLAN', kind: 'allocator' },
   { id: 'biology', label: 'DIGITAL BIOLOGY', kind: 'embed', src: 'dashboards/digital-biology.html', title: 'Digital Biology dashboard', vintage: '2026-07-07', status: 'hypothesis', researchOnly: true },
-  { id: 'robotics', label: 'ROBOTICS', kind: 'embed', src: 'dashboards/robotics.html', title: 'Robotics landscape dashboard', vintage: '2026-07-09', status: 'hypothesis', researchOnly: true },
+  { id: 'robotics', label: 'ROBOTICS', kind: 'embed', src: 'dashboards/robotics.html', title: 'Robotics research dashboard', vintage: '2026-07-09', status: 'hypothesis', researchOnly: true },
   { id: 'quantum', label: 'QUANTUM', kind: 'embed', src: 'dashboards/quantum.html', title: 'Quantum computing dashboard', vintage: '2026-07-15', status: 'watchlist', researchOnly: true },
   { id: 'agentic', label: 'AGENTIC', kind: 'embed', src: 'dashboards/agentic.html', title: 'Agent economy dashboard', vintage: '2026-07-09', status: 'hypothesis', researchOnly: true },
   { id: 'photonics', label: 'PHOTONICS', kind: 'embed', src: 'dashboards/photonics.html', title: 'Photonics and optical interconnect dashboard', vintage: '2026-08-07', status: 'hypothesis', researchOnly: true, staleAfterDays: 7, reviewRequiredAfter: '2026-08-11' },
@@ -45,10 +45,10 @@ function TabStatus({ tab }: { tab: Tab }) {
     <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-term-line bg-term-bg px-4 py-1.5 text-[10px] uppercase tracking-wider text-term-dim">
       <span className={`border px-1 ${STATUS_COLOR[tab.status]}`} title={STATUS_DESCRIPTION[tab.status]}>{tab.status}</span>
       {stale && <span className={`border px-1 ${STATUS_COLOR.stale}`} title={STATUS_DESCRIPTION.stale}>stale</span>}
-      {tab.researchOnly && <span className="border border-term-yellow px-1 text-term-yellow">research only · not order eligible</span>}
-      <span>data as of {tab.vintage} · {days} {days === 1 ? 'day' : 'days'} old</span>
-      <span className="text-term-dim/70">page is a static snapshot — a new evidence record in Plan is required</span>
-      {tab.reviewRequiredAfter && stale && <span className="text-term-red">mandatory review triggered {tab.reviewRequiredAfter}</span>}
+      {tab.researchOnly && <span className="border border-term-yellow px-1 text-term-yellow">research page · excluded from Plan</span>}
+      <span>snapshot {tab.vintage} · {days} {days === 1 ? 'day' : 'days'} old</span>
+      <span className="text-term-dim/70">Plan requires a separate, dated evidence record</span>
+      {tab.reviewRequiredAfter && stale && <span className="text-term-red">review overdue since {tab.reviewRequiredAfter}</span>}
     </div>
   )
 }
@@ -79,7 +79,7 @@ function App() {
     <div className="flex h-dvh flex-col overflow-hidden bg-term-bg font-mono text-term-text">
       <header className="shrink-0 border-b border-term-line bg-term-bg">
         <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2">
-          <a href="#opportunities" className="text-xs font-bold uppercase tracking-[0.2em] text-term-amber hover:underline">Investment Intelligence</a>
+          <a href="#opportunities" className="text-xs font-bold uppercase tracking-[0.2em] text-term-amber hover:underline">Investment Research</a>
           <span className="text-term-line">/</span>
           <span className="text-xs font-bold uppercase tracking-[0.2em] text-term-cyan">EQUITIES</span>
         </div>
@@ -109,7 +109,7 @@ function App() {
 
       <footer className="shrink-0 border-t border-term-line bg-term-bg">
         <div className="mx-auto flex w-full max-w-7xl flex-col items-start gap-1 px-4 py-1 text-[10px] uppercase tracking-wider text-term-dim sm:flex-row sm:items-center sm:justify-between">
-          <span>Research only · no positions held · unlevered by construction · public sources · not investment advice</span>
+          <span>Research only · no recorded holdings · no leverage · public sources · no order execution · not investment advice</span>
           <span>snobistisch/investment-dashboard</span>
         </div>
       </footer>

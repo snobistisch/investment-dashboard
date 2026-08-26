@@ -51,7 +51,7 @@ export function BenchmarkPanel({ input, setInput, riskCapitalEur, activeSleevePc
     <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(18rem,1fr)]">
       <Panel title="2 · Broad baseline instrument">
         <div className="border border-term-cyan/50 bg-term-bg p-3 text-xs leading-relaxed text-term-dim">
-          No product is preselected. Enter the exact instrument only after reading its official product page and current KID/EID. The index is the comparison; the fund and venue are what can actually be bought.
+          No product is preselected. Enter an instrument only after checking its official product page and current KID/EID. The index is the benchmark; the fund, share class and venue determine what you can actually buy.
         </div>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <TextField label="Broad index" value={input.indexName} onChange={(v) => set('indexName', v)} placeholder="Index name, not a ticker" />
@@ -104,7 +104,7 @@ export function BenchmarkPanel({ input, setInput, riskCapitalEur, activeSleevePc
       </Panel>
 
       <div className="space-y-4">
-        <Panel title="Core / satellite policy">
+        <Panel title="Baseline and active ceiling">
           <div className="flex justify-between text-xs">
             <span>Broad baseline</span><span className="text-term-cyan">{100 - activeSleevePct}%</span>
           </div>
@@ -121,7 +121,7 @@ export function BenchmarkPanel({ input, setInput, riskCapitalEur, activeSleevePc
             className="mt-4 w-full accent-term-amber disabled:opacity-30"
           />
           <p className="mt-2 text-[11px] leading-relaxed text-term-dim">
-            The beginner route declares a {MAX_BEGINNER_ACTIVE_SLEEVE_PCT}% ceiling. It is a safety policy, not an estimate of the optimal active share. Stocks remain at 0% unless explicitly enabled.
+            This route caps active stocks at {MAX_BEGINNER_ACTIVE_SLEEVE_PCT}% of capital. The cap is a safety rule, not an estimate of an optimal allocation. Stocks remain at 0% until you enable them.
           </p>
           <dl className="mt-4 space-y-2 border-t border-term-line pt-3 text-xs">
             <div className="flex justify-between"><dt className="text-term-dim">Baseline budget</dt><dd>{eur(assessment.baselineBudgetEur)}</dd></div>
@@ -130,9 +130,9 @@ export function BenchmarkPanel({ input, setInput, riskCapitalEur, activeSleevePc
           </dl>
         </Panel>
 
-        <Panel title={assessment.ready ? 'Benchmark gate · ready' : `Benchmark gate · ${assessment.blockers.length} blocking`}>
+        <Panel title={assessment.ready ? 'Benchmark check · complete' : `Benchmark check · ${assessment.blockers.length} blocking`}>
           {assessment.ready ? (
-            <p className="text-xs leading-relaxed text-term-green">The baseline instrument is fully specified. It can enter cost and order calculations; that still does not approve an active stock.</p>
+            <p className="text-xs leading-relaxed text-term-green">The baseline instrument is fully specified and can enter cost and order calculations. Active stocks still require their own evidence.</p>
           ) : (
             <ul className="space-y-2 text-[11px] leading-relaxed text-term-yellow">
               {assessment.blockers.map((blocker) => <li key={blocker}>— {blocker}</li>)}

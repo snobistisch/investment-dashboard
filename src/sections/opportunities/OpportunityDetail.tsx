@@ -27,15 +27,15 @@ export function OpportunityDetail({
     <div className="border-t border-term-line bg-term-bg p-3 sm:p-4">
       <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(17rem,1fr)]">
         <div>
-          <p className="text-[10px] uppercase tracking-[0.16em] text-term-cyan">Why it is here</p>
+          <p className="text-[10px] uppercase tracking-[0.16em] text-term-cyan">Why the model is here</p>
           <p className="mt-2 text-xs leading-relaxed text-term-text">{model.thesis}</p>
           <p className="mt-3 text-[11px] leading-relaxed text-term-dim">
             {assessment.positiveEdge
-              ? `At the dated quote, the model has ${pct(assessment.entryHeadroomPct)} headroom before it reaches the declared hurdle.`
+              ? `At the dated quote, price has ${pct(assessment.entryHeadroomPct)} headroom before the model falls below the required return.`
               : assessment.decisionReady
-                ? `The research case is complete, but price must fall ${pct(assessment.neededPullbackPct)} to reach the declared hurdle.`
-                : 'The apparent valuation is blocked until every evidence, freshness and tradability gate passes.'}
-            {' '}No cause is assigned to the price move.
+                ? `The research is complete, but price must fall ${pct(assessment.neededPullbackPct)} before the model reaches the required return.`
+                : 'The valuation remains unavailable until the evidence, freshness and tradability checks pass.'}
+            {' '}The model does not infer why the price moved.
           </p>
           <p className="mt-3 text-[11px] leading-relaxed text-term-dim">
             <span className="text-term-yellow">Falsifier:</span> {model.falsifier}
@@ -49,7 +49,7 @@ export function OpportunityDetail({
           <p className="text-[10px] uppercase tracking-[0.16em] text-term-dim">Decision boundary</p>
           <dl className="mt-3 space-y-2 text-xs">
             <div className="flex justify-between gap-3"><dt className="text-term-dim">Current</dt><dd className="tabular-nums">{money(quote?.priceLocal, model.currency)}</dd></div>
-            <div className="flex justify-between gap-3"><dt className="text-term-dim">200MA setup</dt><dd className={`text-right tabular-nums ${screen.ma200OpportunityState === 'entry-zone' && assessment.decisionReady && assessment.positiveEdge ? 'text-term-green' : screen.ma200OpportunityState === 'extended' ? 'text-term-amber' : 'text-term-yellow'}`}>{signedPct(screen.distanceFromMa200Pct)}<span className="block text-[9px] uppercase">{screen.ma200OpportunityState === 'entry-zone' ? assessment.decisionReady && assessment.positiveEdge ? 'preferred entry setup' : 'near line · valuation fails' : screen.ma200OpportunityState}</span></dd></div>
+            <div className="flex justify-between gap-3"><dt className="text-term-dim">200MA setup</dt><dd className={`text-right tabular-nums ${screen.ma200OpportunityState === 'entry-zone' && assessment.decisionReady && assessment.positiveEdge ? 'text-term-green' : screen.ma200OpportunityState === 'extended' ? 'text-term-amber' : 'text-term-yellow'}`}>{signedPct(screen.distanceFromMa200Pct)}<span className="block text-[9px] uppercase">{screen.ma200OpportunityState === 'entry-zone' ? assessment.decisionReady && assessment.positiveEdge ? 'preferred entry setup' : 'near line · return hurdle missed' : screen.ma200OpportunityState}</span></dd></div>
             <div className="flex justify-between gap-3"><dt className="text-term-dim">Max entry</dt><dd className="tabular-nums text-term-amber">{money(assessment.maxEntryPrice, model.currency)}</dd></div>
             <div className="flex justify-between gap-3"><dt className="text-term-dim">Hurdle edge</dt><dd className="tabular-nums">{signedPp(assessment.hurdleEdgePct)}</dd></div>
             <div className="flex justify-between gap-3"><dt className="text-term-dim">Bear outcome</dt><dd className="tabular-nums text-term-red">{signedPct(bear?.netTotalReturnPct)}</dd></div>
@@ -62,12 +62,12 @@ export function OpportunityDetail({
           >
             {shortlisted ? 'Remove from Plan shortlist' : 'Shortlist for Plan'}
           </button>
-          <p className="mt-2 text-[10px] leading-relaxed text-term-dim">Shortlisting does not enable stocks, assign a weight or create an order. The 200MA setup prioritises timing only; it cannot repair a failed valuation or evidence gate.</p>
+          <p className="mt-2 text-[10px] leading-relaxed text-term-dim">A shortlist enables nothing, assigns no weight and creates no order. The 200MA affects timing priority only; it cannot rescue weak valuation or incomplete evidence.</p>
         </div>
       </div>
 
       <div className="mt-4">
-        <p className="mb-2 text-[10px] uppercase tracking-[0.16em] text-term-cyan">Price trend · above 200MA gates · near 200MA prioritises</p>
+        <p className="mb-2 text-[10px] uppercase tracking-[0.16em] text-term-cyan">Price trend · above 200MA qualifies · proximity sets priority</p>
         <EquityPriceChart ticker={model.ticker} series={chart} quote={quote} />
       </div>
 
@@ -110,7 +110,7 @@ export function OpportunityDetail({
       {assessment.stress && (
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <div className="border border-term-line p-3">
-            <p className="text-[10px] uppercase tracking-[0.16em] text-term-cyan">Robustness, kept separate</p>
+            <p className="text-[10px] uppercase tracking-[0.16em] text-term-cyan">Stress tests · separate from expected return</p>
             <ul className="mt-3 space-y-2 text-[11px] leading-relaxed text-term-dim">
               <li>— Bull → bear probability shift: <span className="text-term-text">{assessment.stress.survivesFullBullShift ? 'survives the full bull probability' : `${pct(assessment.stress.bullToBearShiftPct)} to zero edge`}</span></li>
               <li>— Base/bull terminal reduction: <span className="text-term-text">{assessment.stress.baseBullTerminalReductionPct === null ? 'not bounded by this stress' : `${pct(assessment.stress.baseBullTerminalReductionPct)} to zero edge`}</span></li>

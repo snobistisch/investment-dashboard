@@ -13,9 +13,9 @@ import { coverageDelta, snapshotAgeDays, type MarketSnapshot } from '../data/mar
 export const SNAPSHOT_STALE_DAYS = 4
 
 const SOURCE_LABEL: Record<SnapshotSource, string> = {
-  remote: 'live snapshot, read from the repo',
-  bundled: 'snapshot bundled with this build',
-  none: 'no snapshot — transcribed values only',
+  remote: 'committed market snapshot',
+  bundled: 'market snapshot bundled with this build',
+  none: 'market snapshot unavailable · transcribed values only',
 }
 
 export function DataProvenance({
@@ -39,7 +39,7 @@ export function DataProvenance({
   return (
     <div className={`mb-4 border ${border} bg-term-panel p-3`}>
       <p className={`text-[10px] uppercase tracking-[0.2em] ${tone}`}>
-        {loading ? 'loading market data…' : SOURCE_LABEL[source]}
+        {loading ? 'loading market snapshot…' : SOURCE_LABEL[source]}
         {snapshot && (
           <>
             {' · '}
@@ -50,18 +50,18 @@ export function DataProvenance({
       </p>
 
       <p className="mt-2 text-xs leading-relaxed text-term-text">
-        <span className="text-term-cyan tabular-nums">{cov.live}</span> live ·{' '}
+        <span className="text-term-cyan tabular-nums">{cov.live}</span> current ·{' '}
         <span className="tabular-nums">{cov.transcribed}</span> transcribed ·{' '}
-        <span className="text-term-dim tabular-nums">{cov.absent}</span> no market cap at all, of{' '}
-        <span className="tabular-nums">{cov.total}</span> positions.
+        <span className="text-term-dim tabular-nums">{cov.absent}</span> without market cap ·{' '}
+        <span className="tabular-nums">{cov.total}</span> researched names in total.
         {cov.live > 0 && (
           <>
             {' '}
-            Market-cap coverage was{' '}
+            positions.ts supplies market caps for{' '}
             <span className="tabular-nums">
               {cov.before}/{cov.total}
             </span>{' '}
-            from positions.ts alone; with the snapshot merged it is{' '}
+            names; the committed snapshot raises coverage to{' '}
             <span className="text-term-cyan tabular-nums">
               {cov.after}/{cov.total}
             </span>
@@ -72,23 +72,22 @@ export function DataProvenance({
 
       {stale && (
         <p className="mt-2 text-xs leading-relaxed text-term-yellow">
-          This snapshot is {age} days old. The refresh runs on weekdays; a gap this size means it
-          has been failing. Treat every live figure below as {age} days stale.
+          This snapshot is {age} days old. Weekday refreshes should keep it within {SNAPSHOT_STALE_DAYS} days,
+          so treat every current-market figure below as stale.
         </p>
       )}
 
       {source === 'none' && !loading && (
         <p className="mt-2 text-xs leading-relaxed text-term-text">
-          The snapshot could not be read, so every figure below is the transcribed value from
-          positions.ts on its own stated date — exactly what this dashboard showed before live data
-          was wired in. Nothing here is a guess at a current price.
+          The snapshot could not be read. Every figure below therefore comes from positions.ts and
+          keeps its own stated date. No missing current price has been estimated.
         </p>
       )}
 
       {snapshot && (
         <p className="mt-2 text-[11px] leading-relaxed text-term-dim">
-          Equities {snapshot.providers.equity} · FX {snapshot.providers.fx}, {snapshot.fx.asOf}. positions.ts is not modified by any of
-          this: live values are merged at read time, and every row below says which it is showing.
+          Equities {snapshot.providers.equity} · FX {snapshot.providers.fx}, {snapshot.fx.asOf}. The merge happens only when the page
+          loads; positions.ts remains unchanged, and each row identifies the value it shows.
           {snapshot.unmapped.length > 0 && (
             <>
               {' '}
@@ -96,9 +95,9 @@ export function DataProvenance({
                 {snapshot.unmapped.length} ticker
                 {snapshot.unmapped.length === 1 ? '' : 's'} deliberately unmapped
               </span>{' '}
-              ({snapshot.unmapped.map((u) => u.ticker).join(', ')}) — no symbol could be resolved
-              with certainty, so they keep their transcribed values. A wrong symbol returning
-              another company&rsquo;s price is worse than a missing one.
+              ({snapshot.unmapped.map((u) => u.ticker).join(', ')}). No symbol could be resolved
+              with enough confidence, so these rows retain their transcribed values. Missing data
+              is safer than attaching another company&rsquo;s price.
             </>
           )}
         </p>

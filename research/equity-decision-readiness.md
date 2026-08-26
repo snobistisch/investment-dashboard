@@ -7,8 +7,8 @@ concentrated sizing result before it knew the investor, carried no broad
 baseline, had no benchmark-relative equity return test, and stopped before an
 EUR order could be inspected.
 
-It is now ready for a **controlled concept plan** when every visible gate
-passes. It is not an autonomous stock picker and it cannot submit a trade.
+It can now produce a **controlled concept plan** once every visible check
+passes. It neither selects stocks autonomously nor submits trades.
 
 For a first investment, the defensible default is the broad baseline with the
 active-stock sleeve at 0%. The app does not preselect that fund. The exact fund,
@@ -34,14 +34,14 @@ record clears the baseline after costs.
 5. Embedded equity pages are research-only. Defence is outside Exposure and
    Plan. Photonics is stale because the first post-snapshot earnings trigger has
    passed. A research row never becomes an order by appearing in a page.
-6. The final output is an EUR concept order with a user-entered limit, fixed
+6. The final output is a EUR concept order with a user-entered limit, fixed
    fee, FX cost, slippage allowance, minimum order, whole or fractional shares,
    one to four tranches and an execution window. The calculation stays inside
    available cash after estimated costs.
 7. A local JSON snapshot records all inputs, sources, dates, limits, quantities
    and estimated costs. It is labelled concept-only.
 
-## Monday route
+## Review route
 
 1. Leave individual stocks off unless a complete new evidence record exists.
 2. Enter only money that is outside the emergency buffer and not needed during
@@ -49,9 +49,8 @@ record clears the baseline after costs.
    blocks because total-portfolio exposure is not yet modelled.
 3. Identify the broad fund from its issuer page and current KID/EID. Confirm the
    exact ISIN and venue in the broker. Do not substitute a similar ticker.
-4. Use a Friday close before Monday's session or a Monday observation after it
-   becomes available. The planner accepts at most one completed business
-   session of price age.
+4. Use the latest completed close. The planner accepts no more than one
+   completed business session of price age.
 5. Enter the broker's actual fee, FX spread, minimum order and a limit price.
    Recheck news, quoted spread, currency, venue and instrument identity in the
    broker immediately before submission.

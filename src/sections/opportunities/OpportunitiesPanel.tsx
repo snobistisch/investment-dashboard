@@ -124,7 +124,7 @@ function TrendGateField({ value, onChange }: { value: boolean; onChange: (value:
 
 function TrendSetupBadge({ screen, qualifies }: { screen: UniverseScreenResult; qualifies: boolean }) {
   if (screen.ma200OpportunityState === 'entry-zone' && qualifies) return <span className="border border-term-green px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-term-green">200MA entry setup</span>
-  if (screen.ma200OpportunityState === 'entry-zone') return <span className="border border-term-yellow px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-term-yellow">Near 200MA · valuation fails</span>
+  if (screen.ma200OpportunityState === 'entry-zone') return <span className="border border-term-yellow px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-term-yellow">Near 200MA · return hurdle missed</span>
   if (screen.ma200OpportunityState === 'extended') return <span className="border border-term-amber px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-term-amber">Extended above 200MA</span>
   if (screen.ma200OpportunityState === 'below') return <span className="border border-term-red px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-term-red">Below 200MA</span>
   return <span className="border border-term-dim px-1.5 py-0.5 text-[9px] uppercase tracking-wider text-term-dim">200MA unavailable</span>
@@ -284,7 +284,7 @@ export function OpportunitiesPanel() {
   const withMa200 = screenResults.filter((result) => result.ma200 !== undefined).length
   const aboveMa200 = screenResults.filter((result) => result.aboveMa200).length
   const nearAboveMa200 = screenResults.filter((result) => result.ma200OpportunityState === 'entry-zone').length
-  const readyForMonday = !market.loading && assessments.length > 0 && researchCurrent === assessments.length && screenResults.length === equityLongs.length && universeQuotesCurrent === equityLongs.length
+  const readyForReview = !market.loading && assessments.length > 0 && researchCurrent === assessments.length && screenResults.length === equityLongs.length && universeQuotesCurrent === equityLongs.length
 
   const coverageRows: CoverageRow[] = equityLongs.map((position) => ({
     ticker: position.ticker,
@@ -350,15 +350,15 @@ export function OpportunitiesPanel() {
   return (
     <Section
       title="Equity opportunities"
-      description="The 200-session moving average is the primary technical gate and entry-timing signal. Qualified equities just above it are shown first; authored valuation must still clear the return hurdle. Portfolio sizing remains in Plan; this page never submits or authorises a trade."
+      description="First test whether price is above its 200-session average; then ask whether the authored scenarios clear the required return. A name near the average ranks first only after both tests pass. Plan owns sizing, and this page cannot approve a trade."
     >
-      <div className={`border p-4 ${readyForMonday ? 'border-term-green' : 'border-term-yellow'}`}>
+      <div className={`border p-4 ${readyForReview ? 'border-term-green' : 'border-term-yellow'}`}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className={`text-[10px] uppercase tracking-[0.2em] ${readyForMonday ? 'text-term-green' : 'text-term-yellow'}`}>{market.loading ? 'Loading decision inputs' : readyForMonday ? 'Ready for Monday review' : 'Partial coverage · read blockers'}</p>
-            <p className="mt-2 text-xl font-bold sm:text-2xl">{qualified.length} qualified after scanning {equityLongs.length} equities.</p>
+            <p className={`text-[10px] uppercase tracking-[0.2em] ${readyForReview ? 'text-term-green' : 'text-term-yellow'}`}>{market.loading ? 'Loading decision inputs' : readyForReview ? 'Inputs complete for review' : 'Coverage incomplete · check blockers'}</p>
+            <p className="mt-2 text-xl font-bold sm:text-2xl">{qualified.length} of {equityLongs.length} equities qualify.</p>
           </div>
-          {alteredPolicy && <div className="flex flex-wrap items-center gap-2"><span className="border border-term-magenta px-2 py-1 text-[10px] uppercase tracking-wider text-term-magenta">My what-if · canonical research unchanged</span><button type="button" onClick={() => { setPolicy({ ...DEFAULT_OPPORTUNITY_POLICY }); setScreenPolicy({ ...DEFAULT_UNIVERSE_SCREEN_POLICY }) }} className="border border-term-magenta px-2 py-1 text-[10px] uppercase tracking-wider text-term-magenta hover:bg-term-magenta hover:text-black">Reset all</button></div>}
+          {alteredPolicy && <div className="flex flex-wrap items-center gap-2"><span className="border border-term-magenta px-2 py-1 text-[10px] uppercase tracking-wider text-term-magenta">Local what-if · source models unchanged</span><button type="button" onClick={() => { setPolicy({ ...DEFAULT_OPPORTUNITY_POLICY }); setScreenPolicy({ ...DEFAULT_UNIVERSE_SCREEN_POLICY }) }} className="border border-term-magenta px-2 py-1 text-[10px] uppercase tracking-wider text-term-magenta hover:bg-term-magenta hover:text-black">Reset all</button></div>}
         </div>
         <div className="mt-4 grid grid-cols-2 gap-px border border-term-line bg-term-line sm:grid-cols-4 lg:grid-cols-8">
           {[
@@ -372,12 +372,12 @@ export function OpportunitiesPanel() {
             ['Qualified', `${qualified.length}`],
           ].map(([label, value]) => <div key={label} className="bg-term-panel p-3"><dt className="text-[9px] uppercase tracking-wider text-term-dim">{label}</dt><dd className="mt-1 text-xs tabular-nums">{value}</dd></div>)}
         </div>
-        <p className="mt-3 text-[10px] leading-relaxed text-term-dim">Market snapshot {market.snapshot?.fetchedAt ?? 'not loaded'} · {market.source} · FX {market.snapshot ? `${market.snapshot.fx.asOf} (${fxCurrent ? 'current' : 'stale'})` : 'missing'}. Stage one requires the trend to be above 200MA. Stage two applies authored valuation. Among equities that clear both, a close from 0% through {screenPolicy.maxMa200OpportunityDistancePct.toFixed(1)}% above 200MA is the preferred entry zone and ranks first. This technical label does not change terminal value or hurdle edge.</p>
+        <p className="mt-3 text-[10px] leading-relaxed text-term-dim">Market snapshot {market.snapshot?.fetchedAt ?? 'not loaded'} · {market.source} · FX {market.snapshot ? `${market.snapshot.fx.asOf} (${fxCurrent ? 'current' : 'stale'})` : 'missing'}. Stage one requires a price above the 200MA; stage two applies the authored valuation. Names between 0% and {screenPolicy.maxMa200OpportunityDistancePct.toFixed(1)}% above the average rank first after both stages pass. That timing label never changes terminal value or required return.</p>
       </div>
 
       <div className="mt-4">
         <Panel title={`1 · Whole-universe screen · ${screenSurvivors.length}/${equityLongs.length} pass`}>
-          <p className="mb-3 text-[11px] leading-relaxed text-term-dim">These filters rerun over all {equityLongs.length} researched equity longs. They are eligibility rules, not a valuation score. Missing market fields fail closed.</p>
+          <p className="mb-3 text-[11px] leading-relaxed text-term-dim">These filters test all {equityLongs.length} researched equity longs. They decide eligibility, not value; a missing market field produces a failure, never an estimate.</p>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <ThemeField value={screenPolicy.theme} onChange={(theme) => setScreenPolicy((current) => ({ ...current, theme }))} />
             <TrendGateField value={screenPolicy.requireAbove200DayMa} onChange={(requireAbove200DayMa) => setScreenPolicy((current) => ({ ...current, requireAbove200DayMa }))} />
@@ -397,7 +397,7 @@ export function OpportunitiesPanel() {
 
       <div className="mt-4">
         <Panel title={`2 · Valuation policy · ${screenEligibleModels.length}/${assessments.length} models pass stage 1`}>
-          <p className="mb-3 text-[11px] leading-relaxed text-term-dim">Only these controls determine whether a screen-eligible model clears the return hurdle. The watch band changes a label only. Scenario assumptions remain frozen.</p>
+          <p className="mb-3 text-[11px] leading-relaxed text-term-dim">These controls determine whether an eligible model clears the required return. The watch band changes only its label; scenario assumptions remain fixed.</p>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <PolicyField label="Benchmark return" value={policy.benchmarkAnnualReturnPct} onChange={(value) => setPolicy((current) => ({ ...current, benchmarkAnnualReturnPct: value }))} suffix="% p.a." min={-20} max={30} impact="QUALIFICATION" />
             <PolicyField label="Required active premium" value={policy.requiredActivePremiumPct} onChange={(value) => setPolicy((current) => ({ ...current, requiredActivePremiumPct: value }))} suffix="pp" min={0} max={30} impact="QUALIFICATION" />
@@ -406,7 +406,7 @@ export function OpportunitiesPanel() {
             <PolicyField label="Maximum fundamental age" value={policy.maxFundamentalAgeDays} onChange={(value) => setPolicy((current) => ({ ...current, maxFundamentalAgeDays: Math.max(1, Math.round(value)) }))} suffix="days" step={1} min={1} max={365} impact="EVIDENCE GATE" />
             <PolicyField label="Near-hurdle pullback" value={policy.nearHurdlePullbackPct} onChange={(value) => setPolicy((current) => ({ ...current, nearHurdlePullbackPct: value }))} suffix="%" min={0} max={50} impact="WATCH LABEL ONLY" />
           </div>
-          <p className="mt-3 text-[10px] leading-relaxed text-term-dim">Edits recalculate this browser view immediately. They do not modify or persist the canonical research.</p>
+          <p className="mt-3 text-[10px] leading-relaxed text-term-dim">Changes recalculate this view in the browser. They neither edit nor persist the source research.</p>
         </Panel>
       </div>
 
@@ -432,9 +432,9 @@ export function OpportunitiesPanel() {
           {shortlist.size === 0 ? <p className="text-xs text-term-dim">Inspect a decision-ready opportunity before shortlisting it. A shortlist is not an allocation.</p> : <div className="flex flex-wrap gap-2">{[...shortlist].map((ticker) => <button key={ticker} type="button" onClick={() => toggleShortlist(ticker)} className="border border-term-amber px-2 py-1 text-xs text-term-amber hover:bg-term-amber hover:text-black" title={`Remove ${ticker}`}>{ticker} ×</button>)}</div>}
           <p className="mt-3 text-[10px] leading-relaxed text-term-dim">Plan will show this research shortlist for review. Individual stocks stay disabled, the active sleeve stays at 0%, and all personal, benchmark, evidence and execution gates still apply.</p>
         </Panel>
-        <Panel title="Portfolio handoff">
+        <Panel title="Continue to Plan">
           <button type="button" disabled={shortlist.size === 0} onClick={goToPlan} className="w-full border border-term-cyan px-3 py-2 text-xs uppercase tracking-wider text-term-cyan enabled:hover:bg-term-cyan enabled:hover:text-black disabled:cursor-not-allowed disabled:opacity-30">Review shortlist in Plan →</button>
-          <p className="mt-3 text-[10px] leading-relaxed text-term-dim">No holding state is inferred. Portfolio effects remain hypothetical until the owner enters trustworthy personal inputs.</p>
+          <p className="mt-3 text-[10px] leading-relaxed text-term-dim">The shortlist creates no holding. Portfolio effects remain hypothetical until the owner supplies complete personal inputs.</p>
         </Panel>
       </div>
 

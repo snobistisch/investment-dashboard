@@ -38,7 +38,7 @@ export function OpportunityComparison({
 
   return (
     <Panel title={`Compare · ${assessments.length} of 4 selected`}>
-      <p className="mb-3 text-[11px] leading-relaxed text-term-dim">Metrics remain separate. Low volatility, low correlation or strong thesis prose does not increase expected edge.</p>
+      <p className="mb-3 text-[11px] leading-relaxed text-term-dim">Read each measure on its own. Low volatility, low correlation and persuasive thesis prose do not increase expected return.</p>
       <div className="overflow-x-auto">
         <table className="w-full min-w-[640px] text-left text-xs">
           <thead>

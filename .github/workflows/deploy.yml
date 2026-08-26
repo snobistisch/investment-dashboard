@@ -1,0 +1,58 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  # Called by refresh-market-data.yml. A push made with the default
+  # GITHUB_TOKEN does not trigger workflows, so the data refresh has to invoke
+  # the deploy itself or the live site would keep serving the old bundle.
+  workflow_call:
+    inputs:
+      ref:
+        description: >-
+          Commit to build. The refresh workflow passes the SHA it just
+          committed: a called workflow otherwise checks out the SHA that
+          started the run, which predates the new data.
+        type: string
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      # Empty `ref` is what actions/checkout already defaults to, so the push
+      # and workflow_dispatch paths are unchanged.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Allocation invariants run before the build, so a sizing rule that no
+      # longer holds blocks the deploy instead of shipping behind copy that
+      # claims it does hold.
+      - run: npm run verify
+      - run: npm run lint
+      - run: npm run build
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - id: deployment
+        uses: actions/deploy-pages@v4

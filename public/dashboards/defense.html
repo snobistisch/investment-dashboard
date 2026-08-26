@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Defence &amp; Autonomy — Public-Market Research Dashboard</title>
+<style>
+  :root{
+    /* terminal theme — mirrors src/index.css */
+    --paper:#000000; --surface:#0a0a0a; --panel:#111111;
+    --ink:#d6d6d6; --ink-2:#a8a8a8; --ink-3:#8c8c8c;
+    --line:#262626; --line-2:#1c1c1c;
+    --viridian:#00d264; --viridian-soft:#00b457; --viridian-wash:#04150b;
+    --ochre:#fb8b1e; --ochre-wash:#180e02;
+    --slate:#4dd0e1;
+    /* dark title band */
+    --hero:#0a0a0a; --hero-2:#101010; --hero-ink:#d6d6d6; --hero-mut:#8c8c8c; --hero-accent:#fb8b1e;
+    /* type */
+    --serif:ui-monospace,'SF Mono','Cascadia Code','JetBrains Mono','Roboto Mono',Menlo,Consolas,monospace;
+    --sans:ui-monospace,'SF Mono','Cascadia Code','JetBrains Mono','Roboto Mono',Menlo,Consolas,monospace;
+    --mono:ui-monospace,'SF Mono','Cascadia Code','JetBrains Mono','Roboto Mono',Menlo,Consolas,monospace;
+    --maxw:1140px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--sans); font-size:17px; line-height:1.72;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px}
+  p{margin:0 0 1.05em}
+  a{color:var(--viridian); text-decoration:none; border-bottom:1px solid var(--line)}
+  a:hover{border-color:var(--viridian)}
+  .mono{font-family:var(--mono)}
+  .eyebrow{font-family:var(--mono); font-size:.7rem; letter-spacing:.18em; text-transform:uppercase; color:var(--viridian); font-weight:600}
+
+  /* ---------- top nav ---------- */
+  nav.top{position:sticky; top:0; z-index:50; background:rgba(0,0,0,.92); backdrop-filter:blur(8px); border-bottom:1px solid var(--line)}
+  nav.top .wrap{display:flex; align-items:center; gap:22px; height:54px}
+  nav.top .brand{font-family:var(--mono); font-size:.74rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink); font-weight:600; white-space:nowrap}
+  nav.top .brand span{color:var(--viridian)}
+  nav.top .links{display:flex; gap:20px; margin-left:auto; overflow-x:auto}
+  nav.top .links a{font-family:var(--mono); font-size:.72rem; letter-spacing:.04em; color:var(--ink-2); border:none; text-transform:uppercase; white-space:nowrap; padding:4px 0; border-bottom:2px solid transparent}
+  nav.top .links a:hover{color:var(--ink)}
+  nav.top .links a.active{color:var(--viridian); border-bottom-color:var(--viridian)}
+  @media (max-width:820px){nav.top .links{display:none}}
+
+  /* ---------- hero ---------- */
+  header.hero{background:linear-gradient(160deg,var(--hero) 0%,var(--hero-2) 140%); color:var(--hero-ink); padding:64px 0 46px; border-bottom:3px solid var(--viridian)}
+  header.hero .kicker{font-family:var(--mono); font-size:.72rem; letter-spacing:.2em; text-transform:uppercase; color:var(--hero-accent); margin-bottom:22px}
+  header.hero h1{font-family:var(--serif); font-weight:600; font-size:clamp(2.2rem,5.4vw,3.5rem); line-height:1.04; letter-spacing:-.01em; margin:0 0 20px; max-width:18ch}
+  header.hero .lede{font-family:var(--serif); font-size:clamp(1.05rem,2.1vw,1.28rem); line-height:1.55; color:#a8a8a8; max-width:62ch; margin:0 0 30px}
+  header.hero .lede b{color:#fff; font-weight:600}
+  .meta-row{display:flex; flex-wrap:wrap; gap:26px 40px; padding-top:26px; border-top:1px solid rgba(255,255,255,.14)}
+  .meta-row .m .k{font-family:var(--mono); font-size:.64rem; letter-spacing:.16em; text-transform:uppercase; color:var(--hero-mut)}
+  .meta-row .m .v{font-family:var(--mono); font-size:1.02rem; color:#fff; margin-top:5px}
+
+  /* ---------- spectrum signature ---------- */
+  .spectrum{margin:38px 0 6px}
+  .spectrum .head{display:flex; justify-content:space-between; font-family:var(--mono); font-size:.66rem; letter-spacing:.14em; text-transform:uppercase; color:var(--hero-mut); margin-bottom:12px}
+  .spectrum svg{width:100%; height:132px; display:block; overflow:visible}
+  .spectrum .cap{font-family:var(--mono); font-size:.66rem; color:var(--hero-mut); margin-top:6px; text-align:center; letter-spacing:.04em}
+
+  /* ---------- section scaffold ---------- */
+  section{padding:66px 0; border-bottom:1px solid var(--line)}
+  .sec-head{display:flex; align-items:baseline; gap:16px; margin-bottom:28px}
+  .sec-num{font-family:var(--mono); font-size:.8rem; color:var(--viridian-soft); font-weight:600; padding-top:6px}
+  h2{font-family:var(--serif); font-weight:600; font-size:clamp(1.55rem,3vw,2.1rem); line-height:1.12; letter-spacing:-.01em; margin:0; max-width:24ch}
+  h3{font-family:var(--serif); font-weight:600; font-size:1.24rem; line-height:1.2; margin:0 0 .5em}
+  .prose{max-width:70ch}
+  .prose.wide{max-width:82ch}
+  .lead-p{font-size:1.12rem; line-height:1.62}
+  .lead-p b{color:var(--ink); font-weight:600}
+
+  /* callout / not-advice */
+  .note{background:var(--ochre-wash); border-left:3px solid var(--ochre); padding:16px 20px; border-radius:0; font-size:.96rem; color:#e8b06a; max-width:78ch}
+  .note b{color:#fb8b1e}
+
+  /* ---------- three risk profiles ---------- */
+  .profiles{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:30px}
+  .pf{background:var(--surface); border:1px solid var(--line); border-radius:0; padding:22px 22px 24px; border-top:3px solid var(--tier)}
+  .pf .tier{font-family:var(--mono); font-size:.66rem; letter-spacing:.12em; text-transform:uppercase; color:var(--tier); font-weight:600}
+  .pf h3{font-size:1.08rem; margin:10px 0 8px}
+  .pf p{font-size:.94rem; line-height:1.6; color:var(--ink-2); margin:0 0 12px}
+  .pf .names{font-family:var(--mono); font-size:.76rem; color:var(--ink); letter-spacing:.02em; border-top:1px solid var(--line-2); padding-top:11px}
+  .pf.a{--tier:#4dd0e1} .pf.b{--tier:#00d264} .pf.c{--tier:#fb8b1e}
+  @media (max-width:820px){.profiles{grid-template-columns:1fr}}
+
+  /* ---------- kpi strip ---------- */
+  .kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:0; border:1px solid var(--line); border-radius:0; overflow:hidden; background:var(--surface); margin-top:8px}
+  .kpi{padding:22px 20px; border-right:1px solid var(--line-2)}
+  .kpi:last-child{border-right:none}
+  .kpi .n{font-family:var(--mono); font-size:1.9rem; font-weight:600; color:var(--viridian); line-height:1}
+  .kpi .l{font-size:.82rem; color:var(--ink-2); margin-top:8px; line-height:1.35}
+  @media (max-width:820px){.kpis{grid-template-columns:1fr 1fr} .kpi{border-bottom:1px solid var(--line-2)}}
+
+  /* ---------- timeline ---------- */
+  .timeline{margin-top:26px; max-width:80ch}
+  .tl{display:grid; grid-template-columns:120px 1fr; gap:20px; padding:16px 0; border-top:1px solid var(--line)}
+  .tl:last-child{border-bottom:1px solid var(--line)}
+  .tl .when{font-family:var(--mono); font-size:.8rem; color:var(--viridian); font-weight:600; letter-spacing:.02em}
+  .tl .what{font-size:.98rem; line-height:1.55}
+  .tl .what b{color:var(--ink)}
+  @media (max-width:560px){.tl{grid-template-columns:1fr; gap:4px}}
+
+  /* ---------- segmentation grid ---------- */
+  .segs{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:26px}
+  .seg{background:var(--surface); border:1px solid var(--line); border-radius:0; padding:18px 18px 20px}
+  .seg .lbl{font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--viridian-soft); font-weight:600}
+  .seg h3{font-size:1rem; margin:8px 0 7px}
+  .seg p{font-size:.9rem; color:var(--ink-2); line-height:1.55; margin:0}
+  .seg .tk{font-family:var(--mono); font-size:.74rem; color:var(--ink); margin-top:10px; letter-spacing:.02em}
+  @media (max-width:820px){.segs{grid-template-columns:1fr 1fr}}
+  @media (max-width:560px){.segs{grid-template-columns:1fr}}
+
+  /* ---------- deep dive cards ---------- */
+  .dd{background:var(--surface); border:1px solid var(--line); border-radius:0; padding:30px 30px 28px; margin-bottom:22px}
+  .dd .top{display:flex; align-items:flex-start; gap:16px; flex-wrap:wrap; margin-bottom:6px}
+  .dd .tk{font-family:var(--mono); font-size:1rem; font-weight:600; color:#000; background:var(--viridian); padding:5px 10px; border-radius:0; letter-spacing:.03em}
+  .dd .nm{font-family:var(--serif); font-size:1.4rem; font-weight:600; line-height:1.1; align-self:center}
+  .dd .cat{font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3); border:1px solid var(--line); border-radius:0; padding:4px 11px; align-self:center; margin-left:auto}
+  .stats{display:grid; grid-template-columns:repeat(5,1fr); gap:0; border-top:1px solid var(--line-2); border-bottom:1px solid var(--line-2); margin:18px 0 20px}
+  .stat{padding:14px 14px 14px 0; border-right:1px solid var(--line-2)}
+  .stat:last-child{border-right:none; padding-right:0}
+  .stat .k{font-family:var(--mono); font-size:.6rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3)}
+  .stat .v{font-family:var(--mono); font-size:1.02rem; font-weight:600; color:var(--ink); margin-top:6px; line-height:1.15}
+  .stat .v.pos{color:var(--viridian)} .stat .v.neg{color:var(--ochre)}
+  .dd .body{max-width:74ch}
+  .dd .body p{font-size:.99rem; line-height:1.68}
+  .dd .body p:last-child{margin-bottom:0}
+  .dd .body .lab{font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--viridian-soft); font-weight:600; display:block; margin-bottom:4px}
+  .bar{height:6px; background:var(--panel); border-radius:0; overflow:hidden; margin-top:16px; max-width:74ch}
+  .bar > i{display:block; height:100%; background:var(--viridian-soft); border-radius:0; width:0; transition:width 1.1s cubic-bezier(.2,.7,.2,1)}
+  .bar-cap{font-family:var(--mono); font-size:.64rem; color:var(--ink-3); margin-top:6px; letter-spacing:.03em}
+  @media (max-width:760px){.stats{grid-template-columns:1fr 1fr 1fr} .stat{border-bottom:1px solid var(--line-2)} .dd{padding:24px 20px}}
+
+  /* ---------- table ---------- */
+  .filters{display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 20px}
+  .filters button{font-family:var(--mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-2); background:var(--surface); border:1px solid var(--line); border-radius:0; padding:7px 14px; cursor:pointer; transition:all .15s}
+  .filters button:hover{border-color:var(--viridian-soft); color:var(--ink)}
+  .filters button.on{background:var(--viridian); color:#000; border-color:var(--viridian)}
+  .tbl-scroll{overflow-x:auto; border:1px solid var(--line); border-radius:0; background:var(--surface)}
+  table{border-collapse:collapse; width:100%; min-width:1480px; font-size:.86rem}
+  thead th{font-family:var(--mono); font-size:.64rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-2); text-align:left; padding:15px 12px; border-bottom:2px solid var(--line); background:var(--panel); cursor:pointer; user-select:none; white-space:nowrap; position:sticky; top:0}
+  thead th:hover{color:var(--viridian)}
+  thead th .ar{opacity:.35; margin-left:5px}
+  thead th.sorted .ar{opacity:1; color:var(--viridian)}
+  tbody td{padding:14px 12px; border-bottom:1px solid var(--line-2); vertical-align:top; line-height:1.45}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:var(--viridian-wash)}
+  td.tk{font-family:var(--mono); font-weight:600; color:var(--viridian); white-space:nowrap}
+  td.nm{font-weight:600; color:var(--ink); white-space:nowrap}
+  td .seglbl{font-family:var(--mono); font-size:.68rem; color:var(--ink-2); letter-spacing:.02em}
+  td.num{font-family:var(--mono); white-space:nowrap}
+  td.num.pos{color:var(--viridian)} td.num.neg{color:var(--ochre)}
+  td.num.bold{font-weight:600; text-align:right}
+  td.rk{font-family:var(--mono); color:var(--ink-3); text-align:right; white-space:nowrap}
+  td.small{font-size:.8rem; color:var(--ink-2); max-width:34ch; min-width:26ch}
+  td.scen{font-family:var(--mono); font-size:.72rem; color:var(--ink-2); white-space:nowrap; line-height:1.7}
+  td.scen b{color:var(--ink-3); font-weight:400; display:inline-block; width:4ch}
+  td.scen .up{color:var(--viridian)} td.scen .dn{color:var(--ochre)}
+  .tier-dot{display:inline-block; width:8px; height:8px; border-radius:0; margin-right:7px; vertical-align:middle}
+  .table-note{font-family:var(--mono); font-size:.66rem; color:var(--ink-3); margin-top:12px; letter-spacing:.02em; line-height:1.8}
+
+  /* ---------- EV method + scatter ---------- */
+  .method{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:26px}
+  .mc{background:var(--surface); border:1px solid var(--line); border-radius:0; padding:22px 24px}
+  .mc .lbl{font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--viridian-soft); font-weight:600; display:block; margin-bottom:8px}
+  .mc p{font-size:.92rem; line-height:1.6; color:var(--ink-2); margin:0 0 10px}
+  .mc p:last-child{margin-bottom:0}
+  .mc code{font-family:var(--mono); font-size:.84rem; color:var(--ink); background:var(--panel); padding:2px 6px}
+  .formula{font-family:var(--mono); font-size:.84rem; color:var(--ink); background:var(--panel); border-left:2px solid var(--viridian-soft); padding:12px 14px; margin:12px 0; line-height:1.7; overflow-x:auto}
+  @media (max-width:820px){.method{grid-template-columns:1fr}}
+  .scatter{margin-top:28px; background:var(--surface); border:1px solid var(--line); padding:22px 24px 14px}
+  .scatter .head{display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; font-family:var(--mono); font-size:.66rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3); margin-bottom:14px}
+  .scatter svg{width:100%; height:420px; display:block; overflow:visible}
+  .scatter .cap{font-family:var(--mono); font-size:.66rem; color:var(--ink-3); margin-top:10px; letter-spacing:.03em; line-height:1.7}
+
+  /* ---------- hypotheses ---------- */
+  .hyps{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:26px}
+  .hyp{background:var(--surface); border:1px solid var(--line); border-radius:0; padding:24px 24px 22px}
+  .hyp .hh{display:flex; align-items:center; gap:10px; margin-bottom:12px}
+  .hyp .id{font-family:var(--mono); font-size:.72rem; font-weight:600; color:#000; background:var(--ink); border-radius:0; padding:3px 8px}
+  .hyp h3{font-size:1.1rem; margin:0}
+  .hyp p{font-size:.93rem; line-height:1.6; color:var(--ink-2); margin:0 0 14px}
+  .conf{margin:0 0 12px}
+  .conf .cl{display:flex; justify-content:space-between; font-family:var(--mono); font-size:.64rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); margin-bottom:6px}
+  .conf .cl b{color:var(--ink)}
+  .conf .track{height:7px; background:var(--panel); border-radius:0; overflow:hidden}
+  .conf .track > i{display:block; height:100%; width:0; border-radius:0; transition:width 1.1s cubic-bezier(.2,.7,.2,1)}
+  .upd{border-top:1px dashed var(--line); padding-top:11px; font-size:.86rem; color:var(--ink-2)}
+  .upd .lab{font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:var(--viridian-soft); font-weight:600; display:block; margin-bottom:3px}
+  @media (max-width:820px){.hyps{grid-template-columns:1fr}}
+
+  /* risks */
+  .riskgrid{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:24px}
+  .risk{background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--ochre); border-radius:0; padding:18px 20px}
+  .risk h3{font-size:1rem; margin:0 0 6px}
+  .risk p{font-size:.92rem; color:var(--ink-2); line-height:1.55; margin:0}
+  .risk .fals{display:block; margin-top:10px; padding-top:9px; border-top:1px dashed var(--line); font-family:var(--mono); font-size:.74rem; color:var(--ink-3); line-height:1.6}
+  .risk .fals b{color:var(--ochre); font-weight:600}
+  @media (max-width:820px){.riskgrid{grid-template-columns:1fr}}
+
+  /* competition vs complementarity */
+  .vs{display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:26px}
+  .vs .col{background:var(--surface); border:1px solid var(--line); border-radius:0; padding:24px}
+  .vs .col.ss{border-top:3px solid var(--ochre)} .vs .col.th{border-top:3px solid var(--viridian)}
+  .vs .col .tag{font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; font-weight:600}
+  .vs .col.th .tag{color:var(--viridian)} .vs .col.ss .tag{color:var(--ochre)}
+  .vs .col h3{font-size:1.12rem; margin:8px 0 10px}
+  .vs .col p{font-size:.93rem; line-height:1.6; color:var(--ink-2)}
+  .mini{width:100%; border-collapse:collapse; margin-top:8px; font-size:.82rem; min-width:0}
+  .mini th{font-family:var(--mono); font-size:.6rem; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3); text-align:left; padding:8px 8px 8px 0; border-bottom:1px solid var(--line)}
+  .mini td{padding:9px 8px 9px 0; border-bottom:1px solid var(--line-2); vertical-align:top; line-height:1.4}
+  .mini td.k{font-family:var(--mono); font-weight:600; color:var(--viridian)}
+  @media (max-width:820px){.vs{grid-template-columns:1fr}}
+
+  /* synthesis */
+  .synth{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:26px}
+  .sc{background:var(--surface); border:1px solid var(--line); border-radius:0; padding:22px}
+  .sc .bet{font-family:var(--mono); font-size:.64rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3); font-weight:600}
+  .sc h3{font-size:1.02rem; margin:8px 0 10px; color:var(--viridian)}
+  .sc .picks{font-family:var(--mono); font-size:.82rem; color:var(--ink); line-height:1.7; letter-spacing:.02em}
+  .sc p{font-size:.88rem; color:var(--ink-2); line-height:1.55; margin:10px 0 0}
+  @media (max-width:820px){.synth{grid-template-columns:1fr}}
+
+  /* footer */
+  footer{background:var(--hero); color:var(--hero-mut); padding:48px 0 60px}
+  footer h3{font-family:var(--mono); font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; color:var(--hero-accent); margin:0 0 14px}
+  footer p{font-size:.86rem; line-height:1.6; max-width:80ch; color:#8c8c8c; margin:0 0 12px}
+  footer .src{font-family:var(--mono); font-size:.76rem; line-height:1.9; color:var(--hero-mut)}
+  footer .disc{border-top:1px solid rgba(255,255,255,.12); margin-top:26px; padding-top:22px; font-size:.8rem; color:var(--hero-mut)}
+
+  .reveal{opacity:0; transform:translateY(14px); transition:opacity .6s ease, transform .6s ease}
+  .reveal.in{opacity:1; transform:none}
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1; transform:none; transition:none} .bar>i,.conf .track>i{transition:none}}
+  :focus-visible{outline:2px solid var(--viridian); outline-offset:2px}
+
+*{scrollbar-color:#333333 #0a0a0a}
+
+  /* ---------- vintage badge ----------
+     Every page in this set is a frozen snapshot and none of them said so. The
+     date below is the page's own claim about itself; the age is computed
+     against the reader's clock, so the badge cannot go quietly out of date the
+     way a hardcoded "recent" would. */
+  .vintage{border-bottom:1px solid var(--line); background:var(--panel)}
+  .vintage .wrap{display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 14px; padding:9px 0; font-family:var(--mono); font-size:.7rem; letter-spacing:.04em}
+  .vintage .lbl{color:var(--ink-3); text-transform:uppercase; letter-spacing:.14em}
+  .vintage .src{color:var(--ink-2)}
+  .vintage .age{color:var(--ink-2)}
+  .vintage.stale{border-bottom-color:#fb8b1e}
+  .vintage.stale .age{color:#fb8b1e; font-weight:600}
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="wrap">
+    <div class="brand">Defence <span>/</span> Autonomy</div>
+    <div class="links">
+      <a href="#summary">Summary</a>
+      <a href="#thesis">Two theses</a>
+      <a href="#chain">Bottlenecks</a>
+      <a href="#map">Segments</a>
+      <a href="#ev">EV ranking</a>
+      <a href="#deep">Deep dives</a>
+      <a href="#risk">What breaks it</a>
+      <a href="#hyp">Signals</a>
+      <a href="#synth">Synthesis</a>
+    </div>
+  </div>
+</nav>
+
+<div class="vintage" id="vintageBadge" data-vintage="2026-08-11" data-label="market data 11 August 2026">
+  <div class="wrap">
+    <span class="lbl">Data vintage</span>
+    <span class="src"></span>
+    <span class="age"></span>
+  </div>
+</div>
+
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">Equity research overview · market data 11 August 2026</div>
+    <h1>The rearmament trade already happened. Then it fell 40%.</h1>
+    <p class="lede">Every brief on this theme opens with the budget numbers, and the budget numbers are real: NATO's floor moved from 2% of GDP to a 3.5% core commitment by 2035, and Europe now spends more on defence than at any point since the Cold War. What almost none of them mention is that <b>the median name in this universe trades 24% below its 52-week high</b>, and the high-beta half — Rheinmetall −43%, AeroVironment −53%, DroneShield −68% — has been in drawdown for months while the cash-return primes sit at record highs. That inversion, not the budget line, is where the expected value now sits.</p>
+    <div class="meta-row">
+      <div class="m"><div class="k">Names ranked</div><div class="v">53 listed + context</div></div>
+      <div class="m"><div class="k">Method</div><div class="v">Explicit 3-year EV</div></div>
+      <div class="m"><div class="k">Exchanges</div><div class="v">US · DE · FR · UK · IT · NO · SE · NL · ES · KR · AU</div></div>
+      <div class="m"><div class="k">Status</div><div class="v">Not investment advice</div></div>
+    </div>
+
+    <div class="spectrum">
+      <div class="head"><span>◄ At or near 52-week highs · the crowded safety trade</span><span>Deep drawdown · where the EV is ►</span></div>
+      <svg id="spectrumSvg" viewBox="0 0 1000 132" preserveAspectRatio="xMidYMid meet" aria-label="Spectrum plotting selected defence tickers by drawdown from their 52-week high, from RTX at the high to DroneShield 68% below"></svg>
+      <div class="cap">Position = current price against the 52-week high, 11 Aug 2026. A drawdown is not a thesis; it is the discount at which the thesis is now available.</div>
+    </div>
+  </div>
+</header>
+
+<!-- 1 · SUMMARY -->
+<section id="summary">
+  <div class="wrap">
+    <div class="sec-head"><div class="sec-num">01</div><h2>One budget cycle, three completely different things to own</h2></div>
+    <div class="prose wide">
+      <p class="lead-p">The demand case is the least controversial part of this report, and it is also the part that is already in the price. Global military spending passed <b>$2.7 trillion in 2024 and has grown every year since 2015</b>; at the June 2025 Hague summit NATO members committed to <b>3.5% of GDP on core defence plus 1.5% on defence-related infrastructure by 2035</b>, which is the largest formal step-up the alliance has ever agreed. European defence stocks re-rated violently on that, and then gave much of it back. Rheinmetall is a five-bagger from 2022 that is also 43% below its 52-week high.</p>
+      <p>What separates the names now is <b>not who benefits from the budget — almost all of them do — but what each price already assumes.</b> A 21x forward multiple on Rheinmetall after a 43% drawdown is a different proposition from 28.5x on RTX at an all-time high, and both are different again from 75.6x on Palantir or 70.6x on Mercury Systems. Every ranking in §5 is built to make that difference explicit rather than to compress it into a score.</p>
+      <p>Grouped by how the valuation is anchored rather than by weapons category, the universe splits three ways, and the three behave completely differently in a Ukraine-settlement scenario. The first is anchored to a funded backlog; the second to a program that has to be won; the third to a story.</p>
+    </div>
+    <div class="profiles">
+      <div class="pf a">
+        <div class="tier">Tier A · Backlog-anchored</div>
+        <h3>Order books that already exist</h3>
+        <p>Profitable, with multi-year funded backlog and, mostly, dividends. The valuation rests on delivering contracts that are already signed. You give up torque: these do not triple on a good headline. Forward multiples span 9.2x (KBR) to 43x (Elbit) — the tier is defined by earnings quality, not by cheapness.</p>
+        <div class="names">RHM · KOG · LHX · BA.L · LMT · NOC · GD · RTX · HO.PA · LDO.MI · AM.PA · QQ.L · BAB.L · IDR.MC · LDOS · CACI · BAH · CHG.L · CW · DRS · TDY · ESLT · BWXT · KBR · TXT · RR.L · SAAB · 012450 · 079550</div>
+      </div>
+      <div class="pf b">
+        <div class="tier">Tier B · Program-anchored</div>
+        <h3>One contract decides the decade</h3>
+        <p>Real revenue and real products, but the valuation rests on a program that has not been fully won, a ramp that has not been executed, or a margin that has not been proven. This is where the drawdowns are deepest and where the EV ranking clusters at the top — because that is exactly what a drawdown is supposed to do.</p>
+        <div class="names">AVAV · KTOS · HAG.DE · R3NK.DE · TKMS.DE · THEON.AS · EXENS.PA · KRMN · AVIO.MI · MRCY · PSN · PLTR · RKLB · PL · FCT.MI · CAE · 272210 · 047810 · 064350</div>
+      </div>
+      <div class="pf c">
+        <div class="tier">Tier C · Story-anchored</div>
+        <h3>Valuation disconnected from the financials</h3>
+        <p>Market caps two orders of magnitude above trailing revenue, persistent cash burn, and equity issuance as the operating funding model. Unusual Machines carries a $1.3bn capitalisation on a business that reports revenue in the tens of millions. Real optionality; real permanent-loss risk. Two of the four score negative EV on the assumptions in §5.</p>
+        <div class="names">RCAT · UMAC · DRO.AX · BKSY · ASTS</div>
+      </div>
+    </div>
+    <p style="margin-top:26px"></p>
+    <div class="note"><b>Read this as a research map for prioritising due diligence — not investment advice.</b> Market data is 11 August 2026 (US close; European and Korean quotes are that session's last print). The expected-value figures in §5 are built from <em>my</em> stated scenario probabilities, not from consensus or from any model with a track record — they are a way of making judgement auditable, not a forecast. Every probability in this report is a judgement call and is labelled as one.</div>
+  </div>
+</section>
+
+<!-- 2 · TWO THESES -->
+<section id="thesis">
+  <div class="wrap">
+    <div class="sec-head"><div class="sec-num">02</div><h2>Two theses wear the same clothes, and they do not pay off together</h2></div>
+    <div class="prose wide">
+      <p class="lead-p">Most defence research — including the brief this dashboard was built from — opens with the autonomy argument and then recommends European industrials. Those are two different bets, and being explicit about which one you are making is the single most useful thing this section does. <b>The autonomy thesis says cheap attritable mass displaces exquisite platforms. The rearmament thesis says the existing platforms get ordered in far larger quantities.</b> Ukraine is cited as evidence for both, which should be a warning.</p>
+      <p>They diverge on the thing that matters most: <b>a Ukraine settlement is close to fatal for one and merely a headwind for the other.</b> If the war ends, the volume argument for artillery, air defence and armour weakens immediately; the argument that armies must restructure around autonomy does not. Conversely, an autonomy-led restructuring is bad for the tonnage names even in a war scenario, because a euro spent on 100,000 interceptor drones is a euro not spent on a Leopard.</p>
+    </div>
+    <div class="vs">
+      <div class="col th">
+        <div class="tag">Thesis A · Autonomy &amp; attritable mass</div>
+        <h3>Cost-per-effect inverts</h3>
+        <p><b>The claim.</b> A $500 first-person-view drone that disables a $5m armoured vehicle changes the arithmetic of ground combat permanently, and militaries reorganise procurement around volume manufacturing, software iteration and consumable munitions rather than 30-year platforms.</p>
+        <p><b>What has to be true.</b> Programs of record — not experiments — have to move to non-traditional suppliers at scale, and the winners have to manufacture at battlefield cost, not defence-prime cost. This is a manufacturing thesis dressed as a technology thesis.</p>
+        <p style="margin-bottom:0"><b>Listed expression, and its problem.</b> <span class="mono">AVAV · KTOS · RCAT · DRO · UMAC · PLTR</span> — a short list, mostly sub-scale, and it excludes the companies that actually embody the thesis. See the private-market note below.</p>
+      </div>
+      <div class="col ss">
+        <div class="tag">Thesis B · European &amp; allied rearmament</div>
+        <h3>Volume, not novelty</h3>
+        <p><b>The claim.</b> Two decades of underinvestment left NATO with empty magazines and a hollowed industrial base. Rebuilding it is a 10–15 year capital cycle in ammunition, air defence, armour, submarines and the machine tools behind them — largely with existing product designs.</p>
+        <p><b>What has to be true.</b> Budgets have to convert into signed multi-year contracts rather than announcements, and capacity has to be added without destroying margin. This is a backlog thesis, and backlog is observable — which makes it the more falsifiable of the two.</p>
+        <p style="margin-bottom:0"><b>Listed expression.</b> <span class="mono">RHM · KOG · R3NK · TKMS · LDO.MI · HO.PA · IDR.MC · FCT.MI · SAAB · BAB.L · CHG.L · AVIO</span> — deep, liquid, and mostly profitable. The market has far more ways to express B than A.</p>
+      </div>
+    </div>
+    <div class="note" style="margin-top:26px"><b>The structural problem with Thesis A: its best companies are private.</b> Anduril, Helsing, Shield AI, Saronic and Castelion are the reference implementations of autonomy-first defence, and none of them is investable on a public exchange. The listed proxies are therefore either incumbents with an autonomy option attached (Rheinmetall's Skyranger, Kongsberg's loitering work, Leonardo DRS) or sub-scale pure-plays whose main financing instrument is equity issuance. <b>This is not a gap in the research — it is a property of the market.</b> Anyone who tells you they have clean listed exposure to autonomy-first defence is describing a portfolio of second-best substitutes, and should say so.</div>
+    <div class="kpis" style="margin-top:30px">
+      <div class="kpi"><div class="n">3.5%</div><div class="l">NATO core-defence spending commitment by 2035 (plus 1.5% infrastructure), agreed at The Hague, June 2025</div></div>
+      <div class="kpi"><div class="n">−24%</div><div class="l">Median drawdown from the 52-week high across the 53 names ranked here</div></div>
+      <div class="kpi"><div class="n">9.2%</div><div class="l">Median expected annual return over three years on this report's own scenario probabilities</div></div>
+      <div class="kpi"><div class="n">2 of 53</div><div class="l">Names with negative expected value on those same assumptions — both story-anchored</div></div>
+    </div>
+    <div class="timeline">
+      <div class="tl"><div class="when">Feb 2022</div><div class="what"><b>The starting gun, and the reason multiples are not cheap.</b> Every European defence name in this report has re-rated since the invasion. Rheinmetall is the extreme case: a roughly five-fold move to a €2,008 high, followed by a 43% drawdown to €1,142. Buying this theme in 2026 is buying a late-cycle re-rating that has partially unwound, not an unnoticed one.</div></div>
+      <div class="tl"><div class="when">Mar 2025</div><div class="what"><b>Germany changes its own constitution.</b> Defence spending above 1% of GDP is exempted from the debt brake, and a €500bn infrastructure fund is created alongside it. This is the single most important fiscal fact behind Thesis B, and it is legislation rather than a summit communiqué — a materially higher grade of evidence.</div></div>
+      <div class="tl"><div class="when">Jun 2025</div><div class="what"><b>The Hague summit sets 3.5% + 1.5%.</b> The old 2% floor is superseded. <b>Assumption, flagged:</b> a 2035 commitment made by governments that will not be in office in 2035 is a statement of direction, not a contracted cash flow. Treat the trajectory as high-confidence and the level as low-confidence.</div></div>
+      <div class="tl"><div class="when">2025–26</div><div class="what"><b>The industrial constraint shows up in the accounts.</b> Ammunition, solid rocket motors and energetics run at multi-year lead times across NATO. The binding scarcity is nitrocellulose, TNT capacity, propellant and skilled shipyard labour — not chips and not software. §3 maps where that leaves the listed universe.</div></div>
+      <div class="tl"><div class="when">2026 YTD</div><div class="what"><b>The rotation nobody wrote a brief about.</b> Capital moved out of the high-beta rearmament complex and into cash-return primes and quality compounders. RTX, General Dynamics, Thales, Safran and QinetiQ sit within a few percent of 52-week highs; Rheinmetall, RENK, AeroVironment, Kratos, Hanwha Systems and Fincantieri sit 40–60% below theirs. Both moves cannot be right about the same budget.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 · BOTTLENECKS -->
+<section id="chain">
+  <div class="wrap">
+    <div class="sec-head"><div class="sec-num">03</div><h2>Four bottlenecks, and only one of them is drones</h2></div>
+    <div class="prose wide"><p class="lead-p">The useful question in a supply-constrained cycle is not who has the best product but <b>who owns the step that cannot be scaled quickly.</b> In defence right now those steps are chemical, optical and human — energetics, image intensification, and welders with security clearances. None of them is a software problem, and all of them have two-supplier or one-supplier economics somewhere in the chain.</p></div>
+    <div class="segs">
+      <div class="seg"><div class="lbl">Bottleneck 1</div><h3>Energetics &amp; solid rocket motors</h3><p>Every interceptor, every guided round. Propellant, nitrocellulose and TNT capacity is the hardest physical constraint in NATO, with permitting and safety-case timelines measured in years rather than quarters. The listed pure-plays are thin and mostly expensive.</p><div class="tk">LHX (Aerojet) · KRMN · AVIO · CHG.L · <span style="color:var(--ink-3)">Nammo, Eurenco, Nitro-Chem — private/state</span></div></div>
+      <div class="seg"><div class="lbl">Bottleneck 2</div><h3>Night vision &amp; image intensification</h3><p>The least-discussed near-monopoly in European defence. Image intensifier tube capacity sits with a very small number of qualified producers, and every NATO soldier-modernisation program consumes it. Asset-light, high-margin, and directly geared to troop-numbers rather than to platform counts.</p><div class="tk">EXENS · THEON · TDY (FLIR) · ESLT</div></div>
+      <div class="seg"><div class="lbl">Bottleneck 3</div><h3>Counter-UAS sensing</h3><p>The genuinely new problem. Defeating cheap mass requires cheap distributed detection, not exquisite radar — the cost-exchange ratio has to work at the interceptor level or the defender loses by winning. Radar, EW and effector integration is where this is decided.</p><div class="tk">HAG.DE · RHM (Skyranger) · KOG · DRO.AX · DRS · MRCY</div></div>
+      <div class="seg"><div class="lbl">Bottleneck 4</div><h3>Naval &amp; nuclear labour</h3><p>Submarine and surface-combatant capacity is constrained by shipyards and cleared welders, which cannot be bought at any price on a three-year horizon. AUKUS and European submarine programs run against the same wall. Slow, unglamorous, and almost impossible to disintermediate.</p><div class="tk">BWXT · GD · BAB.L · TKMS · FCT.MI · 012450</div></div>
+      <div class="seg"><div class="lbl">Not a bottleneck</div><h3>Airframes and autonomy software</h3><p>Flagged deliberately. Small-UAS airframes are commodity manufacturing with Chinese cost leadership, and autonomy software has many credible suppliers. Value in the drone stack accrues to secure components, datalinks, munitions and — mostly — to whoever holds the program of record.</p><div class="tk">AVAV · KTOS · RCAT · UMAC · ONDS</div></div>
+      <div class="seg"><div class="lbl">Contested</div><h3>Command &amp; control software</h3><p>Palantir has demonstrated the model works and is priced accordingly at 75.6x forward. The interesting question is whether the incumbent integrators — trading at 11–18x forward with the same customers and the same clearances — capture the follow-on work or lose it.</p><div class="tk">PLTR · LDOS · CACI · BAH · PSN · SAIC</div></div>
+    </div>
+    <div class="prose wide" style="margin-top:30px"><p class="lead-p" style="font-size:1.02rem">Where the same budget line lands on different names — the mapping is not uniform, and this is where thematic ETFs get lazy:</p></div>
+    <table class="mini" style="max-width:82ch">
+      <thead><tr><th>Budget line</th><th>What it buys</th><th>Names levered to it</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Munitions replenishment</td><td>Artillery shells, propellant, interceptors, energetics</td><td>RHM · KOG · LHX · CHG.L · AVIO · KRMN · 012450</td></tr>
+        <tr><td class="k">Integrated air &amp; missile defence</td><td>Radar, launchers, interceptors, C2 integration</td><td>RTX · KOG · HAG.DE · 079550 · LDO.MI · RHM</td></tr>
+        <tr><td class="k">Soldier modernisation</td><td>Night vision, thermal sights, personal EW, comms</td><td>THEON · EXENS · ESLT · LHX · TDY</td></tr>
+        <tr><td class="k">Counter-UAS</td><td>Detection, jamming, gun-based and interceptor effectors</td><td>RHM · HAG.DE · DRO.AX · DRS · MRCY · KOG</td></tr>
+        <tr><td class="k">Undersea &amp; strategic</td><td>Submarines, naval nuclear, ICBM recapitalisation</td><td>GD · BWXT · NOC · BAB.L · TKMS · FCT.MI</td></tr>
+        <tr><td class="k">Software-defined C2</td><td>Data platforms, mission software, AI targeting support</td><td>PLTR · LDOS · CACI · BAH · PSN</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:18px; font-size:.9rem; color:var(--ink-2); max-width:80ch"><b>Assumption, flagged.</b> The bottleneck mapping above is a judgement built from public reporting on NATO munitions lead times and from company disclosure on capacity expansion. It is not derived from a proprietary supply-chain dataset, and the relative severity of the four is arguable. What is not arguable is the direction: the constraints are physical and chemical, and the listed universe is far better supplied with platform integrators than with the inputs those integrators cannot get.</p>
+  </div>
+</section>
+
+<!-- 4 · SEGMENTS -->
+<section id="map">
+  <div class="wrap">
+    <div class="sec-head"><div class="sec-num">04</div><h2>Seven segments, and the listed exposure is uneven across all of them</h2></div>
+    <div class="prose wide"><p class="lead-p">Market-size figures below are <b>vendor and broker estimates, not audited data</b>, and the ranges are wide enough that they should be used for ordering the segments rather than for sizing anything. The column that carries real information is the last one: how much clean listed exposure actually exists.</p></div>
+    <div class="segs">
+      <div class="seg"><div class="lbl">A · Critical</div><h3>Autonomous systems</h3><p>Loitering munitions, attritable air vehicles, uncrewed surface and ground systems. The fastest-growing line in most defence budgets and the thinnest in listed pure-plays — the credible scale players are private.</p><div class="tk">AVAV · KTOS · RCAT · <span style="color:var(--ink-3)">Anduril, Shield AI, Saronic — private</span></div></div>
+      <div class="seg"><div class="lbl">B · Critical</div><h3>Counter-drone</h3><p>Detection, EW, and the effector economics problem: a $2m interceptor against a $500 drone is a losing exchange even when it works. Gun-based and directed-energy solutions are where the cost curve gets fixed.</p><div class="tk">RHM · HAG.DE · KOG · DRO.AX · DRS</div></div>
+      <div class="seg"><div class="lbl">C · Critical</div><h3>Munitions &amp; energetics</h3><p>The clearest supply-demand imbalance in the sector and the one with the longest fix. Capacity additions announced in 2023–24 are still coming online, and the constraint moved upstream to propellant chemistry.</p><div class="tk">RHM · KOG · LHX · CHG.L · AVIO · KRMN</div></div>
+      <div class="seg"><div class="lbl">D · High</div><h3>Electronic warfare &amp; sensing</h3><p>Radar, ESM/ECM, thermal and image intensification. Less cyclical than platforms because it is fitted to everything, and it is where the European mid-caps have genuine technical moats.</p><div class="tk">HAG.DE · LHX · ESLT · MRCY · DRS · EXENS · THEON · TDY</div></div>
+      <div class="seg"><div class="lbl">E · High</div><h3>Software, C2 &amp; AI</h3><p>The valuation dispersion here is the widest in the report: 75.6x forward on Palantir against 10.9x on Leidos, with overlapping customers. One of those two prices is wrong.</p><div class="tk">PLTR · LDOS · CACI · BAH · PSN</div></div>
+      <div class="seg"><div class="lbl">F · Moderate-high</div><h3>Space &amp; ISR</h3><p>Commercial imagery and launch have proven defence utility, but the listed names are priced on future contracts rather than current ones. Rocket Lab alone carries a $50bn capitalisation pre-Neutron.</p><div class="tk">RKLB · PL · BKSY · <span style="color:var(--ink-3)">SpaceX — private</span></div></div>
+      <div class="seg"><div class="lbl">G · Flagged</div><h3>Adjacent — mostly civil</h3><p>Included for completeness and explicitly flagged: these are frequently sold as defence exposure and are not. Rolls-Royce is an aero-engine aftermarket business with a submarine-reactor division attached, and it trades near an all-time high.</p><div class="tk">RR.L · CAE · KBR · TXT</div></div>
+      <div class="seg"><div class="lbl">H · Excluded</div><h3>What was cut, and why</h3><p>Enterprise cybersecurity (CrowdStrike, Palo Alto) has no defence-procurement gearing worth the name. Defence-adjacent 3D printing was dropped: the sector consolidated and the listed vehicles no longer represent it.</p><div class="tk"><span style="color:var(--ink-3)">CRWD · PANW · DDD · MKFG — excluded deliberately</span></div></div>
+      <div class="seg"><div class="lbl">I · Regional</div><h3>Asia-Pacific exporters</h3><p>Korea is the swing supplier to European rearmament — howitzers, tanks and air defence delivered on timelines European primes cannot match. Also the deepest drawdowns in the report: Hanwha Systems is 60% below its high.</p><div class="tk">012450 · 272210 · 079550 · 047810 · 064350</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 · EV RANKING -->
+<section id="ev">
+  <div class="wrap">
+    <div class="sec-head"><div class="sec-num">05</div><h2>Fifty-three names ranked by expected value, with the arithmetic shown</h2></div>
+    <div class="prose wide"><p class="lead-p">A composite "score" out of 100 hides the two things that decide an investment: how big the outcomes are and how likely each one is. This ranking replaces the score with an explicit three-scenario expected value per name. <b>Every probability below is my judgement and is visible in the table</b> — disagree with a number and you can recompute the ranking yourself, which is the entire point of showing it this way.</p></div>
+    <div class="method">
+      <div class="mc">
+        <span class="lbl">Method</span>
+        <p>For each name, three scenarios over a <b>three-year horizon to August 2029</b>, with probabilities summing to 1 and a total return (price plus dividends) in each. Returns are built from two drivers: earnings growth to 2029, and the multiple the market pays at the end versus the forward multiple it pays today.</p>
+        <div class="formula">r = (E<sub>2029</sub> / E<sub>2026</sub>) × (M<sub>exit</sub> / M<sub>now</sub>) − 1<br>EV = Σ pᵢ · rᵢ<br>σ = √( Σ pᵢ (rᵢ − EV)² )</div>
+        <p>For loss-making names where a multiple is meaningless, the scenario returns are set directly against a revenue-and-margin path to 2029 and flagged <span class="mono">n/m</span> in the forward-P/E column. <b>Bull</b> = thesis compounds and the multiple holds. <b>Base</b> = growth decelerates to program pace and the multiple normalises. <b>Bear</b> = a Ukraine settlement, a budget slip or an execution failure, with a de-rating on top.</p>
+      </div>
+      <div class="mc">
+        <span class="lbl">What this method cannot do</span>
+        <p><b>It is not a forecast and it has no track record.</b> The probabilities are calibrated against nothing except my own reading of each situation. The honest claim is narrower than a prediction: this makes a judgement auditable, comparable across 53 names, and falsifiable line by line.</p>
+        <p><b>The correlation problem is not solved here.</b> These are not 53 independent bets. The top ten share one driver — European and allied budget conversion — so a portfolio built by taking the top of this list would be a single, very concentrated factor position. EV ranks names; it does not size them.</p>
+        <p style="margin-bottom:0"><b>Two lenses, two answers.</b> Sort by EV and the deep-drawdown names win, because a 45% drawdown mechanically raises expected return if the thesis survives. Sort by <span class="mono">EV/σ</span> and the cheap, unglamorous names win: Leidos, QinetiQ, L3Harris and Rheinmetall are the only four above 1.0. Which column you believe depends on whether you are paid on outcome or on path.</p>
+      </div>
+    </div>
+
+    <div class="scatter">
+      <div class="head"><span>Expected annual return (y) against dispersion of outcomes (x)</span><span id="scatterCount"></span></div>
+      <svg id="scatterSvg" viewBox="0 0 1000 420" preserveAspectRatio="xMidYMid meet" aria-label="Scatter plot of expected annual return against outcome dispersion for the defence universe"></svg>
+      <div class="cap">Up and to the left is better: more expected return per unit of uncertainty. The dashed line is the median expected return. Names below the zero line have negative expected value on these assumptions. Tier colours match §1.</div>
+    </div>
+
+    <div class="filters" id="filters" style="margin-top:30px">
+      <button data-f="all" class="on">All</button>
+      <button data-f="euro">European industrials</button>
+      <button data-f="prime">Primes &amp; nuclear</button>
+      <button data-f="auto">Autonomy</button>
+      <button data-f="sensor">Sensing &amp; EW</button>
+      <button data-f="effect">Effectors &amp; energetics</button>
+      <button data-f="soft">Software &amp; C2</button>
+      <button data-f="space">Space &amp; ISR</button>
+      <button data-f="apac">Asia-Pacific</button>
+      <button data-f="adj">Adjacent (mostly civil)</button>
+    </div>
+    <div class="tbl-scroll">
+      <table id="mainTable">
+        <thead>
+          <tr>
+            <th data-key="rank" data-type="num">#<span class="ar">↕</span></th>
+            <th data-key="tk" data-type="txt">Ticker<span class="ar">↕</span></th>
+            <th data-key="nm" data-type="txt">Company<span class="ar">↕</span></th>
+            <th data-key="ex" data-type="txt">Exchange / ccy<span class="ar">↕</span></th>
+            <th data-key="cap" data-type="num">Market cap<span class="ar">↕</span></th>
+            <th data-key="fpe" data-type="num">Fwd P/E<span class="ar">↕</span></th>
+            <th data-key="dd" data-type="num">vs 52w high<span class="ar">↕</span></th>
+            <th data-key="ann" data-type="num">EV % / yr<span class="ar">↕</span></th>
+            <th data-key="ratio" data-type="num">EV / σ<span class="ar">↕</span></th>
+            <th data-key="scenSort" data-type="num">Scenarios (p → 3y return)<span class="ar">↕</span></th>
+            <th data-key="drv" data-type="txt">What drives it<span class="ar">↕</span></th>
+            <th data-key="risk" data-type="txt">What breaks it<span class="ar">↕</span></th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <div class="table-note">
+      Tier ● A backlog-anchored · ● B program-anchored · ● C story-anchored. Default sort: expected value, descending.<br>
+      Market data 11 August 2026, from Yahoo Finance quote and chart endpoints (price, market capitalisation, forward P/E, 52-week range). Market caps are shown in reporting currency with an approximate USD equivalent; sorting uses the USD figure. All caps <b>est.</b><br>
+      <b>FX assumption</b> — EUR/USD 1.1543, GBP/USD 1.3505, NOK/USD 0.10534, SEK/USD 0.10503, KRW/USD 0.00070834, AUD/USD 0.70631 (11 Aug 2026). Forward P/E is the provider's consensus figure and is unreliable for names in an earnings transition — Saab, Mercury, Avio and Karman are all flagged in the driver column for this reason. Verify against filings.
+    </div>
+  </div>
+</section>
+
+<!-- 6 · DEEP DIVES -->
+<section id="deep">
+  <div class="wrap">
+    <div class="sec-head"><div class="sec-num">06</div><h2>Six profiles: the top of the ranking, and the one it gets most wrong</h2></div>
+    <div class="prose wide"><p class="lead-p" style="margin-bottom:34px">Five of these come from the top of §5. The sixth, Palantir, is here because it is the most-owned name in the theme and my EV ranking puts it 25th — a disagreement worth defending in full rather than burying in a table cell.</p></div>
+
+    <!-- RHM -->
+    <div class="dd">
+      <div class="top"><span class="tk">RHM.DE</span><span class="nm">Rheinmetall</span><span class="cat">Tier A · EV rank 1</span></div>
+      <div class="stats">
+        <div class="stat"><div class="k">Mkt cap</div><div class="v">€53.3B est.</div></div>
+        <div class="stat"><div class="k">Fwd P/E</div><div class="v">21.3x</div></div>
+        <div class="stat"><div class="k">vs 52w high</div><div class="v neg">−43%</div></div>
+        <div class="stat"><div class="k">EV / yr</div><div class="v pos">+22.0%</div></div>
+        <div class="stat"><div class="k">EV / σ</div><div class="v">1.00</div></div>
+      </div>
+      <div class="body">
+        <p><span class="lab">Position &amp; moat</span>The only company in Europe that spans the whole rearmament budget rather than a slice of it: artillery ammunition and propellant, armoured vehicles, air defence, and — through Skyranger — the gun-based counter-UAS effector that fixes the cost-exchange problem in §3. Vertical integration into energetics is what separates it from every other European name here, because the propellant constraint is the one that cannot be relieved by ordering more.</p>
+        <p><span class="lab">Why it ranks first</span>Not because the story is best. Because the price fell 43% while the backlog did not. At €1,142 against a €2,008 high, on 21.3x forward, the market is paying a lower multiple for Rheinmetall than for RTX (28.5x, at its high) or Saab, for materially faster contracted growth. The bear case is priced at 20% in my scenarios and it is a real one — a Ukraine settlement plus German budget slippage takes the shares to roughly €740. <b>The upside case is not heroic either: it needs earnings to roughly two-and-a-half times by 2029 on a multiple no higher than 24x.</b> That is the whole argument.</p>
+        <p><span class="lab">The bear case, stated properly</span>Three things. First, this is the most crowded long in European equities and has been since 2022, which means the marginal buyer has already bought. Second, capacity added into a peak is capacity that carries fixed cost into a trough — the 2028–2032 margin question is genuinely open and management guidance does not resolve it. Third, and least discussed: <b>Rheinmetall is the highest-EV name in this report and simultaneously the most exposed to the single scenario that hurts the most names at once.</b> Ranking it first on EV and then sizing it as if it were diversifying would be a mistake the ranking itself cannot warn you about.</p>
+      </div>
+      <div class="bar"><i data-w="43"></i></div>
+      <div class="bar-cap">Drawdown from the 52-week high (−43%) — the discount at which the backlog is currently available.</div>
+    </div>
+
+    <!-- KOG -->
+    <div class="dd">
+      <div class="top"><span class="tk">KOG.OL</span><span class="nm">Kongsberg Gruppen</span><span class="cat">Tier A · EV rank 6</span></div>
+      <div class="stats">
+        <div class="stat"><div class="k">Mkt cap</div><div class="v">NOK 282B est.</div></div>
+        <div class="stat"><div class="k">Fwd P/E</div><div class="v">28.5x</div></div>
+        <div class="stat"><div class="k">vs 52w high</div><div class="v neg">−25%</div></div>
+        <div class="stat"><div class="k">EV / yr</div><div class="v pos">+14.8%</div></div>
+        <div class="stat"><div class="k">EV / σ</div><div class="v pos">0.93</div></div>
+      </div>
+      <div class="body">
+        <p><span class="lab">Position &amp; moat</span>Two franchises that both sit on the right side of the bottleneck map. <b>Missiles</b> — the Naval Strike Missile and Joint Strike Missile, the latter being the only anti-ship missile that fits inside an F-35's internal bay, which is a moat written into another company's airframe. <b>Air defence</b> — NASAMS, the system protecting Washington DC and now much of Europe, co-developed with Raytheon. Maritime and digital ocean businesses provide non-defence ballast that dilutes the theme but also the drawdown.</p>
+        <p><span class="lab">Why the risk-adjusted rank is higher than the raw rank</span>Kongsberg ranks sixth on EV but third on EV/σ, and that gap is the interesting part. The outcome distribution is tighter than Rheinmetall's because the backlog is longer-dated, the customer base is more diversified across NATO rather than concentrated on German procurement, and the JSM position is contractually locked to F-35 deliveries rather than to any single national budget. <b>A Ukraine settlement damages Kongsberg less than any other Thesis-B name in this report</b>, because Nordic and Pacific naval demand is driven by China and by Russian submarine activity, not by the land war.</p>
+        <p><span class="lab">The bear case</span>28.5x forward is not cheap for a business that is roughly half non-defence, and the maritime division is exposed to a shipping cycle that has its own timing. Norwegian state ownership is a governance feature that cuts both ways: it stabilises the strategy and it limits what shareholders can force. The missile ramp is capacity-constrained by the same propellant supply chain everyone else is queuing for.</p>
+      </div>
+      <div class="bar"><i data-w="93"></i></div>
+      <div class="bar-cap">EV/σ of 0.93 — third-highest in the report, and the reason this ranks above several names with larger raw EV.</div>
+    </div>
+
+    <!-- AVAV -->
+    <div class="dd">
+      <div class="top"><span class="tk">AVAV</span><span class="nm">AeroVironment</span><span class="cat">Tier B · EV rank 4</span></div>
+      <div class="stats">
+        <div class="stat"><div class="k">Mkt cap</div><div class="v">$9.9B est.</div></div>
+        <div class="stat"><div class="k">Fwd P/E</div><div class="v">44.5x</div></div>
+        <div class="stat"><div class="k">vs 52w high</div><div class="v neg">−53%</div></div>
+        <div class="stat"><div class="k">EV / yr</div><div class="v pos">+15.5%</div></div>
+        <div class="stat"><div class="k">EV / σ</div><div class="v">0.69</div></div>
+      </div>
+      <div class="body">
+        <p><span class="lab">Position &amp; moat</span>The closest thing the public market has to a listed expression of Thesis A. Switchblade loitering munitions are combat-proven and in volume production; the BlueHalo combination added space, directed energy and counter-UAS, turning a drone company into something closer to a mid-tier autonomy prime. The moat is not the airframe — it is the program-of-record position and the qualification history that a new entrant needs years to replicate.</p>
+        <p><span class="lab">Why a −53% drawdown is the entire thesis</span>AeroVironment fell from $418 to $196 while the demand argument for attritable munitions got stronger, not weaker. That combination is what the EV method is designed to find. But be precise about what the market is repricing: <b>this is not a demand de-rating, it is a margin and integration de-rating.</b> Merging BlueHalo brought dilution, goodwill and an execution burden onto a company whose previous reputation was operational tidiness. At 44.5x forward the shares still are not cheap in absolute terms; they are cheap only relative to the growth the order book implies.</p>
+        <p><span class="lab">The bear case</span>Three specific risks. Small-UAS airframes are commoditising, and Chinese cost leadership sets the price ceiling even where Chinese supply is banned — margin compression is the natural end state of a hardware business selling consumables. Second, US Army program restructuring can remove a line of business by memorandum. Third, the integration: <b>if BlueHalo synergies do not appear in FY2027 margins, the bull case loses its multiple support</b> and the stock re-rates toward a hardware manufacturer's multiple, which is where my 25%-weighted bear case at −46% comes from.</p>
+      </div>
+      <div class="bar"><i data-w="53"></i></div>
+      <div class="bar-cap">Drawdown from the 52-week high (−53%) — the second-deepest among Tier B names in this report.</div>
+    </div>
+
+    <!-- LHX -->
+    <div class="dd">
+      <div class="top"><span class="tk">LHX</span><span class="nm">L3Harris Technologies</span><span class="cat">Tier A · EV rank 14 · EV/σ rank 3</span></div>
+      <div class="stats">
+        <div class="stat"><div class="k">Mkt cap</div><div class="v">$53.3B est.</div></div>
+        <div class="stat"><div class="k">Fwd P/E</div><div class="v">21.3x</div></div>
+        <div class="stat"><div class="k">vs 52w high</div><div class="v neg">−25%</div></div>
+        <div class="stat"><div class="k">EV / yr</div><div class="v pos">+12.7%</div></div>
+        <div class="stat"><div class="k">EV / σ</div><div class="v pos">1.02</div></div>
+      </div>
+      <div class="body">
+        <p><span class="lab">Why this is in the deep dives at rank 14</span>Because it is the only listed name that directly owns the bottleneck this report identifies as the hardest. The Aerojet Rocketdyne acquisition made L3Harris one of two merchant solid-rocket-motor suppliers in the United States, at exactly the moment when every interceptor program in NATO is motor-constrained. <b>The brief this dashboard was built from named solid rocket motors as the key bottleneck and then ranked L3Harris twelfth on a subjective score — the bottleneck insight and the ranking were disconnected.</b> On EV/σ it is third.</p>
+        <p><span class="lab">Position &amp; moat</span>Three things that are hard to replicate: the SRM franchise; tactical radio and electronic-warfare positions where L3Harris is effectively the NATO standard; and space payloads including missile-warning sensor work. The characteristic that matters for a risk-adjusted ranking is that <b>all three are sole-source or duopoly positions inside programs of record</b> — the revenue is not competed for annually. That produces the tightest outcome distribution of any name in the top fifteen.</p>
+        <p><span class="lab">The bear case</span>Integration debt from Aerojet is real and margin recovery has been slower than promised; the balance sheet carries the acquisition. Defence-prime multiples compress fast when Washington debates budget levels, and at 21.3x this is no longer a value multiple. And the SRM advantage attracts capital: new entrants including well-funded private challengers are targeting exactly this bottleneck, which is a five-year risk rather than a three-year one but is the reason the exit multiple in my base case is 20x rather than 24x.</p>
+      </div>
+      <div class="bar"><i data-w="100"></i></div>
+      <div class="bar-cap">EV/σ of 1.02, scaled to 100 — one of only four names in the report above 1.0.</div>
+    </div>
+
+    <!-- THEON -->
+    <div class="dd">
+      <div class="top"><span class="tk">THEON.AS</span><span class="nm">Theon International</span><span class="cat">Tier B · EV rank 5</span></div>
+      <div class="stats">
+        <div class="stat"><div class="k">Mkt cap</div><div class="v">€2.9B est.</div></div>
+        <div class="stat"><div class="k">Fwd P/E</div><div class="v">21.5x</div></div>
+        <div class="stat"><div class="k">vs 52w high</div><div class="v">−1%</div></div>
+        <div class="stat"><div class="k">EV / yr</div><div class="v pos">+14.8%</div></div>
+        <div class="stat"><div class="k">EV / σ</div><div class="v">0.79</div></div>
+      </div>
+      <div class="body">
+        <p><span class="lab">Position &amp; moat</span>Night-vision and thermal systems for NATO ground forces, sold largely through multi-year national framework agreements. The business is deliberately asset-light — Theon integrates and qualifies rather than manufacturing tubes — which produces high returns on capital and a working-capital profile that scales without heavy capex. It is the purest listed expression of the soldier-modernisation budget line, which is geared to troop numbers rather than to platform counts and is therefore far less sensitive to a settlement than artillery is.</p>
+        <p><span class="lab">Why it ranks fifth despite trading at its high</span>Almost every other name near the top of this ranking got there through a drawdown. Theon got there on growth against a modest multiple: 21.5x forward for a business compounding framework-contract revenue at a rate the European majors cannot match, in a segment with an image-intensifier supply constraint that favours qualified incumbents. <b>It is the only name in the top five that is not a rebound trade</b>, which is exactly why it belongs in a list otherwise dominated by them.</p>
+        <p><span class="lab">The bear case, and it is not small</span>This is a €2.9bn company with a concentrated shareholder base, a listing history measured in a couple of years, and revenue concentrated in a handful of national programs — losing one framework renewal is a material event, not a quarter's noise. Its dependence on tube supply is a moat while capacity is tight and a hostage when it is not. And a small-cap with a high-growth multiple has no valuation floor to fall back on: my bear case at −30% assumes only a normalisation, not a disaster.</p>
+      </div>
+      <div class="bar"><i data-w="79"></i></div>
+      <div class="bar-cap">EV/σ of 0.79 — good, but the outcome spread is wider than the Tier A names above it in EV/σ.</div>
+    </div>
+
+    <!-- PLTR -->
+    <div class="dd">
+      <div class="top"><span class="tk">PLTR</span><span class="nm">Palantir Technologies</span><span class="cat">Tier B · EV rank 25 — the disagreement</span></div>
+      <div class="stats">
+        <div class="stat"><div class="k">Mkt cap</div><div class="v">$420.4B est.</div></div>
+        <div class="stat"><div class="k">Fwd P/E</div><div class="v neg">75.6x</div></div>
+        <div class="stat"><div class="k">vs 52w high</div><div class="v neg">−16%</div></div>
+        <div class="stat"><div class="k">EV / yr</div><div class="v">+9.7%</div></div>
+        <div class="stat"><div class="k">EV / σ</div><div class="v neg">0.43</div></div>
+      </div>
+      <div class="body">
+        <p><span class="lab">The company is not the argument</span>Nothing here disputes the franchise. Palantir won the software-defined-warfare argument: TITAN, Maven and the Foundry/Gotham installed base are programs of record, the commercial business is growing fast, and the company is profitable and cash-generative. If the question were "is this the best company in the theme", the answer would be yes and this section would be short.</p>
+        <p><span class="lab">The argument is the price</span>At <b>$420bn and 75.6x forward earnings</b>, Palantir is worth more than Lockheed Martin, Northrop Grumman, General Dynamics, L3Harris and BAE Systems combined. Those five hold most of the West's strategic programs of record. That comparison does not prove Palantir is overvalued — software economics genuinely deserve a premium to metal-bending — but it does define what has to happen: earnings must roughly triple by 2029 <em>and</em> the multiple must stay above 60x for the bull case to pay. My scenarios weight that at 30%. In the 42%-weighted base case, earnings double and the multiple compresses to 40x, which returns +11% over three years — a good business and a poor investment over that horizon.</p>
+        <p><span class="lab">What would change my mind</span>Two things, and both are observable. First, US government revenue growth sustaining above 40% year on year for four consecutive quarters would mean the defence budget is converting faster than my base case assumes and the multiple is defensible. Second, evidence that the incumbent integrators — Leidos at 10.9x, Booz Allen at 11.7x, CACI at 17.8x, all with the same customers and clearances — are <em>losing</em> follow-on work to Palantir rather than merely being outgrown. <b>The 65x multiple gap between Palantir and Leidos is the single largest valuation dispersion in this report</b>, and one of the two prices is wrong. I do not have high confidence in which.</p>
+      </div>
+      <div class="bar"><i data-w="43"></i></div>
+      <div class="bar-cap">EV/σ of 0.43 — the widest outcome distribution of any company above $100bn in this report.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 · RISKS -->
+<section id="risk">
+  <div class="wrap">
+    <div class="sec-head"><div class="sec-num">07</div><h2>What breaks the thesis — seven ways, each with a falsification trigger</h2></div>
+    <div class="prose wide"><p class="lead-p">A risk without a trigger is a disclaimer. Each of these carries a specific, observable event that would tell you the risk is materialising while there is still time to act on it — that is the only property that makes a risk list useful.</p></div>
+    <div class="riskgrid">
+      <div class="risk"><h3>1 · A Ukraine settlement, and the second-order budget effect</h3><p>The most underweighted risk in almost every defence brief, including the one behind this dashboard, which rated it "low-medium". A negotiated end does not cut budgets immediately — replenishment continues for years — but it removes the political urgency that converts announcements into signed contracts, and multiple compression happens on the announcement, not on the cash flows. This hits Thesis B hard and Thesis A far less.<span class="fals"><b>Trigger:</b> a ceasefire holding 90 days, followed by any two of the top five European defence budgets revising 2027 plans downward.</span></p></div>
+      <div class="risk"><h3>2 · The re-rating unwinds further, not the earnings</h3><p>The whole complex is priced on multiple expansion that already happened. The 2026 drawdowns are evidence that this process has started and is not finished — and multiple compression does not need bad news, only the absence of new good news. At 21–30x forward, the European names have roughly 30% of downside available from de-rating alone with earnings entirely intact.<span class="fals"><b>Trigger:</b> sector forward multiples compressing while order intake grows — de-rating on good news is the signal that the marginal buyer is gone.</span></p></div>
+      <div class="risk"><h3>3 · Capacity added at the peak</h3><p>Every major European producer is expanding ammunition, propellant and vehicle capacity into what governments describe as a permanent step-change. If it is instead a replenishment spike, that capacity carries fixed cost into a trough around 2029–2032. The industry has done exactly this before, after 1991.<span class="fals"><b>Trigger:</b> any large-cap European producer reporting gross-margin compression on rising revenue for two consecutive halves.</span></p></div>
+      <div class="risk"><h3>4 · Procurement inertia beats the disruptors</h3><p>Thesis A depends on non-traditional suppliers winning programs of record, not demonstrations. Defence procurement is structurally hostile to that: qualification cycles, cost-accounting standards and incumbent lobbying all favour the primes, and the most credible challengers are private and can stay private.<span class="fals"><b>Trigger:</b> no non-traditional supplier winning a $500m+ program of record within three years — or, inversely, a prime acquiring the leading challenger unchallenged.</span></p></div>
+      <div class="risk"><h3>5 · The drone stack commoditises faster than it scales</h3><p>Attritable means cheap, and cheap means low gross margin. If the volume thesis is right about units and wrong about price, the drone names grow revenue into declining margins — the classic hardware trap. Chinese component cost leadership sets the ceiling even where Chinese supply is excluded.<span class="fals"><b>Trigger:</b> AeroVironment, Kratos or Red Cat reporting two consecutive quarters of gross-margin decline on rising unit volumes.</span></p></div>
+      <div class="risk"><h3>6 · US posture reverses the geography of the trade</h3><p>A material US force reduction in Europe would accelerate European procurement — and simultaneously make "buy European" instruments harder for US primes, which is why the geographic split in this report is not decoration. The mirror risk is a US administration pressuring allies toward US equipment as a condition of security guarantees, which would reverse it.<span class="fals"><b>Trigger:</b> either a 30%+ announced US force reduction in Europe, or a NATO member cancelling a European program in favour of a US one under explicit political pressure.</span></p></div>
+      <div class="risk"><h3>7 · Concentration inside the ranking itself</h3><p>The method in §5 ranks names independently and they are not independent. The top ten share one factor: European and allied budget conversion. A book built from the top of this list would look diversified by ticker and be a single position by exposure — and risks 1, 2 and 3 would all hit it simultaneously.<span class="fals"><b>Trigger:</b> this one is structural rather than observable. It is a reason to distrust the ranking as a portfolio, not a reason to distrust it as a ranking.</span></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 · HYPOTHESES -->
+<section id="hyp">
+  <div class="wrap">
+    <div class="sec-head"><div class="sec-num">08</div><h2>Five claims that have to be true — and what would change each one</h2></div>
+    <div class="prose wide"><p class="lead-p">These are not a stacked bull case. H1 and H3 compete: if autonomy takes procurement share as fast as H3 assumes, some of the tonnage spending in H1 does not happen. Which one you back determines which half of §5 you should be reading.</p></div>
+    <div class="hyps">
+      <div class="hyp">
+        <div class="hh"><span class="id">H1</span><h3>European budget growth persists independently of Ukraine</h3></div>
+        <p>The load-bearing claim for two thirds of this universe. Evidence for it is unusually good: Germany exempted defence spending above 1% of GDP from its constitutional debt brake in March 2025 — legislation, not a communiqué — and the NATO 3.5% core commitment was agreed by 32 governments in June 2025.</p>
+        <div class="conf"><div class="cl"><span>Confidence</span><b>High</b></div><div class="track"><i data-w="80" style="background:var(--viridian-soft)"></i></div></div>
+        <div class="upd"><span class="lab">What would update it</span>A settlement followed by any large member missing its own published trajectory. Watch national budget submissions rather than summit language: the gap between committed and appropriated is where this claim actually gets tested.</div>
+      </div>
+      <div class="hyp">
+        <div class="hh"><span class="id">H2</span><h3>The bottleneck is chemical and physical, not digital</h3></div>
+        <p>Propellant, energetics, image-intensifier tubes and cleared shipyard labour gate delivery; software does not. This is why §3 ranks the segments the way it does and why the report is more positive on energetics and optics exposure than on airframes.</p>
+        <div class="conf"><div class="cl"><span>Confidence</span><b>Moderate–high</b></div><div class="track"><i data-w="72" style="background:var(--slate)"></i></div></div>
+        <div class="upd"><span class="lab">What would update it</span>Munitions lead times normalising toward pre-2022 levels, or any major producer reporting that it is demand-constrained rather than capacity-constrained. Either would move margin power back to the integrators.</div>
+      </div>
+      <div class="hyp">
+        <div class="hh"><span class="id">H3</span><h3>Attritable autonomy takes a double-digit share of procurement</h3></div>
+        <p>The claim underpinning Thesis A, and the weakest-evidenced one in this report. Battlefield adoption is not in doubt; the transfer of budget authority from platform programs to consumable autonomous systems at scale is. Militaries have restructured around a new weapon class before, but rarely inside a decade.</p>
+        <div class="conf"><div class="cl"><span>Confidence</span><b>Moderate</b></div><div class="track"><i data-w="55" style="background:var(--ochre)"></i></div></div>
+        <div class="upd"><span class="lab">What would update it</span>A named program of record above $1bn awarded to a non-traditional supplier, or a major army publishing a force structure that replaces a platform program with an autonomous one. Absent that, treat the drone names as options rather than as compounders.</div>
+      </div>
+      <div class="hyp">
+        <div class="hh"><span class="id">H4</span><h3>The 2026 drawdown is a de-rating, not a demand signal</h3></div>
+        <p>The claim the entire EV ranking rests on. If the 24% median drawdown reflects multiple compression against intact order books, the top of §5 is a discount. If it is the market correctly anticipating a settlement and slower budget conversion, the ranking is systematically upside-down.</p>
+        <div class="conf"><div class="cl"><span>Confidence</span><b>Moderate</b></div><div class="track"><i data-w="60" style="background:var(--ink)"></i></div></div>
+        <div class="upd"><span class="lab">What would update it</span>Order intake and book-to-bill, reported quarterly, against price. Backlog growing while shares fall supports the de-rating reading; backlog flattening supports the other one. This is the single most checkable claim in the report and it should be re-checked every quarter.</div>
+      </div>
+      <div class="hyp">
+        <div class="hh"><span class="id">H5</span><h3>Defence software is one market at two prices</h3></div>
+        <p>Palantir at 75.6x forward and Leidos at 10.9x sell overlapping capability to the same customers under the same clearances. Either the incumbents are structurally impaired and deserve a value multiple, or Palantir's premium prices a share shift larger than the evidence supports.</p>
+        <div class="conf"><div class="cl"><span>Confidence</span><b>Low — stated as an open question</b></div><div class="track"><i data-w="35" style="background:var(--ochre)"></i></div></div>
+        <div class="upd"><span class="lab">What would update it</span>Recompete outcomes. Watch whether Leidos, CACI, Booz Allen and Parsons retain their large mission-software recompetes over the next eight quarters. Their contract-award announcements resolve this faster than either company's revenue growth does.</div>
+      </div>
+    </div>
+    <div class="prose wide" style="margin-top:32px"><p class="lead-p" style="font-size:1.02rem">Where price action and fundamentals visibly disagree — the six divergences worth diligencing first:</p></div>
+    <table class="mini" style="max-width:82ch">
+      <thead><tr><th>Name</th><th>The divergence</th><th>Read</th></tr></thead>
+      <tbody>
+        <tr><td class="k">RHM.DE</td><td>−43% from the high on 21.3x forward, against RTX at 28.5x sitting at its high</td><td>The most direct expression of H4. If the drawdown is a de-rating, this is the largest single mispricing in the report.</td></tr>
+        <tr><td class="k">PLTR vs LDOS</td><td>75.6x against 10.9x forward, same customers, same clearances</td><td>A 65x multiple gap inside one segment. Unresolved, and stated as unresolved — see H5.</td></tr>
+        <tr><td class="k">DRO.AX</td><td>−68% from the high, the deepest drawdown in the report, in the segment with the strongest demand narrative</td><td>Lumpy order recognition against a story stock's multiple. High EV, worst EV/σ but one — an option, not a position.</td></tr>
+        <tr><td class="k">SAAB · MRCY · KRMN</td><td>Forward multiples of 66x, 71x and 66x that imply falling or barely-growing earnings</td><td>Provider consensus is unreliable through an earnings transition. Do not trust the P/E column on these three; go to the filings.</td></tr>
+        <tr><td class="k">272210.KS</td><td>−60% from the high while Korea's export order book is at a record</td><td>Korean defence has de-rated on domestic political and FX risk rather than on demand. Genuine dislocation or a governance discount — diligence the shareholder structure.</td></tr>
+        <tr><td class="k">ASTS · UMAC</td><td>$27.8bn and $1.3bn capitalisations against negligible defence revenue</td><td>The only two negative-EV names here. Both are sold as defence exposure and neither is, in any quantity that matters.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 9 · SYNTHESIS -->
+<section id="synth">
+  <div class="wrap">
+    <div class="sec-head"><div class="sec-num">09</div><h2>Where to point due diligence next — mapped to which claim you back</h2></div>
+    <div class="prose wide"><p class="lead-p">Not a buy list. The ranking in §5 orders names; it does not build a portfolio, and the correlation problem in risk 7 means the top of the list is one bet wearing ten tickers. <b>What to diligence depends on which of the five claims in §8 you actually believe</b>, and the three routes below imply genuinely different books.</p></div>
+    <div class="synth">
+      <div class="sc">
+        <div class="bet">If you back H1 + H4 · Rearmament at a discount</div>
+        <h3>Buy the drawdown, size it small</h3>
+        <div class="picks">RHM · R3NK · KOG · FCT.MI<br><span style="color:var(--ink-3)">context: 012450, 272210, 079550</span></div>
+        <p>Diligence order intake and book-to-bill first — that single series resolves H4. The trap is treating four names as diversification when they share one driver. This is the highest-EV route and the least diversified one in the report.</p>
+      </div>
+      <div class="sc">
+        <div class="bet">If you back H2 · The bottleneck is physical</div>
+        <h3>Own the input, not the platform</h3>
+        <div class="picks">LHX · CHG.L · EXENS · THEON<br><span style="color:var(--ink-3)">watch: KRMN, AVIO — right asset, hard price</span></div>
+        <p>The best risk-adjusted route: L3Harris and QinetiQ sit above 1.0 on EV/σ, and energetics and optics are less settlement-sensitive than tonnage. Diligence capacity-expansion timing and, for Karman and Avio, whether the multiple leaves anything for the buyer.</p>
+      </div>
+      <div class="sc">
+        <div class="bet">If you back H3 · Autonomy displaces platforms</div>
+        <h3>Accept that the market is second-best</h3>
+        <div class="picks">AVAV · KTOS<br><span style="color:var(--ink-3)">options only: RCAT, DRO · avoid: UMAC, ASTS</span></div>
+        <p>The purest expressions — Anduril, Helsing, Shield AI — are private, so the listed route is two mid-caps at 44x and 57x forward after 50%+ drawdowns. Diligence gross margin, not revenue growth: the whole bear case is that attritable means low-margin.</p>
+      </div>
+    </div>
+    <p style="margin-top:24px; font-size:.92rem; color:var(--ink-2); max-width:80ch">The one cross-cutting view I hold with reasonable confidence: <b>the budget is not the variable here.</b> European and allied spending growth over the next five years is about as well-supported as a macro claim gets — legislated in Germany, committed at NATO, and visible in order books. What is genuinely uncertain is how much of it is already in the price, and the honest answer differs by name rather than by theme. A basket that owns "defence" indiscriminately at these levels is expressing no view on the only question that matters, and is buying the primes at their highs to do it.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <h3>Sources &amp; method</h3>
+    <p>Market data is 11 August 2026 from Yahoo Finance quote and chart endpoints — price, market capitalisation, trailing and forward P/E, and the 52-week range — retrieved directly rather than transcribed. US figures are that day's close; European, Korean and Australian figures are the last print of their local session. FX is the same-day spot cross. Budget, program and bottleneck context is from public reporting and company disclosure; market-size figures are vendor and broker estimates and are labelled as such where used.</p>
+    <p>Expected-value scenarios, probabilities and tier assignments are the author's judgement. They are shown in full in §5 so that they can be disagreed with line by line, and they should be. No probability in this report is derived from a model with a measured track record.</p>
+    <div class="src">
+      Market data: Yahoo Finance (quote + chart endpoints), 11 Aug 2026 · FX same-day spot<br>
+      Policy context: NATO Hague summit declaration (Jun 2025) · German Basic Law amendment on defence spending and the infrastructure fund (Mar 2025) · SIPRI Military Expenditure Database (2024 data, published Apr 2025)<br>
+      Company context: annual reports, capital-markets-day disclosure and order-intake statements for the names profiled in §6<br>
+      Excluded deliberately: enterprise cybersecurity names, defence-adjacent 3D printing, and any figure that could not be traced to a source at time of writing
+    </div>
+    <div class="disc">
+      <b>Not investment advice.</b> This is informational research prepared to help prioritise further due diligence. It does not constitute investment, legal or tax advice, is not a recommendation to buy or sell any security, and reflects information as of 11 August 2026 on a theme that re-prices with the news cycle. The expected-value figures are constructed from subjective probabilities and are not forecasts; the ranking they produce is a way of comparing judgements, not a prediction of returns. Forward P/E figures are provider consensus and are unreliable for companies in an earnings transition. Verify all figures against primary filings and consult a licensed adviser before making any investment decision.
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ---------- data ----------
+   cap   = approximate USD bn, used for sorting; capd is the display string.
+   fpe   = forward P/E, provider consensus; null where meaningless (loss-making).
+   dd    = % from the 52-week high, 11 Aug 2026.
+   sc    = [[p,r] bull, [p,r] base, [p,r] bear]; p sums to 1, r = 3-year total return.
+   FX: EUR 1.1543, GBP 1.3505, NOK 0.10534, SEK 0.10503, KRW 0.00070834,
+       AUD 0.70631, CAD 0.71808 (11 Aug 2026). */
+const COMPANIES = [
+  // === EUROPEAN REARMAMENT INDUSTRIALS ===
+  {tk:'RHM.DE', nm:'Rheinmetall', cat:'euro', tier:'A', ex:'XETRA / EUR', cap:61.5, capd:'€53.3B ≈$61.5B', fpe:21.3, dd:-43,
+   sc:[[.30,1.93],[.50,.61],[.20,-.35]],
+   drv:'Ammunition, propellant, armour and Skyranger C-UAS — the only European name spanning the whole budget',
+   risk:'Most crowded long in Europe; capacity added at the peak; settlement hits it first'},
+  {tk:'R3NK.DE', nm:'RENK Group', cat:'euro', tier:'B', ex:'XETRA / EUR', cap:5.8, capd:'€5.0B ≈$5.8B', fpe:23.0, dd:-44,
+   sc:[[.30,1.49],[.48,.40],[.22,-.38]],
+   drv:'Transmissions in nearly every Western tracked vehicle; backlog covers years of output',
+   risk:'Single-product-family dependence; PE-legacy share overhang; vehicle programs slip easily'},
+  {tk:'TKMS.DE', nm:'TKMS', cat:'euro', tier:'B', ex:'XETRA / EUR', cap:6.4, capd:'€5.5B ≈$6.4B', fpe:32.7, dd:-16,
+   sc:[[.25,1.11],[.50,.14],[.25,-.50]],
+   drv:'Conventional submarines and naval systems; multi-year backlog, newly independent after the spin-off',
+   risk:'Shipbuilding margins are thin and execution risk is chronic; 32.7x leaves no room for a slip'},
+  {tk:'LDO.MI', nm:'Leonardo', cat:'euro', tier:'A', ex:'Milan / EUR', cap:39.2, capd:'€34.0B ≈$39.2B', fpe:20.7, dd:-11,
+   sc:[[.28,1.06],[.50,.35],[.22,-.34]],
+   drv:'Defence electronics, GCAP sixth-generation fighter, helicopters, and control of Leonardo DRS',
+   risk:'State ownership constrains capital allocation; DRS stake means double-counting if held alongside'},
+  {tk:'HO.PA', nm:'Thales', cat:'euro', tier:'A', ex:'Paris / EUR', cap:63.5, capd:'€55.0B ≈$63.5B', fpe:21.5, dd:-4,
+   sc:[[.27,.92],[.52,.28],[.21,-.32]],
+   drv:'Radar, sonar, avionics and cyber across NATO; roughly half of revenue is defence',
+   risk:'Trades near its high; civil aerospace and space divisions dilute the theme both ways'},
+  {tk:'SAAB-B.ST', nm:'Saab', cat:'euro', tier:'A', ex:'Stockholm / SEK', cap:37.2, capd:'SEK 355B ≈$37.2B', fpe:66.2, dd:-12,
+   sc:[[.28,1.08],[.50,.20],[.22,-.48]],
+   drv:'Gripen, GlobalEye, Carl-Gustaf and radar — a full-stack mid-tier prime with NATO access since 2024',
+   risk:'⚠ 66x forward consensus implies falling earnings and looks unreliable — model on trailing 50x'},
+  {tk:'IDR.MC', nm:'Indra Sistemas', cat:'euro', tier:'A', ex:'Madrid / EUR', cap:13.0, capd:'€11.3B ≈$13.0B', fpe:19.7, dd:-3,
+   sc:[[.30,1.24],[.48,.38],[.22,-.33]],
+   drv:'Spain runs the largest percentage budget increase in NATO and Indra is the national consolidator',
+   risk:'Consolidator strategy means acquisition risk; state shareholding; IT legacy dilutes margin'},
+  {tk:'FCT.MI', nm:'Fincantieri', cat:'euro', tier:'B', ex:'Milan / EUR', cap:5.3, capd:'€4.6B ≈$5.3B', fpe:15.8, dd:-53,
+   sc:[[.24,1.51],[.48,.42],[.28,-.43]],
+   drv:'Naval shipbuilding with a record backlog; underwater-domain expansion; cheapest European yard',
+   risk:'Cruise-ship division is a civil-cycle liability; shipbuilding margins are structurally low'},
+  {tk:'AM.PA', nm:'Dassault Aviation', cat:'euro', tier:'A', ex:'Paris / EUR', cap:28.2, capd:'€24.4B ≈$28.2B', fpe:16.8, dd:-12,
+   sc:[[.28,1.08],[.50,.30],[.22,-.25]],
+   drv:'Rafale export order book at a record; Falcon business jets as a civil hedge; 16.8x forward',
+   risk:'Lumpy export recognition; family-controlled with limited float; FCAS program politics'},
+  {tk:'BAB.L', nm:'Babcock International', cat:'euro', tier:'A', ex:'London / GBP', cap:8.0, capd:'£5.9B ≈$8.0B', fpe:16.4, dd:-22,
+   sc:[[.30,1.12],[.48,.36],[.22,-.26]],
+   drv:'UK naval support and submarine infrastructure — an AUKUS beneficiary with contracted revenue',
+   risk:'Fixed-price contract history is poor; margin recovery is the whole equity story'},
+  {tk:'QQ.L', nm:'QinetiQ', cat:'euro', tier:'A', ex:'London / GBP', cap:4.1, capd:'£3.0B ≈$4.1B', fpe:15.1, dd:-1,
+   sc:[[.30,1.09],[.48,.45],[.22,-.24]],
+   drv:'UK test, evaluation and autonomy research; 15.1x forward is the cheapest quality name in Europe',
+   risk:'UK-budget concentration; US division has underperformed; small and easily overlooked'},
+  // === US PRIMES & NUCLEAR ===
+  {tk:'LMT', nm:'Lockheed Martin', cat:'prime', tier:'A', ex:'NYSE / USD', cap:138.0, capd:'$138.0B', fpe:18.3, dd:-14,
+   sc:[[.25,.60],[.52,.14],[.23,-.27]],
+   drv:'F-35 installed base, hypersonics and missile defence; a cash-return holding, not a growth one',
+   risk:'Classified-program charges have recurred; F-35 sustainment politics; low structural growth'},
+  {tk:'NOC', nm:'Northrop Grumman', cat:'prime', tier:'A', ex:'NYSE / USD', cap:81.8, capd:'$81.8B', fpe:18.9, dd:-26,
+   sc:[[.27,.72],[.50,.19],[.23,-.30]],
+   drv:'B-21 and Sentinel ICBM — the two most politically protected US programs; 26% off the high',
+   risk:'Fixed-price B-21 lots carry loss risk; Sentinel restructuring has already cost real money'},
+  {tk:'GD', nm:'General Dynamics', cat:'prime', tier:'A', ex:'NYSE / USD', cap:106.0, capd:'$106.0B', fpe:21.2, dd:-2,
+   sc:[[.25,.56],[.52,.13],[.23,-.29]],
+   drv:'Columbia-class submarines plus Gulfstream; the naval bottleneck expressed at prime scale',
+   risk:'Trades at its high; shipyard labour constraints cap the ramp; Gulfstream is a civil cycle'},
+  {tk:'RTX', nm:'RTX Corporation', cat:'prime', tier:'A', ex:'NYSE / USD', cap:301.7, capd:'$301.7B', fpe:28.5, dd:-1,
+   sc:[[.25,.53],[.50,.06],[.25,-.40]],
+   drv:'Patriot, AMRAAM and the air-defence supercycle, plus Pratt & Whitney aftermarket',
+   risk:'28.5x at an all-time high is the most demanding prime multiple here; GTF engine liability'},
+  {tk:'BA.L', nm:'BAE Systems', cat:'prime', tier:'A', ex:'London / GBP', cap:88.2, capd:'£65.3B ≈$88.2B', fpe:23.3, dd:-6,
+   sc:[[.27,.81],[.51,.26],[.22,-.29]],
+   drv:'GCAP, AUKUS submarines and a large US business — thirty-year revenue visibility',
+   risk:'Quality is fully recognised at 23.3x near the high; the brief ranked it 6th, EV ranks it 31st'},
+  {tk:'BWXT', nm:'BWX Technologies', cat:'prime', tier:'A', ex:'NYSE / USD', cap:15.5, capd:'$15.5B', fpe:32.3, dd:-30,
+   sc:[[.28,1.00],[.50,.21],[.22,-.32]],
+   drv:'Sole-source naval nuclear components plus a microreactor option; 30% off the high',
+   risk:'32.3x for a single-customer business; microreactor value is optionality, not revenue'},
+  // === AUTONOMY & ATTRITABLE MASS ===
+  {tk:'AVAV', nm:'AeroVironment', cat:'auto', tier:'B', ex:'Nasdaq / USD', cap:9.9, capd:'$9.9B', fpe:44.5, dd:-53,
+   sc:[[.30,1.63],[.45,.37],[.25,-.46]],
+   drv:'Switchblade loitering munitions in volume production; BlueHalo adds space, EW and directed energy',
+   risk:'BlueHalo integration is unproven; airframe commoditisation; a memo can end an Army program'},
+  {tk:'KTOS', nm:'Kratos Defense', cat:'auto', tier:'B', ex:'Nasdaq / USD', cap:12.0, capd:'$12.0B', fpe:57.1, dd:-52,
+   sc:[[.30,1.80],[.43,.35],[.27,-.50]],
+   drv:'Valkyrie collaborative combat aircraft, hypersonic targets and small turbine engines',
+   risk:'57x forward pre-inflection; long history of equity issuance; CCA is a program still being defined'},
+  {tk:'RCAT', nm:'Red Cat Holdings', cat:'auto', tier:'C', ex:'Nasdaq / USD', cap:1.6, capd:'$1.6B', fpe:null, dd:-43,
+   sc:[[.25,2.00],[.40,-.15],[.35,-.70]],
+   drv:'US Army Short Range Reconnaissance program of record; Blue-UAS-listed domestic supply',
+   risk:'One contract is the whole company; loss-making; dilution is the funding model'},
+  {tk:'DRO.AX', nm:'DroneShield', cat:'auto', tier:'C', ex:'ASX / AUD', cap:1.4, capd:'A$2.0B ≈$1.4B', fpe:34.0, dd:-68,
+   sc:[[.28,1.80],[.40,.10],[.32,-.60]],
+   drv:'Counter-drone detection and jamming deployed across Ukraine and NATO; profitable, unlike its peers',
+   risk:'Deepest drawdown in the report; order timing is lumpy enough to break any quarter'},
+  {tk:'UMAC', nm:'Unusual Machines', cat:'auto', tier:'C', ex:'NYSE American / USD', cap:1.3, capd:'$1.3B', fpe:null, dd:-24,
+   sc:[[.20,2.00],[.32,-.40],[.48,-.80]],
+   drv:'Domestic FPV drone components as a US alternative to Chinese supply; motor manufacturing onshoring',
+   risk:'⚠ $1.3bn capitalisation on revenue in the tens of millions. Negative EV on these assumptions'},
+  // === SENSING, EW & COUNTER-DRONE ===
+  {tk:'HAG.DE', nm:'Hensoldt', cat:'sensor', tier:'B', ex:'XETRA / EUR', cap:12.1, capd:'€10.5B ≈$12.1B', fpe:37.1, dd:-23,
+   sc:[[.28,1.07],[.47,.16],[.25,-.48]],
+   drv:'TRML-4D radar and SPEAR electronic warfare — the sensing half of the counter-UAS problem',
+   risk:'37.1x forward is the issue, not the franchise; the brief ranked it 5th, EV ranks it 36th'},
+  {tk:'THEON.AS', nm:'Theon International', cat:'sensor', tier:'B', ex:'Amsterdam / EUR', cap:3.4, capd:'€2.9B ≈$3.4B', fpe:21.5, dd:-1,
+   sc:[[.27,1.46],[.47,.42],[.26,-.30]],
+   drv:'Night vision on NATO framework contracts; asset-light, geared to troop numbers not platforms',
+   risk:'Concentrated shareholder base and short listing history; one framework loss is material'},
+  {tk:'EXENS.PA', nm:'Exosens', cat:'sensor', tier:'B', ex:'Paris / EUR', cap:3.7, capd:'€3.2B ≈$3.7B', fpe:27.9, dd:-14,
+   sc:[[.29,1.26],[.47,.36],[.24,-.31]],
+   drv:'Image intensifier tubes — one of the genuinely scarce inputs in European defence',
+   risk:'Capacity expansion by any qualified rival removes the scarcity that justifies the multiple'},
+  {tk:'ESLT', nm:'Elbit Systems', cat:'sensor', tier:'A', ex:'Nasdaq / USD', cap:36.4, capd:'$36.4B', fpe:43.0, dd:-24,
+   sc:[[.28,.86],[.48,.12],[.24,-.44]],
+   drv:'Combat-proven drones, C4I and EW with a record backlog and European order momentum',
+   risk:'43x forward; export licensing is politically exposed; single-country production concentration'},
+  {tk:'TDY', nm:'Teledyne Technologies', cat:'sensor', tier:'A', ex:'NYSE / USD', cap:31.6, capd:'$31.6B', fpe:25.6, dd:-2,
+   sc:[[.25,.58],[.53,.15],[.22,-.26]],
+   drv:'FLIR thermal imaging — every drone and every sight needs a sensor; disciplined M&A compounder',
+   risk:'Only about a third defence; slow growth; trades within 2% of its high'},
+  {tk:'MRCY', nm:'Mercury Systems', cat:'sensor', tier:'B', ex:'Nasdaq / USD', cap:6.6, capd:'$6.6B', fpe:70.6, dd:-15,
+   sc:[[.28,.91],[.47,.03],[.25,-.56]],
+   drv:'Embedded defence computing and RF — the electronics inside other companies’ sensors',
+   risk:'⚠ 70.6x reflects a depressed earnings base, not a premium franchise; turnaround is unfinished'},
+  {tk:'DRS', nm:'Leonardo DRS', cat:'sensor', tier:'A', ex:'Nasdaq / USD', cap:11.9, capd:'$11.9B', fpe:30.4, dd:-12,
+   sc:[[.28,1.00],[.50,.23],[.22,-.32]],
+   drv:'US Navy and Army sensing, power conversion and counter-UAS; the Columbia-class electric drive',
+   risk:'Majority-owned by Leonardo — holding both is one exposure twice; 30.4x is a full price'},
+  // === EFFECTORS, ENERGETICS & PROPULSION ===
+  {tk:'KOG.OL', nm:'Kongsberg Gruppen', cat:'effect', tier:'A', ex:'Oslo / NOK', cap:29.7, capd:'NOK 282B ≈$29.7B', fpe:28.5, dd:-25,
+   sc:[[.30,1.24],[.48,.42],[.22,-.28]],
+   drv:'NSM/JSM strike missiles and NASAMS air defence; JSM is the only ASM fitting the F-35 bay',
+   risk:'28.5x with roughly half the business outside defence; maritime division has its own cycle'},
+  {tk:'LHX', nm:'L3Harris Technologies', cat:'effect', tier:'A', ex:'NYSE / USD', cap:53.3, capd:'$53.3B', fpe:21.3, dd:-25,
+   sc:[[.30,.97],[.50,.37],[.20,-.23]],
+   drv:'Aerojet solid rocket motors — one of two US merchant suppliers — plus NATO-standard tactical radio and EW',
+   risk:'Aerojet margin recovery is slow; acquisition debt; new entrants targeting exactly the SRM gap'},
+  {tk:'KRMN', nm:'Karman Holdings', cat:'effect', tier:'B', ex:'NYSE / USD', cap:8.2, capd:'$8.2B', fpe:66.1, dd:-48,
+   sc:[[.30,1.00],[.45,.06],[.25,-.51]],
+   drv:'Rocket motor cases, nozzles and payload fairings — a pure-play on the missile bottleneck',
+   risk:'⚠ 66.1x even after a 48% drawdown; recent IPO with limited public operating history'},
+  {tk:'AVIO.MI', nm:'Avio', cat:'effect', tier:'B', ex:'Milan / EUR', cap:1.8, capd:'€1.5B ≈$1.8B', fpe:123.6, dd:-49,
+   sc:[[.32,.95],[.43,.00],[.25,-.38]],
+   drv:'European solid rocket motors for Vega and for tactical missiles — a genuinely scarce EU asset',
+   risk:'⚠ Forward P/E meaningless off a small earnings base; Vega launch delays; sub-scale'},
+  {tk:'CHG.L', nm:'Chemring Group', cat:'effect', tier:'A', ex:'London / GBP', cap:2.3, capd:'£1.7B ≈$2.3B', fpe:26.6, dd:-2,
+   sc:[[.28,1.05],[.50,.29],[.22,-.31]],
+   drv:'Countermeasures and energetics plus Roke sensing; energetics capacity is the constrained asset',
+   risk:'Trades at its high; energetics is a safety-incident business; US expansion is capital-hungry'},
+  {tk:'CW', nm:'Curtiss-Wright', cat:'effect', tier:'A', ex:'NYSE / USD', cap:26.1, capd:'$26.1B', fpe:41.2, dd:-13,
+   sc:[[.25,.70],[.52,.12],[.23,-.33]],
+   drv:'Naval nuclear pumps and valves, actuation and control on submarines, missiles and the F-35',
+   risk:'41.2x is a compounder multiple on a mid-single-digit grower; commercial nuclear is the story premium'},
+  // === SOFTWARE, C2 & SERVICES ===
+  {tk:'PLTR', nm:'Palantir Technologies', cat:'soft', tier:'B', ex:'Nasdaq / USD', cap:420.4, capd:'$420.4B', fpe:75.6, dd:-16,
+   sc:[[.30,1.38],[.42,.11],[.28,-.50]],
+   drv:'TITAN and Maven programs of record; the reference implementation of software-defined warfare',
+   risk:'⚠ Worth more than LMT+NOC+GD+LHX+BAE combined. The company is not the argument; the price is'},
+  {tk:'LDOS', nm:'Leidos Holdings', cat:'soft', tier:'A', ex:'NYSE / USD', cap:17.7, capd:'$17.7B', fpe:10.9, dd:-32,
+   sc:[[.28,.96],[.50,.41],[.22,-.17]],
+   drv:'Largest US defence IT and mission-software integrator at 10.9x forward — highest EV/σ in the report',
+   risk:'Federal services pricing pressure; recompete risk on large contracts; low-growth perception'},
+  {tk:'CACI', nm:'CACI International', cat:'soft', tier:'A', ex:'NYSE / USD', cap:14.8, capd:'$14.8B', fpe:17.8, dd:-2,
+   sc:[[.27,.74],[.51,.24],[.22,-.23]],
+   drv:'Intelligence-community software and EW with high clearance barriers to entry',
+   risk:'Trades near its high; consistently strong execution is already in the multiple'},
+  {tk:'BAH', nm:'Booz Allen Hamilton', cat:'soft', tier:'A', ex:'NYSE / USD', cap:9.5, capd:'$9.5B', fpe:11.7, dd:-30,
+   sc:[[.27,.93],[.48,.26],[.25,-.31]],
+   drv:'Defence and intelligence consulting core intact after federal civil cuts gutted the other half',
+   risk:'Civil-agency exposure is the reason it is cheap; headcount model is exposed to AI-led deflation'},
+  {tk:'PSN', nm:'Parsons Corporation', cat:'soft', tier:'B', ex:'NYSE / USD', cap:5.2, capd:'$5.2B', fpe:14.1, dd:-46,
+   sc:[[.28,1.17],[.46,.29],[.26,-.29]],
+   drv:'Missile-defence and critical-infrastructure engineering; direct exposure to homeland air defence',
+   risk:'Lost a large confidential contract — the 46% drawdown is company-specific, not sector-wide'},
+  // === SPACE & ISR ===
+  {tk:'RKLB', nm:'Rocket Lab', cat:'space', tier:'B', ex:'Nasdaq / USD', cap:50.0, capd:'$50.0B', fpe:null, dd:-47,
+   sc:[[.30,1.30],[.40,-.20],[.30,-.65]],
+   drv:'Electron launch cadence, space systems, and national-security launch qualification',
+   risk:'⚠ $50bn capitalisation pre-Neutron. The valuation already assumes the hard part works'},
+  {tk:'PL', nm:'Planet Labs', cat:'space', tier:'B', ex:'NYSE / USD', cap:8.4, capd:'$8.4B', fpe:null, dd:-54,
+   sc:[[.30,1.50],[.42,.05],[.28,-.60]],
+   drv:'Daily global imagery with defence and intelligence contracts now the growth engine',
+   risk:'Commercial imagery pricing is deflationary; approaching but not at sustained profitability'},
+  {tk:'BKSY', nm:'BlackSky Technology', cat:'space', tier:'C', ex:'NYSE / USD', cap:1.2, capd:'$1.2B', fpe:null, dd:-43,
+   sc:[[.28,1.80],[.38,.00],[.34,-.65]],
+   drv:'High-revisit tactical imagery sold directly to defence and intelligence customers',
+   risk:'Sub-scale against Planet and Maxar; cash-burning; capital raises dilute the upside case'},
+  {tk:'ASTS', nm:'AST SpaceMobile', cat:'space', tier:'C', ex:'Nasdaq / USD', cap:27.8, capd:'$27.8B', fpe:null, dd:-46,
+   sc:[[.25,1.20],[.35,-.30],[.40,-.70]],
+   drv:'Direct-to-device satellite connectivity with a dual-use government communications option',
+   risk:'⚠ Not a defence company in any material revenue sense. Binary outcome; negative EV here'},
+  // === ASIA-PACIFIC ===
+  {tk:'012450.KS', nm:'Hanwha Aerospace', cat:'apac', tier:'A', ex:'Korea / KRW', cap:40.0, capd:'KRW 56.5T ≈$40.0B', fpe:null, dd:-34,
+   sc:[[.30,1.20],[.48,.25],[.22,-.40]],
+   drv:'K9 howitzers and Redback IFVs delivered on timelines European primes cannot match',
+   risk:'Export concentration in a few large state customers; Korean governance discount; FX'},
+  {tk:'272210.KS', nm:'Hanwha Systems', cat:'apac', tier:'B', ex:'Korea / KRW', cap:9.7, capd:'KRW 13.6T ≈$9.7B', fpe:null, dd:-60,
+   sc:[[.30,1.40],[.45,.25],[.25,-.45]],
+   drv:'Defence electronics, naval combat systems and a LEO satellite programme',
+   risk:'Deepest Asian drawdown here; non-defence ventures consume capital; group-structure complexity'},
+  {tk:'079550.KS', nm:'LIG Nex1', cat:'apac', tier:'A', ex:'Korea / KRW', cap:11.8, capd:'KRW 16.6T ≈$11.8B', fpe:null, dd:-32,
+   sc:[[.32,1.30],[.45,.30],[.23,-.40]],
+   drv:'Precision-guided munitions and Cheongung-II air defence with record Middle East export orders',
+   risk:'A handful of export customers drive the backlog; delivery execution on unprecedented volume'},
+  {tk:'047810.KS', nm:'Korea Aerospace Ind.', cat:'apac', tier:'B', ex:'Korea / KRW', cap:9.4, capd:'KRW 13.2T ≈$9.4B', fpe:null, dd:-37,
+   sc:[[.28,1.10],[.47,.20],[.25,-.40]],
+   drv:'KF-21 fighter development and FA-50 light-combat exports into Europe and Asia',
+   risk:'KF-21 is a long, capital-intensive program; export campaigns are political and slip'},
+  {tk:'064350.KS', nm:'Hyundai Rotem', cat:'apac', tier:'B', ex:'Korea / KRW', cap:10.9, capd:'KRW 15.4T ≈$10.9B', fpe:null, dd:-50,
+   sc:[[.28,1.20],[.45,.15],[.27,-.45]],
+   drv:'K2 tanks with a large Polish export program in delivery; second-tranche negotiations are the catalyst',
+   risk:'Rail division is a low-margin civil drag; one customer dominates the defence backlog'},
+  // === ADJACENT — MOSTLY CIVIL, FLAGGED ===
+  {tk:'RR.L', nm:'Rolls-Royce Holdings', cat:'adj', tier:'A', ex:'London / GBP', cap:171.1, capd:'£126.7B ≈$171.1B', fpe:32.3, dd:-3,
+   sc:[[.25,.55],[.50,.12],[.25,-.30]],
+   drv:'Submarine reactors and SMRs attached to a civil aero-engine aftermarket that drives the profit',
+   risk:'⚠ Roughly two thirds civil aerospace. Sold as defence exposure; it is an engine cycle at its high'},
+  {tk:'CAE', nm:'CAE Inc.', cat:'adj', tier:'B', ex:'NYSE / USD', cap:8.7, capd:'$8.7B', fpe:25.5, dd:-21,
+   sc:[[.27,.80],[.50,.18],[.23,-.32]],
+   drv:'Military flight simulation and training outsourcing as NATO air forces expand pilot pipelines',
+   risk:'Civil aviation training is the larger half; defence margin recovery has repeatedly disappointed'},
+  {tk:'KBR', nm:'KBR, Inc.', cat:'adj', tier:'A', ex:'NYSE / USD', cap:4.7, capd:'$4.7B', fpe:9.2, dd:-28,
+   sc:[[.28,.85],[.50,.30],[.22,-.25]],
+   drv:'Defence engineering, logistics and space services at 9.2x forward — the cheapest name in the report',
+   risk:'Government services pricing pressure; contract-mix shift; cheap for identifiable reasons'},
+  {tk:'TXT', nm:'Textron', cat:'adj', tier:'A', ex:'NYSE / USD', cap:15.3, capd:'$15.3B', fpe:12.2, dd:-13,
+   sc:[[.28,.75],[.50,.25],[.22,-.25]],
+   drv:'Bell V-280 FLRAA — the US Army’s largest new rotorcraft program — inside a 12.2x industrial',
+   risk:'Cessna and Bell commercial cycles dominate near-term earnings; FLRAA revenue is back-end loaded'},
+];
+const TIER_COLOR = {A:'#4dd0e1', B:'#00d264', C:'#fb8b1e'};
+
+/* ---------- expected value ----------
+   Computed here rather than hard-coded so the ranking is derived from the
+   published probabilities. If a probability set does not sum to 1 the row is
+   flagged in the console rather than silently mis-ranked. */
+function scoreOne(c){
+  const psum = c.sc.reduce((s,[p])=>s+p, 0);
+  if(Math.abs(psum-1) > 1e-9) console.warn('probabilities do not sum to 1:', c.tk, psum);
+  const ev3 = c.sc.reduce((s,[p,r])=>s+p*r, 0);
+  const varr = c.sc.reduce((s,[p,r])=>s+p*Math.pow(r-ev3,2), 0);
+  const sd = Math.sqrt(varr);
+  const leg = ['bull','base','bear'];
+  const scen = c.sc.map(([p,r],i)=>
+    `<b>${leg[i]}</b> ${(p*100).toFixed(0)}% → <span class="${r>=0?'up':'dn'}">${fmtPct(r)}</span>`).join('<br>');
+  return {ev3, ann:Math.pow(1+ev3, 1/3)-1, sd, ratio: sd>0 ? ev3/sd : 0, scen, scenSort:c.sc[0][1]};
+}
+function fmtPct(r){ return (r>=0?'+':'−') + Math.abs(Math.round(r*100)) + '%'; }
+
+COMPANIES.forEach(c=> Object.assign(c, scoreOne(c)));
+COMPANIES.sort((a,b)=> b.ev3-a.ev3).forEach((c,i)=> c.rank = i+1);
+
+/* ---------- render table ---------- */
+const tbody = document.getElementById('tbody');
+let curFilter = 'all';
+let sortKey = 'rank', sortDir = 1, sortType = 'num';
+
+function render(){
+  let rows = COMPANIES.filter(c=> curFilter==='all' || c.cat===curFilter);
+  rows.sort((a,b)=>{
+    let x=a[sortKey], y=b[sortKey];
+    if(sortType==='num'){ x=(x===null||x===undefined)?-Infinity:x; y=(y===null||y===undefined)?-Infinity:y; return (x-y)*sortDir; }
+    return String(x).localeCompare(String(y))*sortDir;
+  });
+  tbody.innerHTML = rows.map(c=>{
+    const annCls = 'num ' + (c.ann>=0?'pos':'neg');
+    return '<tr>'+
+      '<td class="rk">'+c.rank+'</td>'+
+      '<td class="tk"><span class="tier-dot" style="background:'+TIER_COLOR[c.tier]+'"></span>'+c.tk+'</td>'+
+      '<td class="nm">'+c.nm+'</td>'+
+      '<td><span class="seglbl">'+c.ex+'</span></td>'+
+      '<td class="num bold">'+c.capd+'</td>'+
+      '<td class="num">'+(c.fpe===null?'n/m':c.fpe.toFixed(1)+'x')+'</td>'+
+      '<td class="num neg">'+c.dd+'%</td>'+
+      '<td class="'+annCls+'">'+(c.ann>=0?'+':'')+(c.ann*100).toFixed(1)+'%</td>'+
+      '<td class="num">'+c.ratio.toFixed(2)+'</td>'+
+      '<td class="scen">'+c.scen+'</td>'+
+      '<td class="small">'+c.drv+'</td>'+
+      '<td class="small">'+c.risk+'</td>'+
+    '</tr>';
+  }).join('');
+}
+/* sort handlers */
+document.querySelectorAll('#mainTable thead th').forEach(th=>{
+  th.addEventListener('click', ()=>{
+    const key=th.dataset.key, type=th.dataset.type;
+    if(sortKey===key){ sortDir*=-1; } else { sortKey=key; sortType=type; sortDir = (key==='rank'||key==='tk'||key==='nm'||key==='ex'||key==='drv'||key==='risk') ? 1 : -1; }
+    document.querySelectorAll('#mainTable thead th').forEach(t=>{t.classList.remove('sorted'); t.querySelector('.ar').textContent='↕';});
+    th.classList.add('sorted'); th.querySelector('.ar').textContent = sortDir>0?'▲':'▼';
+    render();
+  });
+});
+/* filter handlers */
+document.querySelectorAll('#filters button').forEach(b=>{
+  b.addEventListener('click', ()=>{
+    document.querySelectorAll('#filters button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); curFilter=b.dataset.f; render();
+  });
+});
+render();
+
+/* ---------- hero spectrum: drawdown from the 52-week high ---------- */
+(function(){
+  const svg=document.getElementById('spectrumSvg');
+  if(!svg) return;
+  const NS='http://www.w3.org/2000/svg';
+  const pick=['RTX','GD','BA.L','LDO.MI','LMT','HAG.DE','KOG.OL','NOC','LDOS','RHM.DE','AVAV','DRO.AX'];
+  const pts=pick.map(tk=>{
+    const c=COMPANIES.find(x=>x.tk===tk);
+    return {tk:c.tk.replace(/\.(DE|L|OL|MI|AX|PA|AS|MC|ST)$/,''), pos:Math.min(100, Math.abs(c.dd)/70*100), tier:c.tier};
+  });
+  const W=1000, x0=40, x1=960, y=70;
+  const line=document.createElementNS(NS,'line');
+  line.setAttribute('x1',x0);line.setAttribute('x2',x1);line.setAttribute('y1',y);line.setAttribute('y2',y);
+  line.setAttribute('stroke','rgba(255,255,255,.22)');line.setAttribute('stroke-width','1.5');
+  svg.appendChild(line);
+  [0,25,50,75,100].forEach(p=>{
+    const gx=x0+(x1-x0)*p/100;
+    const t=document.createElementNS(NS,'line');
+    t.setAttribute('x1',gx);t.setAttribute('x2',gx);t.setAttribute('y1',y-5);t.setAttribute('y2',y+5);
+    t.setAttribute('stroke','rgba(255,255,255,.18)');t.setAttribute('stroke-width','1');
+    svg.appendChild(t);
+    const lb=document.createElementNS(NS,'text');
+    lb.setAttribute('x',gx);lb.setAttribute('y',y+66);lb.setAttribute('text-anchor','middle');
+    lb.setAttribute('fill','#8c8c8c');lb.setAttribute('font-family','ui-monospace,SF Mono,Menlo,monospace');
+    lb.setAttribute('font-size','11');lb.textContent='−'+Math.round(p*0.7)+'%';
+    svg.appendChild(lb);
+  });
+  const colors={A:'#4dd0e1',B:'#00d264',C:'#fb8b1e'};
+  pts.forEach((p,i)=>{
+    const gx=x0+(x1-x0)*p.pos/100;
+    const up=(i%2===0);
+    const ly=up? y-30 : y+30;
+    const ty=up? y-38 : y+46;
+    const c=document.createElementNS(NS,'line');
+    c.setAttribute('x1',gx);c.setAttribute('x2',gx);c.setAttribute('y1',y);c.setAttribute('y2',ly);
+    c.setAttribute('stroke','rgba(255,255,255,.28)');c.setAttribute('stroke-width','1');
+    svg.appendChild(c);
+    const dot=document.createElementNS(NS,'circle');
+    dot.setAttribute('cx',gx);dot.setAttribute('cy',y);dot.setAttribute('r','5.5');
+    dot.setAttribute('fill',colors[p.tier]);dot.setAttribute('stroke','#000000');dot.setAttribute('stroke-width','2');
+    svg.appendChild(dot);
+    const tx=document.createElementNS(NS,'text');
+    tx.setAttribute('x',gx);tx.setAttribute('y',ty);tx.setAttribute('text-anchor','middle');
+    tx.setAttribute('fill','#d6d6d6');tx.setAttribute('font-family','ui-monospace,SF Mono,Menlo,monospace');
+    tx.setAttribute('font-size','14');tx.setAttribute('font-weight','600');tx.setAttribute('letter-spacing','.5');
+    tx.textContent=p.tk;
+    svg.appendChild(tx);
+  });
+})();
+
+/* ---------- §5 scatter: expected return against dispersion ---------- */
+(function(){
+  const svg=document.getElementById('scatterSvg');
+  if(!svg) return;
+  const NS='http://www.w3.org/2000/svg';
+  const W=1000, H=420, mL=64, mR=24, mT=22, mB=54;
+  const xs=COMPANIES.map(c=>c.sd), ys=COMPANIES.map(c=>c.ann);
+  const xMax=Math.ceil(Math.max(...xs)*10)/10, yMin=Math.min(...ys), yMax=Math.max(...ys);
+  const yLo=Math.floor(Math.min(yMin,0)*20)/20, yHi=Math.ceil(yMax*20)/20;
+  const px=v=> mL + (v/xMax)*(W-mL-mR);
+  const py=v=> H-mB - ((v-yLo)/(yHi-yLo))*(H-mT-mB);
+  const el=(n,a)=>{const e=document.createElementNS(NS,n); for(const k in a) e.setAttribute(k,a[k]); return e;};
+
+  // axes
+  svg.appendChild(el('line',{x1:mL,x2:W-mR,y1:H-mB,y2:H-mB,stroke:'#262626','stroke-width':1}));
+  svg.appendChild(el('line',{x1:mL,x2:mL,y1:mT,y2:H-mB,stroke:'#262626','stroke-width':1}));
+  // y gridlines
+  for(let v=yLo; v<=yHi+1e-9; v+=0.05){
+    const gy=py(v);
+    svg.appendChild(el('line',{x1:mL,x2:W-mR,y1:gy,y2:gy,stroke: Math.abs(v)<1e-9?'#3a3a3a':'#161616','stroke-width':1}));
+    const t=el('text',{x:mL-10,y:gy+4,'text-anchor':'end',fill:'#8c8c8c','font-family':'ui-monospace,SF Mono,Menlo,monospace','font-size':11});
+    t.textContent=(v>0?'+':'')+Math.round(v*100)+'%'; svg.appendChild(t);
+  }
+  // x ticks
+  for(let v=0; v<=xMax+1e-9; v+=0.2){
+    const gx=px(v);
+    svg.appendChild(el('line',{x1:gx,x2:gx,y1:H-mB,y2:H-mB+5,stroke:'#262626','stroke-width':1}));
+    const t=el('text',{x:gx,y:H-mB+20,'text-anchor':'middle',fill:'#8c8c8c','font-family':'ui-monospace,SF Mono,Menlo,monospace','font-size':11});
+    t.textContent=Math.round(v*100)+'%'; svg.appendChild(t);
+  }
+  // median line
+  const med=[...COMPANIES].map(c=>c.ann).sort((a,b)=>a-b)[Math.floor(COMPANIES.length/2)];
+  svg.appendChild(el('line',{x1:mL,x2:W-mR,y1:py(med),y2:py(med),stroke:'#00b457','stroke-width':1,'stroke-dasharray':'5 5',opacity:.65}));
+  const ml=el('text',{x:W-mR-4,y:py(med)-7,'text-anchor':'end',fill:'#00b457','font-family':'ui-monospace,SF Mono,Menlo,monospace','font-size':11});
+  ml.textContent='median '+(med*100).toFixed(1)+'% / yr'; svg.appendChild(ml);
+  // axis titles
+  const xt=el('text',{x:(mL+W-mR)/2,y:H-8,'text-anchor':'middle',fill:'#8c8c8c','font-family':'ui-monospace,SF Mono,Menlo,monospace','font-size':11,'letter-spacing':'.1em'});
+  xt.textContent='DISPERSION OF 3-YEAR OUTCOMES (σ)'; svg.appendChild(xt);
+  const yt=el('text',{x:16,y:H/2,'text-anchor':'middle',fill:'#8c8c8c','font-family':'ui-monospace,SF Mono,Menlo,monospace','font-size':11,'letter-spacing':'.1em',transform:'rotate(-90 16 '+(H/2)+')'});
+  yt.textContent='EXPECTED RETURN % / YEAR'; svg.appendChild(yt);
+
+  // label only the extremes, so the plot stays readable
+  const byEv=[...COMPANIES].sort((a,b)=>b.ann-a.ann);
+  const byRatio=[...COMPANIES].sort((a,b)=>b.ratio-a.ratio);
+  const labelled=new Set([...byEv.slice(0,6), ...byEv.slice(-4), ...byRatio.slice(0,4)].map(c=>c.tk));
+  const colors={A:'#4dd0e1',B:'#00d264',C:'#fb8b1e'};
+  COMPANIES.forEach(c=>{
+    const cx=px(c.sd), cy=py(c.ann);
+    svg.appendChild(el('circle',{cx,cy,r:5,fill:colors[c.tier],stroke:'#000','stroke-width':1.5,opacity:labelled.has(c.tk)?1:.55}));
+  });
+  // Labels are placed after the dots and nudged vertically off each other:
+  // several of the interesting names sit within a few percent of one another,
+  // and overlapping text is worse than a label two pixels off its dot.
+  const placed=[];
+  COMPANIES.filter(c=>labelled.has(c.tk))
+    .sort((a,b)=> px(a.sd)-px(b.sd))
+    .forEach(c=>{
+      const cx=px(c.sd);
+      let ty=py(c.ann)+4;
+      while(placed.some(p=> Math.abs(p.x-cx)<58 && Math.abs(p.y-ty)<13)) ty-=13;
+      placed.push({x:cx,y:ty});
+      const t=el('text',{x:cx+9,y:ty,fill:'#d6d6d6','font-family':'ui-monospace,SF Mono,Menlo,monospace','font-size':11,'font-weight':600});
+      t.textContent=c.tk.replace(/\.(DE|L|OL|MI|AX|PA|AS|MC|ST|KS)$/,'');
+      svg.appendChild(t);
+    });
+  const cnt=document.getElementById('scatterCount');
+  if(cnt) cnt.textContent=COMPANIES.length+' names · '+COMPANIES.filter(c=>c.ann<0).length+' negative EV';
+})();
+
+/* ---------- reveal + bar fill ---------- */
+const bars = document.querySelectorAll('.bar > i, .conf .track > i');
+const reduce = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+if(reduce){ bars.forEach(b=> b.style.width=(b.dataset.w||0)+'%'); }
+else{
+  const io=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ const el=e.target; el.style.width=(el.dataset.w||0)+'%'; io.unobserve(el); } });
+  },{threshold:.4});
+  bars.forEach(b=> io.observe(b));
+
+  const rev=document.querySelectorAll('section .prose, .dd, .hyp, .risk, .seg, .pf, .kpi, .vs .col, .sc, .tl, .mc');
+  rev.forEach(el=> el.classList.add('reveal'));
+  const io2=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io2.unobserve(e.target); } });
+  },{threshold:.12});
+  rev.forEach(el=> io2.observe(el));
+}
+
+/* ---------- scroll-spy nav ---------- */
+const navLinks=[...document.querySelectorAll('nav.top .links a')];
+const secs=navLinks.map(a=> document.querySelector(a.getAttribute('href')));
+const spy=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const id='#'+e.target.id;
+      navLinks.forEach(a=> a.classList.toggle('active', a.getAttribute('href')===id));
+    }
+  });
+},{rootMargin:'-45% 0px -50% 0px'});
+secs.forEach(s=> s && spy.observe(s));
+</script>
+
+<script>
+/* The one thing on this page that knows what today is. Fourteen days is the
+   threshold because it is roughly one reporting cycle: past it, a price here is
+   decoration and the reader should be told so rather than left to check the
+   footer. */
+(function(){
+  var el = document.getElementById('vintageBadge');
+  if(!el) return;
+  var approx = el.getAttribute('data-approx') === '1';
+  var days = Math.floor((Date.now() - Date.parse(el.getAttribute('data-vintage') + 'T00:00:00Z')) / 86400000);
+  el.querySelector('.src').textContent = (approx ? '\u2248 ' : '') + el.getAttribute('data-label');
+  var age = el.querySelector('.age');
+  if(!isFinite(days) || days < 0){ age.textContent = ''; return; }
+  age.textContent = '\u00b7 ' + days + ' day' + (days === 1 ? '' : 's') + ' old' + (days > 14 ? ' \u00b7 treat as stale' : '');
+  if(days > 14) el.classList.add('stale');
+})();
+</script>
+
+</body>
+</html>

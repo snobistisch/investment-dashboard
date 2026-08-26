@@ -1,0 +1,89 @@
+name: Refresh market data
+
+# Fetches live quotes, market caps and price history and commits the snapshot
+# to public/data/market-data.json, then deploys so the live site serves it.
+#
+# The commit is made with the default GITHUB_TOKEN, and a push made with that
+# token deliberately does NOT trigger other workflows. Without the explicit
+# `deploy` job below, the JSON would land in the repo and the live site would
+# keep serving the previous bundle indefinitely — the snapshot would look
+# fresh in git and be stale in the browser. deploy.yml is therefore called
+# directly as a reusable workflow, and it is handed the SHA committed here so
+# it builds the new data rather than the commit this run started from.
+
+on:
+  schedule:
+    # 22:30 UTC Mon-Fri. Safely past the US close year-round (20:00 UTC under
+    # EDT, 21:00 under EST) and long past every Asian venue in the book, so a
+    # single run captures the same trading day on every exchange.
+    - cron: '30 22 * * 1-5'
+  workflow_dispatch:
+
+concurrency:
+  group: refresh-market-data
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      changed: ${{ steps.commit.outputs.changed }}
+      sha: ${{ steps.commit.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      # No secrets. Both providers are open: Yahoo for equities and the ECB
+      # for FX. There is therefore no key that could reach the committed JSON,
+      # the built bundle, or this log.
+      - run: npm run fetch-market-data
+      - run: npm run build-opportunity-history
+
+      - id: commit
+        run: |
+          set -euo pipefail
+          FILE=public/data/market-data.json
+          HISTORY=public/data/equity-opportunity-history.json
+
+          if git diff --quiet -- "$FILE"; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No change." && exit 0
+          fi
+
+          # `fetchedAt` moves on every run by definition. If it is the only
+          # line that moved, no market data actually changed — a holiday, or a
+          # provider repeating the previous close — and there is nothing worth
+          # committing or deploying.
+          SUBSTANTIVE=$(git diff -U0 -- "$FILE" \
+            | grep -E '^[+-]' | grep -Ev '^(\+\+\+|---)' | grep -v '"fetchedAt"' || true)
+          if [ -z "$SUBSTANTIVE" ]; then
+            git checkout -- "$FILE"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Only fetchedAt moved; discarding." && exit 0
+          fi
+
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$FILE" "$HISTORY"
+          git commit -m "Refresh market data snapshot" \
+                     -m "Automated run of scripts/fetch-market-data.ts. positions.ts is not touched."
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    needs: refresh
+    if: needs.refresh.outputs.changed == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/deploy.yml
+    with:
+      ref: ${{ needs.refresh.outputs.sha }}

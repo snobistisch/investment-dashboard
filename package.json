@@ -1,0 +1,32 @@
+{
+  "name": "investment-dashboard",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "verify": "jiti scripts/verify-planning.ts && jiti scripts/verify-benchmark.ts && jiti scripts/verify-opportunity.ts && jiti scripts/verify-active-selection.ts && jiti scripts/verify-execution.ts && jiti scripts/verify-allocation.ts",
+    "fetch-market-data": "jiti scripts/fetch-market-data.ts",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "build-opportunity-history": "jiti scripts/build-opportunity-history.ts",
+    "summary": "jiti scripts/summary.ts"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.3.2",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "tailwindcss": "^4.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.2",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.3",
+    "jiti": "^2.7.0",
+    "oxlint": "^1.71.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.1.1"
+  }
+}

@@ -112,6 +112,7 @@ for (const model of [...equityOpportunityModels].sort((a, b) => a.ticker.localeC
     currency: quote?.currency ?? model.currency,
     close: quote?.priceLocal ?? null,
     closeAsOf: quote?.asOf ?? null,
+    realisedVolPct: round(quote?.stats?.realisedVolPct),
     ...evaluate(model, quote),
     modelVersion: model.version,
     nextReviewAt: model.nextReviewAt,

@@ -2,6 +2,29 @@
 
 Reverse-chronological record of the current public-equity product.
 
+## 2026-10-14 — Repaired the market-data pipeline
+
+- Every refresh deploy since 2026-09-17 failed in `verify-opportunity.ts`: it required
+  more than five qualified names and at least one 200MA entry setup on the live
+  snapshot. The market moved to three qualified names with none in the entry zone.
+  Those were assertions about the market, not the engine. The decision-logic suites
+  (opportunity, active selection, execution) now run on a frozen 2026-09-16 snapshot
+  in `scripts/fixtures/`; live data keeps its shape, provenance, chart and freshness
+  checks.
+- The live site reads the committed snapshot from raw.githubusercontent, so the
+  refresh workflow now runs `npm run verify` before committing instead of after.
+- Scheduled runs start 00:15–06:15 UTC, after Tokyo and Hong Kong open, so snapshots
+  mixed US closes with Asian intraday prices. The fetch script now drops any session
+  still trading (from Yahoo's own trading period) and reports each venue's last
+  completed close, with the market cap restated at that close.
+- The fetch script refuses to write when fewer than 90% of mapped symbols return a
+  price and history.
+- GitHub Actions moved to Node 24 releases; `npm audit fix` cleared three
+  build-tool advisories; an identity-only route map was removed.
+- Not changed: all six research pages are past their staleness bound and the
+  opportunity models are due for review on 2026-10-28. Both need new research,
+  not code.
+
 ## 2026-08-26 — Narrowed the repository to public equities
 
 - The application now opens directly on Opportunities and exposes only the equity

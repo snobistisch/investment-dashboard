@@ -39,9 +39,13 @@ committed snapshot at read time and never written back into that source file.
 ## Market data
 
 `scripts/fetch-market-data.ts` retrieves equity quotes, market caps, FX and daily closes
-from Yahoo Finance and the ECB, then writes `public/data/market-data.json`. The weekday
-workflow refreshes the snapshot and records one Opportunities valuation per date, ticker
-and model version in `public/data/equity-opportunity-history.json`.
+from Yahoo Finance and the ECB, then writes `public/data/market-data.json`. Each quote is
+the venue's last completed session: a session still trading when the script runs is
+dropped. The script refuses to write a snapshot covering under 90% of mapped symbols.
+The weekday workflow refreshes the snapshot, records one Opportunities valuation per
+date, ticker and model version in `public/data/equity-opportunity-history.json`, and
+commits only after `npm run verify` passes, because the site reads the committed
+snapshot directly.
 
 ```sh
 npm run fetch-market-data

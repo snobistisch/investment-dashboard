@@ -1,7 +1,3 @@
-import { readFileSync } from 'node:fs'
-import { dirname, resolve } from 'node:path'
-import { fileURLToPath } from 'node:url'
-import type { MarketSnapshot } from '../src/data/market-data'
 import {
   ACTIVE_FACTOR_CAP_PCT,
   ACTIVE_NAME_CAP_PCT,
@@ -10,14 +6,16 @@ import {
   emptyCandidate,
   type ActiveCandidateInput,
 } from '../src/sections/allocator/active-selection'
+import { FIXTURE_DATE, FIXTURE_MARKET } from './fixtures/market'
 
 function assert(ok: unknown, message: string): asserts ok {
   if (!ok) throw new Error(message)
 }
 
-const here = dirname(fileURLToPath(import.meta.url))
-const snapshot = JSON.parse(readFileSync(resolve(here, '../public/data/market-data.json'), 'utf8')) as MarketSnapshot
-const today = snapshot.fetchedAt.slice(0, 10)
+// Frozen prices: whether LITE qualifies is a property of the market, not of
+// the gates under test. See scripts/fixtures/market.ts.
+const snapshot = FIXTURE_MARKET
+const today = FIXTURE_DATE
 
 const complete: ActiveCandidateInput = {
   ...emptyCandidate('lite'),

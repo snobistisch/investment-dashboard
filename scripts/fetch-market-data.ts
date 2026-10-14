@@ -36,6 +36,12 @@ const SCHEMA_VERSION = 1
 const BN = 1e9
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
 
+/** Share of mapped symbols that must come back priced and with history before
+ *  the snapshot is written. The site reads the committed file directly, so a
+ *  provider outage that returns a fraction of the book would otherwise replace
+ *  a complete snapshot with a mostly Unknown one. */
+const MIN_COVERAGE = 0.9
+
 /** Trailing window for realised volatility and max drawdown. */
 const WINDOW_DAYS = 365
 
@@ -241,10 +247,11 @@ interface YahooQuote {
   regularMarketTime?: number
   marketCap?: number
   quoteType?: string
+  marketState?: string
 }
 
 async function yahooQuotes(symbols: string[], s: { cookie: string; crumb: string }) {
-  const fields = 'symbol,shortName,longName,currency,regularMarketPrice,regularMarketTime,marketCap,quoteType'
+  const fields = 'symbol,shortName,longName,currency,regularMarketPrice,regularMarketTime,marketCap,quoteType,marketState'
   const out = new Map<string, YahooQuote>()
   for (let i = 0; i < symbols.length; i += 20) {
     const batch = symbols.slice(i, i + 20)
@@ -268,19 +275,40 @@ async function yahooQuotes(symbols: string[], s: { cookie: string; crumb: string
 async function yahooHistory(symbol: string) {
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=2y&interval=1d`
   const body = await getJson<{
-    chart: { result?: [{ timestamp?: number[]; indicators: { quote: [{ close?: (number | null)[] }] } }] }
+    chart: {
+      result?: [{
+        meta?: { currentTradingPeriod?: { regular?: { start: number; end: number } } }
+        timestamp?: number[]
+        indicators: { quote: [{ close?: (number | null)[] }] }
+      }]
+    }
   }>(url)
   const r = body.chart.result?.[0]
   if (!r?.timestamp) return null
   const closes = r.indicators.quote[0].close ?? []
   const series: { date: string; close: number }[] = []
+  let lastTimestamp: number | undefined
   for (let i = 0; i < r.timestamp.length; i++) {
     const c = closes[i]
     if (typeof c === 'number' && Number.isFinite(c) && c > 0) {
       series.push({ date: new Date(r.timestamp[i] * 1000).toISOString().slice(0, 10), close: c })
+      lastTimestamp = r.timestamp[i]
     }
   }
-  return series.length ? series : null
+  // The scheduled run starts hours late, often after Tokyo and Hong Kong have
+  // opened, so the newest bar can be a session still trading. That bar is a
+  // live price, not a close, and mixing it with the previous US close puts
+  // two trading days in one snapshot. Yahoo reports the venue's own regular
+  // session (DST and lunch breaks included): once it ends, the period moves
+  // to the next session and the bar counts as complete.
+  const regular = r.meta?.currentTradingPeriod?.regular
+  const inProgress =
+    regular !== undefined &&
+    lastTimestamp !== undefined &&
+    lastTimestamp >= regular.start &&
+    Date.now() / 1000 < regular.end
+  if (inProgress) series.pop()
+  return series.length ? { series, inProgress } : null
 }
 
 // ---------------------------------------------------------------------------
@@ -517,8 +545,8 @@ async function fetchFxHistory(currencies: Set<string>) {
   for (const ccy of currencies) {
     if (ccy === 'USD') continue
     try {
-      const series = await yahooHistory(`${ccy}=X`)
-      if (series) out.set(ccy, series)
+      const history = await yahooHistory(`${ccy}=X`)
+      if (history) out.set(ccy, history.series)
     } catch {
       // Without a rate series this currency's rows land without returns, which
       // the UI shows as absent. Reported in the run summary below.
@@ -557,11 +585,11 @@ console.log(
 )
 
 console.log(`\nfetching ${yahooRows.length} price histories...`)
-const histories = new Map<string, { date: string; close: number }[]>()
+const histories = new Map<string, { series: Series; inProgress: boolean }>()
 await mapLimit(yahooRows, 6, async (x) => {
   try {
-    const s = await yahooHistory(x.r.symbol)
-    if (s) histories.set(x.r.symbol, s)
+    const h = await yahooHistory(x.r.symbol)
+    if (h) histories.set(x.r.symbol, h)
   } catch {
     // A single symbol's history failing is not a reason to lose the whole run;
     // it simply lands without stats and is reported in the summary below.
@@ -589,12 +617,25 @@ for (const { p, r } of yahooRows) {
     dropped.push({ ticker: p.ticker, reason: `provider returned nothing for ${r.symbol}` })
     continue
   }
-  const price = q.regularMarketPrice
+  const history = histories.get(r.symbol)
+  const series = history?.series
+  const quotedPrice = q.regularMarketPrice
   const currency = q.currency
-  if (typeof price !== 'number' || !Number.isFinite(price) || price <= 0) {
+  if (typeof quotedPrice !== 'number' || !Number.isFinite(quotedPrice) || quotedPrice <= 0) {
     dropped.push({ ticker: p.ticker, reason: `no usable price for ${r.symbol}` })
     continue
   }
+  // While the venue is trading, the quote is intraday. The last completed
+  // close from the history replaces it. The quote's own market state covers
+  // the minutes after the open before the provider has published a daily bar.
+  // Without a completed close an intraday price is not substituted.
+  const sessionOpen = history?.inProgress === true || q.marketState === 'REGULAR'
+  const lastClose = sessionOpen ? series?.at(-1) : undefined
+  if (sessionOpen && !lastClose) {
+    dropped.push({ ticker: p.ticker, reason: `session in progress and no completed close for ${r.symbol}` })
+    continue
+  }
+  const price = lastClose?.close ?? quotedPrice
   if (!currency || fx.usdPer[currency] === undefined) {
     dropped.push({ ticker: p.ticker, reason: `no FX rate for ${currency ?? 'unknown currency'}` })
     continue
@@ -608,14 +649,14 @@ for (const { p, r } of yahooRows) {
   }
 
   // Market cap is absent for ETFs (the provider reports net assets instead).
-  // Absent beats a plausible substitute.
-  const capLocal = q.marketCap
+  // Absent beats a plausible substitute. During a session the provider's cap
+  // moves with the intraday price, so it is restated at the reported close.
+  const capLocal = typeof q.marketCap === 'number' ? q.marketCap * (price / quotedPrice) : undefined
   const marketCapUsd =
     typeof capLocal === 'number' && Number.isFinite(capLocal) && capLocal > 0
       ? round(capLocal / fx.usdPer[currency] / BN, 4)
       : undefined
 
-  const series = histories.get(r.symbol)
   // Stats stay on the local-currency series: volatility and drawdown are
   // properties of the asset. Returns are restated in USD, because that is
   // what the holder actually earned.
@@ -636,7 +677,7 @@ for (const { p, r } of yahooRows) {
     // Every venue in this book closes within its own UTC day (Tokyo 15:00 JST
     // = 06:00 UTC, Mexico 15:00 CST = 21:00 UTC), so the UTC date is the
     // trading date without needing per-exchange timezone handling.
-    asOf: new Date((q.regularMarketTime ?? Date.now() / 1000) * 1000).toISOString().slice(0, 10),
+    asOf: lastClose?.date ?? new Date((q.regularMarketTime ?? Date.now() / 1000) * 1000).toISOString().slice(0, 10),
     stats: series ? computeStats(series) : undefined,
     trend200: technical?.trend,
   }
@@ -668,6 +709,15 @@ const payload = {
     ...unmappedRows.map(({ p, r }) => ({ ticker: p.ticker, exchange: p.exchange, reason: r.reason })),
     ...dropped.map((d) => ({ ticker: d.ticker, exchange: positions.find((p) => p.ticker === d.ticker)?.exchange ?? '', reason: d.reason })),
   ].sort((a, b) => a.ticker.localeCompare(b.ticker)),
+}
+
+const minimum = Math.ceil(yahooRows.length * MIN_COVERAGE)
+const priced = Object.keys(quotes).length
+const charted = Object.keys(equityCharts).length
+if (priced < minimum || charted < minimum) {
+  console.error(`\nNOT WRITTEN: ${priced} priced and ${charted} charted of ${yahooRows.length} mapped, below the ${minimum} required.`)
+  for (const d of dropped) console.error(`  ${d.ticker.padEnd(12)} ${d.reason}`)
+  process.exit(1)
 }
 
 mkdirSync(dirname(OUT), { recursive: true })

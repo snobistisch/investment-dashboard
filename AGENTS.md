@@ -43,6 +43,9 @@ Opportunities and Plan—plus six self-contained research pages embedded as ifra
 - Never invent market data. Missing is valid and renders as `Unknown`.
 - Publish inputs and formulas, not unexplained stored scores.
 - Never tune a threshold to force an outcome. A changed conclusion is a finding.
+- Verification asserts engine behaviour on the frozen fixture, never on how many
+  names the live market happens to qualify. Live data is checked for shape,
+  provenance and freshness.
 - Opportunity probabilities and terminal assumptions change only in a visible,
   versioned research revision. Market refreshes change rankings, not authored theses.
 - Equity charts and the simple 200-session average use fetched daily closes only.
@@ -73,6 +76,7 @@ label and ordering rule only.
 | `src/sections/allocator/execution.ts` | Concept-order construction and execution gates. |
 | `src/sections/allocator/allocation.ts` | Verified legacy sizing model, not the current route. |
 | `scripts/verify-*.ts` | Executable policy and quantitative invariants. |
+| `scripts/fixtures/` | Frozen market snapshot for decision-logic suites; live data is checked for shape only. |
 | `scripts/fetch-market-data.ts` | Network-backed equity and FX snapshot builder. |
 | `scripts/build-opportunity-history.ts` | Records price-driven opportunity changes. |
 | `public/data/` | Generated and committed artifacts; never hand-edit. |

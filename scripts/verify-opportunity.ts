@@ -25,6 +25,7 @@ import {
   screenUniversePosition,
   validateUniverseScreenPolicy,
 } from '../src/sections/opportunities/universe-screen'
+import { FIXTURE_DATE, FIXTURE_MARKET } from './fixtures/market'
 
 const TOL = 1e-9
 const here = dirname(fileURLToPath(import.meta.url))
@@ -120,8 +121,9 @@ assert(
 )
 assert(equityOpportunityModels.some((row) => row.valuation.kind === 'terminal-price'), 'full coverage must retain explicit frozen terminal-price envelopes')
 
-const currentMarket = JSON.parse(readFileSync(resolve(here, '../public/data/market-data.json'), 'utf8')) as MarketSnapshot
-const marketDate = currentMarket.fetchedAt.slice(0, 10)
+// Engine behaviour on the canonical models is observed on frozen prices; see
+// scripts/fixtures/market.ts. The live snapshot is checked for shape below.
+const marketDate = FIXTURE_DATE
 function canonicalQualified(
   opportunityPolicy: OpportunityPolicy,
   theme: 'all' | 'biology' = 'all',
@@ -132,7 +134,7 @@ function canonicalQualified(
     .filter((authored) => {
       const row = positions.find((candidate) => candidate.ticker === authored.ticker)
       if (!row) return false
-      const quote = currentMarket.quotes[authored.ticker]
+      const quote = FIXTURE_MARKET.quotes[authored.ticker]
       const screen = screenUniversePosition(row, quote, isDirectlyTradable(row), screenPolicy, opportunityPolicy.maxQuoteBusinessSessions, marketDate)
       return screen.passes && assessOpportunity(authored, quote, opportunityPolicy, isDirectlyTradable(row), marketDate).positiveEdge
     })
@@ -144,7 +146,7 @@ const highHurdleQualified = canonicalQualified({ ...DEFAULT_OPPORTUNITY_POLICY, 
 const biologyQualified = canonicalQualified(DEFAULT_OPPORTUNITY_POLICY, 'biology')
 const withoutTrendGateQualified = canonicalQualified(DEFAULT_OPPORTUNITY_POLICY, 'all', false)
 const defaultMa200EntrySetups = defaultQualified.filter((ticker) => {
-  const distance = currentMarket.quotes[ticker]?.trend200?.distancePct
+  const distance = FIXTURE_MARKET.quotes[ticker]?.trend200?.distancePct
   return classifyMa200Opportunity(distance, DEFAULT_UNIVERSE_SCREEN_POLICY.maxMa200OpportunityDistancePct) === 'entry-zone'
 })
 assert(defaultQualified.length > 5, 'full-universe modelling must break the former five-name output ceiling')
@@ -154,6 +156,7 @@ assert(defaultQualified.length < withoutTrendGateQualified.length, 'the default 
 assert(defaultMa200EntrySetups.length > 0, 'the canonical qualified set must expose at least one near-above-200MA entry setup')
 assert(defaultMa200EntrySetups.length < defaultQualified.length, 'the 200MA entry zone must not relabel every qualified equity as a preferred setup')
 
+const currentMarket = JSON.parse(readFileSync(resolve(here, '../public/data/market-data.json'), 'utf8')) as MarketSnapshot
 const equityRows = positions
 const equityTickers = new Set(equityRows.map((row) => row.ticker))
 for (const ticker of Object.keys(currentMarket.equityCharts ?? {})) assert(equityTickers.has(ticker), `${ticker}: non-equity leaked into equity charts`)

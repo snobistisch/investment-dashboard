@@ -13,9 +13,11 @@ name: Refresh market data
 
 on:
   schedule:
-    # 22:30 UTC Mon-Fri. Safely past the US close year-round (20:00 UTC under
-    # EDT, 21:00 under EST) and long past every Asian venue in the book, so a
-    # single run captures the same trading day on every exchange.
+    # 22:30 UTC Mon-Fri, safely past the US close year-round (20:00 UTC under
+    # EDT, 21:00 under EST). GitHub has started these runs between 00:15 and
+    # 06:15 UTC, after Tokyo and Hong Kong open, so the fetch script itself
+    # drops any session still trading and reports each venue's last completed
+    # close instead of relying on this time.
     - cron: '30 22 * * 1-5'
   workflow_dispatch:
 
@@ -32,8 +34,8 @@ jobs:
       changed: ${{ steps.commit.outputs.changed }}
       sha: ${{ steps.commit.outputs.sha }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -44,6 +46,11 @@ jobs:
       # the built bundle, or this log.
       - run: npm run fetch-market-data
       - run: npm run build-opportunity-history
+
+      # The site reads the committed snapshot straight from raw.githubusercontent,
+      # so a commit is already live before the deploy job runs. Data that fails
+      # the shape, provenance and freshness checks must stop here, uncommitted.
+      - run: npm run verify
 
       - id: commit
         run: |

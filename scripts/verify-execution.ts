@@ -1,17 +1,13 @@
-import { readFileSync } from 'node:fs'
-import { dirname, resolve } from 'node:path'
-import { fileURLToPath } from 'node:url'
-import type { MarketSnapshot } from '../src/data/market-data'
 import type { BenchmarkInput } from '../src/sections/allocator/benchmark'
 import { buildConceptOrders, EMPTY_EXECUTION_INPUT, type ExecutionInput } from '../src/sections/allocator/execution'
 import type { PlanningInput } from '../src/sections/allocator/planning'
+import { FIXTURE_MARKET } from './fixtures/market'
 
 function assert(ok: unknown, message: string): asserts ok {
   if (!ok) throw new Error(message)
 }
 
-const here = dirname(fileURLToPath(import.meta.url))
-const market = JSON.parse(readFileSync(resolve(here, '../public/data/market-data.json'), 'utf8')) as MarketSnapshot
+const market = FIXTURE_MARKET
 
 const planning: PlanningInput = {
   goal: 'Long-term wealth building', horizonYears: 10, riskCapitalEur: 10_000,

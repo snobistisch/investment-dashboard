@@ -53,17 +53,10 @@ function TabStatus({ tab }: { tab: Tab }) {
   )
 }
 
-const LEGACY: Record<string, string> = {
-  defense: 'defense', photonics: 'photonics', biology: 'biology', robotics: 'robotics',
-  quantum: 'quantum', agentic: 'agentic', exposure: 'exposure',
-  opportunities: 'opportunities', allocator: 'allocator',
-}
-
 function tabFromHash() {
   let hash = window.location.hash.replace(/^#/, '')
   if (hash.startsWith('equities/')) hash = hash.slice('equities/'.length)
-  const requested = LEGACY[hash] ?? hash
-  return TABS.some((tab) => tab.id === requested) ? requested : TABS[0].id
+  return TABS.some((tab) => tab.id === hash) ? hash : TABS[0].id
 }
 
 function App() {

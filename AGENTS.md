@@ -79,6 +79,7 @@ label and ordering rule only.
 | `scripts/fixtures/` | Frozen market snapshot for decision-logic suites; live data is checked for shape only. |
 | `scripts/fetch-market-data.ts` | Network-backed equity and FX snapshot builder. |
 | `scripts/build-opportunity-history.ts` | Records price-driven opportunity changes. |
+| `scripts/signals.ts` | Opportunities result as json for monitoring agents; `--live` adds a price-only what-if. |
 | `public/data/` | Generated and committed artifacts; never hand-edit. |
 | `public/dashboards/` | Static research pages with independent stylesheets. |
 | `research/` | Claims, sources, caveats and audit record. |
@@ -103,6 +104,7 @@ npm run build
 npm run dev
 npm run fetch-market-data
 npm run build-opportunity-history
+npm run -s signals [-- --live]
 ```
 
 Generated output is committed. Do not run network refreshes as routine cleanup.

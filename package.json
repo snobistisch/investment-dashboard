@@ -11,7 +11,8 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "build-opportunity-history": "jiti scripts/build-opportunity-history.ts",
-    "summary": "jiti scripts/summary.ts"
+    "summary": "jiti scripts/summary.ts",
+    "signals": "jiti scripts/signals.ts"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.2",

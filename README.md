@@ -52,6 +52,10 @@ npm run fetch-market-data
 npm run build-opportunity-history
 ```
 
+`npm run -s signals` prints the Opportunities result for every modelled long as json, from
+the same engine as the dashboard, for monitoring agents. `-- --live` adds a what-if at the
+provider's current price that moves only the price and the 200MA distance.
+
 ## Development
 
 ```sh

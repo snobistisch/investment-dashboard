@@ -2,6 +2,14 @@
 
 Reverse-chronological record of the current public-equity product.
 
+## 2026-10-14 — Added a json signal feed for monitoring agents
+
+- `npm run -s signals` emits the dashboard's own Opportunities result per modelled long
+  (state, screen blockers, max entry, hurdle edge, 200MA zone, thesis and falsifier), so
+  an external agent alerts on the engine's output instead of a reimplementation.
+- `--live` adds a labelled what-if at the provider's current price. Only price and 200MA
+  distance move; risk statistics stay at the snapshot's completed sessions.
+
 ## 2026-10-14 — Repaired the market-data pipeline
 
 - Every refresh deploy since 2026-09-17 failed in `verify-opportunity.ts`: it required
